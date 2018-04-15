@@ -1,0 +1,8 @@
+<div class="form-group row">
+	<label class="{{layout.colLeft}} col-form-label" for="{{component.id}}">
+		{{component.i18n.name}}
+	</label>
+	<div class="{{layout.colRight}}">
+		<input type="text" class="form-control" id="{{component.id}}" placeholder="{{component.i18n.placeholder}}" value="{{value}}" {{#config.required}}required{{/config.required}}>
+	</div>
+</div>

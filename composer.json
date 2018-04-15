@@ -6,5 +6,8 @@
         "psr-4": {
             "Reef\\": "src/"
         }
+    },
+    "require": {
+        "symfony/yaml": "^4.0"
     }
 }
