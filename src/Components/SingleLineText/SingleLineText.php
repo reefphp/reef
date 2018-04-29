@@ -6,11 +6,17 @@ use Reef\Components\Component;
 
 class SingleLineText implements Component {
 	
+	const COMPONENT_NAME = 'reef:single_line_text';
+	
 	private $a_config;
 	
 	public function __construct(array $a_config) {
 		$this->a_config = $a_config;
 		
+	}
+	
+	public static function getDir() {
+		return __DIR__.'/';
 	}
 	
 	public function getConfig() : array {
@@ -24,10 +30,9 @@ class SingleLineText implements Component {
 	}
 	
 	public function view_form($m_value) : array {
-		return [
-			'value' => (string)$m_value,
-			'config' => $this->a_config,
-		];
+		$a_vars = $this->a_config;
+		$a_vars['value'] = (string)$m_value;
+		return $a_vars;
 	}
 	
 	public function validate($m_input, array &$a_errors = null) : bool {

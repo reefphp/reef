@@ -1,0 +1,20 @@
+locale:
+    title: 'Example form'
+layout:
+    name: 'bootstrap4'
+    colLeft: col-12 col-md-3
+    colRight: col-12 col-md-9
+components:
+  - component: reef:single_line_text
+    name: 'name'
+    required: true
+    locale:
+        title: 'Your name'
+        placeholder: 'Fill in your name please'
+  - component: reef:single_line_text
+    name: 'fav_film'
+    required: false
+    locales:
+        en:
+            title: 'Favourite film'
+            placeholder: 'What is your favourite film?'
