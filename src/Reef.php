@@ -10,7 +10,7 @@ class Reef {
 	 * Place where the forms are stored
 	 * @type Storage
 	 */
-	private $Storage;
+	private $FormStorage;
 	
 	/**
 	 * Mapping from component name to component class path
@@ -21,19 +21,33 @@ class Reef {
 	/**
 	 * Constructor
 	 */
-	public function __construct(Storage $Storage) {
-		$this->Storage = $Storage;
+	public function __construct(Storage $FormStorage) {
+		$this->FormStorage = $FormStorage;
 		$this->ComponentMapper = new ComponentMapper($this);
 	}
 	
-	public function getStorage() : Storage {
-		return $this->Storage;
+	public function getFormStorage() : Storage {
+		return $this->FormStorage;
+	}
+	
+	public function getStorage($a_storageDeclaration) {
+		switch(strtolower($a_storageDeclaration['type']??'')) {
+			case 'json':
+				return new \Reef\Storage\JSONStorage($a_storageDeclaration['path']);
+			break;
+			
+			case 'none':
+				return new \Reef\Storage\NoStorage();
+			break;
+		}
+		
+		throw new \Exception('Invalid storage.');
 	}
 	
 	public function getForm(int $i_formId) : Form {
 		$Form = $this->newForm();
 		
-		$Form->importDeclaration($this->Storage->get($i_formId));
+		$Form->load($i_formId);
 		
 		return $Form;
 	}

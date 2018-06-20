@@ -30,6 +30,25 @@ class JSONStorage implements Storage {
 		return $this->s_path . self::INC_FILE;
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function list() : array {
+		$a_files = glob($this->s_path.'*.json');
+		$a_ids = [];
+		foreach($a_files as $i => $s_file) {
+			$s_file = substr($s_file, strlen($this->s_path));
+			
+			if(preg_match('%^(\d+)\.json$%', $s_file, $a_matches)) {
+				$a_ids[] = $a_matches[1];
+			}
+		}
+		return $a_ids;
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function insert(array $a_data) : int {
 		$s_incFilePath = $this->getIncFile();
 		
@@ -75,12 +94,15 @@ class JSONStorage implements Storage {
 		}
 		
 		if(!fclose($fp)) {
-			throw new IOException('Could not close"'.$s_incFilePath.'".');
+			throw new IOException('Could not close "'.$s_incFilePath.'".');
 		}
 		
 		return $i_entryId;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function update(int $i_entryId, array $a_data) {
 		
 		$s_entryFilePath = $this->s_path . $i_entryId.'.json';
@@ -95,6 +117,9 @@ class JSONStorage implements Storage {
 		
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function delete(int $i_entryId) {
 		$s_entryFilePath = $this->s_path . $i_entryId.'.json';
 		
@@ -108,6 +133,9 @@ class JSONStorage implements Storage {
 		
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function get(int $i_entryId) : array {
 		$s_entryFilePath = $this->s_path . $i_entryId.'.json';
 		
@@ -123,6 +151,9 @@ class JSONStorage implements Storage {
 		return json_decode($s_content, true);
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function exists(int $i_entryId) : bool {
 		$s_entryFilePath = $this->s_path . $i_entryId.'.json';
 		

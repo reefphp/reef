@@ -15,37 +15,42 @@ class SingleLineText implements Component {
 		
 	}
 	
-	public static function getDir() {
+	/**
+	 * @inherit
+	 */
+	public static function getDir() : string {
 		return __DIR__.'/';
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function newValue() : SingleLineTextValue {
+		return new SingleLineTextValue($this);
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function getConfig() : array {
 		return $this->a_config;
 		
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function view_builder() : array {
 		
 		
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function view_form($m_value) : array {
 		$a_vars = $this->a_config;
 		$a_vars['value'] = (string)$m_value;
 		return $a_vars;
-	}
-	
-	public function validate($m_input, array &$a_errors = null) : bool {
-		$m_input = trim($m_input);
-		
-		if($this->a_config['required'] && empty($m_input)) {
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public function store($m_input) {
-		return trim($m_input);
 	}
 }

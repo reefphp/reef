@@ -4,18 +4,56 @@ ini_set('display_errors', 'on'); error_reporting(E_ALL);
 
 require('../../vendor/autoload.php');
 
+// Create Reef object. In this example, we do not safe the form itself, so we use NoStorage
 $Reef = new Reef\Reef(
-	new Reef\Storage\JSONStorage('./storage')
+	new Reef\Storage\NoStorage()
 );
 
+// Specify which components we want to use
 $Mapper = $Reef->getComponentMapper();
-
 $Mapper->add('Reef\\Components\\SingleLineText\\SingleLineText');
 
+// Generate the form object from the declaration
 $Form = $Reef->newForm();
 $Form->importDeclarationFile('./declaration.yml');
 
-$s_form = $Form->generateFormHtml();
+// Find whether we are given an existing submission id
+if(isset($_POST['submission_id']) && $_POST['submission_id'] > 0) {
+	$Submission = $Form->getSubmission($_POST['submission_id']);
+	$b_load = true;
+}
+else if(isset($_GET['submission_id']) && $_GET['submission_id'] > 0) {
+	$Submission = $Form->getSubmission($_GET['submission_id']);
+	$b_load = true;
+}
+else {
+	$Submission = $Form->newSubmission();
+	$b_load = false;
+}
+
+// Process a POST request
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+	if(isset($_POST['delete'])) {
+		$Submission->delete();
+		header("Location: index.php");
+		exit();
+	}
+	
+	$Submission->fromUserInput($_POST['form_data']);
+	$Submission->save();
+	$b_load = true;
+}
+
+if($b_load) {
+	// If $b_load is true, we should display an existing submission
+	$i_submissionId = $Submission->getSubmissionId();
+	$s_form = $Form->generateFormHtml($Submission);
+}
+else {
+	// Else, we display the form for adding a new submission
+	$i_submissionId = -1;
+	$s_form = $Form->generateFormHtml();
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -32,7 +70,26 @@ $s_form = $Form->generateFormHtml();
 </head>
 <body>
 <div class="container-fluid">
+<ul>
+	<li><a href="?">New submission</a></li>
+<?php
+foreach($Form->getSubmissionIds() as $i_id) {
+	echo('<li><a href="?submission_id='.$i_id.'">Submission '.$i_id.'</a></li>');
+}
+?>
+</ul>
+<form action="" method="post">
+	<input type="hidden" name="submission_id" value="<?php echo($i_submissionId); ?>" />
 	<?php echo($s_form); ?>
+<input type="submit" name="submit" value="submit" class="btn btn-primary" />
+<?php
+if($b_load) {
+	?>
+	<input type="submit" name="delete" value="delete" class="btn btn-outline-danger" />
+	<?php
+}
+?>
+</form>
 </div>
 </body>
 </html>

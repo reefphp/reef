@@ -8,6 +8,7 @@ use Symfony\Component\Yaml\Yaml;
 class Form {
 	
 	private $Reef;
+	private $SubmissionStorage;
 	
 	private $i_formId;
 	private $a_locale;
@@ -23,6 +24,14 @@ class Form {
 	
 	public function getFormId() {
 		return $this->i_formId;
+	}
+	
+	public function getComponents() {
+		return $this->a_components;
+	}
+	
+	public function getSubmissionStorage() {
+		return $this->SubmissionStorage;
 	}
 	
 	public function importDeclarationFile(string $s_filename) {
@@ -46,6 +55,9 @@ class Form {
 		
 		$this->a_formConfig = $a_declaration;
 		unset($this->a_formConfig['components']);
+		unset($this->a_formConfig['submissions']);
+		
+		$this->SubmissionStorage = $this->Reef->getStorage($a_declaration['submissions']);
 		
 		$this->a_formConfig['layout']['name'] = $this->a_formConfig['layout']['name'] ?? 'bootstrap4';
 		
@@ -62,15 +74,44 @@ class Form {
 		$a_declaration = $this->generateDeclaration();
 		
 		if($this->i_formId == null) {
-			$this->i_formId = $this->Reef->getStorage()->insert($a_declaration);
+			$this->i_formId = $this->Reef->getFormStorage()->insert($a_declaration);
 		}
 		else {
-			$this->Reef->getStorage()->update($this->i_formId, $a_declaration);
+			$this->Reef->getFormStorage()->update($this->i_formId, $a_declaration);
 		}
 	}
 	
-	public function generateFormHtml($a_options = []) {
+	public function load(int $i_formId) {
+		$this->importDeclaration($this->Reef->getFormStorage()->get($i_formId));
+		$this->i_formId = $i_formId;
+	}
+	
+	public function delete() {
+		if($this->i_formId == null) {
+			throw new \Exception("Unsaved form.");
+		}
+		$this->Reef->getFormStorage()->delete($this->i_formId);
+	}
+	
+	public function getSubmissionIds() {
+		return $this->SubmissionStorage->list();
+	}
+	
+	public function getSubmission(int $i_submissionId) : Submission {
+		$Submission = $this->newSubmission();
+		
+		$Submission->load($i_submissionId);
+		
+		return $Submission;
+	}
+	
+	public function generateFormHtml(Submission $Submission = null, $a_options = []) {
 		$a_components = [];
+		
+		if($Submission == null) {
+			$Submission = $this->newSubmission();
+			$Submission->emptySubmission();
+		}
 		
 		$a_formConfig = $this->a_formConfig;
 		$a_formConfig['locale'] = $this->getLocale($a_formConfig, $a_options['locale']??null);
@@ -84,7 +125,7 @@ class Form {
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($Component::getDir()));
 			$Template = $Mustache->loadTemplate('view/'.$this->a_formConfig['layout']['name'].'/form.mustache');
-			$a_vars = $Component->view_form('');
+			$a_vars = $Component->view_form($Submission->getComponentValue($Component->getConfig()['name'])->toTemplateVar());
 			
 			$a_vars['locale'] = $this->getLocale($a_vars, $a_options['locale']??null);
 			unset($a_vars['locales']);
@@ -127,6 +168,10 @@ class Form {
 		}
 		
 		throw new \InvalidArgumentException("Could not find locale for component '".$a_vars['name']."'.");
+	}
+	
+	public function newSubmission() {
+		return new Submission($this);
 	}
 	
 }
