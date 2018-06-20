@@ -1,13 +1,6 @@
 <?php
 
-ini_set('display_errors', 'on'); error_reporting(E_ALL);
-
-require('../../vendor/autoload.php');
-
-// Create Reef object. In this example, we do not safe the form itself, so we use NoStorage
-$Reef = new Reef\Reef(
-	new Reef\Storage\NoStorage()
-);
+require_once('./common.php');
 
 // Specify which components we want to use
 $Mapper = $Reef->getComponentMapper();
@@ -54,6 +47,14 @@ else {
 	$i_submissionId = -1;
 	$s_form = $Form->generateFormHtml();
 }
+
+$s_CSS = $Form->getFormAssets()->getCSSHTML(function($s_assetsHash) {
+	return './assets.php?type=css&amp;hash='.$s_assetsHash;
+});
+$s_JS = $Form->getFormAssets()->getJSHTML(function($s_assetsHash) {
+	return './assets.php?type=js&amp;hash='.$s_assetsHash;
+});
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -62,10 +63,15 @@ else {
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	
+	<?php echo($s_CSS); ?>
+	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+	<?php echo($s_JS); ?>
+	
 	<title>Simple form</title>
 </head>
 <body>

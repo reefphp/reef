@@ -9,6 +9,7 @@ class Form {
 	
 	private $Reef;
 	private $SubmissionStorage;
+	private $FormAssets;
 	
 	private $i_formId;
 	private $a_locale;
@@ -30,8 +31,20 @@ class Form {
 		return $this->a_components;
 	}
 	
+	public function getReef() {
+		return $this->Reef;
+	}
+	
 	public function getSubmissionStorage() {
 		return $this->SubmissionStorage;
+	}
+	
+	public function getFormAssets() {
+		if($this->FormAssets == null) {
+			$this->FormAssets = new FormAssets($this);
+		}
+		
+		return $this->FormAssets;
 	}
 	
 	public function importDeclarationFile(string $s_filename) {

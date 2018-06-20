@@ -13,6 +13,32 @@ interface Component {
 	public static function getDir() : string;
 	
 	/**
+	 * Returns an array of javascript files required by this component.
+	 * Each file is defined by an array:
+	 * [
+	 *   type => local or remote
+	 *   path => path or url
+	 *   name => canonical name (required for remote files)
+	 *   integrity => Optionally, an integrity value for remote files
+	 * ]
+	 * @return array The javascript files
+	 */
+	public function getJS() : array;
+	
+	/**
+	 * Returns an array of CSS files required by this component.
+	 * Each file is defined by an array:
+	 * [
+	 *   type => local or remote
+	 *   path => path or url
+	 *   name => canonical name (required for remote files)
+	 *   integrity => Optionally, an integrity value for remote files
+	 * ]
+	 * @return array The CSS files
+	 */
+	public function getCSS() : array;
+	
+	/**
 	 * Return the entire configuration array
 	 * @return array
 	 */

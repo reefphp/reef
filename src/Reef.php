@@ -3,6 +3,7 @@
 namespace Reef;
 
 use \Reef\Storage\Storage;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 
 class Reef {
 	
@@ -19,11 +20,47 @@ class Reef {
 	private $ComponentMapper;
 	
 	/**
+	 * Options
+	 * @type array
+	 */
+	private $a_options;
+	
+	/**
+	 * Cache object
+	 * @type FilesystemCache
+	 */
+	private $Cache;
+	
+	/**
 	 * Constructor
 	 */
-	public function __construct(Storage $FormStorage) {
+	public function __construct(Storage $FormStorage, $a_options = []) {
 		$this->FormStorage = $FormStorage;
 		$this->ComponentMapper = new ComponentMapper($this);
+		
+		$this->a_options = [];
+		if(isset($a_options['cache_dir'])) {
+			$this->a_options['cache_dir'] = $a_options['cache_dir'];
+		}
+		else {
+			$this->a_options['cache_dir'] = '/tmp/reef/';
+			if(!is_dir($this->a_options['cache_dir'])) {
+				mkdir($this->a_options['cache_dir'], 0644);
+			}
+		}
+		
+		$this->a_options['css_prefix'] = $a_options['css_prefix'] ?? 'rf-';
+	}
+	
+	public function getCache() : FilesystemCache {
+		if($this->Cache == null) {
+			$this->Cache = new FilesystemCache('reef', 0, $this->a_options['cache_dir']);
+		}
+		return $this->Cache;
+	}
+	
+	public function getOption($s_name) {
+		return $this->a_options[$s_name];
 	}
 	
 	public function getFormStorage() : Storage {
@@ -59,6 +96,10 @@ class Reef {
 	
 	public function getComponentMapper() : ComponentMapper {
 		return $this->ComponentMapper;
+	}
+	
+	public function getAsset($s_type, $s_assetsHash) {
+		return FormAssets::getAssetByHash($this, $s_type, $s_assetsHash);
 	}
 	
 }

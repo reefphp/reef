@@ -9,6 +9,7 @@
     },
     "require": {
         "symfony/yaml": "^4.0",
-        "mustache/mustache": "^2.12"
+        "mustache/mustache": "^2.12",
+        "symfony/cache": "^4.1"
     }
 }

@@ -25,6 +25,30 @@ class SingleLineText implements Component {
 	/**
 	 * @inherit
 	 */
+	public function getJS() : array {
+		return [
+			[
+				'type' => 'local',
+				'path' => 'script.js',
+			]
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getCSS() : array {
+		return [
+			[
+				'type' => 'local',
+				'path' => 'style.css',
+			]
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function newValue() : SingleLineTextValue {
 		return new SingleLineTextValue($this);
 	}
