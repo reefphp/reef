@@ -22,6 +22,17 @@ abstract class Component {
 	abstract public static function getDir() : string;
 	
 	/**
+	 * Return a list of class names, of this class and all its parents, except this abstract Component class
+	 * @return string The directory
+	 */
+	public static function getInheritanceList() {
+		$s_currentClass = get_called_class();
+		$a_classes = array_merge([$s_currentClass], class_parents($s_currentClass));
+		array_pop($a_classes); // Remove the Component class
+		return array_values($a_classes);
+	}
+	
+	/**
 	 * Return the Form the component is assigned to
 	 * @return Form
 	 */
@@ -123,14 +134,17 @@ abstract class Component {
 			throw new \InvalidArgumentException("Could not find locale for component '".$this->a_config['name']."'.");
 		}
 		
-		// Find component-defined locale
-		foreach($a_locales as $s_loc) {
-			if(file_exists(static::getDir().'locale/'.$s_loc.'.yml')) {
-				$a_locale = array_merge(
-					Yaml::parseFile(static::getDir().'locale/'.$s_loc.'.yml')??[],
-					$a_locale
-				);
-				break;
+		$a_classes = static::getInheritanceList();
+		foreach($a_classes as $s_class) {
+			// Find component-defined locale
+			foreach($a_locales as $s_loc) {
+				if(file_exists($s_class::getDir().'locale/'.$s_loc.'.yml')) {
+					$a_locale = array_merge(
+						Yaml::parseFile($s_class::getDir().'locale/'.$s_loc.'.yml')??[],
+						$a_locale
+					);
+					break;
+				}
 			}
 		}
 		

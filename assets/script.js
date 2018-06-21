@@ -15,7 +15,8 @@ if(typeof Reef === 'undefined') {
 				var name = $(this).data(CSSPRFX+'name');
 				var type = $(this).data(CSSPRFX+'type');
 				if(Reef.components[type]) {
-					self.fields[name] = new Reef.components[type](self, $(this));
+					self.fields[name] = self.newComponent(type, $(this));
+					self.fields[name].attach();
 				}
 			});
 			
@@ -26,6 +27,10 @@ if(typeof Reef === 'undefined') {
 		
 		Reef.addComponent = function(component) {
 			Reef.components[component.componentName] = component;
+		};
+		
+		Reef.prototype.newComponent = function(type, $el) {
+			return new Reef.components[type](this, $el);
 		};
 		
 		Reef.prototype.validate = function() {

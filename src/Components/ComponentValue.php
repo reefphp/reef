@@ -32,7 +32,7 @@ abstract class ComponentValue {
 	 * Parse the value from a flat array created with toFlat()
 	 * @param array $a_flat The flat value array
 	 */
-	abstract public function fromFlat(array $a_flat);
+	abstract public function fromFlat(?array $a_flat);
 	
 	/**
 	 * Prepare the values to be used in the form template

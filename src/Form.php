@@ -141,9 +141,23 @@ class Form {
 		]);
 		
 		foreach($this->a_components as $Component) {
+			$s_templateDir = null;
+			$s_viewfile = 'view/'.$this->a_formConfig['layout']['name'].'/form.mustache';
 			
-			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($Component::getDir()));
-			$Template = $Mustache->loadTemplate('view/'.$this->a_formConfig['layout']['name'].'/form.mustache');
+			$a_classes = $Component::getInheritanceList();
+			foreach($a_classes as $s_class) {
+				if(file_exists($s_class::getDir() . $s_viewfile)) {
+					$s_templateDir = $s_class::getDir();
+					break;
+				}
+			}
+			
+			if($s_templateDir === null) {
+				throw new \Exception("Could not find form template file for component '".$Component->getConfig()['name']."'.");
+			}
+			
+			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
+			$Template = $Mustache->loadTemplate($s_viewfile);
 			$a_vars = $Component->view_form($Submission->getComponentValue($Component->getConfig()['name']), array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([

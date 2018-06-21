@@ -6,7 +6,7 @@ use Reef\Components\ComponentValue;
 
 class SingleLineTextValue extends ComponentValue {
 	
-	private $s_value;
+	protected $s_value;
 	
 	/**
 	 * @inherit
@@ -15,7 +15,7 @@ class SingleLineTextValue extends ComponentValue {
 		$this->a_errors = [];
 		$s_value = trim($this->s_value);
 		
-		if($this->Component->getConfig()['required'] && empty($s_value)) {
+		if($this->Component->getConfig()['required'] && $s_value == '') {
 			$this->a_errors[] = $this->Component->getForm()->trans('error_required_empty');
 			return false;
 		}
@@ -51,8 +51,8 @@ class SingleLineTextValue extends ComponentValue {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(array $a_flat) {
-		$this->s_value = $a_flat['value'];
+	public function fromFlat(?array $a_flat) {
+		$this->s_value = $a_flat['value']??$this->Component->getConfig()['default']??'';
 		$this->a_errors = null;
 	}
 	

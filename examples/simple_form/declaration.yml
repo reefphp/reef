@@ -22,6 +22,16 @@ components:
         en_US:
             title: 'Favourite film'
             placeholder: 'What is your favourite film?'
+  - component: reef:text_number
+    name: 'grade'
+    required: true
+    min: 0
+    max: 10
+    step: 1
+    locales:
+        en_US:
+            title: 'What grade did you get?'
+            placeholder: '0-10'
   - component: reef:single_checkbox
     name: 'agree'
     required: true

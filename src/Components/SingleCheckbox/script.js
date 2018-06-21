@@ -3,18 +3,19 @@ Reef.addComponent((function() {
 	'use strict';
 	
 	var Component = function(Reef, $field) {
-		var self = this;
-		
 		this.$field = $field;
 		this.Reef = Reef;
+	};
+	
+	Component.componentName = 'reef:single_checkbox';
+	
+	Component.prototype.attach = function() {
+		var self = this;
 		
 		this.$field.find('input').on('change blur keyup', function(evt) {
 			self.validate();
 		});
-	
 	};
-	
-	Component.componentName = 'reef:single_checkbox';
 	
 	Component.prototype.validate = function() {
 		var valid = true;

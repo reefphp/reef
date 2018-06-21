@@ -22,7 +22,7 @@ class SingleLineText extends Component {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'script.js',
+				'path' => self::getDir().'script.js',
 			]
 		];
 	}
@@ -34,7 +34,7 @@ class SingleLineText extends Component {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'style.css',
+				'path' => self::getDir().'style.css',
 			]
 		];
 	}
@@ -42,7 +42,7 @@ class SingleLineText extends Component {
 	/**
 	 * @inherit
 	 */
-	public function newValue() : SingleLineTextValue {
+	public function newValue() {
 		return new SingleLineTextValue($this);
 	}
 	

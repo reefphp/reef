@@ -50,8 +50,8 @@ class SingleCheckboxValue extends ComponentValue {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(array $a_flat) {
-		$this->b_value = (bool)$a_flat['value'];
+	public function fromFlat(?array $a_flat) {
+		$this->b_value = (bool)($a_flat['value']??$this->Component->getConfig()['default']??false);
 		$this->a_errors = null;
 	}
 	

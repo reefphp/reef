@@ -22,7 +22,7 @@ class SingleCheckbox extends Component {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'script.js',
+				'path' => self::getDir().'script.js',
 			]
 		];
 	}
@@ -34,7 +34,7 @@ class SingleCheckbox extends Component {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'style.css',
+				'path' => self::getDir().'style.css',
 			]
 		];
 	}

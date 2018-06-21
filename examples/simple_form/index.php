@@ -6,6 +6,7 @@ require_once('./common.php');
 $Mapper = $Reef->getComponentMapper();
 $Mapper->add('Reef\\Components\\SingleLineText\\SingleLineText');
 $Mapper->add('Reef\\Components\\SingleCheckbox\\SingleCheckbox');
+$Mapper->add('Reef\\Components\\TextNumber\\TextNumber');
 
 // Generate the form object from the declaration
 $Form = $Reef->newForm();
