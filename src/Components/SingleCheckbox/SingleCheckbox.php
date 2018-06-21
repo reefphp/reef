@@ -1,12 +1,12 @@
 <?php
 
-namespace Reef\Components\SingleLineText;
+namespace Reef\Components\SingleCheckbox;
 
 use Reef\Components\Component;
 
-class SingleLineText extends Component {
+class SingleCheckbox extends Component {
 	
-	const COMPONENT_NAME = 'reef:single_line_text';
+	const COMPONENT_NAME = 'reef:single_checkbox';
 	
 	/**
 	 * @inherit
@@ -42,8 +42,8 @@ class SingleLineText extends Component {
 	/**
 	 * @inherit
 	 */
-	public function newValue() : SingleLineTextValue {
-		return new SingleLineTextValue($this);
+	public function newValue() : SingleCheckboxValue {
+		return new SingleCheckboxValue($this);
 	}
 	
 	/**
@@ -59,7 +59,7 @@ class SingleLineText extends Component {
 	 */
 	public function view_form($Value, $a_options = []) : array {
 		$a_vars = parent::view_form($Value, $a_options);
-		$a_vars['value'] = (string)$Value->toTemplateVar();
+		$a_vars['value'] = (bool)$Value->toTemplateVar();
 		return $a_vars;
 	}
 }

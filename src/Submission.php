@@ -27,7 +27,9 @@ class Submission {
 		$a_components = $this->Form->getComponents();
 		$this->a_componentValues = [];
 		foreach($a_components as $Component) {
-			$this->a_componentValues[$Component->getConfig()['name']] = $Component->newValue();
+			$s_name = $Component->getConfig()['name'];
+			$this->a_componentValues[$s_name] = $Component->newValue();
+			$this->a_componentValues[$s_name]->fromDefault();
 		}
 	}
 	

@@ -1,21 +1,20 @@
 <?php
 
-namespace Reef\Components\SingleLineText;
+namespace Reef\Components\SingleCheckbox;
 
 use Reef\Components\ComponentValue;
 
-class SingleLineTextValue extends ComponentValue {
+class SingleCheckboxValue extends ComponentValue {
 	
-	private $s_value;
+	private $b_value;
 	
 	/**
 	 * @inherit
 	 */
 	public function validate() : bool {
 		$this->a_errors = [];
-		$s_value = trim($this->s_value);
 		
-		if($this->Component->getConfig()['required'] && empty($s_value)) {
+		if($this->Component->getConfig()['required'] && !$this->b_value) {
 			$this->a_errors[] = $this->Component->getForm()->trans('error_required_empty');
 			return false;
 		}
@@ -27,15 +26,15 @@ class SingleLineTextValue extends ComponentValue {
 	 * @inherit
 	 */
 	public function fromDefault() {
-		$this->s_value = $this->Component->getConfig()['default']??'';
+		$this->b_value = (bool)($this->Component->getConfig()['default']??false);
 		$this->a_errors = null;
 	}
 	
 	/**
 	 * @inherit
 	 */
-	public function fromUserInput($s_input) {
-		$this->s_value = $s_input;
+	public function fromUserInput($m_input) {
+		$this->b_value = (bool)$m_input;
 		$this->a_errors = null;
 	}
 	
@@ -44,7 +43,7 @@ class SingleLineTextValue extends ComponentValue {
 	 */
 	public function toFlat() : array {
 		return [
-			'value' => $this->s_value,
+			'value' => $this->b_value,
 		];
 	}
 	
@@ -52,7 +51,7 @@ class SingleLineTextValue extends ComponentValue {
 	 * @inherit
 	 */
 	public function fromFlat(array $a_flat) {
-		$this->s_value = $a_flat['value'];
+		$this->b_value = (bool)$a_flat['value'];
 		$this->a_errors = null;
 	}
 	
@@ -60,6 +59,6 @@ class SingleLineTextValue extends ComponentValue {
 	 * @inherit
 	 */
 	public function toTemplateVar() {
-		return $this->s_value;
+		return $this->b_value;
 	}
 }

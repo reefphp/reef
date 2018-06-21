@@ -1,0 +1,27 @@
+<div class="form-group row {{CSSPRFX}}component {{#component.hasErrors}}{{CSSPRFX}}invalid{{/component.hasErrors}}" data-{{CSSPRFX}}type="reef:single_checkbox" data-{{CSSPRFX}}name="{{component.name}}">
+	<label class="{{layout.col_left}} col-form-label" for="{{component.name}}">
+		{{component.locale.title_left}}
+	</label>
+	<div class="{{layout.col_right}}">
+		<div class="form-check">
+			<input
+				class="form-check-input {{#component.hasErrors}}is-invalid{{/component.hasErrors}} {{^component.locale.title_right}}position-static{{/component.locale.title_right}}"
+				type="checkbox"
+				name="{{main_var}}[{{component.name}}]"
+				id="{{component.name}}"
+				value="1"
+				{{#component.value}}checked{{/component.value}}
+				{{#component.required}}required{{/component.required}}
+			>
+			{{#component.locale.title_right}}
+			<label class="form-check-label" for="{{component.name}}">
+				{{component.locale.title_right}}
+			</label>
+			{{/component.locale.title_right}}
+			<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{component.locale.error_required_empty}}</div>
+			{{#component.errors}}
+				<div class="invalid-feedback">{{.}}</div>
+			{{/component.errors}}
+		</div>
+	</div>
+</div>

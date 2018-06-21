@@ -22,3 +22,9 @@ components:
         en_US:
             title: 'Favourite film'
             placeholder: 'What is your favourite film?'
+  - component: reef:single_checkbox
+    name: 'agree'
+    required: true
+    locales:
+        en_US:
+            title_left: 'To click or not to click?'

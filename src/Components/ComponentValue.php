@@ -12,6 +12,11 @@ abstract class ComponentValue {
 	}
 	
 	/**
+	 * Set the value equal to the default value
+	 */
+	abstract public function fromDefault();
+	
+	/**
 	 * Parse the value from user input
 	 * @param mixed $m_input The user input for the component, e.g. from $_POST
 	 */
