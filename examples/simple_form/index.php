@@ -33,7 +33,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 	
 	$Submission->fromUserInput($_POST['form_data']);
-	$Submission->save();
+	if($Submission->validate()) {
+		$Submission->save();
+	}
 	$b_load = true;
 }
 
@@ -91,7 +93,7 @@ foreach($Form->getSubmissionIds() as $i_id) {
 	</div>
 	<input type="submit" name="submit" value="submit" class="btn btn-primary" />
 <?php
-if($b_load) {
+if(!$Submission->isNew()) {
 	?>
 	<input type="submit" name="delete" value="delete" class="btn btn-outline-danger" />
 	<?php

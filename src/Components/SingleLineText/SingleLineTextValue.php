@@ -5,25 +5,21 @@ namespace Reef\Components\SingleLineText;
 use Reef\Components\Component;
 use Reef\Components\ComponentValue;
 
-class SingleLineTextValue implements ComponentValue {
+class SingleLineTextValue extends ComponentValue {
 	
 	const COMPONENT_NAME = 'reef:single_line_text';
 	
-	private $Component;
 	private $s_value;
-	
-	public function __construct(Component $Component) {
-		$this->Component = $Component;
-		
-	}
 	
 	/**
 	 * @inherit
 	 */
-	public function validate(array &$a_errors = null) : bool {
+	public function validate() : bool {
+		$this->a_errors = [];
 		$s_value = trim($this->s_value);
 		
 		if($this->Component->getConfig()['required'] && empty($s_value)) {
+			$this->a_errors[] = $this->Component->getForm()->trans('error_required_empty');
 			return false;
 		}
 		
@@ -35,6 +31,7 @@ class SingleLineTextValue implements ComponentValue {
 	 */
 	public function fromUserInput($s_input) {
 		$this->s_value = $s_input;
+		$this->a_errors = null;
 	}
 	
 	/**
@@ -51,6 +48,7 @@ class SingleLineTextValue implements ComponentValue {
 	 */
 	public function fromFlat(array $a_flat) {
 		$this->s_value = $a_flat['value'];
+		$this->a_errors = null;
 	}
 	
 	/**

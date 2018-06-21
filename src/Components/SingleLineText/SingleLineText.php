@@ -3,17 +3,11 @@
 namespace Reef\Components\SingleLineText;
 
 use Reef\Components\Component;
+use Reef\Form;
 
-class SingleLineText implements Component {
+class SingleLineText extends Component {
 	
 	const COMPONENT_NAME = 'reef:single_line_text';
-	
-	private $a_config;
-	
-	public function __construct(array $a_config) {
-		$this->a_config = $a_config;
-		
-	}
 	
 	/**
 	 * @inherit
@@ -56,14 +50,6 @@ class SingleLineText implements Component {
 	/**
 	 * @inherit
 	 */
-	public function getConfig() : array {
-		return $this->a_config;
-		
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function view_builder() : array {
 		
 		
@@ -72,9 +58,9 @@ class SingleLineText implements Component {
 	/**
 	 * @inherit
 	 */
-	public function view_form($m_value) : array {
-		$a_vars = $this->a_config;
-		$a_vars['value'] = (string)$m_value;
+	public function view_form($Value, $a_options = []) : array {
+		$a_vars = parent::view_form($Value, $a_options);
+		$a_vars['value'] = (string)$Value->toTemplateVar();
 		return $a_vars;
 	}
 }

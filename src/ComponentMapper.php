@@ -25,12 +25,12 @@ class ComponentMapper {
 		$this->a_mapping[$s_componentClass::COMPONENT_NAME] = $s_componentClass;
 	}
 	
-	public function get(array $a_config) {
+	public function get(array $a_config, Form $Form) {
 		if(!isset($this->a_mapping[$a_config['component']])) {
 			throw new \DomainException("Component not loaded: ".$a_config['component']);
 		}
 		
-		return new $this->a_mapping[$a_config['component']]($a_config);
+		return new $this->a_mapping[$a_config['component']]($a_config, $Form);
 	}
 	
 	

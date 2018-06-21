@@ -27,6 +27,10 @@ class Form {
 		return $this->i_formId;
 	}
 	
+	public function getFormConfig() {
+		return $this->a_formConfig;
+	}
+	
 	public function getComponents() {
 		return $this->a_components;
 	}
@@ -75,7 +79,7 @@ class Form {
 		$this->a_formConfig['layout']['name'] = $this->a_formConfig['layout']['name'] ?? 'bootstrap4';
 		
 		foreach($a_declaration['components'] as $s_id => $a_config) {
-			$this->a_components[$s_id] = $Mapper->get($a_config);
+			$this->a_components[$s_id] = $Mapper->get($a_config, $this);
 		}
 	}
 	
@@ -127,7 +131,7 @@ class Form {
 		}
 		
 		$a_helpers = $this->a_formConfig;
-		$a_helpers['locale'] = $this->getLocale($a_helpers, null, $a_options['locale']??null);
+		$a_helpers['locale'] = $this->getLocale($a_options['locale']??null);
 		unset($a_helpers['locales']);
 		
 		$a_helpers['CSSPRFX'] = $this->Reef->getOption('css_prefix');
@@ -140,10 +144,7 @@ class Form {
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($Component::getDir()));
 			$Template = $Mustache->loadTemplate('view/'.$this->a_formConfig['layout']['name'].'/form.mustache');
-			$a_vars = $Component->view_form($Submission->getComponentValue($Component->getConfig()['name'])->toTemplateVar());
-			
-			$a_vars['locale'] = $this->getLocale($a_vars, $Component::getDir().'locale/', $a_options['locale']??null);
-			unset($a_vars['locales']);
+			$a_vars = $Component->view_form($Submission->getComponentValue($Component->getConfig()['name']), array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([
 				'component' => $a_vars,
@@ -164,54 +165,47 @@ class Form {
 		return $s_html;
 	}
 	
-	private function getLocale($a_vars, $s_dir, ?string $s_locale) {
+	private function getLocale($a_locales = null) {
 		$a_locale = null;
-		$s_usedLocale = null;
 		
-		if(isset($a_vars['locales'])) {
-			$a_locales = array_unique(array_filter([
-				$s_locale,
-				$this->a_formConfig['default_locale']??null,
-				'en_US',
-			]));
-			
+		if(!is_array($a_locales)) {
+			$a_locales = [$a_locales];
+		}
+		
+		$a_locales[] = $this->a_formConfig['default_locale']??null;
+		$a_locales[] = 'en_US';
+		$a_locales = array_unique(array_filter($a_locales));
+		
+		// Find user-defined locale
+		if(isset($this->a_formConfig['locales'])) {
 			foreach($a_locales as $s_loc) {
-				if(isset($a_vars['locales'][$s_loc])) {
-					$a_locale = $a_vars['locales'][$s_loc];
-					$s_usedLocale = $s_loc;
+				if(isset($this->a_formConfig['locales'][$s_loc])) {
+					$a_locale = $this->a_formConfig['locales'][$s_loc];
+					break;
 				}
 			}
 		}
 		
-		if($a_locale === null && isset($a_vars['locale'])) {
-			$a_locale = $a_vars['locale'];
+		// Find user-defined general locale
+		if($a_locale === null && isset($this->a_formConfig['locale'])) {
+			$a_locale = $this->a_formConfig['locale'];
 		}
 		
 		if($a_locale === null) {
-			throw new \InvalidArgumentException("Could not find locale for component '".$a_vars['name']."'.");
+			throw new \InvalidArgumentException("Could not find locale for form.");
 		}
 		
-		if($s_dir === null) {
-			return $a_locale;
-		}
-		
-		$a_locales = array_unique(array_filter([
-			$s_usedLocale,
-			$s_locale,
-			$this->a_formConfig['default_locale']??null,
-			'en_US',
-		]));
-		
-		foreach($a_locales as $s_loc) {
-			if(file_exists($s_dir.$s_loc.'.yml')) {
-				return array_merge(
-					Yaml::parseFile($s_dir.$s_loc.'.yml'),
-					$a_locale
-				);
-			}
-		}
+		// Find Reef-defined locale
+		$a_locale = array_merge(
+			$this->getReef()->getLocale($a_locales),
+			$a_locale
+		);
 		
 		return $a_locale;
+	}
+	
+	public function trans($s_key, $a_locales = null) {
+		return $this->getLocale($a_locales)[$s_key]??null;
 	}
 	
 	public function newSubmission() {

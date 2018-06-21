@@ -4,6 +4,7 @@ namespace Reef;
 
 use \Reef\Storage\Storage;
 use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Yaml\Yaml;
 
 require(__DIR__ . '/functions.php');
 
@@ -55,6 +56,10 @@ class Reef {
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
 	}
 	
+	public static function getDir() : string {
+		return __DIR__.'/../';
+	}
+	
 	public function getCache() : FilesystemCache {
 		if($this->Cache == null) {
 			$this->Cache = new FilesystemCache('reef', 0, $this->a_options['cache_dir']);
@@ -103,6 +108,30 @@ class Reef {
 	
 	public function getAsset($s_type, $s_assetsHash) {
 		return FormAssets::getAssetByHash($this, $s_type, $s_assetsHash);
+	}
+	
+	/**
+	 * Get locale array
+	 * @param array|string $a_locales The locale to fetch, or null for default locale. If you provide multiple locales, the first available locale will be fetched
+	 * @return array The locale data
+	 */
+	public function getLocale($a_locales = null) {
+		if(!is_array($a_locales)) {
+			$a_locales = [$a_locales];
+		}
+		
+		$a_locales[] = 'en_US';
+		$a_locales = array_unique(array_filter($a_locales));
+		
+		foreach($a_locales as $s_loc) {
+			if(file_exists(static::getDir().'locale/'.$s_loc.'.yml')) {
+				return Yaml::parseFile(static::getDir().'locale/'.$s_loc.'.yml')??[];
+			}
+		}
+	}
+	
+	public function trans($s_key, $a_locales = null) {
+		return $this->getLocale($a_locales)[$s_key]??null;
 	}
 	
 }

@@ -41,6 +41,33 @@ class Submission {
 		}
 	}
 	
+	public function validate() : bool {
+		$b_valid = true;
+		
+		$a_components = $this->Form->getComponents();
+		foreach($a_components as $Component) {
+			$s_name = $Component->getConfig()['name'];
+			$b_valid = $this->a_componentValues[$s_name]->validate() && $b_valid;
+		}
+		
+		return $b_valid;
+	}
+	
+	public function getErrors() : array {
+		$a_errors = [];
+		
+		$a_components = $this->Form->getComponents();
+		foreach($a_components as $Component) {
+			$s_name = $Component->getConfig()['name'];
+			$a_componentErrors = $this->a_componentValues[$s_name]->getErrors();
+			if(!empty($a_componentErrors)) {
+				$a_errors[$s_name] = $a_componentErrors;
+			}
+		}
+		
+		return $a_errors;
+	}
+	
 	public function getComponentValue($s_name) {
 		if(!isset($this->a_componentValues[$s_name])) {
 			throw new IOException("Could not find value for component '".$s_name."'.");
@@ -95,6 +122,10 @@ class Submission {
 		else {
 			$this->Form->getSubmissionStorage()->update($this->i_submissionId, $a_submission);
 		}
+	}
+	
+	public function isNew() {
+		return ($this->i_submissionId === null);
 	}
 	
 	public function load(int $i_submissionId) {

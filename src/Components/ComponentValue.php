@@ -2,38 +2,50 @@
 
 namespace Reef\Components;
 
-interface ComponentValue {
+abstract class ComponentValue {
 	
-	public function __construct(Component $Component);
+	protected $Component;
+	protected $a_errors;
+	
+	public function __construct(Component $Component) {
+		$this->Component = $Component;
+	}
 	
 	/**
 	 * Parse the value from user input
 	 * @param mixed $m_input The user input for the component, e.g. from $_POST
 	 */
-	public function fromUserInput($m_input);
+	abstract public function fromUserInput($m_input);
 	
 	/**
 	 * Serialize the current value into a flat array
 	 * @return array The value
 	 */
-	public function toFlat() : array;
+	abstract public function toFlat() : array;
 	
 	/**
 	 * Parse the value from a flat array created with toFlat()
 	 * @param array $a_flat The flat value array
 	 */
-	public function fromFlat(array $a_flat);
+	abstract public function fromFlat(array $a_flat);
 	
 	/**
 	 * Prepare the values to be used in the form template
 	 * @return mixed
 	 */
-	public function toTemplateVar();
+	abstract public function toTemplateVar();
 	
 	/**
 	 * Determine whether the current value is valid
-	 * @param &array $a_errors (Out) An array of errors
 	 * @return boolean True if the current value is valid, false otherwise
 	 */
-	public function validate(array &$a_errors = null) : bool;
+	abstract public function validate() : bool;
+	
+	/**
+	 * Retrieve errors from validation
+	 * @return array The errors
+	 */
+	public function getErrors() : ?array {
+		return $this->a_errors;
+	}
 }
