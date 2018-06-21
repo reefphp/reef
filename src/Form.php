@@ -126,12 +126,14 @@ class Form {
 			$Submission->emptySubmission();
 		}
 		
-		$a_formConfig = $this->a_formConfig;
-		$a_formConfig['locale'] = $this->getLocale($a_formConfig, $a_options['locale']??null);
-		unset($a_formConfig['locales']);
+		$a_helpers = $this->a_formConfig;
+		$a_helpers['locale'] = $this->getLocale($a_helpers, null, $a_options['locale']??null);
+		unset($a_helpers['locales']);
+		
+		$a_helpers['CSSPRFX'] = $this->Reef->getOption('css_prefix');
 		
 		$Mustache = new \Mustache_Engine([
-			'helpers' => $a_formConfig,
+			'helpers' => $a_helpers,
 		]);
 		
 		foreach($this->a_components as $Component) {
@@ -140,7 +142,7 @@ class Form {
 			$Template = $Mustache->loadTemplate('view/'.$this->a_formConfig['layout']['name'].'/form.mustache');
 			$a_vars = $Component->view_form($Submission->getComponentValue($Component->getConfig()['name'])->toTemplateVar());
 			
-			$a_vars['locale'] = $this->getLocale($a_vars, $a_options['locale']??null);
+			$a_vars['locale'] = $this->getLocale($a_vars, $Component::getDir().'locale/', $a_options['locale']??null);
 			unset($a_vars['locales']);
 			
 			$s_html = $Template->render([
@@ -156,31 +158,60 @@ class Form {
 		$Template = $Mustache->loadTemplate('view/'.$this->a_formConfig['layout']['name'].'/form.mustache');
 		$s_html = $Template->render([
 			'components' => $a_components,
+			'config_base64' => base64_encode(json_encode(\Reef\array_subset($this->a_formConfig, ['main_var', 'layout']))),
 		]);
 		
 		return $s_html;
 	}
 	
-	private function getLocale($a_vars, ?string $s_locale) {
+	private function getLocale($a_vars, $s_dir, ?string $s_locale) {
+		$a_locale = null;
+		$s_usedLocale = null;
+		
 		if(isset($a_vars['locales'])) {
 			$a_locales = array_unique(array_filter([
 				$s_locale,
 				$this->a_formConfig['default_locale']??null,
-				'en',
+				'en_US',
 			]));
 			
 			foreach($a_locales as $s_loc) {
 				if(isset($a_vars['locales'][$s_loc])) {
-					return $a_vars['locales'][$s_loc];
+					$a_locale = $a_vars['locales'][$s_loc];
+					$s_usedLocale = $s_loc;
 				}
 			}
 		}
 		
-		if(isset($a_vars['locale'])) {
-			return $a_vars['locale'];
+		if($a_locale === null && isset($a_vars['locale'])) {
+			$a_locale = $a_vars['locale'];
 		}
 		
-		throw new \InvalidArgumentException("Could not find locale for component '".$a_vars['name']."'.");
+		if($a_locale === null) {
+			throw new \InvalidArgumentException("Could not find locale for component '".$a_vars['name']."'.");
+		}
+		
+		if($s_dir === null) {
+			return $a_locale;
+		}
+		
+		$a_locales = array_unique(array_filter([
+			$s_usedLocale,
+			$s_locale,
+			$this->a_formConfig['default_locale']??null,
+			'en_US',
+		]));
+		
+		foreach($a_locales as $s_loc) {
+			if(file_exists($s_dir.$s_loc.'.yml')) {
+				return array_merge(
+					Yaml::parseFile($s_dir.$s_loc.'.yml'),
+					$a_locale
+				);
+			}
+		}
+		
+		return $a_locale;
 	}
 	
 	public function newSubmission() {

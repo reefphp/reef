@@ -19,6 +19,6 @@ components:
     name: 'fav_film'
     required: false
     locales:
-        en:
+        en_US:
             title: 'Favourite film'
             placeholder: 'What is your favourite film?'

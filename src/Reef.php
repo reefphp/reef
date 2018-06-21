@@ -5,6 +5,8 @@ namespace Reef;
 use \Reef\Storage\Storage;
 use Symfony\Component\Cache\Simple\FilesystemCache;
 
+require(__DIR__ . '/functions.php');
+
 class Reef {
 	
 	/**
@@ -50,6 +52,7 @@ class Reef {
 		}
 		
 		$this->a_options['css_prefix'] = $a_options['css_prefix'] ?? 'rf-';
+		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
 	}
 	
 	public function getCache() : FilesystemCache {

@@ -84,10 +84,12 @@ foreach($Form->getSubmissionIds() as $i_id) {
 }
 ?>
 </ul>
-<form action="" method="post">
+<form action="" method="post" onsubmit="return reef.validate();">
 	<input type="hidden" name="submission_id" value="<?php echo($i_submissionId); ?>" />
-	<?php echo($s_form); ?>
-<input type="submit" name="submit" value="submit" class="btn btn-primary" />
+	<div class="form-wrapper">
+		<?php echo($s_form); ?>
+	</div>
+	<input type="submit" name="submit" value="submit" class="btn btn-primary" />
 <?php
 if($b_load) {
 	?>
@@ -97,5 +99,11 @@ if($b_load) {
 ?>
 </form>
 </div>
+<script>
+var reef;
+$(function() {
+	reef = new Reef($('.form-wrapper'));
+});
+</script>
 </body>
 </html>

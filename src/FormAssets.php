@@ -23,14 +23,14 @@ class FormAssets {
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
 				if(isset($a_asset['integrity'])) {
-					$s_html .= '<script src="'.$a_asset['path'].'" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous"></script>'.PHP_EOL;
+					$s_html .= '<link href="'.$a_asset['path'].'" rel="stylesheet" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous">'.PHP_EOL;
 				}
 				else {
-					$s_html .= '<script src="'.$a_asset['path'].'"></script>'.PHP_EOL;
+					$s_html .= '<link href="'.$a_asset['path'].'" rel="stylesheet">'.PHP_EOL;
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_html .= '<script src="'.$fnc_local($a_asset['hash']).'"></script>'.PHP_EOL;
+				$s_html .= '<link href="'.$fnc_local($a_asset['hash']).'" rel="stylesheet">'.PHP_EOL;
 			}
 		}
 		return $s_html;
@@ -42,14 +42,14 @@ class FormAssets {
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
 				if(isset($a_asset['integrity'])) {
-					$s_html .= '<link href="'.$a_asset['path'].'" rel="stylesheet" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous">'.PHP_EOL;
+					$s_html .= '<script src="'.$a_asset['path'].'" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous"></script>'.PHP_EOL;
 				}
 				else {
-					$s_html .= '<link href="'.$a_asset['path'].'" rel="stylesheet">'.PHP_EOL;
+					$s_html .= '<script src="'.$a_asset['path'].'"></script>'.PHP_EOL;
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_html .= '<link href="'.$fnc_local($a_asset['hash']).'" rel="stylesheet">'.PHP_EOL;
+				$s_html .= '<script src="'.$fnc_local($a_asset['hash']).'"></script>'.PHP_EOL;
 			}
 		}
 		return $s_html;
@@ -102,6 +102,14 @@ class FormAssets {
 		$Cache = $this->getForm()->getReef()->getCache();
 		$a_localAssets = [];
 		
+		if($s_type == 'JS') {
+			$s_mainFile = __DIR__ . '/../assets/script.js';
+		}
+		else if($s_type == 'CSS') {
+			$s_mainFile = __DIR__ . '/../assets/style.css';
+		}
+		$a_localAssets[$s_mainFile] = filemtime($s_mainFile);
+		
 		foreach($this->getForm()->getComponents() as $Component) {
 			$a_assets = $Component->$s_assetFnc();
 			
@@ -133,8 +141,17 @@ class FormAssets {
 		
 		if($b_compile) {
 			$s_content = '';
+			
 			foreach($a_localAssets as $s_path => $i_time) {
 				$s_content .= file_get_contents($s_path);
+			}
+			
+			if($s_type == 'CSS') {
+				$s_content = str_replace('CSSPRFX', $this->getForm()->getReef()->getOption('css_prefix'), $s_content);
+			}
+			else if($s_type == 'JS') {
+				$s_content = str_replace('JS_INSERT_CSS_PREFIX', $this->getForm()->getReef()->getOption('css_prefix'), $s_content);
+				$s_content = str_replace('JS_INSERT_EVENT_PREFIX', $this->getForm()->getReef()->getOption('js_event_prefix'), $s_content);
 			}
 			
 			$a_cache = [
