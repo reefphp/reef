@@ -2,15 +2,15 @@ Reef.addComponent((function() {
 	
 	'use strict';
 	
-	var Component = function(Reef, $field) {
+	var Field = function(Reef, $field) {
 		this.$field = $field;
 		this.Reef = Reef;
-		this.parent = this.Reef.newComponent('reef:single_line_text', $field);
+		this.parent = this.Reef.newField('reef:single_line_text', $field);
 	};
 	
-	Component.componentName = 'reef:text_number';
+	Field.componentName = 'reef:text_number';
 	
-	Component.prototype.attach = function() {
+	Field.prototype.attach = function() {
 		var self = this;
 		
 		this.$field.find('input').on('change blur keyup', function(evt) {
@@ -24,7 +24,7 @@ Reef.addComponent((function() {
 		});
 	};
 	
-	Component.prototype.validate = function() {
+	Field.prototype.validate = function() {
 		var valid = this.parent.validate();
 		
 		var $input = this.$field.find('input');
@@ -50,5 +50,5 @@ Reef.addComponent((function() {
 		return valid;
 	};
 	
-	return Component;
+	return Field;
 })());

@@ -20,13 +20,13 @@ class Builder {
 		$a_componentMapping = $this->Reef->getComponentMapper()->getMapping();
 		$a_categories = [];
 		
-		foreach($a_componentMapping as $s_name => $s_componentClass) {
-			$a_definition = $s_componentClass::getDefinition();
+		foreach($a_componentMapping as $s_name => $Component) {
+			$a_definition = $Component->getDefinition();
 			
 			$s_templateDir = null;
 			$s_viewfile = 'view/'.$Form->getFormConfig()['layout']['name'].'/form.mustache';
 			
-			$a_classes = $s_componentClass::getInheritanceList();
+			$a_classes = $Component->getInheritanceList();
 			foreach($a_classes as $s_class) {
 				if(file_exists($s_class::getDir() . $s_viewfile)) {
 					$s_templateDir = $s_class::getDir();
@@ -60,7 +60,7 @@ class Builder {
 					'col_left' => 'col-12',
 					'col_right' => 'col-12',
 				],
-				'components' => $a_definition['declaration']['components'],
+				'fields' => $a_definition['declaration']['fields'],
 			];
 			
 			$ComponentForm = $this->Reef->newForm();

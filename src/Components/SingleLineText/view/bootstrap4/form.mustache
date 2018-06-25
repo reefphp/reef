@@ -1,12 +1,12 @@
-<div class="form-group row {{CSSPRFX}}component {{#component.hasErrors}}{{CSSPRFX}}invalid{{/component.hasErrors}}" data-{{CSSPRFX}}type="reef:single_line_text" data-{{CSSPRFX}}name="{{component.name}}">
-	<label class="{{layout.col_left}} col-form-label" for="{{component.name}}">
-		{{component.locale.title}}
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:single_line_text" data-{{CSSPRFX}}name="{{field.name}}">
+	<label class="{{layout.col_left}} col-form-label" for="{{field.name}}">
+		{{field.locale.title}}
 	</label>
 	<div class="{{layout.col_right}}">
-		<input type="text" class="form-control {{#component.hasErrors}}is-invalid{{/component.hasErrors}}" id="{{component.name}}" name="{{main_var}}[{{component.name}}]" placeholder="{{component.locale.placeholder}}" value="{{component.value}}" {{#component.required}}required{{/component.required}}>
-		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{component.locale.error_required_empty}}</div>
-		{{#component.errors}}
+		<input type="text" class="form-control {{#field.hasErrors}}is-invalid{{/field.hasErrors}}" id="{{field.name}}" name="{{main_var}}[{{field.name}}]" placeholder="{{field.locale.placeholder}}" value="{{field.value}}" {{#field.required}}required{{/field.required}}>
+		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.error_required_empty}}</div>
+		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>
-		{{/component.errors}}
+		{{/field.errors}}
 	</div>
 </div>

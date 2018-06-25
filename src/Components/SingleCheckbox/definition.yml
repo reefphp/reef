@@ -3,7 +3,7 @@ name: single_checkbox
 category: choice
 image: choice-check.svg
 declaration:
-    components:
+    fields:
       - component: reef:single_checkbox
         name: 'required'
         locales:

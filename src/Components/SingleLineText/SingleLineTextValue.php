@@ -2,9 +2,9 @@
 
 namespace Reef\Components\SingleLineText;
 
-use Reef\Components\ComponentValue;
+use Reef\Components\FieldValue;
 
-class SingleLineTextValue extends ComponentValue {
+class SingleLineTextValue extends FieldValue {
 	
 	protected $s_value;
 	
@@ -15,8 +15,8 @@ class SingleLineTextValue extends ComponentValue {
 		$this->a_errors = [];
 		$s_value = trim($this->s_value);
 		
-		if($this->Component->getConfig()['required'] && $s_value == '') {
-			$this->a_errors[] = $this->Component->getForm()->trans('error_required_empty');
+		if($this->Field->getConfig()['required'] && $s_value == '') {
+			$this->a_errors[] = $this->Field->getForm()->trans('error_required_empty');
 			return false;
 		}
 		
@@ -27,7 +27,7 @@ class SingleLineTextValue extends ComponentValue {
 	 * @inherit
 	 */
 	public function fromDefault() {
-		$this->s_value = $this->Component->getConfig()['default']??'';
+		$this->s_value = $this->Field->getConfig()['default']??'';
 		$this->a_errors = null;
 	}
 	
@@ -52,7 +52,7 @@ class SingleLineTextValue extends ComponentValue {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->s_value = $a_flat['value']??$this->Component->getConfig()['default']??'';
+		$this->s_value = $a_flat['value']??$this->Field->getConfig()['default']??'';
 		$this->a_errors = null;
 	}
 	

@@ -13,20 +13,20 @@ class TextNumberValue extends SingleLineTextValue {
 		$b_valid = parent::validate();
 		
 		if($this->s_value != '' && !is_numeric($this->s_value)) {
-			$this->a_errors[] = $this->Component->trans('error_not_a_number');
+			$this->a_errors[] = $this->Field->trans('error_not_a_number');
 			$b_valid = false;
 		}
 		else {
 			$f_value = (float)$this->s_value;
-			$a_config = $this->Component->getConfig();
+			$a_config = $this->Field->getConfig();
 			
 			if(isset($a_config['min']) && $f_value < $a_config['min']) {
 				$b_valid = false;
-				$this->a_errors[] = $this->Component->trans('error_number_range');
+				$this->a_errors[] = $this->Field->trans('error_number_range');
 			}
 			else if(isset($a_config['max']) && $f_value > $a_config['max']) {
 				$b_valid = false;
-				$this->a_errors[] = $this->Component->trans('error_number_range');
+				$this->a_errors[] = $this->Field->trans('error_number_range');
 			}
 		}
 		

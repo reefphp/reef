@@ -71,8 +71,8 @@ class FormAssets {
 		
 		$a_remoteAssets = [];
 		
-		foreach($this->getForm()->getComponents() as $Component) {
-			$a_assets = $Component->$s_assetFnc();
+		foreach($this->getForm()->getFields() as $Field) {
+			$a_assets = $Field->getComponent()->$s_assetFnc();
 			
 			foreach($a_assets as $a_asset) {
 				if($a_asset['type'] == 'remote') {
@@ -110,8 +110,8 @@ class FormAssets {
 		}
 		$a_localAssets[$s_mainFile] = filemtime($s_mainFile);
 		
-		foreach($this->getForm()->getComponents() as $Component) {
-			$a_assets = $Component->$s_assetFnc();
+		foreach($this->getForm()->getFields() as $Field) {
+			$a_assets = $Field->getComponent()->$s_assetFnc();
 			
 			foreach($a_assets as $a_asset) {
 				if($a_asset['type'] == 'local') {

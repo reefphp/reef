@@ -4,7 +4,7 @@ namespace Reef\Components\SingleCheckbox;
 
 use Reef\Components\Component;
 
-class SingleCheckbox extends Component {
+class SingleCheckboxComponent extends Component {
 	
 	const COMPONENT_NAME = 'reef:single_checkbox';
 	
@@ -37,29 +37,5 @@ class SingleCheckbox extends Component {
 				'path' => self::getDir().'style.css',
 			]
 		];
-	}
-	
-	/**
-	 * @inherit
-	 */
-	public function newValue() : SingleCheckboxValue {
-		return new SingleCheckboxValue($this);
-	}
-	
-	/**
-	 * @inherit
-	 */
-	public function view_builder() : array {
-		
-		
-	}
-	
-	/**
-	 * @inherit
-	 */
-	public function view_form($Value, $a_options = []) : array {
-		$a_vars = parent::view_form($Value, $a_options);
-		$a_vars['value'] = (bool)$Value->toTemplateVar();
-		return $a_vars;
 	}
 }

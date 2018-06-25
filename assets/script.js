@@ -11,11 +11,11 @@ if(typeof Reef === 'undefined') {
 			this.$wrapper = $(selector);
 			this.fields = {};
 			
-			this.$wrapper.find('.'+CSSPRFX+'component').each(function() {
+			this.$wrapper.find('.'+CSSPRFX+'field').each(function() {
 				var name = $(this).data(CSSPRFX+'name');
 				var type = $(this).data(CSSPRFX+'type');
 				if(Reef.components[type]) {
-					self.fields[name] = self.newComponent(type, $(this));
+					self.fields[name] = self.newField(type, $(this));
 					self.fields[name].attach();
 				}
 			});
@@ -29,7 +29,7 @@ if(typeof Reef === 'undefined') {
 			Reef.components[component.componentName] = component;
 		};
 		
-		Reef.prototype.newComponent = function(type, $el) {
+		Reef.prototype.newField = function(type, $el) {
 			return new Reef.components[type](this, $el);
 		};
 		

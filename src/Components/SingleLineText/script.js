@@ -2,14 +2,14 @@ Reef.addComponent((function() {
 	
 	'use strict';
 	
-	var Component = function(Reef, $field) {
+	var Field = function(Reef, $field) {
 		this.$field = $field;
 		this.Reef = Reef;
 	};
 	
-	Component.componentName = 'reef:single_line_text';
+	Field.componentName = 'reef:single_line_text';
 	
-	Component.prototype.attach = function() {
+	Field.prototype.attach = function() {
 		var self = this;
 		
 		this.$field.find('input').on('change blur keyup', function(evt) {
@@ -23,7 +23,7 @@ Reef.addComponent((function() {
 		});
 	};
 	
-	Component.prototype.validate = function() {
+	Field.prototype.validate = function() {
 		var valid = true;
 		
 		this.removeErrors();
@@ -40,7 +40,7 @@ Reef.addComponent((function() {
 		return valid;
 	};
 	
-	Component.prototype.setError = function(message_key) {
+	Field.prototype.setError = function(message_key) {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
 		if(this.Reef.config.layout.name == 'bootstrap4') {
@@ -49,7 +49,7 @@ Reef.addComponent((function() {
 		}
 	};
 	
-	Component.prototype.removeErrors = function() {
+	Field.prototype.removeErrors = function() {
 		this.$field.removeClass(CSSPRFX+'invalid');
 		
 		if(this.Reef.config.layout.name == 'bootstrap4') {
@@ -58,5 +58,5 @@ Reef.addComponent((function() {
 		}
 	};
 	
-	return Component;
+	return Field;
 })());

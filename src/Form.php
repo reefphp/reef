@@ -14,7 +14,7 @@ class Form {
 	private $i_formId;
 	private $a_locale;
 	private $a_formConfig = [];
-	private $a_components = [];
+	private $a_fields = [];
 	
 	/**
 	 * Constructor
@@ -31,8 +31,8 @@ class Form {
 		return $this->a_formConfig;
 	}
 	
-	public function getComponents() {
-		return $this->a_components;
+	public function getFields() {
+		return $this->a_fields;
 	}
 	
 	public function getReef() {
@@ -71,15 +71,15 @@ class Form {
 		$Mapper = $this->Reef->getComponentMapper();
 		
 		$this->a_formConfig = $a_declaration;
-		unset($this->a_formConfig['components']);
+		unset($this->a_formConfig['fields']);
 		unset($this->a_formConfig['submissions']);
 		
 		$this->SubmissionStorage = $this->Reef->getStorage($a_declaration['submissions']);
 		
 		$this->a_formConfig['layout']['name'] = $this->a_formConfig['layout']['name'] ?? 'bootstrap4';
 		
-		foreach($a_declaration['components'] as $s_id => $a_config) {
-			$this->a_components[$s_id] = $Mapper->get($a_config, $this);
+		foreach($a_declaration['fields'] as $s_id => $a_config) {
+			$this->a_fields[$s_id] = $Mapper->getField($a_config, $this);
 		}
 	}
 	
@@ -123,7 +123,7 @@ class Form {
 	}
 	
 	public function generateFormHtml(Submission $Submission = null, $a_options = []) {
-		$a_components = [];
+		$a_fields = [];
 		
 		if($Submission == null) {
 			$Submission = $this->newSubmission();
@@ -140,11 +140,11 @@ class Form {
 			'helpers' => $a_helpers,
 		]);
 		
-		foreach($this->a_components as $Component) {
+		foreach($this->a_fields as $Field) {
 			$s_templateDir = null;
 			$s_viewfile = 'view/'.$this->a_formConfig['layout']['name'].'/form.mustache';
 			
-			$a_classes = $Component::getInheritanceList();
+			$a_classes = $Field->getComponent()->getInheritanceList();
 			foreach($a_classes as $s_class) {
 				if(file_exists($s_class::getDir() . $s_viewfile)) {
 					$s_templateDir = $s_class::getDir();
@@ -153,18 +153,18 @@ class Form {
 			}
 			
 			if($s_templateDir === null) {
-				throw new \Exception("Could not find form template file for component '".$Component->getConfig()['name']."'.");
+				throw new \Exception("Could not find form template file for field '".$Field->getConfig()['name']."'.");
 			}
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
 			$Template = $Mustache->loadTemplate($s_viewfile);
-			$a_vars = $Component->view_form($Submission->getComponentValue($Component->getConfig()['name']), array_subset($a_options, ['locale']));
+			$a_vars = $Field->view_form($Submission->getFieldValue($Field->getConfig()['name']), array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([
-				'component' => $a_vars,
+				'field' => $a_vars,
 			]);
 			
-			$a_components[] = [
+			$a_fields[] = [
 				'html' => $s_html,
 			];
 		}
@@ -172,7 +172,7 @@ class Form {
 		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
 		$Template = $Mustache->loadTemplate('view/'.$this->a_formConfig['layout']['name'].'/form.mustache');
 		$s_html = $Template->render([
-			'components' => $a_components,
+			'fields' => $a_fields,
 			'config_base64' => base64_encode(json_encode(\Reef\array_subset($this->a_formConfig, ['main_var', 'layout']))),
 		]);
 		

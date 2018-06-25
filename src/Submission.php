@@ -10,7 +10,7 @@ class Submission {
 	private $Form;
 	
 	private $i_submissionId;
-	private $a_componentValues = [];
+	private $a_fieldValues = [];
 	
 	/**
 	 * Constructor
@@ -24,32 +24,32 @@ class Submission {
 	}
 	
 	public function emptySubmission() {
-		$a_components = $this->Form->getComponents();
-		$this->a_componentValues = [];
-		foreach($a_components as $Component) {
-			$s_name = $Component->getConfig()['name'];
-			$this->a_componentValues[$s_name] = $Component->newValue();
-			$this->a_componentValues[$s_name]->fromDefault();
+		$a_fields = $this->Form->getFields();
+		$this->a_fieldValues = [];
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getConfig()['name'];
+			$this->a_fieldValues[$s_name] = $Field->newValue();
+			$this->a_fieldValues[$s_name]->fromDefault();
 		}
 	}
 	
 	public function fromUserInput($a_input) {
-		$a_components = $this->Form->getComponents();
-		$this->a_componentValues = [];
-		foreach($a_components as $Component) {
-			$s_name = $Component->getConfig()['name'];
-			$this->a_componentValues[$s_name] = $Component->newValue();
-			$this->a_componentValues[$s_name]->fromUserInput($a_input[$s_name] ?? null);
+		$a_fields = $this->Form->getFields();
+		$this->a_fieldValues = [];
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getConfig()['name'];
+			$this->a_fieldValues[$s_name] = $Field->newValue();
+			$this->a_fieldValues[$s_name]->fromUserInput($a_input[$s_name] ?? null);
 		}
 	}
 	
 	public function validate() : bool {
 		$b_valid = true;
 		
-		$a_components = $this->Form->getComponents();
-		foreach($a_components as $Component) {
-			$s_name = $Component->getConfig()['name'];
-			$b_valid = $this->a_componentValues[$s_name]->validate() && $b_valid;
+		$a_fields = $this->Form->getFields();
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getConfig()['name'];
+			$b_valid = $this->a_fieldValues[$s_name]->validate() && $b_valid;
 		}
 		
 		return $b_valid;
@@ -58,41 +58,41 @@ class Submission {
 	public function getErrors() : array {
 		$a_errors = [];
 		
-		$a_components = $this->Form->getComponents();
-		foreach($a_components as $Component) {
-			$s_name = $Component->getConfig()['name'];
-			$a_componentErrors = $this->a_componentValues[$s_name]->getErrors();
-			if(!empty($a_componentErrors)) {
-				$a_errors[$s_name] = $a_componentErrors;
+		$a_fields = $this->Form->getFields();
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getConfig()['name'];
+			$a_fieldErrors = $this->a_fieldValues[$s_name]->getErrors();
+			if(!empty($a_fieldErrors)) {
+				$a_errors[$s_name] = $a_fieldErrors;
 			}
 		}
 		
 		return $a_errors;
 	}
 	
-	public function getComponentValue($s_name) {
-		if(!isset($this->a_componentValues[$s_name])) {
-			throw new IOException("Could not find value for component '".$s_name."'.");
+	public function getFieldValue($s_name) {
+		if(!isset($this->a_fieldValues[$s_name])) {
+			throw new IOException("Could not find value for field '".$s_name."'.");
 		}
 		
-		return $this->a_componentValues[$s_name];
+		return $this->a_fieldValues[$s_name];
 	}
 	
 	public function toFlat() {
 		$a_flat = [];
 		
-		$a_components = $this->Form->getComponents();
-		foreach($a_components as $Component) {
-			$s_name = $Component->getConfig()['name'];
-			$a_flatComponent = $this->a_componentValues[$s_name]->toFlat();
+		$a_fields = $this->Form->getFields();
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getConfig()['name'];
+			$a_flatField = $this->a_fieldValues[$s_name]->toFlat();
 			
-			$a_prefixedFlatComponent = [];
+			$a_prefixedFlatField = [];
 			
-			foreach($a_flatComponent as $s_subfieldName => $m_value) {
-				$a_prefixedFlatComponent[$s_name.'__'.$s_subfieldName] = $m_value;
+			foreach($a_flatField as $s_subfieldName => $m_value) {
+				$a_prefixedFlatField[$s_name.'__'.$s_subfieldName] = $m_value;
 			}
 			
-			$a_flat = array_merge($a_flat, $a_prefixedFlatComponent);
+			$a_flat = array_merge($a_flat, $a_prefixedFlatField);
 		}
 		
 		return $a_flat;
@@ -106,12 +106,12 @@ class Submission {
 			$a_grouped[substr($s_key, 0, $i_pos)][substr($s_key, $i_pos+2)] = $m_value;
 		}
 		
-		$a_components = $this->Form->getComponents();
-		$this->a_componentValues = [];
-		foreach($a_components as $Component) {
-			$s_name = $Component->getConfig()['name'];
-			$this->a_componentValues[$s_name] = $Component->newValue();
-			$this->a_componentValues[$s_name]->fromFlat($a_grouped[$s_name] ?? null);
+		$a_fields = $this->Form->getFields();
+		$this->a_fieldValues = [];
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getConfig()['name'];
+			$this->a_fieldValues[$s_name] = $Field->newValue();
+			$this->a_fieldValues[$s_name]->fromFlat($a_grouped[$s_name] ?? null);
 		}
 	}
 	

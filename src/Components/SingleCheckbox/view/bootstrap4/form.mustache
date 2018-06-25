@@ -1,27 +1,27 @@
-<div class="form-group row {{CSSPRFX}}component {{#component.hasErrors}}{{CSSPRFX}}invalid{{/component.hasErrors}}" data-{{CSSPRFX}}type="reef:single_checkbox" data-{{CSSPRFX}}name="{{component.name}}">
-	<label class="{{layout.col_left}} col-form-label" for="{{component.name}}">
-		{{component.locale.title_left}}
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:single_checkbox" data-{{CSSPRFX}}name="{{field.name}}">
+	<label class="{{layout.col_left}} col-form-label" for="{{field.name}}">
+		{{field.locale.title_left}}
 	</label>
 	<div class="{{layout.col_right}}">
 		<div class="form-check">
 			<input
-				class="form-check-input {{#component.hasErrors}}is-invalid{{/component.hasErrors}} {{^component.locale.title_right}}position-static{{/component.locale.title_right}}"
+				class="form-check-input {{#field.hasErrors}}is-invalid{{/field.hasErrors}} {{^field.locale.title_right}}position-static{{/field.locale.title_right}}"
 				type="checkbox"
-				name="{{main_var}}[{{component.name}}]"
-				id="{{component.name}}"
+				name="{{main_var}}[{{field.name}}]"
+				id="{{field.name}}"
 				value="1"
-				{{#component.value}}checked{{/component.value}}
-				{{#component.required}}required{{/component.required}}
+				{{#field.value}}checked{{/field.value}}
+				{{#field.required}}required{{/field.required}}
 			>
-			{{#component.locale.title_right}}
-			<label class="form-check-label" for="{{component.name}}">
-				{{component.locale.title_right}}
+			{{#field.locale.title_right}}
+			<label class="form-check-label" for="{{field.name}}">
+				{{field.locale.title_right}}
 			</label>
-			{{/component.locale.title_right}}
-			<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{component.locale.error_required_empty}}</div>
-			{{#component.errors}}
+			{{/field.locale.title_right}}
+			<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.error_required_empty}}</div>
+			{{#field.errors}}
 				<div class="invalid-feedback">{{.}}</div>
-			{{/component.errors}}
+			{{/field.errors}}
 		</div>
 	</div>
 </div>

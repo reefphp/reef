@@ -2,30 +2,9 @@
 
 namespace Reef\Components\TextNumber;
 
-use Reef\Components\SingleLineText\SingleLineText;
+use Reef\Components\SingleLineText\SingleLineTextField;
 
-class TextNumber extends SingleLineText {
-	
-	const COMPONENT_NAME = 'reef:text_number';
-	
-	/**
-	 * @inherit
-	 */
-	public static function getDir() : string {
-		return __DIR__.'/';
-	}
-	
-	/**
-	 * @inherit
-	 */
-	public function getJS() : array {
-		return array_merge(parent::getJS(), [
-			[
-				'type' => 'local',
-				'path' => self::getDir().'script.js',
-			]
-		]);
-	}
+class TextNumberField extends SingleLineTextField {
 	
 	/**
 	 * @inherit

@@ -2,13 +2,13 @@
 
 namespace Reef\Components;
 
-abstract class ComponentValue {
+abstract class FieldValue {
 	
-	protected $Component;
+	protected $Field;
 	protected $a_errors;
 	
-	public function __construct(Component $Component) {
-		$this->Component = $Component;
+	public function __construct(Field $Field) {
+		$this->Field = $Field;
 	}
 	
 	/**
@@ -18,7 +18,7 @@ abstract class ComponentValue {
 	
 	/**
 	 * Parse the value from user input
-	 * @param mixed $m_input The user input for the component, e.g. from $_POST
+	 * @param mixed $m_input The user input for the field, e.g. from $_POST
 	 */
 	abstract public function fromUserInput($m_input);
 	

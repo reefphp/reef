@@ -6,7 +6,7 @@ locale:
   - title
   - placeholder
 declaration:
-    components:
+    fields:
       - component: reef:single_checkbox
         name: 'required'
         locales:

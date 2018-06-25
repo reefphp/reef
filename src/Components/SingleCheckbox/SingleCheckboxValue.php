@@ -2,9 +2,9 @@
 
 namespace Reef\Components\SingleCheckbox;
 
-use Reef\Components\ComponentValue;
+use Reef\Components\FieldValue;
 
-class SingleCheckboxValue extends ComponentValue {
+class SingleCheckboxValue extends FieldValue {
 	
 	private $b_value;
 	
@@ -14,8 +14,8 @@ class SingleCheckboxValue extends ComponentValue {
 	public function validate() : bool {
 		$this->a_errors = [];
 		
-		if($this->Component->getConfig()['required'] && !$this->b_value) {
-			$this->a_errors[] = $this->Component->getForm()->trans('error_required_empty');
+		if($this->Field->getConfig()['required'] && !$this->b_value) {
+			$this->a_errors[] = $this->Field->getForm()->trans('error_required_empty');
 			return false;
 		}
 		
@@ -26,7 +26,7 @@ class SingleCheckboxValue extends ComponentValue {
 	 * @inherit
 	 */
 	public function fromDefault() {
-		$this->b_value = (bool)($this->Component->getConfig()['default']??false);
+		$this->b_value = (bool)($this->Field->getConfig()['default']??false);
 		$this->a_errors = null;
 	}
 	
@@ -51,7 +51,7 @@ class SingleCheckboxValue extends ComponentValue {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->b_value = (bool)($a_flat['value']??$this->Component->getConfig()['default']??false);
+		$this->b_value = (bool)($a_flat['value']??$this->Field->getConfig()['default']??false);
 		$this->a_errors = null;
 	}
 	
