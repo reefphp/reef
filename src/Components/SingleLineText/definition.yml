@@ -1,0 +1,23 @@
+vendor: reef
+name: single_line_text
+category: text
+image: text-freeform.svg
+locale:
+  - title
+  - placeholder
+declaration:
+    components:
+      - component: reef:single_checkbox
+        name: 'required'
+        locales:
+            en_US:
+                title_right: 'Required'
+            nl_NL:
+                title_right: 'Verplicht'
+      - component: reef:single_line_text
+        name: 'default'
+        locales:
+            en_US:
+                title: 'Default value'
+            nl_NL:
+                title: 'Standaardwaarde'

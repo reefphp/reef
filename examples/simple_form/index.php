@@ -79,7 +79,6 @@ $s_JS = $Form->getFormAssets()->getJSHTML(function($s_assetsHash) {
 	<title>Simple form</title>
 </head>
 <body>
-<div class="container-fluid">
 <ul>
 	<li><a href="?">New submission</a></li>
 <?php
@@ -102,7 +101,6 @@ if(!$Submission->isNew()) {
 }
 ?>
 </form>
-</div>
 <script>
 var reef;
 $(function() {

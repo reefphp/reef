@@ -163,7 +163,7 @@ class Form {
 			$s_html = $Template->render([
 				'component' => $a_vars,
 			]);
-				
+			
 			$a_components[] = [
 				'html' => $s_html,
 			];

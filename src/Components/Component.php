@@ -41,6 +41,14 @@ abstract class Component {
 	}
 	
 	/**
+	 * Return the definition array of this component
+	 * @return array
+	 */
+	public static function getDefinition() : array {
+		return Yaml::parseFile(static::getDir().'definition.yml');
+	}
+	
+	/**
 	 * Returns an array of javascript files required by this component.
 	 * Each file is defined by an array:
 	 * [

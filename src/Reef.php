@@ -75,6 +75,10 @@ class Reef {
 		return $this->FormStorage;
 	}
 	
+	public function getBuilder() : Builder {
+		return new Builder($this);
+	}
+	
 	public function getStorage($a_storageDeclaration) {
 		switch(strtolower($a_storageDeclaration['type']??'')) {
 			case 'json':

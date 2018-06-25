@@ -1,0 +1,248 @@
+<style>
+.rf-builder {
+	display: flex;
+	position: relative;
+}
+
+.rf-builder-select {
+	display: flex;
+	width: 200px;
+	background-color: #f7f7fe;
+}
+
+.rf-builder-select .rf-categories {
+	flex: 1;
+}
+
+.rf-builder-select .rf-category,.rf-builder-select  .rf-component {
+	height: 100px;
+	text-align: center;
+	font-size: 9pt;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.rf-builder-select .rf-category img,.rf-builder-select  .rf-component img {
+	max-width: 50px;
+	max-height: 50px;
+}
+
+.rf-builder-select .rf-category span,.rf-builder-select  .rf-component span {
+	display: block;
+}
+
+.rf-builder-select .rf-components {
+	flex: 1;
+	display: none;
+}
+
+.rf-builder-select .rf-components.rf-active {
+	display: block;
+}
+
+.rf-builder-select .rf-category {
+	background-color: #cfd1f9;
+	border-bottom: 1px solid #afafd1;
+	cursor: pointer;
+}
+
+.rf-builder-select .rf-category:hover {
+	background-color: #b8bbf3;
+}
+
+.rf-builder-select .rf-category.rf-active {
+	background-color: #a6aaed;
+}
+
+.rf-builder-select .rf-component {
+	background-color: #e6e7fe;
+	border-bottom: 1px solid #d0d0e9;
+	cursor: grab;
+}
+
+.rf-builder-select .rf-component:hover {
+	background-color: #d8dafb;
+}
+
+.rf-workspace {
+	background-color: #fff;
+	flex: 1;
+}
+
+.rf-field {
+	display: flex;
+}
+
+.rf-field-preview {
+	flex: 1;
+}
+
+.rf-field-actions {
+	width: 200px;
+}
+
+.rf-btn {
+	display: inline-block;
+	background-color: #a6aaed;
+	padding: 3px 10px;
+	font-size: 20px;
+	cursor: pointer;
+	border-radius: 3px;
+	margin: 1px 3px;
+}
+
+.rf-btn:hover {
+	background-color: #969add;
+}
+
+.rf-template {
+	display: none;
+}
+
+.rf-dialog {
+	position: absolute;
+	width: 300px;
+	background-color: #fff;
+	border: 2px solid #969add;
+}
+
+</style>
+<script>
+$(function() {
+	$('.rf-category').on('click', function() {
+		$('.rf-components').hide().filter('[data-category="'+$(this).data('category')+'"]').show();
+		$('.rf-category').removeClass('rf-active');
+		$(this).addClass('rf-active');
+	});
+	
+	$('.rf-components').each(function() {
+		Sortable.create(this, {
+				sort: false,
+				group: {
+					name: 'component-select',
+					pull: 'clone',
+					put: false
+				},
+				animation: 150
+			}
+		);
+	});
+	
+	Sortable.create($('.rf-workspace')[0], {
+			sort: true,
+			group: {
+				name: 'component-select',
+				pull: false,
+				put: true
+			},
+			handle: '.rf-drag-handle',
+			animation: 150,
+			onAdd: function(evt) {
+				var $item = $(evt.item);
+				var $field = $('<div class="rf-field"><div class="rf-field-preview"></div><div class="rf-field-actions"><div class="rf-btn rf-drag-handle">&#8661;</div><div class="rf-btn rf-component-config">&#9881;</div><div class="rf-btn rf-component-locale">&#128483;</div><div class="rf-btn rf-component-delete">&times;</div></div><div class="rf-field-templates"></div></div>');
+				$field.find('.rf-field-preview').html(atob($item.data('html')));
+				
+				$field.find('.rf-field-templates').append($item.find('.rf-template.rf-component-form').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
+				
+				$field.find('.rf-component-config').on('click', function() {
+					ReefBuilder.openConfig($(this).closest('.rf-field'));
+				});
+				
+				$field.find('.rf-component-delete').on('click', function() {
+					ReefBuilder.deleteField($(this).closest('.rf-field'));
+				});
+				
+				$item.replaceWith($field);
+				
+				ReefBuilder.updateField($field);
+			},
+			onUpdate: function(evt) {
+				console.log('update');
+				console.log(evt);
+			}
+		}
+	);
+	
+});
+
+var ReefBuilder = (function() {
+	'use strict';
+	
+	var ReefBuilder = function() {
+	
+	};
+	
+	ReefBuilder.prototype.openConfig = function($field) {
+		this.openDialog($field.find('.rf-component-config'), $field.find('.rf-component-form'));
+	};
+	
+	ReefBuilder.prototype.deleteField = function($field) {
+		$field.remove();
+		
+	};
+	
+	ReefBuilder.prototype.updateField = function($field) {
+		
+		// TODO
+		// Get HTML from component
+		// Get & parse data from config / locale
+		// Parse with mustache (already included in temporary main file)
+		// Set HTML
+		
+	};
+	
+	ReefBuilder.prototype.openDialog = function($anchor, $dialog) {
+		var left = $anchor.position().left;
+		
+		left = Math.min(
+			left,
+			$anchor.offsetParent().width() - $dialog.outerWidth() - 3
+		);
+		
+		left = Math.max(0, left);
+		
+		$dialog.css({
+			left: left,
+			top: $anchor.position().top + $anchor.outerHeight()
+		}).toggle();
+	};
+	
+	return new ReefBuilder();
+})();
+
+</script>
+
+<div class="rf-builder">
+	<div class="rf-builder-select">
+		<div class="rf-categories">
+		{{#categories}}
+			<div class="rf-category" data-category="{{category}}">
+				<div>
+					<img title="" alt="" src="../../assets/img/{{category}}.svg" />
+					<span>{{category}}</span>
+				</div>
+			</div>
+		{{/categories}}
+		</div>
+		
+		{{#categories}}
+		<div class="rf-components" data-category="{{category}}">
+			{{#components}}
+			<div class="rf-component" data-definition="{{definition}}" data-html="{{html}}">
+				<div class="rf-tile">
+					<img title="" alt="" src="../../assets/img/{{image}}" />
+					<span>{{name}}</span>
+				</div>
+				<div class="rf-template rf-component-form">
+					{{{componentForm}}}
+				</div>
+			</div>
+			{{/components}}
+		</div>
+		{{/categories}}
+	</div>
+	<div class="rf-workspace container-fluid">
+		
+	</div>
+</div>

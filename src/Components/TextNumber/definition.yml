@@ -1,0 +1,44 @@
+vendor: reef
+name: text_number
+category: text
+image: text-number.svg
+locale:
+  - title
+  - placeholder
+declaration:
+    components:
+      - component: reef:single_checkbox
+        name: 'required'
+        locales:
+            en_US:
+                title_right: 'Required'
+            nl_NL:
+                title_right: 'Verplicht'
+      - component: reef:text_number
+        name: 'default'
+        locales:
+            en_US:
+                title: 'Default value'
+            nl_NL:
+                title: 'Standaardwaarde'
+      - component: reef:text_number
+        name: 'min'
+        locales:
+            en_US:
+                title: 'Minimum'
+            nl_NL:
+                title: 'Minimum'
+      - component: reef:text_number
+        name: 'max'
+        locales:
+            en_US:
+                title: 'Maximum'
+            nl_NL:
+                title: 'Maximum'
+      - component: reef:text_number
+        name: 'step'
+        locales:
+            en_US:
+                title: 'Step'
+            nl_NL:
+                title: 'Stap'

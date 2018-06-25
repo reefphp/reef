@@ -17,6 +17,10 @@ class ComponentMapper {
 		$this->Reef = $Reef;
 	}
 	
+	public function getMapping() {
+		return $this->a_mapping;
+	}
+	
 	public function add($s_componentClass) {
 		if(!class_exists($s_componentClass) || !is_subclass_of($s_componentClass, 'Reef\\Components\\Component')) {
 			throw new \InvalidArgumentException("Provided class is not a component: ".$s_componentClass);

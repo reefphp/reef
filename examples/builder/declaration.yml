@@ -1,0 +1,40 @@
+locale:
+    title: 'Example form'
+submissions:
+    type: JSON
+    path: ./storage/
+main_var: form_data
+layout:
+    name: 'bootstrap4'
+    col_left: col-12 col-md-3
+    col_right: col-12 col-md-9
+components:
+  - component: reef:single_line_text
+    name: 'name'
+    required: true
+    locale:
+        title: 'Your name'
+        placeholder: 'Fill in your name please'
+  - component: reef:single_line_text
+    name: 'fav_film'
+    required: false
+    locales:
+        en_US:
+            title: 'Favourite film'
+            placeholder: 'What is your favourite film?'
+  - component: reef:text_number
+    name: 'grade'
+    required: true
+    min: 0
+    max: 10
+    step: 1
+    locales:
+        en_US:
+            title: 'What grade did you get?'
+            placeholder: '0-10'
+  - component: reef:single_checkbox
+    name: 'agree'
+    required: true
+    locales:
+        en_US:
+            title_left: 'To click or not to click?'
