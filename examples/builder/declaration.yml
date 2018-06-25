@@ -1,5 +1,4 @@
-locale:
-    title: 'Example form'
+locale: {}
 submissions:
     type: JSON
     path: ./storage/

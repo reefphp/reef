@@ -7,6 +7,7 @@ $Mapper = $Reef->getComponentMapper();
 $Mapper->add(new Reef\Components\SingleLineText\SingleLineTextComponent);
 $Mapper->add(new Reef\Components\SingleCheckbox\SingleCheckboxComponent);
 $Mapper->add(new Reef\Components\TextNumber\TextNumberComponent);
+$Mapper->add(new Reef\Components\Heading\HeadingComponent);
 
 // Generate the form object from the declaration
 $Form = $Reef->newForm();

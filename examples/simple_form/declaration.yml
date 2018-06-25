@@ -1,5 +1,4 @@
-locale:
-    title: 'Example form'
+locale: {}
 submissions:
     type: JSON
     path: ./storage/
@@ -9,6 +8,11 @@ layout:
     col_left: col-12 col-md-3
     col_right: col-12 col-md-9
 fields:
+  - component: reef:heading
+    name: 'asdf'
+    size: 2
+    locale:
+        title: 'Example form'
   - component: reef:single_line_text
     name: 'name'
     required: true
