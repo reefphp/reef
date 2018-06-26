@@ -5,6 +5,7 @@ image: text-freeform.svg
 locale:
   - title
   - placeholder
+  - rf_error_required_empty
 declaration:
     fields:
       - component: reef:single_checkbox

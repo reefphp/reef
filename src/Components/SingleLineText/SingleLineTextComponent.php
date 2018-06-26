@@ -7,6 +7,7 @@ use Reef\Components\Component;
 class SingleLineTextComponent extends Component {
 	
 	const COMPONENT_NAME = 'reef:single_line_text';
+	const PARENT_NAME = null;
 	
 	/**
 	 * @inherit

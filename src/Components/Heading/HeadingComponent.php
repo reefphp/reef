@@ -7,6 +7,7 @@ use Reef\Components\Component;
 class HeadingComponent extends Component {
 	
 	const COMPONENT_NAME = 'reef:heading';
+	const PARENT_NAME = null;
 	
 	/**
 	 * @inherit

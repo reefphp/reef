@@ -16,7 +16,7 @@ class SingleLineTextValue extends FieldValue {
 		$s_value = trim($this->s_value);
 		
 		if($this->Field->getConfig()['required'] && $s_value == '') {
-			$this->a_errors[] = $this->Field->getForm()->trans('error_required_empty');
+			$this->a_errors[] = $this->Field->getForm()->trans('rf_error_required_empty');
 			return false;
 		}
 		

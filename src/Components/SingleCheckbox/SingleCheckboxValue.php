@@ -15,7 +15,7 @@ class SingleCheckboxValue extends FieldValue {
 		$this->a_errors = [];
 		
 		if($this->Field->getConfig()['required'] && !$this->b_value) {
-			$this->a_errors[] = $this->Field->getForm()->trans('error_required_empty');
+			$this->a_errors[] = $this->Field->getForm()->trans('rf_error_required_empty');
 			return false;
 		}
 		

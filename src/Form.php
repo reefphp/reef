@@ -2,10 +2,13 @@
 
 namespace Reef;
 
+use \Reef\Trait_Locale;
 use \Reef\Exception\IOException;
 use Symfony\Component\Yaml\Yaml;
 
 class Form {
+	
+	use Trait_Locale;
 	
 	private $Reef;
 	private $SubmissionStorage;
@@ -179,47 +182,27 @@ class Form {
 		return $s_html;
 	}
 	
-	private function getLocale($a_locales = null) {
-		$a_locale = null;
-		
-		if(!is_array($a_locales)) {
-			$a_locales = [$a_locales];
+	protected function fetchBaseLocale($s_locale) {
+		if(!empty($s_locale) && isset($this->a_formConfig['locales'][$s_locale])) {
+			return $this->a_formConfig['locales'][$s_locale];
 		}
-		
-		$a_locales[] = $this->a_formConfig['default_locale']??null;
-		$a_locales[] = 'en_US';
-		$a_locales = array_unique(array_filter($a_locales));
-		
-		// Find user-defined locale
-		if(isset($this->a_formConfig['locales'])) {
-			foreach($a_locales as $s_loc) {
-				if(isset($this->a_formConfig['locales'][$s_loc])) {
-					$a_locale = $this->a_formConfig['locales'][$s_loc];
-					break;
-				}
-			}
+		else if(isset($this->a_formConfig['locale'])) {
+			return $this->a_formConfig['locale'];
 		}
-		
-		// Find user-defined general locale
-		if($a_locale === null && isset($this->a_formConfig['locale'])) {
-			$a_locale = $this->a_formConfig['locale'];
+		else {
+			return [];
 		}
-		
-		if($a_locale === null) {
-			throw new \InvalidArgumentException("Could not find locale for form.");
-		}
-		
-		// Find Reef-defined locale
-		$a_locale = array_merge(
-			$this->getReef()->getLocale($a_locales),
-			$a_locale
-		);
-		
-		return $a_locale;
 	}
 	
-	public function trans($s_key, $a_locales = null) {
-		return $this->getLocale($a_locales)[$s_key]??null;
+	public function getCombinedLocaleSources($s_locale) {
+		return $this->combineLocaleSources(
+			$this->getOwnLocaleSource($s_locale),
+			$this->Reef->getOwnLocaleSource($s_locale)
+		);
+	}
+	
+	protected function getDefaultLocale() {
+		return $this->a_formConfig['default_locale']??null;
 	}
 	
 	public function newSubmission() {

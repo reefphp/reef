@@ -5,6 +5,11 @@ image: text-number.svg
 locale:
   - title
   - placeholder
+  - error_not_a_number
+  - error_number_min_max
+  - error_number_min
+  - error_number_max
+  - rf_error_required_empty
 declaration:
     fields:
       - component: reef:single_checkbox

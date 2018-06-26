@@ -4,7 +4,7 @@
 	</label>
 	<div class="{{layout.col_right}}">
 		<input type="text" class="form-control {{#field.hasErrors}}is-invalid{{/field.hasErrors}}" id="{{field.name}}" name="{{main_var}}[{{field.name}}]" placeholder="{{field.locale.placeholder}}" value="{{field.value}}" {{#field.required}}required{{/field.required}}>
-		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.error_required_empty}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>
 		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>
 		{{/field.errors}}

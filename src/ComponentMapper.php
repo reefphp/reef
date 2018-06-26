@@ -22,7 +22,12 @@ class ComponentMapper {
 	}
 	
 	public function add(Component $Component) {
+		$Component->setReef($this->Reef);
 		$this->a_mapping[$Component::COMPONENT_NAME] = $Component;
+	}
+	
+	public function getComponent($s_componentName) {
+		return $this->a_mapping[$s_componentName];
 	}
 	
 	public function getField(array $a_config, Form $Form) {

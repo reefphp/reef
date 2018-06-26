@@ -7,6 +7,7 @@ use Reef\Components\Component;
 class SingleCheckboxComponent extends Component {
 	
 	const COMPONENT_NAME = 'reef:single_checkbox';
+	const PARENT_NAME = null;
 	
 	/**
 	 * @inherit

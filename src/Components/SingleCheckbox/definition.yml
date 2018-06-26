@@ -2,6 +2,10 @@ vendor: reef
 name: single_checkbox
 category: choice
 image: choice-check.svg
+locale:
+  - title_left
+  - title_right
+  - rf_error_required_empty
 declaration:
     fields:
       - component: reef:single_checkbox
