@@ -3,8 +3,6 @@ name: text_number
 category: text
 image: text-number.svg
 locale:
-  - title
-  - placeholder
   - error_not_a_number
   - error_number_min_max
   - error_number_min
@@ -12,13 +10,6 @@ locale:
   - rf_error_required_empty
 declaration:
     fields:
-      - component: reef:single_checkbox
-        name: 'required'
-        locales:
-            en_US:
-                title_right: 'Required'
-            nl_NL:
-                title_right: 'Verplicht'
       - component: reef:text_number
         name: 'default'
         locales:

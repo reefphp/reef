@@ -62,7 +62,21 @@ abstract class Component {
 	 * @return array
 	 */
 	public function getDefinition() : array {
-		return Yaml::parseFile(static::getDir().'definition.yml');
+		return $this->Reef->cache('definition.component.'.static::COMPONENT_NAME, function() {
+			$a_definition = Yaml::parseFile(static::getDir().'definition.yml');
+			
+			$ParentComponent = $this->getParent();
+			if(empty($ParentComponent)) {
+				return $a_definition;
+			}
+			
+			$a_parentDefinition = $ParentComponent->getDefinition();
+			
+			$a_definition['locale'] = array_merge($a_definition['locale'], $a_parentDefinition['locale']);
+			$a_definition['declaration']['fields'] = array_merge($a_parentDefinition['declaration']['fields'], $a_definition['declaration']['fields']);
+			
+			return $a_definition;
+		});
 	}
 	
 	/**
