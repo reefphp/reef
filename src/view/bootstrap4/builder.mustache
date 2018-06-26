@@ -105,6 +105,7 @@
 	width: 300px;
 	background-color: #fff;
 	border: 2px solid #969add;
+	z-index: 75;
 }
 
 </style>
@@ -141,17 +142,28 @@ $(function() {
 			onAdd: function(evt) {
 				var $item = $(evt.item);
 				var $field = $('<div class="rf-field"><div class="rf-field-preview"></div><div class="rf-field-actions"><div class="rf-btn rf-drag-handle">&#8661;</div><div class="rf-btn rf-component-config">&#9881;</div><div class="rf-btn rf-component-locale">&#128483;</div><div class="rf-btn rf-component-delete">&times;</div></div><div class="rf-field-templates"></div></div>');
-				$field.find('.rf-field-preview').html(atob($item.data('html')));
 				
 				$field.find('.rf-field-templates').append($item.find('.rf-template.rf-component-form').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
+				
+				$field.find('.rf-field-templates').append($item.find('.rf-template.rf-locale-forms').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
+				
+				$field.find('.rf-component-form input, .rf-locale-forms input').on('change', function() {
+					ReefBuilder.updateField($field);
+				});
 				
 				$field.find('.rf-component-config').on('click', function() {
 					ReefBuilder.openConfig($(this).closest('.rf-field'));
 				});
 				
+				$field.find('.rf-component-locale').on('click', function() {
+					ReefBuilder.openLocale($(this).closest('.rf-field'));
+				});
+				
 				$field.find('.rf-component-delete').on('click', function() {
 					ReefBuilder.deleteField($(this).closest('.rf-field'));
 				});
+				
+				$field.attr('data-component-name', $item.data('component-name'));
 				
 				$item.replaceWith($field);
 				
@@ -177,12 +189,48 @@ var ReefBuilder = (function() {
 		this.openDialog($field.find('.rf-component-config'), $field.find('.rf-component-form'));
 	};
 	
+	ReefBuilder.prototype.openLocale = function($field) {
+		this.openDialog($field.find('.rf-component-locale'), $field.find('.rf-locale-forms'));
+	};
+	
 	ReefBuilder.prototype.deleteField = function($field) {
 		$field.remove();
 		
 	};
 	
 	ReefBuilder.prototype.updateField = function($field) {
+		
+		var template = atob($('.rf-builder-select .rf-component[data-component-name="'+$field.data('component-name')+'"]').data('html'));
+		
+		var fieldConfig = {};
+		$field.find('.rf-component-form input').each(function() {
+			var $this = $(this);
+			var name = $this.attr('name');
+			name = name.substring(name.lastIndexOf('[')+1, name.length-1);
+			fieldConfig[name] = $this.val(); // TODO: Replace with reef component JS logic (for non-textboxes)
+		});
+		
+		fieldConfig.locale = {};
+		$field.find('.rf-locale-form input').each(function() {
+			var $this = $(this);
+			var name = $this.attr('name');
+			name = name.substring(name.lastIndexOf('[')+1, name.length-1);
+			fieldConfig.locale[name] = $this.val();
+		});
+		
+		
+		var vars = JSON.parse(atob($('.rf-builder').attr('data-form_config')));
+		vars.CSSPRFX = 'rf-';
+		vars.main_var = 'preview';
+		vars.field = fieldConfig;
+		
+		var html = Mustache.render(template, vars);
+		
+		console.log(template);
+		console.log(vars);
+		console.log(html);
+		
+		$field.find('.rf-field-preview').html(html);
 		
 		// TODO
 		// Get HTML from component
@@ -213,7 +261,7 @@ var ReefBuilder = (function() {
 
 </script>
 
-<div class="rf-builder">
+<div class="rf-builder" data-form_config="{{formConfig}}">
 	<div class="rf-builder-select">
 		<div class="rf-categories">
 		{{#categories}}
@@ -229,13 +277,20 @@ var ReefBuilder = (function() {
 		{{#categories}}
 		<div class="rf-components" data-category="{{category}}">
 			{{#components}}
-			<div class="rf-component" data-definition="{{definition}}" data-html="{{html}}">
+			<div class="rf-component" data-component-name="{{name}}" data-definition="{{definition}}" data-html="{{html}}">
 				<div class="rf-tile">
 					<img title="" alt="" src="../../assets/img/{{image}}" />
 					<span>{{name}}</span>
 				</div>
 				<div class="rf-template rf-component-form">
 					{{{componentForm}}}
+				</div>
+				<div class="rf-template rf-locale-forms">
+					{{#localeForms}}
+					<div class="rf-locale-form" data-locale="{{locale}}">
+						{{{form}}}
+					</div>
+					{{/localeForms}}
 				</div>
 			</div>
 			{{/components}}

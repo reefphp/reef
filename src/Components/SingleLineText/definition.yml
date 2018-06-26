@@ -2,10 +2,11 @@ vendor: reef
 name: single_line_text
 category: text
 image: text-freeform.svg
-locale:
-  - title
-  - placeholder
-  - rf_error_required_empty
+valueLocale:
+    title: Field title
+    placeholder: Placeholder
+configLocale:
+    rf_error_required_empty: Required error
 declaration:
     fields:
       - component: reef:single_checkbox

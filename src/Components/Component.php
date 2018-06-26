@@ -64,6 +64,7 @@ abstract class Component {
 	public function getDefinition() : array {
 		return $this->Reef->cache('definition.component.'.static::COMPONENT_NAME, function() {
 			$a_definition = Yaml::parseFile(static::getDir().'definition.yml');
+			$a_definition['locale'] = array_merge($a_definition['valueLocale'], $a_definition['configLocale']);
 			
 			$ParentComponent = $this->getParent();
 			if(empty($ParentComponent)) {
@@ -72,7 +73,9 @@ abstract class Component {
 			
 			$a_parentDefinition = $ParentComponent->getDefinition();
 			
-			$a_definition['locale'] = array_merge($a_definition['locale'], $a_parentDefinition['locale']);
+			$a_definition['valueLocale'] = array_merge($a_parentDefinition['valueLocale'], $a_definition['valueLocale']);
+			$a_definition['configLocale'] = array_merge($a_parentDefinition['configLocale'], $a_definition['configLocale']);
+			$a_definition['locale'] = array_merge($a_definition['valueLocale'], $a_definition['configLocale']);
 			$a_definition['declaration']['fields'] = array_merge($a_parentDefinition['declaration']['fields'], $a_definition['declaration']['fields']);
 			
 			return $a_definition;
@@ -121,7 +124,7 @@ abstract class Component {
 	}
 	
 	protected function getLocaleKeys() {
-		return $this->getDefinition()['locale'];
+		return array_keys($this->getDefinition()['locale']);
 	}
 	
 	private function combineOwnAndParentLocaleSource($s_locale) {
@@ -137,7 +140,7 @@ abstract class Component {
 	public function getCombinedLocaleSources($s_locale) {
 		return $this->combineLocaleSources(
 			$this->combineOwnAndParentLocaleSource($s_locale),
-			\Reef\array_subset($this->Reef->getOwnLocaleSource($s_locale), $this->getDefinition()['locale'])
+			\Reef\array_subset($this->Reef->getOwnLocaleSource($s_locale), $this->getLocaleKeys())
 		);
 	}
 	
