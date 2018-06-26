@@ -65,21 +65,31 @@
 	background-color: #d8dafb;
 }
 
+.rf-component.rf-add-ghost {
+	background-color: #f7f7fe;
+}
+
+.rf-component.rf-add-ghost img {
+	max-width: 25px;
+}
+
 .rf-workspace {
 	background-color: #fff;
 	flex: 1;
 }
 
-.rf-field {
+.rfb-field {
 	display: flex;
 }
 
-.rf-field-preview {
+.rfb-field-preview {
 	flex: 1;
 }
 
-.rf-field-actions {
+.rfb-field-actions {
 	width: 200px;
+	text-align: center;
+	margin-bottom: 1rem;
 }
 
 .rf-btn {
@@ -125,6 +135,7 @@ $(function() {
 					pull: 'clone',
 					put: false
 				},
+				ghostClass: 'rf-add-ghost',
 				animation: 150
 			}
 		);
@@ -141,26 +152,26 @@ $(function() {
 			animation: 150,
 			onAdd: function(evt) {
 				var $item = $(evt.item);
-				var $field = $('<div class="rf-field"><div class="rf-field-preview"></div><div class="rf-field-actions"><div class="rf-btn rf-drag-handle">&#8661;</div><div class="rf-btn rf-component-config">&#9881;</div><div class="rf-btn rf-component-locale">&#128483;</div><div class="rf-btn rf-component-delete">&times;</div></div><div class="rf-field-templates"></div></div>');
+				var $field = $('<div class="rfb-field"><div class="rfb-field-preview"></div><div class="rfb-field-actions"><div class="rf-btn rf-drag-handle">&#8661;</div><div class="rf-btn rf-component-config">&#9881;</div><div class="rf-btn rf-component-locale">&#128483;</div><div class="rf-btn rf-component-delete">&times;</div></div><div class="rfb-field-templates"></div></div>');
 				
-				$field.find('.rf-field-templates').append($item.find('.rf-template.rf-component-form').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
+				$field.find('.rfb-field-templates').append($item.find('.rf-template.rf-component-form').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
 				
-				$field.find('.rf-field-templates').append($item.find('.rf-template.rf-locale-forms').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
+				$field.find('.rfb-field-templates').append($item.find('.rf-template.rf-locale-forms').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
 				
 				$field.find('.rf-component-form input, .rf-locale-forms input').on('change', function() {
 					ReefBuilder.updateField($field);
 				});
 				
 				$field.find('.rf-component-config').on('click', function() {
-					ReefBuilder.openConfig($(this).closest('.rf-field'));
+					ReefBuilder.openConfig($(this).closest('.rfb-field'));
 				});
 				
 				$field.find('.rf-component-locale').on('click', function() {
-					ReefBuilder.openLocale($(this).closest('.rf-field'));
+					ReefBuilder.openLocale($(this).closest('.rfb-field'));
 				});
 				
 				$field.find('.rf-component-delete').on('click', function() {
-					ReefBuilder.deleteField($(this).closest('.rf-field'));
+					ReefBuilder.deleteField($(this).closest('.rfb-field'));
 				});
 				
 				$field.attr('data-component-name', $item.data('component-name'));
@@ -170,8 +181,7 @@ $(function() {
 				ReefBuilder.updateField($field);
 			},
 			onUpdate: function(evt) {
-				console.log('update');
-				console.log(evt);
+				
 			}
 		}
 	);
@@ -230,30 +240,37 @@ var ReefBuilder = (function() {
 		console.log(vars);
 		console.log(html);
 		
-		$field.find('.rf-field-preview').html(html);
-		
-		// TODO
-		// Get HTML from component
-		// Get & parse data from config / locale
-		// Parse with mustache (already included in temporary main file)
-		// Set HTML
+		$field.find('.rfb-field-preview').html(html);
 		
 	};
 	
 	ReefBuilder.prototype.openDialog = function($anchor, $dialog) {
-		var left = $anchor.position().left;
+		var i, left;
 		
-		left = Math.min(
-			left,
-			$anchor.offsetParent().width() - $dialog.outerWidth() - 3
-		);
+		if($dialog.is(':visible')) {
+			$dialog.hide();
+			return;
+		}
 		
-		left = Math.max(0, left);
-		
-		$dialog.css({
-			left: left,
-			top: $anchor.position().top + $anchor.outerHeight()
-		}).toggle();
+		for(i=0; i<2; i++) {
+			left = $anchor.position().left;
+			
+			left = Math.min(
+				left,
+				$anchor.offsetParent().width() - $dialog.outerWidth() - 3
+			);
+			
+			left = Math.max(0, left);
+			
+			$dialog.css({
+				left: left,
+				top: $anchor.position().top + $anchor.outerHeight()
+			});
+			
+			if(i == 0) {
+				$dialog.show();
+			}
+		}
 	};
 	
 	return new ReefBuilder();
@@ -297,7 +314,7 @@ var ReefBuilder = (function() {
 		</div>
 		{{/categories}}
 	</div>
-	<div class="rf-workspace container-fluid">
+	<div class="rf-workspace container-fluid my-3">
 		
 	</div>
 </div>
