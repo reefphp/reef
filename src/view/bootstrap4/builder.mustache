@@ -162,6 +162,9 @@ $(function() {
 					ReefBuilder.updateField($field);
 				});
 				
+				new Reef($field.find('.rf-component-form'));
+				new Reef($field.find('.rf-locale-forms'));
+				
 				$field.find('.rf-component-config').on('click', function() {
 					ReefBuilder.openConfig($(this).closest('.rfb-field'));
 				});
@@ -235,10 +238,6 @@ var ReefBuilder = (function() {
 		vars.field = fieldConfig;
 		
 		var html = Mustache.render(template, vars);
-		
-		console.log(template);
-		console.log(vars);
-		console.log(html);
 		
 		$field.find('.rfb-field-preview').html(html);
 		

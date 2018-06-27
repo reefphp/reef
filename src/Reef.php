@@ -38,6 +38,12 @@ class Reef {
 	private $Cache;
 	
 	/**
+	 * Reef assets object
+	 * @type ReefAssets
+	 */
+	private $ReefAssets;
+	
+	/**
 	 * Constructor
 	 */
 	public function __construct(Storage $FormStorage, $a_options = []) {
@@ -140,6 +146,14 @@ class Reef {
 			
 			return [];
 		});
+	}
+	
+	public function getReefAssets() {
+		if($this->ReefAssets == null) {
+			$this->ReefAssets = new ReefAssets($this);
+		}
+		
+		return $this->ReefAssets;
 	}
 	
 }
