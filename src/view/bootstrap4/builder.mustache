@@ -277,6 +277,10 @@ var ReefBuilderField = (function() {
 		fieldConfig.locale = this.localeForms.getData();
 		
 		var component = Reef.getComponent(this.$fieldWrapper.data('component-name'));
+		if(component.viewVars) {
+			fieldConfig = component.viewVars(fieldConfig);
+		}
+		
 		if(component.getLanguageReplacements) {
 			var replacements = component.getLanguageReplacements(fieldConfig);
 			for(var i in fieldConfig.locale) {

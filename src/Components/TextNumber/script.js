@@ -21,6 +21,12 @@ Reef.addComponent((function() {
 		return replacements;
 	};
 	
+	Field.viewVars = function(config) {
+		config.hasMin = (config.min !== '');
+		config.hasMax = (config.max !== '');
+		return config;
+	};
+	
 	Field.prototype.attach = function() {
 		var self = this;
 		
