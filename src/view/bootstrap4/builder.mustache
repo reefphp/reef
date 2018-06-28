@@ -78,6 +78,10 @@
 	flex: 1;
 }
 
+.rf-workspace .rf-fields {
+	height: 100%;
+}
+
 .rfb-field {
 	display: flex;
 }
@@ -156,7 +160,7 @@ $(function() {
 		);
 	});
 	
-	Sortable.create($('.rf-workspace')[0], {
+	Sortable.create($('.rf-workspace .rf-fields')[0], {
 			sort: true,
 			group: {
 				name: 'component-select',
@@ -167,45 +171,7 @@ $(function() {
 			animation: 150,
 			onAdd: function(evt) {
 				var $item = $(evt.item);
-				var $field = $('<div class="rfb-field"><div class="rfb-field-preview"></div><div class="rfb-field-actions"><div class="rf-btn rf-drag-handle">&#8661;</div><div class="rf-btn rf-component-config">&#9881;</div><div class="rf-btn rf-component-locale">&#128483;</div><div class="rf-btn rf-component-delete">&times;</div></div><div class="rfb-field-templates"></div></div>');
-				
-				var templates = ['rf-component-form', 'rf-locale-forms'];
-				var $template;
-				for(var i in templates) {
-					$template = $item.find('.rf-template.'+templates[i]).clone().hide().removeClass('rf-template').addClass('rf-dialog');
-					$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.rf-main-config').data('form-idpfx')), 'g'), unique_id()));
-					
-					$field.find('.rfb-field-templates').append($template);
-				}
-				
-				$field.find('.rf-component-form input, .rf-locale-forms input').on('change', function() {
-					ReefBuilder.updateField($field);
-				});
-				
-				var rfComponentForm = new Reef($field.find('.rf-component-form'));
-				var rfLocaleForms = new Reef($field.find('.rf-locale-forms'));
-				
-				if(rfComponentForm.hasField('name')) {
-					rfComponentForm.getField('name').setValue('field_'+unique_id().substr(0, 16));
-				}
-				
-				$field.find('.rf-component-config').on('click', function() {
-					ReefBuilder.openConfig($(this).closest('.rfb-field'));
-				});
-				
-				$field.find('.rf-component-locale').on('click', function() {
-					ReefBuilder.openLocale($(this).closest('.rfb-field'));
-				});
-				
-				$field.find('.rf-component-delete').on('click', function() {
-					ReefBuilder.deleteField($(this).closest('.rfb-field'));
-				});
-				
-				$field.attr('data-component-name', $item.data('component-name'));
-				
-				$item.replaceWith($field);
-				
-				ReefBuilder.updateField($field);
+				ReefBuilder.addField($item);
 			},
 			onUpdate: function(evt) {
 				
@@ -219,42 +185,96 @@ var ReefBuilder = (function() {
 	'use strict';
 	
 	var ReefBuilder = function() {
-	
-	};
-	
-	ReefBuilder.prototype.openConfig = function($field) {
-		this.openDialog($field.find('.rf-component-config'), $field.find('.rf-component-form'));
-	};
-	
-	ReefBuilder.prototype.openLocale = function($field) {
-		this.openDialog($field.find('.rf-component-locale'), $field.find('.rf-locale-forms'));
-	};
-	
-	ReefBuilder.prototype.deleteField = function($field) {
-		$field.remove();
+		var self = this;
 		
+		this.fields = [];
+		this.reef = null;
+		
+		$(function() {
+			self.reef = new Reef($('.rf-workspace'));
+		});
 	};
 	
-	ReefBuilder.prototype.updateField = function($field) {
+	ReefBuilder.prototype.getReef = function() {
+		return this.reef;
+	};
+	
+	ReefBuilder.prototype.addField = function($item) {
+		var field = new ReefBuilderField();
+		field.initFromItem($item);
+		this.fields.push(field);
+	};
+	
+	return new ReefBuilder();
+})();
+
+var ReefBuilderField = (function() {
+	'use strict';
+	
+	var ReefBuilderField = function() {
+		this.componentForm = null;
+		this.localeForms = null;
+		this.$fieldWrapper = null;
+		this.field = null;
+		this.$field = null;
+	};
+	
+	ReefBuilderField.prototype.initFromItem = function($item) {
+		var self = this;
 		
-		var template = atob($('.rf-builder-select .rf-component[data-component-name="'+$field.data('component-name')+'"]').data('html'));
+		var $fieldWrapper = $('<div class="rfb-field"><div class="rfb-field-preview"></div><div class="rfb-field-actions"><div class="rf-btn rf-drag-handle">&#8661;</div><div class="rf-btn rf-component-config">&#9881;</div><div class="rf-btn rf-component-locale">&#128483;</div><div class="rf-btn rf-component-delete">&times;</div></div><div class="rfb-field-templates"></div></div>');
 		
-		var fieldConfig = {};
-		$field.find('.rf-component-form input').each(function() {
-			var $this = $(this);
-			var name = $this.attr('name');
-			name = name.substring(name.lastIndexOf('[')+1, name.length-1);
-			fieldConfig[name] = $this.val(); // TODO: Replace with reef component JS logic (for non-textboxes)
+		var templates = ['rf-component-form', 'rf-locale-forms'];
+		var $template;
+		for(var i in templates) {
+			$template = $item.find('.rf-template.'+templates[i]).clone().hide().removeClass('rf-template').addClass('rf-dialog');
+			$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.rf-main-config').data('form-idpfx')), 'g'), unique_id()));
+			
+			$fieldWrapper.find('.rfb-field-templates').append($template);
+		}
+		
+		$fieldWrapper.find('.rf-component-form input, .rf-locale-forms input').on('change', function() {
+			self.updateField($fieldWrapper);
 		});
 		
-		fieldConfig.locale = {};
-		$field.find('.rf-locale-form input').each(function() {
-			var $this = $(this);
-			var name = $this.attr('name');
-			name = name.substring(name.lastIndexOf('[')+1, name.length-1);
-			fieldConfig.locale[name] = $this.val();
+		this.componentForm = new Reef($fieldWrapper.find('.rf-component-form'));
+		this.localeForms = new Reef($fieldWrapper.find('.rf-locale-forms'));
+		
+		if(this.componentForm.hasField('name')) {
+			this.componentForm.getField('name').setValue('field_'+unique_id().substr(0, 16));
+		}
+		
+		$fieldWrapper.find('.rf-component-config').on('click', function() {
+			self.openConfig();
 		});
 		
+		$fieldWrapper.find('.rf-component-locale').on('click', function() {
+			self.openLocale();
+		});
+		
+		$fieldWrapper.find('.rf-component-delete').on('click', function() {
+			self.deleteField();
+		});
+		
+		$fieldWrapper.attr('data-component-name', $item.data('component-name'));
+		
+		$item.replaceWith($fieldWrapper);
+		
+		this.$fieldWrapper = $fieldWrapper;
+		
+		this.updateField();
+	};
+	
+	ReefBuilderField.prototype.deleteField = function() {
+		this.$fieldWrapper.remove();
+	};
+	
+	ReefBuilderField.prototype.updateField = function() {
+		
+		var template = atob($('.rf-builder-select .rf-component[data-component-name="'+this.$fieldWrapper.data('component-name')+'"]').data('html'));
+		
+		var fieldConfig = this.componentForm.getData();
+		fieldConfig.locale = this.localeForms.getData();
 		
 		var vars = JSON.parse(atob($('.rf-builder').attr('data-form_config')));
 		vars.form_idpfx = unique_id();
@@ -264,11 +284,22 @@ var ReefBuilder = (function() {
 		
 		var html = Mustache.render(template, vars);
 		
-		$field.find('.rfb-field-preview').html(html);
+		this.$fieldWrapper.find('.rfb-field-preview').html(html);
+		this.$field = this.$fieldWrapper.find('.rfb-field-preview .rf-field');
 		
+		this.field = ReefBuilder.getReef().newField(this.$field.data(CSSPRFX+'type'), this.$field);
+		this.field.attach();
 	};
 	
-	ReefBuilder.prototype.openDialog = function($anchor, $dialog) {
+	ReefBuilderField.prototype.openConfig = function() {
+		this.openDialog(this.$fieldWrapper.find('.rf-component-config'), this.$fieldWrapper.find('.rf-component-form'));
+	};
+	
+	ReefBuilderField.prototype.openLocale = function() {
+		this.openDialog(this.$fieldWrapper.find('.rf-component-locale'), this.$fieldWrapper.find('.rf-locale-forms'));
+	};
+	
+	ReefBuilderField.prototype.openDialog = function($anchor, $dialog) {
 		var i, left;
 		
 		if($dialog.is(':visible')) {
@@ -297,7 +328,7 @@ var ReefBuilder = (function() {
 		}
 	};
 	
-	return new ReefBuilder();
+	return ReefBuilderField;
 })();
 
 </script>
@@ -338,7 +369,7 @@ var ReefBuilder = (function() {
 		</div>
 		{{/categories}}
 	</div>
-	<div class="rf-workspace container-fluid my-3">
-		
+	<div class="rf-workspace my-3">
+		{{{formHtml}}}
 	</div>
 </div>

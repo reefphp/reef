@@ -45,6 +45,14 @@ if(typeof Reef === 'undefined') {
 			return this.fields[name];
 		};
 		
+		Reef.prototype.getData = function() {
+			var data = {};
+			for(name in this.fields) {
+				data[name] = this.fields[name].getValue();
+			}
+			return data;
+		};
+		
 		Reef.prototype.validate = function() {
 			var valid = true;
 			

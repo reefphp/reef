@@ -153,6 +153,7 @@ class Builder {
 		$s_html = $Template->render([
 			'categories' => $a_categories,
 			'formConfig' => base64_encode(json_encode(array_subset($Form->getFormConfig(), ['locale', 'layout']))),
+			'formHtml' => $Form->generateFormHtml(),
 		]);
 		
 		return $s_html;
