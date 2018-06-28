@@ -316,14 +316,15 @@ var ReefBuilderField = (function() {
 	};
 	
 	ReefBuilderField.prototype.openConfig = function() {
-		this.openDialog(this.$fieldWrapper.find('.rf-component-config'), this.$fieldWrapper.find('.rf-component-form'));
+		this.toggleDialog(this.$fieldWrapper.find('.rf-component-config'), this.$fieldWrapper.find('.rf-component-form'));
 	};
 	
 	ReefBuilderField.prototype.openLocale = function() {
-		this.openDialog(this.$fieldWrapper.find('.rf-component-locale'), this.$fieldWrapper.find('.rf-locale-forms'));
+		this.toggleDialog(this.$fieldWrapper.find('.rf-component-locale'), this.$fieldWrapper.find('.rf-locale-forms'));
 	};
 	
-	ReefBuilderField.prototype.openDialog = function($anchor, $dialog) {
+	ReefBuilderField.prototype.toggleDialog = function($anchor, $dialog) {
+		var self = this;
 		var i, left;
 		
 		if($dialog.is(':visible')) {
@@ -331,6 +332,7 @@ var ReefBuilderField = (function() {
 			return;
 		}
 		
+		// Open dialog & possibly reposition for appearing scroll bars
 		for(i=0; i<2; i++) {
 			left = $anchor.position().left;
 			
@@ -350,6 +352,32 @@ var ReefBuilderField = (function() {
 				$dialog.show();
 			}
 		}
+		
+		// Focus first input
+		$dialog.find('input').first().focus();
+		
+		// Close on mousedown outside dialog or on ESC press
+		setTimeout(function() {
+			var namespace = '.rf-builder-dialog-'+unique_id();
+			$(document).on('mousedown'+namespace, function(evt) {
+				var $target = $(evt.target);
+				if(!$target.is($dialog) && !$target.is($anchor) && $target.closest($dialog).length == 0) {
+					self.toggleDialog($anchor, $dialog);
+					$(document).off('mousedown'+namespace);
+					$(document).off('keydown'+namespace);
+				}
+			});
+			
+			$(document).on('keydown'+namespace, function(evt) {
+				if(evt.which === 27) {
+					self.toggleDialog($anchor, $dialog);
+					evt.preventDefault();
+					$(document).off('mousedown'+namespace);
+					$(document).off('keydown'+namespace);
+				}
+			});
+		}, 0);
+		
 	};
 	
 	return ReefBuilderField;
