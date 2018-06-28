@@ -1,5 +1,5 @@
 <div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:single_checkbox" data-{{CSSPRFX}}name="{{field.name}}">
-	<label class="{{layout.col_left}} col-form-label" for="{{field.name}}">
+	<label class="{{layout.col_left}} col-form-label" for="{{form_idpfx}}-{{field.name}}">
 		{{field.locale.title_left}}
 	</label>
 	<div class="{{layout.col_right}}">
@@ -8,13 +8,13 @@
 				class="form-check-input {{#field.hasErrors}}is-invalid{{/field.hasErrors}} {{^field.locale.title_right}}position-static{{/field.locale.title_right}}"
 				type="checkbox"
 				name="{{main_var}}[{{field.name}}]"
-				id="{{field.name}}"
+				id="{{form_idpfx}}-{{field.name}}"
 				value="1"
 				{{#field.value}}checked{{/field.value}}
 				{{#field.required}}required{{/field.required}}
 			>
 			{{#field.locale.title_right}}
-			<label class="form-check-label" for="{{field.name}}">
+			<label class="form-check-label" for="{{form_idpfx}}-{{field.name}}">
 				{{field.locale.title_right}}
 			</label>
 			{{/field.locale.title_right}}

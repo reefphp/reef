@@ -15,6 +15,7 @@ class Form {
 	private $FormAssets;
 	
 	private $i_formId;
+	private $s_idPfx;
 	private $a_locale;
 	private $a_formConfig = [];
 	private $a_fields = [];
@@ -24,6 +25,7 @@ class Form {
 	 */
 	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
+		$this->s_idPfx = unique_id();
 	}
 	
 	public function getFormId() {
@@ -52,6 +54,14 @@ class Form {
 		}
 		
 		return $this->FormAssets;
+	}
+	
+	public function getIdPfx() {
+		return $this->s_idPfx;
+	}
+	
+	public function setIdPfx($s_idPfx) {
+		$this->s_idPfx = $s_idPfx;
 	}
 	
 	public function importDeclarationFile(string $s_filename) {
@@ -138,6 +148,7 @@ class Form {
 		unset($a_helpers['locales']);
 		
 		$a_helpers['CSSPRFX'] = $this->Reef->getOption('css_prefix');
+		$a_helpers['form_idpfx'] = $this->s_idPfx;
 		
 		$Mustache = new \Mustache_Engine([
 			'helpers' => $a_helpers,

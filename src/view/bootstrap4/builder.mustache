@@ -120,6 +120,21 @@
 
 </style>
 <script>
+// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+function unique_id() {
+	function s4() {
+		return Math.floor((1 + Math.random()) * 0x10000)
+		.toString(16)
+		.substring(1);
+	}
+	return s4() + s4() + s4() + s4()+ s4() + s4() + s4() + s4();
+}
+
+// https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+function escapeRegExp(str) {
+	return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
 $(function() {
 	$('.rf-category').on('click', function() {
 		$('.rf-components').hide().filter('[data-category="'+$(this).data('category')+'"]').show();
@@ -154,9 +169,14 @@ $(function() {
 				var $item = $(evt.item);
 				var $field = $('<div class="rfb-field"><div class="rfb-field-preview"></div><div class="rfb-field-actions"><div class="rf-btn rf-drag-handle">&#8661;</div><div class="rf-btn rf-component-config">&#9881;</div><div class="rf-btn rf-component-locale">&#128483;</div><div class="rf-btn rf-component-delete">&times;</div></div><div class="rfb-field-templates"></div></div>');
 				
-				$field.find('.rfb-field-templates').append($item.find('.rf-template.rf-component-form').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
-				
-				$field.find('.rfb-field-templates').append($item.find('.rf-template.rf-locale-forms').clone().hide().removeClass('rf-template').addClass('rf-dialog'));
+				var templates = ['rf-component-form', 'rf-locale-forms'];
+				var $template;
+				for(var i in templates) {
+					$template = $item.find('.rf-template.'+templates[i]).clone().hide().removeClass('rf-template').addClass('rf-dialog');
+					$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.rf-main-config').data('form-idpfx')), 'g'), unique_id()));
+					
+					$field.find('.rfb-field-templates').append($template);
+				}
 				
 				$field.find('.rf-component-form input, .rf-locale-forms input').on('change', function() {
 					ReefBuilder.updateField($field);
@@ -233,6 +253,7 @@ var ReefBuilder = (function() {
 		
 		
 		var vars = JSON.parse(atob($('.rf-builder').attr('data-form_config')));
+		vars.form_idpfx = unique_id();
 		vars.CSSPRFX = 'rf-';
 		vars.main_var = 'preview';
 		vars.field = fieldConfig;

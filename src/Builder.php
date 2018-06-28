@@ -64,6 +64,7 @@ class Builder {
 			];
 			
 			$ComponentForm = $this->Reef->newForm();
+			$ComponentForm->setIdPfx('__form_idpfx__'.$ComponentForm->getIdPfx());
 			$ComponentForm->importDeclaration($a_configDeclaration);
 			$s_form = $ComponentForm->generateFormHtml();
 			
@@ -103,6 +104,7 @@ class Builder {
 				];
 				
 				$LocaleForm = $this->Reef->newForm();
+				$LocaleForm->setIdPfx('__form_idpfx__'.$LocaleForm->getIdPfx());
 				$LocaleForm->importDeclaration($a_localeDeclaration);
 				$a_localeForms[] = [
 					'locale' => $s_locale,

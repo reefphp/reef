@@ -11,6 +11,10 @@ if(typeof Reef === 'undefined') {
 			this.$wrapper = $(selector);
 			this.fields = {};
 			
+			if(this.$wrapper.length == 0) {
+				throw "Cannot initialize Reef with an empty selector set";
+			}
+			
 			this.$wrapper.find('.'+CSSPRFX+'field').each(function() {
 				var name = $(this).data(CSSPRFX+'name');
 				var type = $(this).data(CSSPRFX+'type');
