@@ -30,6 +30,13 @@ trait Trait_Locale {
 	/**
 	 * @override
 	 */
+	protected function getLanguageReplacements() : array {
+		return [];
+	}
+	
+	/**
+	 * @override
+	 */
 	protected function getLocaleKeys() : array {
 		return [];
 	}
@@ -118,19 +125,43 @@ trait Trait_Locale {
 			}
 		}
 		
-		if(empty($a_missing)) {
-			return $a_locale;
+		// Fill in gaps with other languages, if provided
+		if(!empty($a_missing)) {
+			foreach($a_locales as $s_locale) {
+				$a_secLocale = array_intersect_key($this->getCombinedLocaleSources($s_locale), $a_missing);
+				
+				$a_locale = array_merge($a_locale, $a_secLocale);
+				
+				$a_missing = array_diff_key($a_missing, $a_secLocale);
+				
+				if(empty($a_missing)) {
+					break;
+				}
+			}
 		}
 		
-		foreach($a_locales as $s_locale) {
-			$a_secLocale = array_intersect_key($this->getCombinedLocaleSources($s_locale), $a_missing);
-			
-			$a_locale = array_merge($a_locale, $a_secLocale);
-			
-			$a_missing = array_diff_key($a_missing, $a_secLocale);
-			
-			if(empty($a_missing)) {
-				return $a_locale;
+		// Replace variables
+		$a_replacements = $this->getLanguageReplacements();
+		if(!empty($a_replacements)) {
+			foreach($a_locale as $s_key => $s_val) {
+				if(empty($s_val)) {
+					continue;
+				}
+				
+				$a_locale[$s_key] = preg_replace_callback('/\[\[([^\[\]]+)\]\]/', function($a_match) use($a_replacements) {
+					$a_parts = explode('.', $a_match[1]);
+					
+					foreach($a_parts as $s_part) {
+						if(!is_array($a_replacements) || !isset($a_replacements[$s_part])) {
+							return '';
+						}
+						
+						$a_replacements = $a_replacements[$s_part];
+					}
+					
+					// Most likely, $a_replacements has now become a string...
+					return is_scalar($a_replacements) ? $a_replacements : '';
+				}, $s_val);
 			}
 		}
 		

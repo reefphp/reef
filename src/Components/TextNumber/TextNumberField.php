@@ -32,25 +32,7 @@ class TextNumberField extends SingleLineTextField {
 		return $a_vars;
 	}
 	
-	/**
-	 * @inherit
-	 */
-	public function getLocale($a_locales = null) {
-		$a_locale = parent::getLocale($a_locales);
-		$b_min = isset($this->a_config['min']);
-		$b_max = isset($this->a_config['max']);
-		if($b_min && $b_max) {
-			$a_locale['error_number_range'] = str_replace(['[min]', '[max]'], [$this->a_config['min'], $this->a_config['max']], $a_locale['error_number_min_max']);
-		}
-		else if($b_min) {
-			$a_locale['error_number_range'] = str_replace('[min]', $this->a_config['min'], $a_locale['error_number_min']);
-		}
-		else if($b_max) {
-			$a_locale['error_number_range'] = str_replace('[max]', $this->a_config['max'], $a_locale['error_number_max']);
-		}
-		else {
-			$a_locale['error_number_range'] = '';
-		}
-		return $a_locale;
+	protected function getLanguageReplacements() : array {
+		return \Reef\array_subset($this->a_config, ['min', 'max']);
 	}
 }

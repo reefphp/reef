@@ -33,6 +33,14 @@ if(typeof Reef === 'undefined') {
 			Reef.components[component.componentName] = component;
 		};
 		
+		Reef.getComponent = function(type) {
+			if(typeof Reef.components[type] === 'undefined') {
+				throw "Unknown component "+type+".";
+			}
+			
+			return Reef.components[type];
+		};
+		
 		Reef.prototype.newField = function(type, $el) {
 			return new Reef.components[type](this, $el);
 		};

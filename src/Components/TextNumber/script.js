@@ -10,6 +10,17 @@ Reef.addComponent((function() {
 	
 	Field.componentName = 'reef:text_number';
 	
+	Field.getLanguageReplacements = function(config) {
+		var replacements = {};
+		if(typeof config.min !== 'undefined') {
+			replacements.min = config.min;
+		}
+		if(typeof config.max !== 'undefined') {
+			replacements.max = config.max;
+		}
+		return replacements;
+	};
+	
 	Field.prototype.attach = function() {
 		var self = this;
 		
@@ -47,11 +58,11 @@ Reef.addComponent((function() {
 			
 			if($input.is('[min]') && val < $input.attr('min')) {
 				valid = false;
-				this.parent.setError('error-number-range');
+				this.parent.setError($input.is('[max]') ? 'error-number-min-max' : 'error-number-min');
 			}
 			else if($input.is('[max]') && val > $input.attr('max')) {
 				valid = false;
-				this.parent.setError('error-number-range');
+				this.parent.setError($input.is('[min]') ? 'error-number-min-max' : 'error-number-max');
 			}
 		}
 		

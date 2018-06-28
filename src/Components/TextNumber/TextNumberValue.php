@@ -22,11 +22,11 @@ class TextNumberValue extends SingleLineTextValue {
 			
 			if(isset($a_config['min']) && $f_value < $a_config['min']) {
 				$b_valid = false;
-				$this->a_errors[] = $this->Field->trans('error_number_range');
+				$this->a_errors[] = $this->Field->trans(isset($a_config['max']) ? 'error_number_min_max' : 'error_number_min');
 			}
 			else if(isset($a_config['max']) && $f_value > $a_config['max']) {
 				$b_valid = false;
-				$this->a_errors[] = $this->Field->trans('error_number_range');
+				$this->a_errors[] = $this->Field->trans(isset($a_config['min']) ? 'error_number_min_max' : 'error_number_max');
 			}
 		}
 		

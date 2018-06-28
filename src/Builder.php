@@ -133,6 +133,7 @@ class Builder {
 				'html' => base64_encode($s_html),
 				'image' => $a_definition['image'],
 				'name' => $a_definition['name'],
+				'type' => $a_definition['vendor'].':'.$a_definition['name'],
 				'componentForm' => $s_form,
 				'localeForms' => $a_localeForms,
 			];

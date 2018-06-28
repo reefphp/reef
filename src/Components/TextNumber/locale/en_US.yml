@@ -1,4 +1,4 @@
 error_not_a_number: Please enter a valid number
-error_number_min_max: The number should be between [min] and [max]
-error_number_min: The number should be at least [min]
-error_number_max: The number should be at most [max]
+error_number_min_max: The number should be between [[min]] and [[max]]
+error_number_min: The number should be at least [[min]]
+error_number_max: The number should be at most [[max]]
