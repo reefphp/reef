@@ -23,6 +23,14 @@ Reef.addComponent((function() {
 		});
 	};
 	
+	Field.prototype.getValue = function() {
+		return this.$field.find('input').val();
+	};
+	
+	Field.prototype.setValue = function(value) {
+		this.$field.find('input').val(value);
+	};
+	
 	Field.prototype.validate = function() {
 		var valid = true;
 		

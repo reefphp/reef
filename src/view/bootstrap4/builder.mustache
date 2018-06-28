@@ -182,8 +182,12 @@ $(function() {
 					ReefBuilder.updateField($field);
 				});
 				
-				new Reef($field.find('.rf-component-form'));
-				new Reef($field.find('.rf-locale-forms'));
+				var rfComponentForm = new Reef($field.find('.rf-component-form'));
+				var rfLocaleForms = new Reef($field.find('.rf-locale-forms'));
+				
+				if(rfComponentForm.hasField('name')) {
+					rfComponentForm.getField('name').setValue('field_'+unique_id().substr(0, 16));
+				}
 				
 				$field.find('.rf-component-config').on('click', function() {
 					ReefBuilder.openConfig($(this).closest('.rfb-field'));

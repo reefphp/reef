@@ -17,6 +17,14 @@ Reef.addComponent((function() {
 		});
 	};
 	
+	Field.prototype.getValue = function() {
+		return this.$field.find('input').prop('checked');
+	};
+	
+	Field.prototype.setValue = function(value) {
+		this.$field.find('input').prop('checked', !!value);
+	};
+	
 	Field.prototype.validate = function() {
 		var valid = true;
 		

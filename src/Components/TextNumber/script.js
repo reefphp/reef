@@ -24,6 +24,14 @@ Reef.addComponent((function() {
 		});
 	};
 	
+	Field.prototype.getValue = function() {
+		return this.parent.getValue();
+	};
+	
+	Field.prototype.setValue = function(value) {
+		this.parent.setValue(parseFloat(value));
+	};
+	
 	Field.prototype.validate = function() {
 		var valid = this.parent.validate();
 		

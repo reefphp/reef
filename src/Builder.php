@@ -63,6 +63,22 @@ class Builder {
 				'fields' => $a_definition['declaration']['fields']??[],
 			];
 			
+			if($a_definition['category'] !== 'static') {
+				array_unshift($a_configDeclaration['fields'], [
+					'component' => 'reef:single_line_text',
+					'name' => 'name',
+					'required' => true,
+					'locales' => [
+						'en_US' => [
+							'title' => 'Field name',
+						],
+						'nl_NL' => [
+							'title' => 'Veldnaam',
+						],
+					],
+				]);
+			}
+			
 			$ComponentForm = $this->Reef->newForm();
 			$ComponentForm->setIdPfx('__form_idpfx__'.$ComponentForm->getIdPfx());
 			$ComponentForm->importDeclaration($a_configDeclaration);
