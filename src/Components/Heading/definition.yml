@@ -12,6 +12,7 @@ declaration:
         min: 1
         max: 6
         step: 1
+        default: 4
         locales:
             en_US:
                 title: 'Size'

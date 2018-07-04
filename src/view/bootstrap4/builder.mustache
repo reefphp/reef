@@ -270,13 +270,21 @@ var ReefBuilderField = (function() {
 	};
 	
 	ReefBuilderField.prototype.updateField = function() {
+		var componentName = this.$fieldWrapper.data('component-name');
 		
-		var template = atob($('.rf-builder-select .rf-component[data-component-name="'+this.$fieldWrapper.data('component-name')+'"]').data('html'));
+		var template = atob($('.rf-builder-select .rf-component[data-component-name="'+componentName+'"]').data('html'));
 		
 		var fieldConfig = this.componentForm.getData();
 		fieldConfig.locale = this.localeForms.getData();
 		
-		var component = Reef.getComponent(this.$fieldWrapper.data('component-name'));
+		var component;
+		if(Reef.hasComponent(componentName)) {
+			component = Reef.getComponent(componentName);
+		}
+		else {
+			component = function(){};
+		}
+		
 		if(component.viewVars) {
 			fieldConfig = component.viewVars(fieldConfig);
 		}
@@ -311,8 +319,10 @@ var ReefBuilderField = (function() {
 		this.$fieldWrapper.find('.rfb-field-preview').html(html);
 		this.$field = this.$fieldWrapper.find('.rfb-field-preview .rf-field');
 		
-		this.field = ReefBuilder.getReef().newField(this.$field.data(CSSPRFX+'type'), this.$field);
-		this.field.attach();
+		if(Reef.hasComponent(componentName)) {
+			this.field = ReefBuilder.getReef().newField(this.$field.data(CSSPRFX+'type'), this.$field);
+			this.field.attach();
+		}
 	};
 	
 	ReefBuilderField.prototype.openConfig = function() {
@@ -324,13 +334,21 @@ var ReefBuilderField = (function() {
 	};
 	
 	ReefBuilderField.prototype.toggleDialog = function($anchor, $dialog) {
+		if($dialog.is(':visible')) {
+			this.hideDialog($anchor, $dialog);
+		}
+		else {
+			this.showDialog($anchor, $dialog);
+		}
+	};
+	
+	ReefBuilderField.prototype.hideDialog = function($anchor, $dialog) {
+		$dialog.hide();
+	};
+	
+	ReefBuilderField.prototype.showDialog = function($anchor, $dialog) {
 		var self = this;
 		var i, left;
-		
-		if($dialog.is(':visible')) {
-			$dialog.hide();
-			return;
-		}
 		
 		// Open dialog & possibly reposition for appearing scroll bars
 		for(i=0; i<2; i++) {
@@ -362,7 +380,7 @@ var ReefBuilderField = (function() {
 			$(document).on('mousedown'+namespace, function(evt) {
 				var $target = $(evt.target);
 				if(!$target.is($dialog) && !$target.is($anchor) && $target.closest($dialog).length == 0) {
-					self.toggleDialog($anchor, $dialog);
+					self.hideDialog($anchor, $dialog);
 					$(document).off('mousedown'+namespace);
 					$(document).off('keydown'+namespace);
 				}
@@ -370,7 +388,7 @@ var ReefBuilderField = (function() {
 			
 			$(document).on('keydown'+namespace, function(evt) {
 				if(evt.which === 27) {
-					self.toggleDialog($anchor, $dialog);
+					self.hideDialog($anchor, $dialog);
 					evt.preventDefault();
 					$(document).off('mousedown'+namespace);
 					$(document).off('keydown'+namespace);
