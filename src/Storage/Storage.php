@@ -43,4 +43,10 @@ interface Storage {
 	 * @return boolean True if the specified id corresponds to an existing entry, false otherwise
 	 */
 	public function exists(int $i_entryId) : bool;
+	
+	/**
+	 * Determine next entry id. This function's value should be taken as an indication, it is not meant to be race-condition safe!
+	 * @return int The next entry id
+	 */
+	public function next() : int;
 }

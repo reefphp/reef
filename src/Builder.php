@@ -91,6 +91,7 @@ class Builder {
 			'formConfig' => base64_encode(json_encode(array_subset($Form->getFormConfig(), ['locale', 'layout']))),
 			'formHtml' => $Form->generateFormHtml(),
 			'settings' => $this->a_settings,
+			'formConfigHtml' => $this->generateFormConfigForm($Form)->generateFormHtml(),
 		]);
 		
 		return $s_html;
@@ -164,6 +165,38 @@ class Builder {
 		return [
 			'result' => true,
 		];
+	}
+	
+	private function generateFormConfigForm(Form $Form) {
+		
+		$a_declaration = [
+			'locale' => [],
+			'submissions' => [
+				'type' => 'none',
+			],
+			'main_var' => 'form_config',
+			'layout' => [
+				'name' => 'bootstrap4',
+				'col_left' => 'col-12',
+				'col_right' => 'col-12',
+			],
+			'fields' => [
+				[
+					'component' => 'reef:single_line_text',
+					'name' => 'form_name',
+					'required' => true,
+					'locale' => [
+						'title' => 'Form file name',
+					],
+					'default' => 'form_'.$Form->getReef()->getFormStorage()->next(),
+				]
+			],
+		];
+		
+		$ConfigForm = $this->Reef->newForm();
+		$ConfigForm->importDeclaration($a_declaration);
+		
+		return $ConfigForm;
 	}
 	
 	private function generateConfigForm(Component $Component) {

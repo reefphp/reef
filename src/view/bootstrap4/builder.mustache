@@ -11,11 +11,16 @@
 	background-color: #f7f7fe;
 }
 
-.rf-toolbar .rf-toolbar-submit {
-	width: 100%;
+.rf-toolbar-general {
+	display: flex;
+	height: 2rem;
+}
+
+.rf-toolbar .rf-toolbar-submit, .rf-toolbar .rf-toolbar-config {
+	display: block;
+	flex: 1;
 	background-color: #c6caed;
 	border: 0;
-	height: 2rem;
 	cursor: pointer;
 }
 
@@ -199,6 +204,88 @@ $(function() {
 	
 });
 
+var ReefDialog = (function() {
+	'use strict';
+	
+	var ReefDialog = function($dialog, $anchor) {
+		var self = this;
+		
+		this.$dialog = $dialog;
+		this.$anchor = $anchor;
+		
+		$anchor.on('click', function() {
+			self.show();
+		});
+	};
+	
+	ReefDialog.prototype.toggle = function() {
+		if(this.$dialog.is(':visible')) {
+			this.hide();
+		}
+		else {
+			this.show();
+		}
+	};
+	
+	ReefDialog.prototype.hide = function() {
+		this.$dialog.hide();
+	};
+	
+	ReefDialog.prototype.show = function() {
+		var self = this;
+		var i, left;
+		
+		// Open dialog & possibly reposition for appearing scroll bars
+		for(i=0; i<2; i++) {
+			left = this.$anchor.position().left;
+			
+			left = Math.min(
+				left,
+				this.$anchor.offsetParent().width() - this.$dialog.outerWidth() - 3
+			);
+			
+			left = Math.max(0, left);
+			
+			this.$dialog.css({
+				left: left,
+				top: this.$anchor.position().top + this.$anchor.outerHeight()
+			});
+			
+			if(i == 0) {
+				this.$dialog.show();
+			}
+		}
+		
+		// Focus first input
+		this.$dialog.find('input').first().focus();
+		
+		// Close on mousedown outside dialog or on ESC press
+		setTimeout(function() {
+			var namespace = '.rf-builder-dialog-'+unique_id();
+			$(document).on('mousedown'+namespace, function(evt) {
+				var $target = $(evt.target);
+				if(!$target.is(self.$dialog) && !$target.is(self.$anchor) && $target.closest(self.$dialog).length == 0) {
+					self.hide();
+					$(document).off('mousedown'+namespace);
+					$(document).off('keydown'+namespace);
+				}
+			});
+			
+			$(document).on('keydown'+namespace, function(evt) {
+				if(evt.which === 27) {
+					self.hide();
+					evt.preventDefault();
+					$(document).off('mousedown'+namespace);
+					$(document).off('keydown'+namespace);
+				}
+			});
+		}, 0);
+		
+	};
+	
+	return ReefDialog;
+})();
+
 var ReefBuilder = (function() {
 	'use strict';
 	
@@ -210,6 +297,10 @@ var ReefBuilder = (function() {
 		
 		$(function() {
 			self.reef = new Reef($('.rf-workspace'));
+			
+			self.configForm = new Reef($('.rf-form-config'));
+			
+			self.configDialog = new ReefDialog($('.rf-dialog.rf-form-config'), $('.rf-toolbar-config'));
 		});
 	};
 	
@@ -240,6 +331,11 @@ var ReefBuilder = (function() {
 	
 	ReefBuilder.prototype.submit = function() {
 		var i;
+		
+		if(!this.configForm.validate()) {
+			this.configDialog.show();
+			return false;
+		}
 		
 		for(i in this.fields) {
 			if(!this.fields[i].validate()) {
@@ -312,17 +408,12 @@ var ReefBuilderField = (function() {
 		this.componentForm = new Reef($fieldWrapper.find('.rf-component-form'));
 		this.localeForms = new Reef($fieldWrapper.find('.rf-locale-forms'));
 		
+		this.componentDialog = new ReefDialog($fieldWrapper.find('.rf-component-form'), $fieldWrapper.find('.rf-component-config'));
+		this.localeDialog = new ReefDialog($fieldWrapper.find('.rf-locale-forms'), $fieldWrapper.find('.rf-component-locale'));
+		
 		if(this.componentForm.hasField('name')) {
 			this.componentForm.getField('name').setValue('field_'+unique_id().substr(0, 16));
 		}
-		
-		$fieldWrapper.find('.rf-component-config').on('click', function() {
-			self.openConfig();
-		});
-		
-		$fieldWrapper.find('.rf-component-locale').on('click', function() {
-			self.openLocale();
-		});
 		
 		$fieldWrapper.find('.rf-component-delete').on('click', function() {
 			self.deleteField();
@@ -398,86 +489,13 @@ var ReefBuilderField = (function() {
 		}
 	};
 	
-	ReefBuilderField.prototype.openConfig = function() {
-		this.toggleDialog(this.$fieldWrapper.find('.rf-component-config'), this.$fieldWrapper.find('.rf-component-form'));
-	};
-	
-	ReefBuilderField.prototype.openLocale = function() {
-		this.toggleDialog(this.$fieldWrapper.find('.rf-component-locale'), this.$fieldWrapper.find('.rf-locale-forms'));
-	};
-	
-	ReefBuilderField.prototype.toggleDialog = function($anchor, $dialog) {
-		if($dialog.is(':visible')) {
-			this.hideDialog($anchor, $dialog);
-		}
-		else {
-			this.showDialog($anchor, $dialog);
-		}
-	};
-	
-	ReefBuilderField.prototype.hideDialog = function($anchor, $dialog) {
-		$dialog.hide();
-	};
-	
-	ReefBuilderField.prototype.showDialog = function($anchor, $dialog) {
-		var self = this;
-		var i, left;
-		
-		// Open dialog & possibly reposition for appearing scroll bars
-		for(i=0; i<2; i++) {
-			left = $anchor.position().left;
-			
-			left = Math.min(
-				left,
-				$anchor.offsetParent().width() - $dialog.outerWidth() - 3
-			);
-			
-			left = Math.max(0, left);
-			
-			$dialog.css({
-				left: left,
-				top: $anchor.position().top + $anchor.outerHeight()
-			});
-			
-			if(i == 0) {
-				$dialog.show();
-			}
-		}
-		
-		// Focus first input
-		$dialog.find('input').first().focus();
-		
-		// Close on mousedown outside dialog or on ESC press
-		setTimeout(function() {
-			var namespace = '.rf-builder-dialog-'+unique_id();
-			$(document).on('mousedown'+namespace, function(evt) {
-				var $target = $(evt.target);
-				if(!$target.is($dialog) && !$target.is($anchor) && $target.closest($dialog).length == 0) {
-					self.hideDialog($anchor, $dialog);
-					$(document).off('mousedown'+namespace);
-					$(document).off('keydown'+namespace);
-				}
-			});
-			
-			$(document).on('keydown'+namespace, function(evt) {
-				if(evt.which === 27) {
-					self.hideDialog($anchor, $dialog);
-					evt.preventDefault();
-					$(document).off('mousedown'+namespace);
-					$(document).off('keydown'+namespace);
-				}
-			});
-		}, 0);
-		
-	};
-	
 	ReefBuilderField.prototype.validate = function() {
 		if(!this.componentForm.validate()) {
-			this.openConfig();
+			this.componentDialog.show();
 			return false;
 		}
 		if(!this.localeForms.validate()) {
-			this.openLocale();
+			this.localeDialog.show();
 			return false;
 		}
 		return true;
@@ -502,6 +520,12 @@ var ReefBuilderField = (function() {
 			<button type="button" class="rf-toolbar-submit" data-action="{{settings.submit_action}}">
 				Save
 			</button>
+			<button type="button" class="rf-toolbar-config">
+				&#9881;
+			</button>
+			<div class="rf-dialog rf-form-config" style="display: none;">
+				{{{formConfigHtml}}}
+			</div>
 		</div>
 		<div class="rf-builder-select">
 			<div class="rf-categories">

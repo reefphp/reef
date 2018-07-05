@@ -52,4 +52,11 @@ class NoStorage implements Storage {
 		return false;
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function next() : int {
+		return -1;
+	}
+	
 }

@@ -160,5 +160,34 @@ class JSONStorage implements Storage {
 		return file_exists($s_entryFilePath);
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function next() : int {
+		$s_incFilePath = $this->getIncFile();
+		
+		$fp = @fopen($s_incFilePath, 'r+');
+		
+		if(!$fp) {
+			throw new IOException('Could not open "'.$s_incFilePath.'".');
+		}
+		
+		try {
+			if(!flock($fp, LOCK_EX)) {
+				throw new IOException('Could not acquire lock on "'.$s_incFilePath.'".');
+			}
+			
+			if(!fscanf($fp, '%D', $i_entryId)) {
+				throw new IOException('Could not read "'.$s_incFilePath.'".');
+			}
+		}
+		catch(IOException $e) {
+			fclose($fp);
+			throw $e;
+		}
+		
+		return $i_entryId;
+	}
+	
 	
 }
