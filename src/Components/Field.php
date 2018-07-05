@@ -52,14 +52,14 @@ abstract class Field {
 	
 	/**
 	 * Build template variables for the form
-	 * @param FieldValue $Value The value object
+	 * @param ?FieldValue $Value The value object, may be null for static components
 	 * @param array $a_options Options
 	 * @return array The template variables
 	 */
-	public function view_form(FieldValue $Value, $a_options = []) : array {
+	public function view_form(?FieldValue $Value, $a_options = []) : array {
 		$a_vars = $this->a_config;
 		
-		$a_vars['errors'] = $Value->getErrors();
+		$a_vars['errors'] = !empty($Value) ? $Value->getErrors() : [];
 		$a_vars['hasErrors'] = !empty($a_vars['errors']);
 		
 		$a_vars['locale'] = $this->getLocale($a_options['locale']??null);

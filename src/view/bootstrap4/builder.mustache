@@ -4,10 +4,24 @@
 	position: relative;
 }
 
-.rf-builder-select {
+.rf-toolbar {
 	display: flex;
+	flex-direction: column;
 	width: 200px;
 	background-color: #f7f7fe;
+}
+
+.rf-toolbar .rf-toolbar-submit {
+	width: 100%;
+	background-color: #c6caed;
+	border: 0;
+	height: 2rem;
+	cursor: pointer;
+}
+
+.rf-builder-select {
+	flex: 1;
+	display: flex;
 }
 
 .rf-builder-select .rf-categories {
@@ -171,13 +185,17 @@ $(function() {
 			animation: 150,
 			onAdd: function(evt) {
 				var $item = $(evt.item);
-				ReefBuilder.addField($item);
+				ReefBuilder.addField($item, evt.newIndex);
 			},
 			onUpdate: function(evt) {
-				
+				ReefBuilder.moveField(evt.oldIndex, evt.newIndex);
 			}
 		}
 	);
+	
+	$('.rf-toolbar-submit').on('click', function() {
+		ReefBuilder.submit();
+	});
 	
 });
 
@@ -199,10 +217,63 @@ var ReefBuilder = (function() {
 		return this.reef;
 	};
 	
-	ReefBuilder.prototype.addField = function($item) {
-		var field = new ReefBuilderField();
+	ReefBuilder.prototype.addField = function($item, newIndex) {
+		var field = new ReefBuilderField(this);
 		field.initFromItem($item);
-		this.fields.push(field);
+		this.fields.splice(newIndex, 0, field);
+	};
+	
+	ReefBuilder.prototype.moveField = function(oldIndex, newIndex) {
+		if(typeof this.fields[oldIndex] == 'undefined') {
+			return;
+		}
+		
+		this.fields.splice(newIndex, 0, this.fields.splice(oldIndex, 1)[0]);
+	};
+	
+	ReefBuilder.prototype.removeField = function(field) {
+		var index = this.fields.indexOf(field);
+		if(index > -1) {
+			this.fields.splice(index, 1);
+		}
+	};
+	
+	ReefBuilder.prototype.submit = function() {
+		var i;
+		
+		for(i in this.fields) {
+			if(!this.fields[i].validate()) {
+				return false;
+			}
+		}
+		
+		// All is valid, gather data
+		var data = [];
+		
+		for(i in this.fields) {
+			data.push(this.fields[i].getDefinition());
+		}
+		
+		// Save form
+		$.ajax({
+			url: $('.rf-toolbar-submit').data('action'),
+			method: 'POST',
+			data: {
+				form_fields : data
+			},
+			dataType: 'json',
+			success: function(response) {
+				if(typeof response == 'object') {
+					if(typeof response.result !== 'undefined') {
+						
+						
+					}
+					if(typeof response.redirect !== 'undefined') {
+						window.location = response.redirect;
+					}
+				}
+			}
+		});
 	};
 	
 	return new ReefBuilder();
@@ -211,7 +282,8 @@ var ReefBuilder = (function() {
 var ReefBuilderField = (function() {
 	'use strict';
 	
-	var ReefBuilderField = function() {
+	var ReefBuilderField = function(reefBuilder) {
+		this.reefBuilder = reefBuilder;
 		this.componentForm = null;
 		this.localeForms = null;
 		this.$fieldWrapper = null;
@@ -266,6 +338,7 @@ var ReefBuilderField = (function() {
 	};
 	
 	ReefBuilderField.prototype.deleteField = function() {
+		this.reefBuilder.removeField(this);
 		this.$fieldWrapper.remove();
 	};
 	
@@ -398,46 +471,73 @@ var ReefBuilderField = (function() {
 		
 	};
 	
+	ReefBuilderField.prototype.validate = function() {
+		if(!this.componentForm.validate()) {
+			this.openConfig();
+			return false;
+		}
+		if(!this.localeForms.validate()) {
+			this.openLocale();
+			return false;
+		}
+		return true;
+	};
+	
+	ReefBuilderField.prototype.getDefinition = function() {
+		return {
+			component: this.$fieldWrapper.data('component-name'),
+			config: this.componentForm.getData(),
+			locale: this.localeForms.getData()
+		};
+	};
+	
 	return ReefBuilderField;
 })();
 
 </script>
 
 <div class="rf-builder" data-form_config="{{formConfig}}">
-	<div class="rf-builder-select">
-		<div class="rf-categories">
-		{{#categories}}
-			<div class="rf-category" data-category="{{category}}">
-				<div>
-					<img title="" alt="" src="../../assets/img/{{category}}.svg" />
-					<span>{{category}}</span>
-				</div>
-			</div>
-		{{/categories}}
+	<div class="rf-toolbar">
+		<div class="rf-toolbar-general">
+			<button type="button" class="rf-toolbar-submit" data-action="{{settings.submit_action}}">
+				Save
+			</button>
 		</div>
-		
-		{{#categories}}
-		<div class="rf-components" data-category="{{category}}">
-			{{#components}}
-			<div class="rf-component" data-component-name="{{type}}" data-definition="{{definition}}" data-html="{{html}}">
-				<div class="rf-tile">
-					<img title="" alt="" src="../../assets/img/{{image}}" />
-					<span>{{name}}</span>
-				</div>
-				<div class="rf-template rf-component-form">
-					{{{componentForm}}}
-				</div>
-				<div class="rf-template rf-locale-forms">
-					{{#localeForms}}
-					<div class="rf-locale-form" data-locale="{{locale}}">
-						{{{form}}}
+		<div class="rf-builder-select">
+			<div class="rf-categories">
+			{{#categories}}
+				<div class="rf-category {{#open_default}}rf-active{{/open_default}}" data-category="{{category}}">
+					<div>
+						<img title="" alt="" src="../../assets/img/{{category}}.svg" />
+						<span>{{category}}</span>
 					</div>
-					{{/localeForms}}
 				</div>
+			{{/categories}}
 			</div>
-			{{/components}}
+			
+			{{#categories}}
+			<div class="rf-components {{#open_default}}rf-active{{/open_default}}" data-category="{{category}}">
+				{{#components}}
+				<div class="rf-component" data-component-name="{{type}}" data-definition="{{definition}}" data-html="{{html}}">
+					<div class="rf-tile">
+						<img title="" alt="" src="../../assets/img/{{image}}" />
+						<span>{{name}}</span>
+					</div>
+					<div class="rf-template rf-component-form">
+						{{{componentForm}}}
+					</div>
+					<div class="rf-template rf-locale-forms">
+						{{#localeForms}}
+						<div class="rf-locale-form" data-locale="{{locale}}">
+							{{{form}}}
+						</div>
+						{{/localeForms}}
+					</div>
+				</div>
+				{{/components}}
+			</div>
+			{{/categories}}
 		</div>
-		{{/categories}}
 	</div>
 	<div class="rf-workspace my-3">
 		{{{formHtml}}}

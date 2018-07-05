@@ -14,7 +14,7 @@ class SingleCheckboxValue extends FieldValue {
 	public function validate() : bool {
 		$this->a_errors = [];
 		
-		if($this->Field->getConfig()['required'] && !$this->b_value) {
+		if(($this->Field->getConfig()['required']??false) && !$this->b_value) {
 			$this->a_errors[] = $this->Field->getForm()->trans('rf_error_required_empty');
 			return false;
 		}
@@ -34,6 +34,11 @@ class SingleCheckboxValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromUserInput($m_input) {
+		if(is_string($m_input)) {
+			$m_input = strtolower($m_input);
+			$m_input = ($m_input != 'false' && $m_input != 'no' && $m_input != '0');
+		}
+		
 		$this->b_value = (bool)$m_input;
 		$this->a_errors = null;
 	}
@@ -53,6 +58,13 @@ class SingleCheckboxValue extends FieldValue {
 	public function fromFlat(?array $a_flat) {
 		$this->b_value = (bool)($a_flat['value']??$this->Field->getConfig()['default']??false);
 		$this->a_errors = null;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function toStructured() {
+		return $this->b_value;
 	}
 	
 	/**

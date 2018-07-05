@@ -35,6 +35,12 @@ abstract class FieldValue {
 	abstract public function fromFlat(?array $a_flat);
 	
 	/**
+	 * Serialize the current value into a structured value
+	 * @return mixed The value
+	 */
+	abstract public function toStructured();
+	
+	/**
 	 * Prepare the values to be used in the form template
 	 * @return mixed
 	 */

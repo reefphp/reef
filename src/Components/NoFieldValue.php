@@ -41,6 +41,13 @@ class NoFieldValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function toStructured() {
+		return null;
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function toTemplateVar() {
 		return null;
 	}

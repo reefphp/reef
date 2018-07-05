@@ -58,6 +58,30 @@ abstract class Component {
 	}
 	
 	/**
+	 * Returns the raw HTML template of this component
+	 * @param string $s_layout The layout to use
+	 * @return string The template
+	 */
+	public function getTemplate($s_layout) {
+		$s_templateDir = null;
+		$s_viewfile = 'view/'.$s_layout.'/form.mustache';
+		
+		$a_classes = $this->getInheritanceList();
+		foreach($a_classes as $s_class) {
+			if(file_exists($s_class::getDir() . $s_viewfile)) {
+				$s_templateDir = $s_class::getDir();
+				break;
+			}
+		}
+		
+		if($s_templateDir === null) {
+			throw new \Exception("Could not find form template file for component '".static::COMPONENT_NAME."'.");
+		}
+		
+		return file_get_contents($s_templateDir.$s_viewfile);
+	}
+	
+	/**
 	 * Return the definition array of this component
 	 * @return array
 	 */

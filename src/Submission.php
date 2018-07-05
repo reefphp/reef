@@ -24,7 +24,7 @@ class Submission {
 	}
 	
 	public function emptySubmission() {
-		$a_fields = $this->Form->getFields();
+		$a_fields = $this->Form->getValueFields();
 		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getConfig()['name'];
@@ -34,7 +34,7 @@ class Submission {
 	}
 	
 	public function fromUserInput($a_input) {
-		$a_fields = $this->Form->getFields();
+		$a_fields = $this->Form->getValueFields();
 		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getConfig()['name'];
@@ -46,7 +46,7 @@ class Submission {
 	public function validate() : bool {
 		$b_valid = true;
 		
-		$a_fields = $this->Form->getFields();
+		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getConfig()['name'];
 			$b_valid = $this->a_fieldValues[$s_name]->validate() && $b_valid;
@@ -58,7 +58,7 @@ class Submission {
 	public function getErrors() : array {
 		$a_errors = [];
 		
-		$a_fields = $this->Form->getFields();
+		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getConfig()['name'];
 			$a_fieldErrors = $this->a_fieldValues[$s_name]->getErrors();
@@ -81,7 +81,7 @@ class Submission {
 	public function toFlat() {
 		$a_flat = [];
 		
-		$a_fields = $this->Form->getFields();
+		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getConfig()['name'];
 			$a_flatField = $this->a_fieldValues[$s_name]->toFlat();
@@ -106,13 +106,25 @@ class Submission {
 			$a_grouped[substr($s_key, 0, $i_pos)][substr($s_key, $i_pos+2)] = $m_value;
 		}
 		
-		$a_fields = $this->Form->getFields();
+		$a_fields = $this->Form->getValueFields();
 		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getConfig()['name'];
 			$this->a_fieldValues[$s_name] = $Field->newValue();
 			$this->a_fieldValues[$s_name]->fromFlat($a_grouped[$s_name] ?? null);
 		}
+	}
+	
+	public function toStructured() {
+		$a_data = [];
+		
+		$a_fields = $this->Form->getValueFields();
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getConfig()['name'];
+			$a_data[$s_name] = $this->a_fieldValues[$s_name]->toStructured();
+		}
+		
+		return $a_data;
 	}
 	
 	public function save() {

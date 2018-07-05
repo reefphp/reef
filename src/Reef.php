@@ -116,6 +116,10 @@ class Reef {
 		throw new \Exception('Invalid storage.');
 	}
 	
+	public function getFormIds() {
+		return $this->FormStorage->list();
+	}
+	
 	public function getForm(int $i_formId) : Form {
 		$Form = $this->newForm();
 		

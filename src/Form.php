@@ -40,6 +40,16 @@ class Form {
 		return $this->a_fields;
 	}
 	
+	public function getValueFields() {
+		$a_fields = $this->a_fields;
+		foreach($a_fields as $i => $Field) {
+			if($Field->getComponent()->getDefinition()['category'] == 'static') {
+				unset($a_fields[$i]);
+			}
+		}
+		return $a_fields;
+	}
+	
 	public function getReef() {
 		return $this->Reef;
 	}
@@ -81,23 +91,35 @@ class Form {
 	}
 	
 	public function importDeclaration(array $a_declaration) {
-		$Mapper = $this->Reef->getComponentMapper();
-		
 		$this->a_formConfig = $a_declaration;
 		unset($this->a_formConfig['fields']);
-		unset($this->a_formConfig['submissions']);
 		
 		$this->SubmissionStorage = $this->Reef->getStorage($a_declaration['submissions']);
 		
 		$this->a_formConfig['layout']['name'] = $this->a_formConfig['layout']['name'] ?? 'bootstrap4';
 		
-		foreach($a_declaration['fields'] as $s_id => $a_config) {
+		$this->setFields($a_declaration['fields']??[]);
+	}
+	
+	public function setFields(array $a_fields) {
+		$Mapper = $this->Reef->getComponentMapper();
+		
+		$this->a_fields = [];
+		foreach($a_fields as $s_id => $a_config) {
 			$this->a_fields[$s_id] = $Mapper->getField($a_config, $this);
 		}
 	}
 	
-	public function generateDeclaration() : string {
+	public function generateDeclaration() : array {
+		$a_declaration = $this->a_formConfig;
 		
+		$a_declaration['fields'] = [];
+		
+		foreach($this->a_fields as $s_id => $Field) {
+			$a_declaration['fields'][$s_id] = $Field->getConfig();
+		}
+		
+		return $a_declaration;
 	}
 	
 	public function save() {
@@ -144,6 +166,7 @@ class Form {
 		}
 		
 		$a_helpers = $this->a_formConfig;
+		unset($a_helpers['submissions']);
 		$a_helpers['locale'] = $this->getLocale($a_options['locale']??null);
 		unset($a_helpers['locales']);
 		
@@ -172,7 +195,8 @@ class Form {
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
 			$Template = $Mustache->loadTemplate($s_viewfile);
-			$a_vars = $Field->view_form($Submission->getFieldValue($Field->getConfig()['name']), array_subset($a_options, ['locale']));
+			$Value = ($Field->getComponent()->getDefinition()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getConfig()['name']);
+			$a_vars = $Field->view_form($Value, array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([
 				'field' => $a_vars,
