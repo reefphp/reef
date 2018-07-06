@@ -9,6 +9,15 @@ class SingleCheckboxField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function getFlatStructure() : array {
+		return [[
+			'type' => Field::TYPE_BOOLEAN,
+		]];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function newValue() : SingleCheckboxValue {
 		return new SingleCheckboxValue($this);
 	}

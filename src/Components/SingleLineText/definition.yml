@@ -23,3 +23,14 @@ declaration:
                 title: 'Default value'
             nl_NL:
                 title: 'Standaardwaarde'
+      - component: reef:text_number
+        name: 'max_length'
+        required: true
+        default: 1000
+        min: 0
+        step: 1
+        locales:
+            en_US:
+                title: 'Max. input length'
+            nl_NL:
+                title: 'Max. aantal tekens'

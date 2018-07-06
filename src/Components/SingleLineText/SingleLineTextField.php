@@ -9,6 +9,16 @@ class SingleLineTextField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function getFlatStructure() : array {
+		return [[
+			'type' => Field::TYPE_TEXT,
+			'limit' => $this->a_config['max_length'] ?? 1000,
+		]];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function newValue() {
 		return new SingleLineTextValue($this);
 	}

@@ -18,3 +18,13 @@ function array_subset(array $a_haystack, array $a_needles) {
 function unique_id() {
 	return bin2hex(random_bytes(16));
 }
+
+/**
+ * Return the first key of an array without resetting its pointer
+ * @param array The array
+ * @return mixed The first key
+ */
+function array_first_key(array $a_array) {
+	reset($a_array);
+	return key($a_array);
+}

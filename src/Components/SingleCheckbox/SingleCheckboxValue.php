@@ -48,7 +48,7 @@ class SingleCheckboxValue extends FieldValue {
 	 */
 	public function toFlat() : array {
 		return [
-			'value' => $this->b_value,
+			$this->b_value,
 		];
 	}
 	
@@ -56,7 +56,7 @@ class SingleCheckboxValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->b_value = (bool)($a_flat['value']??$this->Field->getConfig()['default']??false);
+		$this->b_value = (bool)($a_flat[0]??$this->Field->getConfig()['default']??false);
 		$this->a_errors = null;
 	}
 	

@@ -44,7 +44,7 @@ class SingleLineTextValue extends FieldValue {
 	 */
 	public function toFlat() : array {
 		return [
-			'value' => $this->s_value,
+			$this->s_value,
 		];
 	}
 	
@@ -52,7 +52,7 @@ class SingleLineTextValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->s_value = $a_flat['value']??$this->Field->getConfig()['default']??'';
+		$this->s_value = $a_flat[0]??$this->Field->getConfig()['default']??'';
 		$this->a_errors = null;
 	}
 	

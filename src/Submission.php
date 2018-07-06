@@ -84,12 +84,18 @@ class Submission {
 		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getConfig()['name'];
-			$a_flatField = $this->a_fieldValues[$s_name]->toFlat();
+			$a_flatStructure = $Field->getFlatStructure();
 			
+			$a_flatField = $this->a_fieldValues[$s_name]->toFlat();
 			$a_prefixedFlatField = [];
 			
-			foreach($a_flatField as $s_subfieldName => $m_value) {
-				$a_prefixedFlatField[$s_name.'__'.$s_subfieldName] = $m_value;
+			if(count($a_flatStructure) == 1 && \Reef\array_first_key($a_flatStructure) === 0) {
+				$a_prefixedFlatField[$s_name] = reset($a_flatField);
+			}
+			else {
+				foreach($a_flatStructure as $s_dataFieldName => $a_dataFieldStructure) {
+					$a_prefixedFlatField[$s_name.'__'.$s_dataFieldName] = $a_flatField[$s_dataFieldName] ?? null;
+				}
 			}
 			
 			$a_flat = array_merge($a_flat, $a_prefixedFlatField);
@@ -99,19 +105,26 @@ class Submission {
 	}
 	
 	public function fromFlat($a_flat) {
-		$a_grouped = [];
-		
-		foreach($a_flat as $s_key => $m_value) {
-			$i_pos = strrpos($s_key, '__');
-			$a_grouped[substr($s_key, 0, $i_pos)][substr($s_key, $i_pos+2)] = $m_value;
-		}
 		
 		$a_fields = $this->Form->getValueFields();
-		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getConfig()['name'];
+			$a_flatStructure = $Field->getFlatStructure();
+			
+			if(count($a_flatStructure) == 1 && \Reef\array_first_key($a_flatStructure) === 0) {
+				$a_flatField = [
+					$a_flat[$s_name]
+				];
+			}
+			else {
+				$a_flatField = [];
+				foreach($a_flatStructure as $s_dataFieldName => $a_dataFieldStructure) {
+					$a_flatField[$s_dataFieldName] = $a_flat[$s_name.'__'.$s_dataFieldName] ?? null;
+				}
+			}
+			
 			$this->a_fieldValues[$s_name] = $Field->newValue();
-			$this->a_fieldValues[$s_name]->fromFlat($a_grouped[$s_name] ?? null);
+			$this->a_fieldValues[$s_name]->fromFlat($a_flatField);
 		}
 	}
 	
