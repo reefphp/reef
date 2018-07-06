@@ -20,13 +20,16 @@ class TextNumberValue extends SingleLineTextValue {
 			$f_value = (float)$this->s_value;
 			$a_config = $this->Field->getConfig();
 			
-			if(isset($a_config['min']) && $f_value < $a_config['min']) {
+			$b_hasMin = isset($a_config['min']) && strlen($a_config['min']) > 0;
+			$b_hasMax = isset($a_config['max']) && strlen($a_config['max']) > 0;
+			
+			if($b_hasMin && $f_value < $a_config['min']) {
 				$b_valid = false;
-				$this->a_errors[] = $this->Field->trans(isset($a_config['max']) ? 'error_number_min_max' : 'error_number_min');
+				$this->a_errors[] = $this->Field->trans($b_hasMax ? 'error_number_min_max' : 'error_number_min');
 			}
-			else if(isset($a_config['max']) && $f_value > $a_config['max']) {
+			else if($b_hasMax && $f_value > $a_config['max']) {
 				$b_valid = false;
-				$this->a_errors[] = $this->Field->trans(isset($a_config['min']) ? 'error_number_min_max' : 'error_number_max');
+				$this->a_errors[] = $this->Field->trans($b_hasMin ? 'error_number_min_max' : 'error_number_max');
 			}
 		}
 		

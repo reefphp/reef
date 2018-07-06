@@ -27,8 +27,8 @@ class TextNumberField extends SingleLineTextField {
 	public function view_form($Value, $a_options = []) : array {
 		$a_vars = parent::view_form($Value, $a_options);
 		$a_vars['value'] = $a_vars['value'];
-		$a_vars['hasMin'] = isset($this->a_config['min']);
-		$a_vars['hasMax'] = isset($this->a_config['max']);
+		$a_vars['hasMin'] = isset($this->a_config['min']) && strlen($this->a_config['min']) > 0;
+		$a_vars['hasMax'] = isset($this->a_config['max']) && strlen($this->a_config['max']) > 0;
 		return $a_vars;
 	}
 	
