@@ -13,16 +13,9 @@ else if(isset($_GET['form_id']) && $_GET['form_id'] > 0) {
 	$Form = $Reef->getForm($_GET['form_id']);
 }
 else {
-	if(!is_dir('./storage/submissions/')) {
-		mkdir('./storage/submissions/', 0755, true);
-	}
-	
 	$Form = $Reef->newForm();
 	$Form->importDeclaration([
-		'submissions' => [
-			'type' => 'JSON',
-			'path' => './storage/submissions/',
-		],
+		'storage_name' => 'form_'.$Form->getReef()->getFormStorage()->next(),
 		'main_var' => 'form_data',
 		'layout' => [
 			'name' => 'bootstrap4',
@@ -43,8 +36,8 @@ $Builder->setSettings([
 	'submit_action' => 'builder.php',
 ]);
 
-if(isset($_POST['form_fields'])) {
-	$a_return = $Builder->applyBuilderData($Form, $_POST['form_fields']);
+if(isset($_POST['form_data'])) {
+	$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
 	$Form->save();
 	
 	$a_return['redirect'] = 'index.php';

@@ -3,6 +3,8 @@
 namespace Reef;
 
 use \Reef\Trait_Locale;
+use \Reef\Storage\DataStore;
+use \Reef\Storage\StorageFactory;
 use \Reef\Storage\Storage;
 use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Yaml\Yaml;
@@ -14,10 +16,10 @@ class Reef {
 	use Trait_Locale;
 	
 	/**
-	 * Place where the forms are stored
-	 * @type Storage
+	 * Place where the forms and submissions are stored
+	 * @type DataStore
 	 */
-	private $FormStorage;
+	private $DataStore;
 	
 	/**
 	 * Mapping from component name to component class path
@@ -46,8 +48,8 @@ class Reef {
 	/**
 	 * Constructor
 	 */
-	public function __construct(Storage $FormStorage, $a_options = []) {
-		$this->FormStorage = $FormStorage;
+	public function __construct(StorageFactory $StorageFactory, $a_options = []) {
+		$this->DataStore = new DataStore($StorageFactory);
 		$this->ComponentMapper = new ComponentMapper($this);
 		
 		$this->a_options = [];
@@ -95,29 +97,19 @@ class Reef {
 	}
 	
 	public function getFormStorage() : Storage {
-		return $this->FormStorage;
+		return $this->DataStore->getFormStorage();
+	}
+	
+	public function getFormIds() {
+		return $this->getFormStorage()->list();
+	}
+	
+	public function getSubmissionStorage($Form) {
+		return $this->DataStore->getSubmissionStorage($Form);
 	}
 	
 	public function getBuilder() : Builder {
 		return new Builder($this);
-	}
-	
-	public function getStorage($a_storageDeclaration) {
-		switch(strtolower($a_storageDeclaration['type']??'')) {
-			case 'json':
-				return new \Reef\Storage\JSONStorage($a_storageDeclaration['path']);
-			break;
-			
-			case 'none':
-				return new \Reef\Storage\NoStorage();
-			break;
-		}
-		
-		throw new \Exception('Invalid storage.');
-	}
-	
-	public function getFormIds() {
-		return $this->FormStorage->list();
 	}
 	
 	public function getForm(int $i_formId) : Form {

@@ -1,7 +1,5 @@
 locale: {}
-submissions:
-    type: JSON
-    path: ./storage/
+storage_name: simple_form
 main_var: form_data
 layout:
     name: 'bootstrap4'

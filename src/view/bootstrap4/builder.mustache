@@ -343,19 +343,25 @@ var ReefBuilder = (function() {
 			}
 		}
 		
-		// All is valid, gather data
-		var data = [];
+		// All is valid, gather fields
+		var fields = [];
 		
 		for(i in this.fields) {
-			data.push(this.fields[i].getDefinition());
+			fields.push(this.fields[i].getDefinition());
 		}
+		
+		// Gather all data
+		var form_data = {
+			'form_config' : this.configForm.getData(),
+			'fields' : fields
+		};
 		
 		// Save form
 		$.ajax({
 			url: $('.rf-toolbar-submit').data('action'),
 			method: 'POST',
 			data: {
-				form_fields : data
+				form_data : form_data
 			},
 			dataType: 'json',
 			success: function(response) {

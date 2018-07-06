@@ -104,9 +104,21 @@ class Builder {
 		$b_valid = true;
 		$a_errors = [];
 		
+		// Validate form config
+		$FormConfigForm = $this->generateFormConfigForm($Form);
+		$FormConfigSubmission = $FormConfigForm->newSubmission();
+		
+		$FormConfigSubmission->fromUserInput($a_data['form_config']);
+		
+		$b_valid = $FormConfigSubmission->validate() && $b_valid;
+		if(!$b_valid) {
+			$a_errors[-1] = $FormConfigSubmission->getErrors();
+		}
+		
+		// Validate all fields
 		$a_submissions = [];
 		
-		foreach($a_data as $i_pos => $a_field) {
+		foreach($a_data['fields'] as $i_pos => $a_field) {
 			$Component = $ComponentMapper->getComponent($a_field['component']);
 			
 			// Validate config
@@ -160,6 +172,7 @@ class Builder {
 			$a_fields[] = $a_fieldDecl;
 		}
 		
+		$Form->mergeConfig($FormConfigSubmission->toStructured());
 		$Form->setFields($a_fields);
 		
 		return [
@@ -183,10 +196,10 @@ class Builder {
 			'fields' => [
 				[
 					'component' => 'reef:single_line_text',
-					'name' => 'form_name',
+					'name' => 'storage_name',
 					'required' => true,
 					'locale' => [
-						'title' => 'Form file name',
+						'title' => 'Form storage name',
 					],
 					'default' => 'form_'.$Form->getReef()->getFormStorage()->next(),
 				]

@@ -4,11 +4,8 @@ ini_set('display_errors', 'on'); error_reporting(E_ALL);
 
 require('../../vendor/autoload.php');
 
-if(!is_dir('./storage/forms/')) {
-	mkdir('./storage/forms/', 0755, true);
-}
 $Reef = new Reef\Reef(
-	new Reef\Storage\JSONStorage('./storage/forms/'),
+	new Reef\Storage\JSONStorageFactory('./storage/'),
 	[
 		'cache_dir' => './cache/',
 	]

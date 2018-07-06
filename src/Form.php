@@ -36,6 +36,10 @@ class Form {
 		return $this->a_formConfig;
 	}
 	
+	public function getStorageName() {
+		return $this->a_formConfig['storage_name']??null;
+	}
+	
 	public function getFields() {
 		return $this->a_fields;
 	}
@@ -55,6 +59,14 @@ class Form {
 	}
 	
 	public function getSubmissionStorage() {
+		if(empty($this->a_formConfig['storage_name']??null)) {
+			return null;
+		}
+		
+		if(empty($this->SubmissionStorage)) {
+			$this->SubmissionStorage = $this->Reef->getSubmissionStorage($this);
+		}
+		
 		return $this->SubmissionStorage;
 	}
 	
@@ -94,11 +106,13 @@ class Form {
 		$this->a_formConfig = $a_declaration;
 		unset($this->a_formConfig['fields']);
 		
-		$this->SubmissionStorage = $this->Reef->getStorage($a_declaration['submissions']);
-		
 		$this->a_formConfig['layout']['name'] = $this->a_formConfig['layout']['name'] ?? 'bootstrap4';
 		
 		$this->setFields($a_declaration['fields']??[]);
+	}
+	
+	public function mergeConfig(array $a_partialDeclaration) {
+		$this->a_formConfig = array_merge($this->a_formConfig, $a_partialDeclaration);
 	}
 	
 	public function setFields(array $a_fields) {
@@ -146,7 +160,7 @@ class Form {
 	}
 	
 	public function getSubmissionIds() {
-		return $this->SubmissionStorage->list();
+		return $this->getSubmissionStorage()->list();
 	}
 	
 	public function getSubmission(int $i_submissionId) : Submission {
@@ -166,7 +180,7 @@ class Form {
 		}
 		
 		$a_helpers = $this->a_formConfig;
-		unset($a_helpers['submissions']);
+		unset($a_helpers['storage_name']);
 		$a_helpers['locale'] = $this->getLocale($a_options['locale']??null);
 		unset($a_helpers['locales']);
 		
