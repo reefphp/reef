@@ -16,7 +16,6 @@ else {
 	$Form = $Reef->newForm();
 	$Form->importDeclaration([
 		'storage_name' => 'form_'.$Form->getReef()->getFormStorage()->next(),
-		'main_var' => 'form_data',
 		'layout' => [
 			'name' => 'bootstrap4',
 			'col_left' => 'col-12 col-md-3',

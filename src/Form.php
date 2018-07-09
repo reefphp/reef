@@ -186,6 +186,7 @@ class Form {
 		
 		$a_helpers['CSSPRFX'] = $this->Reef->getOption('css_prefix');
 		$a_helpers['form_idpfx'] = $this->s_idPfx;
+		$a_helpers['main_var'] = $a_options['main_var'] ?? 'reef_data';
 		
 		$Mustache = new \Mustache_Engine([
 			'helpers' => $a_helpers,
@@ -225,7 +226,10 @@ class Form {
 		$Template = $Mustache->loadTemplate('view/'.$this->a_formConfig['layout']['name'].'/form.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,
-			'config_base64' => base64_encode(json_encode(\Reef\array_subset($this->a_formConfig, ['main_var', 'layout']))),
+			'config_base64' => base64_encode(json_encode(array_merge(
+				\Reef\array_subset($this->a_formConfig, ['layout']),
+				\Reef\array_subset($a_helpers, ['main_var'])
+			))),
 		]);
 		
 		return $s_html;

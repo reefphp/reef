@@ -45,12 +45,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 if($b_load) {
 	// If $b_load is true, we should display an existing submission
 	$i_submissionId = $Submission->getSubmissionId();
-	$s_form = $Form->generateFormHtml($Submission);
+	$s_form = $Form->generateFormHtml($Submission, ['main_var' => 'form_data']);
 }
 else {
 	// Else, we display the form for adding a new submission
 	$i_submissionId = -1;
-	$s_form = $Form->generateFormHtml();
+	$s_form = $Form->generateFormHtml(null, ['main_var' => 'form_data']);
 }
 
 $s_CSS = $Form->getFormAssets()->getCSSHTML(function($s_assetsHash) {

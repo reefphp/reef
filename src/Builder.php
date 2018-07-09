@@ -49,7 +49,7 @@ class Builder {
 			
 			$ComponentForm = $this->generateConfigForm($Component);
 			$ComponentForm->setIdPfx('__form_idpfx__'.$ComponentForm->getIdPfx());
-			$s_form = $ComponentForm->generateFormHtml();
+			$s_form = $ComponentForm->generateFormHtml(null, ['main_var' => 'form_data[config]']);
 			
 			$a_localeForms = [];
 			foreach($a_locales as $s_locale) {
@@ -58,7 +58,7 @@ class Builder {
 				
 				$a_localeForms[] = [
 					'locale' => $s_locale,
-					'form' => $LocaleForm->generateFormHtml(),
+					'form' => $LocaleForm->generateFormHtml(null, ['main_var' => 'form_data[locale]['.$s_locale.']']),
 				];
 			}
 			
@@ -89,9 +89,9 @@ class Builder {
 		$s_html = $Template->render([
 			'categories' => $a_categories,
 			'formConfig' => base64_encode(json_encode(array_subset($Form->getFormConfig(), ['locale', 'layout']))),
-			'formHtml' => $Form->generateFormHtml(),
+			'formHtml' => $Form->generateFormHtml(null, ['main_var' => 'form_data']),
 			'settings' => $this->a_settings,
-			'formConfigHtml' => $this->generateFormConfigForm($Form)->generateFormHtml(),
+			'formConfigHtml' => $this->generateFormConfigForm($Form)->generateFormHtml(null, ['main_var' => 'form_config']),
 		]);
 		
 		return $s_html;
@@ -187,7 +187,6 @@ class Builder {
 			'submissions' => [
 				'type' => 'none',
 			],
-			'main_var' => 'form_config',
 			'layout' => [
 				'name' => 'bootstrap4',
 				'col_left' => 'col-12',
@@ -220,7 +219,6 @@ class Builder {
 			'submissions' => [
 				'type' => 'none',
 			],
-			'main_var' => 'form_data[config]',
 			'layout' => [
 				'name' => 'bootstrap4',
 				'col_left' => 'col-12',
@@ -277,7 +275,6 @@ class Builder {
 			'submissions' => [
 				'type' => 'none',
 			],
-			'main_var' => 'form_data[locale]['.$s_locale.']',
 			'layout' => [
 				'name' => 'bootstrap4',
 				'col_left' => 'col-12',
