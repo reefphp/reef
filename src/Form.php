@@ -106,8 +106,6 @@ class Form {
 		$this->a_formConfig = $a_declaration;
 		unset($this->a_formConfig['fields']);
 		
-		$this->a_formConfig['layout']['name'] = $this->a_formConfig['layout']['name'] ?? 'bootstrap4';
-		
 		$this->setFields($a_declaration['fields']??[]);
 	}
 	
@@ -116,11 +114,11 @@ class Form {
 	}
 	
 	public function setFields(array $a_fields) {
-		$Mapper = $this->Reef->getComponentMapper();
+		$Setup = $this->Reef->getSetup();
 		
 		$this->a_fields = [];
 		foreach($a_fields as $s_id => $a_config) {
-			$this->a_fields[$s_id] = $Mapper->getField($a_config, $this);
+			$this->a_fields[$s_id] = $Setup->getField($a_config, $this);
 		}
 	}
 	
@@ -188,13 +186,17 @@ class Form {
 		$a_helpers['form_idpfx'] = $this->s_idPfx;
 		$a_helpers['main_var'] = $a_options['main_var'] ?? 'reef_data';
 		
+		$Layout = $this->Reef->getSetup()->getLayout();
+		$a_helpers['layout_name'] = $Layout->getName();
+		$a_helpers['layout'] = $Layout->getMergedConfig($a_helpers['layout'][$Layout->getName()] ?? []);
+		
 		$Mustache = new \Mustache_Engine([
 			'helpers' => $a_helpers,
 		]);
 		
 		foreach($this->a_fields as $Field) {
 			$s_templateDir = null;
-			$s_viewfile = 'view/'.$this->a_formConfig['layout']['name'].'/form.mustache';
+			$s_viewfile = 'view/'.$Layout->getName().'/form.mustache';
 			
 			$a_classes = $Field->getComponent()->getInheritanceList();
 			foreach($a_classes as $s_class) {
@@ -223,13 +225,10 @@ class Form {
 		}
 		
 		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
-		$Template = $Mustache->loadTemplate('view/'.$this->a_formConfig['layout']['name'].'/form.mustache');
+		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/form.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,
-			'config_base64' => base64_encode(json_encode(array_merge(
-				\Reef\array_subset($this->a_formConfig, ['layout']),
-				\Reef\array_subset($a_helpers, ['main_var'])
-			))),
+			'config_base64' => base64_encode(json_encode(\Reef\array_subset($a_helpers, ['main_var', 'layout_name', 'layout']))),
 		]);
 		
 		return $s_html;

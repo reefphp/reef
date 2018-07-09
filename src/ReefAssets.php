@@ -18,7 +18,7 @@ class ReefAssets extends Assets {
 	}
 	
 	protected function getComponents() : array {
-		return array_values($this->Reef->getComponentMapper()->getMapping());
+		return array_values($this->Reef->getSetup()->getComponentMapping());
 	}
 	
 }

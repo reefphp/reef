@@ -16,4 +16,13 @@ class HeadingComponent extends Component {
 		return __DIR__.'/';
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function supportedLayouts() : array {
+		return [
+			'bootstrap4',
+		];
+	}
+	
 }

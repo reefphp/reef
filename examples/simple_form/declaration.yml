@@ -1,9 +1,5 @@
 locale: {}
 storage_name: simple_form
-layout:
-    name: 'bootstrap4'
-    col_left: col-12 col-md-3
-    col_right: col-12 col-md-9
 fields:
   - component: reef:heading
     name: 'asdf'

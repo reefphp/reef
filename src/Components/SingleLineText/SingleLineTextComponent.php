@@ -40,4 +40,13 @@ class SingleLineTextComponent extends Component {
 		];
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function supportedLayouts() : array {
+		return [
+			'bootstrap4',
+		];
+	}
+	
 }

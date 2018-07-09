@@ -16,16 +16,16 @@ class Reef {
 	use Trait_Locale;
 	
 	/**
+	 * All setup that cannot change after Reef is initialized
+	 * @type ReefSetup
+	 */
+	private $ReefSetup;
+	
+	/**
 	 * Place where the forms and submissions are stored
 	 * @type DataStore
 	 */
 	private $DataStore;
-	
-	/**
-	 * Mapping from component name to component class path
-	 * @type ComponentMapper
-	 */
-	private $ComponentMapper;
 	
 	/**
 	 * Options
@@ -48,9 +48,11 @@ class Reef {
 	/**
 	 * Constructor
 	 */
-	public function __construct(StorageFactory $StorageFactory, $a_options = []) {
-		$this->DataStore = new DataStore($StorageFactory);
-		$this->ComponentMapper = new ComponentMapper($this);
+	public function __construct(ReefSetup $ReefSetup, $a_options = []) {
+		$this->ReefSetup = $ReefSetup;
+		$this->ReefSetup->checkSetup($this);
+		
+		$this->DataStore = new DataStore($this->ReefSetup->getStorageFactory());
 		
 		$this->a_options = [];
 		if(isset($a_options['cache_dir'])) {
@@ -125,8 +127,8 @@ class Reef {
 		
 	}
 	
-	public function getComponentMapper() : ComponentMapper {
-		return $this->ComponentMapper;
+	public function getSetup() : ReefSetup {
+		return $this->ReefSetup;
 	}
 	
 	public function getAsset($s_type, $s_assetsHash) {

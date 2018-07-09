@@ -39,4 +39,13 @@ class SingleCheckboxComponent extends Component {
 			]
 		];
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function supportedLayouts() : array {
+		return [
+			'bootstrap4',
+		];
+	}
 }

@@ -27,4 +27,13 @@ class TextNumberComponent extends SingleLineTextComponent {
 			]
 		]);
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function supportedLayouts() : array {
+		return [
+			'bootstrap4',
+		];
+	}
 }

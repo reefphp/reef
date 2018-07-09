@@ -26,7 +26,7 @@ abstract class Component {
 	 * @return Component The parent component
 	 */
 	public function getParent() {
-		return (static::PARENT_NAME == null) ? null : $this->Reef->getComponentMapper()->getComponent(static::PARENT_NAME);
+		return (static::PARENT_NAME == null) ? null : $this->Reef->getSetup()->getComponent(static::PARENT_NAME);
 	}
 	
 	/**
@@ -47,6 +47,34 @@ abstract class Component {
 	abstract public static function getDir() : string;
 	
 	/**
+	 * Returns an array of required components
+	 * @return array
+	 */
+	public function requiredComponents() : array {
+		$a_components = [];
+		
+		if(static::PARENT_NAME !== null) {
+			$a_components = array_flip($this->getParent()->requiredComponents());
+			$a_components[static::PARENT_NAME] = 1;
+		}
+		
+		$a_definition = $this->getDefinition();
+		foreach($a_definition['declaration']['fields']??[] as $a_field) {
+			$a_components[$a_field['component']] = 1;
+		}
+		
+		unset($a_components[static::COMPONENT_NAME]);
+		
+		return array_keys($a_components);
+	}
+	
+	/**
+	 * Returns an array of supported layouts
+	 * @return array
+	 */
+	abstract public function supportedLayouts() : array;
+	
+	/**
 	 * Return a list of class names, of this class and all its parents, except this abstract Component class
 	 * @return string The directory
 	 */
@@ -59,10 +87,14 @@ abstract class Component {
 	
 	/**
 	 * Returns the raw HTML template of this component
-	 * @param string $s_layout The layout to use
+	 * @param ?string $s_layout The layout to use. Optional, defaults to the layout set in the Reef setup
 	 * @return string The template
 	 */
-	public function getTemplate($s_layout) {
+	public function getTemplate($s_layout = null) {
+		if(empty($s_layout)) {
+			$s_layout = $this->Reef->getSetup()->getLayout()->getName();
+		}
+		
 		$s_templateDir = null;
 		$s_viewfile = 'view/'.$s_layout.'/form.mustache';
 		

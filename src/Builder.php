@@ -32,7 +32,8 @@ class Builder {
 	}
 	
 	public function generateBuilderHtml(Form $Form) {
-		$a_componentMapping = $this->Reef->getComponentMapper()->getMapping();
+		$Layout = $this->Reef->getSetup()->getLayout();
+		$a_componentMapping = $this->Reef->getSetup()->getComponentMapping();
 		$a_categories = [];
 		
 		$a_locales = ['en_US'];
@@ -64,7 +65,7 @@ class Builder {
 			
 			$a_categories[$a_definition['category']]['components'][] = [
 				'definition' => base64_encode(json_encode($a_definition)),
-				'html' => base64_encode($Component->getTemplate($Form->getFormConfig()['layout']['name'])),
+				'html' => base64_encode($Component->getTemplate($Layout->getName())),
 				'image' => $a_definition['image'],
 				'name' => $a_definition['name'],
 				'type' => $a_definition['vendor'].':'.$a_definition['name'],
@@ -84,11 +85,17 @@ class Builder {
 		]);
 		
 		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
-		$Template = $Mustache->loadTemplate('view/'.$Form->getFormConfig()['layout']['name'].'/builder.mustache');
+		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/builder.mustache');
 		
 		$s_html = $Template->render([
 			'categories' => $a_categories,
-			'formConfig' => base64_encode(json_encode(array_subset($Form->getFormConfig(), ['locale', 'layout']))),
+			'formConfig' => base64_encode(json_encode(array_merge(
+				array_subset($Form->getFormConfig(), ['locale']),
+				[
+					'layout_name' => $Layout->getName(),
+					'layout' => $Layout->getConfig(),
+				]
+			))),
 			'formHtml' => $Form->generateFormHtml(null, ['main_var' => 'form_data']),
 			'settings' => $this->a_settings,
 			'formConfigHtml' => $this->generateFormConfigForm($Form)->generateFormHtml(null, ['main_var' => 'form_config']),
@@ -99,7 +106,7 @@ class Builder {
 	
 	
 	public function applyBuilderData(Form $Form, array $a_data) {
-		$ComponentMapper = $this->Reef->getComponentMapper();
+		$Setup = $this->Reef->getSetup();
 		
 		$b_valid = true;
 		$a_errors = [];
@@ -119,7 +126,7 @@ class Builder {
 		$a_submissions = [];
 		
 		foreach($a_data['fields'] as $i_pos => $a_field) {
-			$Component = $ComponentMapper->getComponent($a_field['component']);
+			$Component = $Setup->getComponent($a_field['component']);
 			
 			// Validate config
 			$ConfigForm = $this->generateConfigForm($Component);
@@ -188,9 +195,10 @@ class Builder {
 				'type' => 'none',
 			],
 			'layout' => [
-				'name' => 'bootstrap4',
-				'col_left' => 'col-12',
-				'col_right' => 'col-12',
+				'bootstrap4' => [
+					'col_left' => 'col-12',
+					'col_right' => 'col-12',
+				],
 			],
 			'fields' => [
 				[
@@ -220,9 +228,10 @@ class Builder {
 				'type' => 'none',
 			],
 			'layout' => [
-				'name' => 'bootstrap4',
-				'col_left' => 'col-12',
-				'col_right' => 'col-12',
+				'bootstrap4' => [
+					'col_left' => 'col-12',
+					'col_right' => 'col-12',
+				],
 			],
 			'fields' => $a_definition['declaration']['fields']??[],
 		];
@@ -276,9 +285,10 @@ class Builder {
 				'type' => 'none',
 			],
 			'layout' => [
-				'name' => 'bootstrap4',
-				'col_left' => 'col-12',
-				'col_right' => 'col-12',
+				'bootstrap4' => [
+					'col_left' => 'col-12',
+					'col_right' => 'col-12',
+				],
 			],
 			'fields' => $a_fields,
 		];
