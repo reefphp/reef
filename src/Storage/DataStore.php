@@ -41,4 +41,28 @@ class DataStore {
 		return $this->a_submissionStorages[$s_storageName];
 	}
 	
+	public function deleteSubmissionStorage(\Reef\Form $Form) {
+		$this->getSubmissionStorage($Form)->deleteStorage();
+		unset($this->a_submissionStorages[$Form->getStorageName()]);
+	}
+	
+	public function deleteSubmissionStorageIfExists(\Reef\Form $Form) {
+		if($this->hasSubmissionStorage($Form->getStorageName())) {
+			$this->deleteSubmissionStorage($Form);
+		}
+	}
+	
+	public function changeSubmissionStorageName(\Reef\Form $Form, $s_newStorageName) {
+		if(!$this->hasSubmissionStorage($Form->getStorageName())) {
+			return;
+		}
+		
+		$this->StorageFactory->renameStorage(
+			$this->s_prefix.'form_'.$Form->getStorageName(),
+			$this->s_prefix.'form_'.$s_newStorageName
+		);
+		
+		unset($this->a_submissionStorages[$Form->getStorageName()]);
+	}
+	
 }

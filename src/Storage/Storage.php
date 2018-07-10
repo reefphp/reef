@@ -5,6 +5,12 @@ namespace Reef\Storage;
 interface Storage {
 	
 	/**
+	 * Delete the entire storage
+	 */
+	public function deleteStorage();
+	
+	
+	/**
 	 * Return a list of stored entry ids
 	 * @return array<int> The stored ids
 	 */

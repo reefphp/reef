@@ -26,6 +26,13 @@ class JSONStorage implements Storage {
 		$this->s_path = $s_path;
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function deleteStorage() {
+		return \Reef\rmTree($this->s_path);
+	}
+	
 	private function getIncFile() : string {
 		return $this->s_path . self::INC_FILE;
 	}
@@ -43,6 +50,7 @@ class JSONStorage implements Storage {
 				$a_ids[] = $a_matches[1];
 			}
 		}
+		natsort($a_ids);
 		return $a_ids;
 	}
 	
@@ -50,6 +58,13 @@ class JSONStorage implements Storage {
 	 * @inherit
 	 */
 	public function insert(array $a_data) : int {
+		return $this->insertAs(null, $a_data);
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function insertAs(?int $i_entryId, array $a_data) : int {
 		$s_incFilePath = $this->getIncFile();
 		
 		$fp = @fopen($s_incFilePath, 'r+');
@@ -63,29 +78,36 @@ class JSONStorage implements Storage {
 				throw new IOException('Could not acquire lock on "'.$s_incFilePath.'".');
 			}
 			
-			if(!fscanf($fp, '%D', $i_entryId)) {
+			if(!fscanf($fp, '%D', $i_nextEntryId)) {
 				throw new IOException('Could not read "'.$s_incFilePath.'".');
+			}
+			
+			if($i_entryId === null) {
+				$i_entryId = $i_nextEntryId;
 			}
 			
 			$s_entryFilePath = $this->s_path . $i_entryId.'.json';
 			if(file_exists($s_entryFilePath)) {
-				throw new IOException('Corrupt inner state: Entry "'.$i_entryId.'" already exists.');
+				throw new IOException('Entry "'.$i_entryId.'" already exists.');
 			}
 			
 			if(!file_put_contents($s_entryFilePath, json_encode($a_data))) {
 				throw new IOException('Could not write to "'.$s_entryFilePath.'".');
 			}
 			
-			if(!ftruncate($fp, 0) || !rewind($fp)) {
-				throw new IOException('Could not truncate "'.$s_incFilePath.'".');
-			}
-			
-			if(!fprintf($fp, "%d", $i_entryId+1)) {
-				throw new IOException('Could not write to "'.$s_incFilePath.'".');
-			}
-			
-			if(!fflush($fp) || !flock($fp, LOCK_UN)) {
-				throw new IOException('Could not flush or release lock on "'.$s_incFilePath.'".');
+			if((int)$i_nextEntryId <= $i_entryId) {
+				
+				if(!ftruncate($fp, 0) || !rewind($fp)) {
+					throw new IOException('Could not truncate "'.$s_incFilePath.'".');
+				}
+				
+				if(!fprintf($fp, "%d", $i_entryId+1)) {
+					throw new IOException('Could not write to "'.$s_incFilePath.'".');
+				}
+				
+				if(!fflush($fp) || !flock($fp, LOCK_UN)) {
+					throw new IOException('Could not flush or release lock on "'.$s_incFilePath.'".');
+				}
 			}
 		}
 		catch(IOException $e) {

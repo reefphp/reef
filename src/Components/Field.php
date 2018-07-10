@@ -76,6 +76,16 @@ abstract class Field {
 	abstract public function getFlatStructure() : array;
 	
 	/**
+	 * Determine whether a field update would require the value to be updated as well
+	 * @param Field $OldField The old field
+	 * @param ?bool $b_dataLoss (Out) Whether data loss may occur when updating the field, or null if it is unknown
+	 * @return boolean Whether the value has to be updated
+	 */
+	public function needsValueUpdate(Field $OldField, ?bool &$b_dataLoss = null) : bool {
+		return false;
+	}
+	
+	/**
 	 * Build template variables for the form builder
 	 * @return array The template variables
 	 */

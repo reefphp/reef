@@ -40,6 +40,11 @@ class Form {
 		return $this->a_formConfig['storage_name']??null;
 	}
 	
+	public function setStorageName($s_newStorageName) {
+		$this->Reef->getDataStore()->changeSubmissionStorageName($this, $s_newStorageName);
+		$this->a_formConfig['storage_name'] = $s_newStorageName;
+	}
+	
 	public function getFields() {
 		return $this->a_fields;
 	}
@@ -50,6 +55,14 @@ class Form {
 			if($Field->getComponent()->getDefinition()['category'] == 'static') {
 				unset($a_fields[$i]);
 			}
+		}
+		return $a_fields;
+	}
+	
+	public function getValueFieldsByName() {
+		$a_fields = [];
+		foreach($this->getValueFields() as $Field) {
+			$a_fields[$Field->getConfig()['name']] = $Field;
 		}
 		return $a_fields;
 	}
@@ -145,16 +158,26 @@ class Form {
 		}
 	}
 	
+	public function saveAs(int $i_formId) {
+		if($this->i_formId !== null) {
+			throw new \Exception("Already saved form");
+		}
+		
+		$a_declaration = $this->generateDeclaration();
+		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, $a_declaration);
+	}
+	
 	public function load(int $i_formId) {
 		$this->importDeclaration($this->Reef->getFormStorage()->get($i_formId));
 		$this->i_formId = $i_formId;
 	}
 	
 	public function delete() {
-		if($this->i_formId == null) {
-			throw new \Exception("Unsaved form.");
+		$this->Reef->getDataStore()->deleteSubmissionStorageIfExists($this);
+		
+		if($this->i_formId !== null) {
+			$this->Reef->getFormStorage()->delete($this->i_formId);
 		}
-		$this->Reef->getFormStorage()->delete($this->i_formId);
 	}
 	
 	public function getSubmissionIds() {

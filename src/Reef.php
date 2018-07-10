@@ -49,10 +49,6 @@ class Reef {
 	 * Constructor
 	 */
 	public function __construct(ReefSetup $ReefSetup, $a_options = []) {
-		$this->ReefSetup = $ReefSetup;
-		$this->ReefSetup->checkSetup($this);
-		
-		$this->DataStore = new DataStore($this->ReefSetup->getStorageFactory());
 		
 		$this->a_options = [];
 		if(isset($a_options['cache_dir'])) {
@@ -67,6 +63,11 @@ class Reef {
 		
 		$this->a_options['css_prefix'] = $a_options['css_prefix'] ?? 'rf-';
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
+		
+		$this->ReefSetup = $ReefSetup;
+		$this->ReefSetup->checkSetup($this);
+		
+		$this->DataStore = new DataStore($this->ReefSetup->getStorageFactory());
 	}
 	
 	public static function getDir() : string {
@@ -100,6 +101,10 @@ class Reef {
 	
 	public function getFormStorage() : Storage {
 		return $this->DataStore->getFormStorage();
+	}
+	
+	public function getDataStore() : DataStore {
+		return $this->DataStore;
 	}
 	
 	public function getFormIds() {

@@ -1,10 +1,12 @@
 <?php
 
-namespace Reef\Components;
+namespace Reef\Components\Hidden;
 
 use Reef\Components\FieldValue;
 
-class NoFieldValue extends FieldValue {
+class HiddenValue extends FieldValue {
+	
+	protected $s_value;
 	
 	/**
 	 * @inherit
@@ -17,44 +19,52 @@ class NoFieldValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromDefault() {
+		$this->s_value = '';
+		$this->a_errors = null;
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function fromUserInput($s_input) {
+		$this->s_value = $s_input;
+		$this->a_errors = null;
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function toFlat() : array {
-		return [];
+		return [
+		];
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
+		$this->a_errors = null;
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function toStructured() {
-		return null;
+		return $this->s_value;
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function toTemplateVar() {
-		return null;
+		return $this->s_value;
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function fromUpdate($OldValue) {
+		$this->s_value = $OldValue->s_value;
+		$this->a_errors = null;
 	}
 }

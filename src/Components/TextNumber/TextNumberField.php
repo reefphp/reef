@@ -67,6 +67,24 @@ class TextNumberField extends SingleLineTextField {
 		return $a_vars;
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function needsValueUpdate($OldField, &$b_dataLoss = null) : bool {
+		if(isset($this->a_config['max']) && (!isset($OldField->a_config['max']) || $OldField->a_config['max'] > $this->a_config['max'])) {
+			$b_dataLoss = true;
+			return true;
+		}
+		
+		if(isset($this->a_config['min']) && (!isset($OldField->a_config['min']) || $OldField->a_config['min'] < $this->a_config['min'])) {
+			$b_dataLoss = true;
+			return true;
+		}
+		
+		$b_dataLoss = false;
+		return false;
+	}
+	
 	protected function getLanguageReplacements() : array {
 		return \Reef\array_subset($this->a_config, ['min', 'max']);
 	}

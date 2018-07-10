@@ -59,4 +59,10 @@ abstract class FieldValue {
 	public function getErrors() : ?array {
 		return $this->a_errors;
 	}
+	
+	/**
+	 * Parse the value from a value object that uses the old field settings during an update
+	 * @param FieldValue $OldValue The old value to update from
+	 */
+	abstract public function fromUpdate(FieldValue $OldValue);
 }

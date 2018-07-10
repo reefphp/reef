@@ -23,6 +23,10 @@ class JSONStorageFactory implements StorageFactory {
 		return is_dir($this->getStoragePath($s_storageName));
 	}
 	
+	public function renameStorage(string $s_oldStorageName, string $s_newStorageName) {
+		return rename($this->getStoragePath($s_oldStorageName), $this->getStoragePath($s_newStorageName));
+	}
+	
 	private function getStoragePath($s_storageName) {
 		return rtrim($this->s_path, '/').'/'.$s_storageName.'/';
 	}

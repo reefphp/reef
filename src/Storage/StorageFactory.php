@@ -8,4 +8,6 @@ interface StorageFactory {
 	
 	public function hasStorage(string $s_storageName);
 	
+	public function renameStorage(string $s_oldStorageName, string $s_newStorageName);
+	
 }

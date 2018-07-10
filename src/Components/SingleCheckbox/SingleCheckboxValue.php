@@ -73,4 +73,12 @@ class SingleCheckboxValue extends FieldValue {
 	public function toTemplateVar() {
 		return $this->b_value;
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function fromUpdate($OldValue) {
+		$this->b_value = $OldValue->b_value;
+		$this->a_errors = null;
+	}
 }

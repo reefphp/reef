@@ -15,4 +15,8 @@ class NoStorageFactory implements StorageFactory {
 		return false;
 	}
 	
+	public function renameStorage(string $s_oldStorageName, string $s_newStorageName) {
+		return true;
+	}
+	
 }

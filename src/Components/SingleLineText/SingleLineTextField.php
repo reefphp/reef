@@ -39,4 +39,17 @@ class SingleLineTextField extends Field {
 		$a_vars['value'] = (string)$Value->toTemplateVar();
 		return $a_vars;
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function needsValueUpdate($OldField, &$b_dataLoss = null) : bool {
+		if(($OldField->a_config['max_length'] ?? 1000) > ($this->a_config['max_length'] ?? 1000)) {
+			$b_dataLoss = true;
+			return true;
+		}
+		
+		$b_dataLoss = false;
+		return false;
+	}
 }

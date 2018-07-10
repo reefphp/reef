@@ -120,7 +120,7 @@ abstract class Component {
 	public function getDefinition() : array {
 		return $this->Reef->cache('definition.component.'.static::COMPONENT_NAME, function() {
 			$a_definition = Yaml::parseFile(static::getDir().'definition.yml');
-			$a_definition['locale'] = array_merge($a_definition['valueLocale'], $a_definition['configLocale']);
+			$a_definition['locale'] = array_merge($a_definition['valueLocale']??[], $a_definition['configLocale']??[]);
 			
 			$ParentComponent = $this->getParent();
 			if(empty($ParentComponent)) {
@@ -129,8 +129,8 @@ abstract class Component {
 			
 			$a_parentDefinition = $ParentComponent->getDefinition();
 			
-			$a_definition['valueLocale'] = array_merge($a_parentDefinition['valueLocale'], $a_definition['valueLocale']);
-			$a_definition['configLocale'] = array_merge($a_parentDefinition['configLocale'], $a_definition['configLocale']);
+			$a_definition['valueLocale'] = array_merge($a_parentDefinition['valueLocale'], $a_definition['valueLocale']??[]);
+			$a_definition['configLocale'] = array_merge($a_parentDefinition['configLocale'], $a_definition['configLocale']??[]);
 			$a_definition['locale'] = array_merge($a_definition['valueLocale'], $a_definition['configLocale']);
 			$a_definition['declaration']['fields'] = array_merge($a_parentDefinition['declaration']['fields'], $a_definition['declaration']['fields']);
 			

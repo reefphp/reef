@@ -1,0 +1,15 @@
+vendor: reef
+name: hidden
+category: text
+image: text-freeform.svg
+valueLocale:
+configLocale:
+declaration:
+    fields:
+      - component: reef:single_line_text
+        name: 'default'
+        locales:
+            en_US:
+                title: 'Value'
+            nl_NL:
+                title: 'Waarde'

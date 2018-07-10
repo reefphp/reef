@@ -76,6 +76,42 @@ class Builder {
 		}
 		$a_categories = array_values($a_categories);
 		$a_categories[0]['open_default'] = true;
+		$a_fields = [];
+		foreach($Form->getFields() as $Field) {
+			$s_config = base64_encode(json_encode($Field->getConfig()));
+			
+			$ComponentForm = $this->generateConfigForm($Field->getComponent());
+			$ComponentSubmission = $ComponentForm->newSubmission();
+			$a_fieldConfig = $Field->getConfig();
+			if(isset($a_fieldConfig['name'])) {
+				$a_fieldConfig['old_name'] = $a_fieldConfig['name'];
+			}
+			$ComponentSubmission->fromUserInput($a_fieldConfig);
+			$s_form = $ComponentForm->generateFormHtml($ComponentSubmission, ['main_var' => 'form_data[config]']);
+			
+			$a_localeForms = [];
+			foreach($a_locales as $s_locale) {
+				$LocaleForm = $this->generateLocaleForm($Field->getComponent(), $s_locale);
+				$LocaleSubmission = $LocaleForm->newSubmission();
+				$LocaleSubmission->fromUserInput($Field->getConfig()['locales'][$s_locale] ?? $Field->getConfig()['locale'] ?? []);
+				
+				$a_localeForms[] = [
+					'locale' => $s_locale,
+					'form' => $LocaleForm->generateFormHtml($LocaleSubmission, ['main_var' => 'form_data[locale]['.$s_locale.']']),
+				];
+			}
+			
+			$a_fields[] = [
+				'config' => $s_config,
+				'type' => $Field->getComponent()::COMPONENT_NAME,
+				'componentForm' => $s_form,
+				'localeForms' => $a_localeForms,
+			];
+		}
+		
+		$EmptyForm = clone $Form;
+		$EmptyForm->setFields([]);
+		$s_formHtml = $EmptyForm->generateFormHtml();
 		
 		$a_helpers = [];
 		$a_helpers['CSSPRFX'] = $this->Reef->getOption('css_prefix');
@@ -96,9 +132,11 @@ class Builder {
 					'layout' => $Layout->getConfig(),
 				]
 			))),
-			'formHtml' => $Form->generateFormHtml(null, ['main_var' => 'form_data']),
+			'formHtml' => $s_formHtml,
 			'settings' => $this->a_settings,
+			'fields' => $a_fields,
 			'formConfigHtml' => $this->generateFormConfigForm($Form)->generateFormHtml(null, ['main_var' => 'form_config']),
+			'form_id' => $Form->getFormId(),
 		]);
 		
 		return $s_html;
@@ -164,7 +202,7 @@ class Builder {
 			];
 		}
 		
-		$a_fields = [];
+		$a_fields = $a_fieldRenames = [];
 		foreach($a_submissions as $i_pos => $a_fieldSubmissions) {
 			$Component = $a_fieldSubmissions['component'];
 			
@@ -172,15 +210,28 @@ class Builder {
 				'component' => $Component::COMPONENT_NAME,
 			];
 			
-			$a_fieldDecl = array_merge($a_fieldDecl, $a_fieldSubmissions['config']->toStructured());
+			$a_fieldConfig = $a_fieldSubmissions['config']->toStructured();
+			if(isset($a_fieldConfig['name']) && $a_fieldConfig['name'] != $a_fieldConfig['old_name'] && !empty($a_fieldConfig['old_name'])) {
+				$a_fieldRenames[$a_fieldConfig['old_name']] = $a_fieldConfig['name'];
+			}
+			unset($a_fieldConfig['old_name']);
+			
+			$a_fieldDecl = array_merge($a_fieldDecl, $a_fieldConfig);
 			
 			$a_fieldDecl['locale'] = array_merge($a_fieldDecl['locale']??[], $a_fieldSubmissions['locale']->toStructured());
 			
 			$a_fields[] = $a_fieldDecl;
 		}
 		
-		$Form->mergeConfig($FormConfigSubmission->toStructured());
-		$Form->setFields($a_fields);
+	//	$Form->mergeConfig($FormConfigSubmission->toStructured());
+	//	$Form->setFields($a_fields);
+		
+		$Form2 = clone $Form;
+		$Form2->mergeConfig($FormConfigSubmission->toStructured());
+		$Form2->setFields($a_fields);
+		
+		$Updater = new Updater();
+		$Form = $Updater->update($Form, $Form2, $a_fieldRenames);
 		
 		return [
 			'result' => true,
@@ -249,6 +300,11 @@ class Builder {
 						'title' => 'Veldnaam',
 					],
 				],
+			]);
+			
+			array_unshift($a_configDeclaration['fields'], [
+				'component' => 'reef:hidden',
+				'name' => 'old_name',
 			]);
 		}
 		

@@ -151,6 +151,15 @@ class Submission {
 		}
 	}
 	
+	public function saveAs(int $i_submissionId) {
+		if($this->i_submissionId !== null) {
+			throw new \Exception("Already saved submission");
+		}
+		
+		$a_submission = $this->toFlat();
+		$this->i_submissionId = $this->Form->getSubmissionStorage()->insertAs($i_submissionId, $a_submission);
+	}
+	
 	public function isNew() {
 		return ($this->i_submissionId === null);
 	}

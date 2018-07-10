@@ -6,8 +6,8 @@ require_once('./common.php');
 $Form = $Reef->newForm();
 
 // Find whether we are given an existing form id
-if(isset($_POST['form_id']) && $_POST['form_id'] > 0) {
-	$Form = $Reef->getForm($_POST['form_id']);
+if(isset($_POST['form_data']['form_id']) && $_POST['form_data']['form_id'] > 0) {
+	$Form = $Reef->getForm($_POST['form_data']['form_id']);
 }
 else if(isset($_GET['form_id']) && $_GET['form_id'] > 0) {
 	$Form = $Reef->getForm($_GET['form_id']);
