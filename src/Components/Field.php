@@ -8,18 +8,6 @@ use Symfony\Component\Yaml\Yaml;
 
 abstract class Field {
 	
-	const TYPE_TEXT = 'type_text';
-	const TYPE_INTEGER = 'type_integer';
-	const TYPE_FLOAT = 'type_float';
-	const TYPE_BOOLEAN = 'type_boolean';
-	
-	const TYPES = [
-		self::TYPE_TEXT,
-		self::TYPE_INTEGER,
-		self::TYPE_FLOAT,
-		self::TYPE_BOOLEAN,
-	];
-	
 	use Trait_Locale;
 	
 	protected $a_config;
@@ -68,12 +56,70 @@ abstract class Field {
 	 * 
 	 * The keys returned by the corresponding Value::toFlat() MUST match the keys returned by this function.
 	 * 
-	 * A structure defining array must include a 'type' value, being one of the Field::TYPE_* values. Each
-	 * such type value may also require other settings to be defined
+	 * A structure defining array must include a 'type' value, being one of the \Reef\Storage\Storage::TYPE_*
+	 * values. Each such type value may also require other settings to be defined
 	 * 
 	 * @return array The flat structure information
 	 */
 	abstract public function getFlatStructure() : array;
+	
+	final public function getFlatStructureByColumnName() : array {
+		$s_name = $this->getConfig()['name'];
+		
+		$a_fieldStructure = $this->getFlatStructure();
+		$a_columnStructure = [];
+		
+		if(count($a_fieldStructure) == 1 && \Reef\array_first_key($a_fieldStructure) === 0) {
+			$a_columnStructure[$s_name] = $a_fieldStructure[0];
+		}
+		else {
+			foreach($a_fieldStructure as $s_dataFieldName => $a_dataFieldStructure) {
+				$a_columnStructure[$s_name.'__'.$s_dataFieldName] = $a_dataFieldStructure;
+			}
+		}
+		
+		return $a_columnStructure;
+	}
+	
+	final public function dataFieldNamesToColumnNames() : array {
+		$s_name = $this->getConfig()['name'];
+		$a_fieldStructure = $this->getFlatStructure();
+		
+		$a_fieldNames = [];
+		
+		if(count($a_fieldStructure) == 1 && \Reef\array_first_key($a_fieldStructure) === 0) {
+			$a_fieldNames[0] = $s_name;
+		}
+		else {
+			foreach($a_fieldStructure as $s_dataFieldName => $a_dataFieldStructure) {
+				$a_fieldNames[$s_dataFieldName] = $s_name.'__'.$s_dataFieldName;
+			}
+		}
+		return $a_fieldNames;
+	}
+	
+	final public function columnNamesToDataFieldNames() : array {
+		$s_name = $this->getConfig()['name'];
+		$a_fieldStructure = $this->getFlatStructure();
+		
+		$a_columnNames = [];
+		
+		if(count($a_fieldStructure) == 1 && \Reef\array_first_key($a_fieldStructure) === 0) {
+			$a_columnNames[$s_name] = 0;
+		}
+		else {
+			foreach($a_fieldStructure as $s_dataFieldName => $a_dataFieldStructure) {
+				$a_columnNames[$s_name.'__'.$s_dataFieldName] = $s_dataFieldName;
+			}
+		}
+		return $a_columnNames;
+	}
+	
+	public function beforeSchemaUpdate($a_data) {
+	}
+	
+	public function afterSchemaUpdate($a_data) {
+	}
 	
 	/**
 	 * Determine whether a field update would require the value to be updated as well

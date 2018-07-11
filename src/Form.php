@@ -122,6 +122,23 @@ class Form {
 		$this->setFields($a_declaration['fields']??[]);
 	}
 	
+	public function newDeclaration(array $a_declaration) {
+		if(empty($a_declaration['storage_name'])) {
+			throw new \Exception("Missing storage_name");
+		}
+		
+		$this->a_formConfig['storage_name'] = $a_declaration['storage_name'];
+		$this->updateDeclaration($a_declaration);
+	}
+	
+	public function updateDeclaration(array $a_declaration, array $a_fieldRenames = []) {
+		$Form2 = clone $this;
+		$Form2->importDeclaration($a_declaration);
+		
+		$Updater = new Updater();
+		$Updater->update($this, $Form2, $a_fieldRenames);
+	}
+	
 	public function mergeConfig(array $a_partialDeclaration) {
 		$this->a_formConfig = array_merge($this->a_formConfig, $a_partialDeclaration);
 	}
@@ -151,10 +168,10 @@ class Form {
 		$a_declaration = $this->generateDeclaration();
 		
 		if($this->i_formId == null) {
-			$this->i_formId = $this->Reef->getFormStorage()->insert($a_declaration);
+			$this->i_formId = $this->Reef->getFormStorage()->insert(['declaration' => json_encode($a_declaration)]);
 		}
 		else {
-			$this->Reef->getFormStorage()->update($this->i_formId, $a_declaration);
+			$this->Reef->getFormStorage()->update($this->i_formId, ['declaration' => json_encode($a_declaration)]);
 		}
 	}
 	
@@ -164,11 +181,11 @@ class Form {
 		}
 		
 		$a_declaration = $this->generateDeclaration();
-		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, $a_declaration);
+		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, ['declaration' => json_encode($a_declaration)]);
 	}
 	
 	public function load(int $i_formId) {
-		$this->importDeclaration($this->Reef->getFormStorage()->get($i_formId));
+		$this->importDeclaration(json_decode($this->Reef->getFormStorage()->get($i_formId)['declaration'], true));
 		$this->i_formId = $i_formId;
 	}
 	

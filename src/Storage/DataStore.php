@@ -20,6 +20,15 @@ class DataStore {
 			$this->FormStorage = $this->StorageFactory->getStorage($this->s_prefix.'forms');
 		}
 		
+		if(count($this->FormStorage->getColumns()) == 0) {
+			$this->FormStorage->addColumns([
+				'declaration' => [
+					'type' => Storage::TYPE_TEXT,
+					'limit' => 4194303,
+				],
+			]);
+		}
+		
 		return $this->FormStorage;
 	}
 	
@@ -57,8 +66,7 @@ class DataStore {
 			return;
 		}
 		
-		$this->StorageFactory->renameStorage(
-			$this->s_prefix.'form_'.$Form->getStorageName(),
+		$this->StorageFactory->getSubmissionStorage($this->s_prefix.'form_'.$Form->getStorageName())->renameStorage(
 			$this->s_prefix.'form_'.$s_newStorageName
 		);
 		

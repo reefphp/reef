@@ -29,14 +29,14 @@ class TextNumberField extends SingleLineTextField {
 			$b_signed = (empty($this->a_config['min']) && $this->a_config['min'] != '0') || (!empty($this->a_config['min']) && $this->a_config['min'] < 0);
 			
 			return [[
-				'type' => Field::TYPE_INTEGER,
-				'signed' => $b_signed,
-				'limit' => max(abs($this->a_config['min']), abs($this->a_config['max'])),
+				'type' => \Reef\Storage\Storage::TYPE_INTEGER,
+				'min' => $this->a_config['min']??null,
+				'max' => $this->a_config['max']??null,
 			]];
 		}
 		else {
 			return [[
-				'type' => Field::TYPE_FLOAT,
+				'type' => \Reef\Storage\Storage::TYPE_FLOAT,
 			]];
 		}
 	}

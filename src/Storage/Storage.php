@@ -4,6 +4,18 @@ namespace Reef\Storage;
 
 interface Storage {
 	
+	const TYPE_TEXT = 'type_text';
+	const TYPE_INTEGER = 'type_integer';
+	const TYPE_FLOAT = 'type_float';
+	const TYPE_BOOLEAN = 'type_boolean';
+	
+	const TYPES = [
+		self::TYPE_TEXT,
+		self::TYPE_INTEGER,
+		self::TYPE_FLOAT,
+		self::TYPE_BOOLEAN,
+	];
+	
 	/**
 	 * Delete the entire storage
 	 */
@@ -41,7 +53,7 @@ interface Storage {
 	 * @param int $i_entryId The entry id to retrieve
 	 * @return array The entry data
 	 */
-	public function get(int $i_entryId) : array;
+	public function get(int $i_entryId) : ?array;
 	
 	/**
 	 * Determine whether an entry exists

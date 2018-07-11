@@ -11,7 +11,7 @@ class SingleCheckboxField extends Field {
 	 */
 	public function getFlatStructure() : array {
 		return [[
-			'type' => Field::TYPE_BOOLEAN,
+			'type' => \Reef\Storage\Storage::TYPE_BOOLEAN,
 		]];
 	}
 	

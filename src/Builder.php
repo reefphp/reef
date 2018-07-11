@@ -225,13 +225,18 @@ class Builder {
 		
 	//	$Form->mergeConfig($FormConfigSubmission->toStructured());
 	//	$Form->setFields($a_fields);
-		
+		/*
 		$Form2 = clone $Form;
 		$Form2->mergeConfig($FormConfigSubmission->toStructured());
 		$Form2->setFields($a_fields);
 		
 		$Updater = new Updater();
-		$Form = $Updater->update($Form, $Form2, $a_fieldRenames);
+		$Form = $Updater->update($Form, $Form2, $a_fieldRenames);*/
+		
+		$a_newDeclaration = array_merge($Form->getFormConfig(), $FormConfigSubmission->toStructured());
+		$a_newDeclaration['fields'] = $a_fields;
+		
+		$Form->updateDeclaration($a_newDeclaration);
 		
 		return [
 			'result' => true,

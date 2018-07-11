@@ -41,7 +41,7 @@ class NoStorage implements Storage {
 	/**
 	 * @inherit
 	 */
-	public function get(int $i_entryId) : array {
+	public function get(int $i_entryId) : ?array {
 		throw new IOException("No storage attached.");
 	}
 	

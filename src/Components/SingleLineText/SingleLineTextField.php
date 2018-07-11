@@ -11,7 +11,7 @@ class SingleLineTextField extends Field {
 	 */
 	public function getFlatStructure() : array {
 		return [[
-			'type' => Field::TYPE_TEXT,
+			'type' => \Reef\Storage\Storage::TYPE_TEXT,
 			'limit' => $this->a_config['max_length'] ?? 1000,
 		]];
 	}
