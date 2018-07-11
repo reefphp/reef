@@ -18,6 +18,12 @@ class ReefSetup {
 	public function __construct(StorageFactory $StorageFactory, Layout $Layout) {
 		$this->StorageFactory = $StorageFactory;
 		$this->Layout = $Layout;
+		
+		$this->addComponent(new \Reef\Components\SingleLineText\SingleLineTextComponent);
+		$this->addComponent(new \Reef\Components\SingleCheckbox\SingleCheckboxComponent);
+		$this->addComponent(new \Reef\Components\TextNumber\TextNumberComponent);
+		$this->addComponent(new \Reef\Components\Heading\HeadingComponent);
+		$this->addComponent(new \Reef\Components\Hidden\HiddenComponent);
 	}
 	
 	public function getStorageFactory() : StorageFactory {

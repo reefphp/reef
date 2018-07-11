@@ -122,6 +122,16 @@ class Form {
 		$this->setFields($a_declaration['fields']??[]);
 	}
 	
+	public function newDeclarationFromFile(string $s_filename) {
+		if(!file_exists($s_filename) || !is_readable($s_filename)) {
+			throw new IOException('Could not find file "'.$s_filename.'".');
+		}
+		
+		$a_declaration = Yaml::parseFile($s_filename);
+		
+		$this->newDeclaration($a_declaration);
+	}
+	
 	public function newDeclaration(array $a_declaration) {
 		if(empty($a_declaration['storage_name'])) {
 			throw new \Exception("Missing storage_name");

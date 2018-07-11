@@ -32,11 +32,6 @@ final class FormTest extends TestCase {
 		
 		$this->assertInstanceOf(\Reef\ReefSetup::class, $Setup);
 		
-		$Setup->addComponent(new \Reef\Components\SingleLineText\SingleLineTextComponent);
-		$Setup->addComponent(new \Reef\Components\SingleCheckbox\SingleCheckboxComponent);
-		$Setup->addComponent(new \Reef\Components\TextNumber\TextNumberComponent);
-		$Setup->addComponent(new \Reef\Components\Heading\HeadingComponent);
-		
 		static::$Reef = new \Reef\Reef(
 			$Setup,
 			[

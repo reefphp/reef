@@ -12,12 +12,6 @@ $Setup = new \Reef\ReefSetup(
 	new Reef\Layout\bootstrap4()
 );
 
-$Setup->addComponent(new Reef\Components\SingleLineText\SingleLineTextComponent);
-$Setup->addComponent(new Reef\Components\SingleCheckbox\SingleCheckboxComponent);
-$Setup->addComponent(new Reef\Components\TextNumber\TextNumberComponent);
-$Setup->addComponent(new Reef\Components\Heading\HeadingComponent);
-$Setup->addComponent(new Reef\Components\Hidden\HiddenComponent);
-
 $Reef = new Reef\Reef(
 	$Setup,
 	[

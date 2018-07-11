@@ -3,8 +3,12 @@
 require_once('./common.php');
 
 // Generate the form object from the declaration
-$Form = $Reef->newForm();
-$Form->importDeclarationFile('./declaration.yml');
+if(count($Reef->getFormIds()) == 0) {
+	$Form = $Reef->newForm();
+	$Form->newDeclarationFromFile('./declaration.yml');
+}
+
+$Form = $Reef->getForm(1);
 
 // Find whether we are given an existing submission id
 if(isset($_POST['submission_id']) && $_POST['submission_id'] > 0) {
