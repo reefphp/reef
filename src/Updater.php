@@ -251,6 +251,8 @@ class Updater {
 			foreach($a_structureUpdate as $s_dataFieldName) {
 				$a_updateColumns = array_merge($a_updateColumns, [
 					$a_columnNames1[$s_dataFieldName] => [
+						'fieldNameFrom' => $s_fieldName1,
+						'fieldNameTo' => $s_fieldName2,
 						'name' => $a_columnNames2[$s_dataFieldName],
 						'type' => $a_structure2[$s_dataFieldName],
 					],
@@ -301,15 +303,24 @@ class Updater {
 			};
 		};
 		
+		$a_updateFields = [];
+		foreach($a_update as $a_fieldUpdate) {
+			$a_updateFields[$a_fieldUpdate['fieldNameFrom']] = $a_fieldUpdate['fieldNameTo'];
+		}
+		
 		$a_info = [
 			'PDO_DRIVER' => $PDO->getAttribute(\PDO::ATTR_DRIVER_NAME),
 		];
 		
 		$SubmissionStorage->addColumns($a_create);
 		
-		foreach($Form->getValueFields() as $Field) {
-			$Field->beforeSchemaUpdate(array_merge($a_info, [
-				'content_updater' => $fn_getContentUpdater($Field),
+		$a_fields1 = $Form->getValueFieldsByName();
+		$a_fields2 = $newForm->getValueFieldsByName();
+		
+		foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
+			$a_fields1[$s_fieldName1]->beforeSchemaUpdate(array_merge($a_info, [
+				'content_updater' => $fn_getContentUpdater($a_fields1[$s_fieldName1]),
+				'new_field' => $a_fields2[$s_fieldName2],
 			]));
 		}
 		
@@ -319,9 +330,11 @@ class Updater {
 		
 		$Form->setFields($newForm->generateDeclaration()['fields']);
 		
-		foreach($Form->getValueFields() as $Field) {
-			$Field->afterSchemaUpdate(array_merge($a_info, [
-				'content_updater' => $fn_getContentUpdater($Field),
+		$a_fields = $Form->getValueFieldsByName();
+		
+		foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
+			$a_fields[$s_fieldName2]->afterSchemaUpdate(array_merge($a_info, [
+				'content_updater' => $fn_getContentUpdater($a_fields[$s_fieldName2]),
 			]));
 		}
 		
