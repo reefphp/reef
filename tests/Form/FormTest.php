@@ -45,7 +45,7 @@ final class FormTest extends TestCase {
 	 * @depends testCanCreateReef
 	 */
 	public function testCanCreateForm(): void {
-		static::$Form = static::$Reef->newForm();
+		static::$Form = static::$Reef->newStoredForm();
 		static::$Form->newDeclaration([
 			'storage_name' => 'test',
 			'fields' => [

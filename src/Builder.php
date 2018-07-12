@@ -136,7 +136,7 @@ class Builder {
 			'settings' => $this->a_settings,
 			'fields' => $a_fields,
 			'formConfigHtml' => $this->generateFormConfigForm($Form)->generateFormHtml(null, ['main_var' => 'form_config']),
-			'form_id' => $Form->getFormId(),
+			'form_id' => ($Form instanceof StoredForm) ? $Form->getFormId() : -1,
 		]);
 		
 		return $s_html;
@@ -269,7 +269,7 @@ class Builder {
 			],
 		];
 		
-		$ConfigForm = $this->Reef->newForm();
+		$ConfigForm = $this->Reef->newTempForm();
 		$ConfigForm->importDeclaration($a_declaration);
 		
 		return $ConfigForm;
@@ -313,7 +313,7 @@ class Builder {
 			]);
 		}
 		
-		$ComponentForm = $this->Reef->newForm();
+		$ComponentForm = $this->Reef->newTempForm();
 		$ComponentForm->importDeclaration($a_configDeclaration);
 		
 		return $ComponentForm;
@@ -354,7 +354,7 @@ class Builder {
 			'fields' => $a_fields,
 		];
 		
-		$LocaleForm = $this->Reef->newForm();
+		$LocaleForm = $this->Reef->newTempForm();
 		$LocaleForm->importDeclaration($a_localeDeclaration);
 		
 		return $LocaleForm;

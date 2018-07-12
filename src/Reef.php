@@ -120,16 +120,23 @@ class Reef {
 	}
 	
 	public function getForm(int $i_formId) : Form {
-		$Form = $this->newForm();
+		$Form = $this->newStoredForm();
 		
 		$Form->load($i_formId);
 		
 		return $Form;
 	}
 	
-	public function newForm() : Form {
-		return new Form($this);
+	public function newStoredForm() : StoredForm {
+		if($this->ReefSetup->getStorageFactory() instanceof \Reef\Storage\NoStorageFactory) {
+			throw new \Exception("Cannot create stored form using NoStorage");
+		}
 		
+		return new StoredForm($this);
+	}
+	
+	public function newTempForm() : TempForm {
+		return new TempForm($this);
 	}
 	
 	public function getSetup() : ReefSetup {

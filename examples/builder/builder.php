@@ -2,9 +2,6 @@
 
 require_once('./common.php');
 
-// Generate the form object from the declaration
-$Form = $Reef->newForm();
-
 // Find whether we are given an existing form id
 if(isset($_POST['form_data']['form_id']) && $_POST['form_data']['form_id'] > 0) {
 	$Form = $Reef->getForm($_POST['form_data']['form_id']);
@@ -13,7 +10,7 @@ else if(isset($_GET['form_id']) && $_GET['form_id'] > 0) {
 	$Form = $Reef->getForm($_GET['form_id']);
 }
 else {
-	$Form = $Reef->newForm();
+	$Form = $Reef->newStoredForm();
 	$Form->importDeclaration([
 		'storage_name' => 'form_'.$Form->getReef()->getFormStorage()->next(),
 	]);

@@ -146,7 +146,7 @@ class Updater {
 		return $Form;
 	}*/
 	
-	public function computeFieldUpdatePlan(Form $Form1, Form $Form2, array $a_fieldRenames) {
+	public function computeFieldUpdatePlan(StoredForm $Form1, StoredForm $Form2, array $a_fieldRenames) {
 		$a_create = $a_update = $a_delete = [];
 		
 		$a_fields1 = $Form1->getValueFieldsByName();
@@ -185,7 +185,7 @@ class Updater {
 		return [$a_create, $a_update, $a_delete];
 	}
 	
-	public function computeSchemaUpdatePlan(Form $Form1, Form $Form2, array $a_fieldRenames) {
+	public function computeSchemaUpdatePlan(StoredForm $Form1, StoredForm $Form2, array $a_fieldRenames) {
 		
 		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form1, $Form2, $a_fieldRenames);
 		
@@ -261,7 +261,7 @@ class Updater {
 		return [$a_createColumns, $a_updateColumns, $a_deleteColumns];
 	}
 	
-	public function update(Form $Form, Form $newForm, $a_fieldRenames) {
+	public function update(StoredForm $Form, StoredForm $newForm, $a_fieldRenames) {
 		
 		[$a_create, $a_update, $a_delete] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
 		
