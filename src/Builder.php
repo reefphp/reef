@@ -109,6 +109,13 @@ class Builder {
 			];
 		}
 		
+		// Form config
+		$FormConfigForm = $this->generateFormConfigForm($Form);
+		$FormConfigSubmission = $FormConfigForm->newSubmission();
+		$FormConfigSubmission->fromUserInput([
+			'storage_name' => $Form->getStorageName(),
+		]);
+		
 		$EmptyForm = clone $Form;
 		$EmptyForm->setFields([]);
 		$s_formHtml = $EmptyForm->generateFormHtml();
@@ -135,7 +142,7 @@ class Builder {
 			'formHtml' => $s_formHtml,
 			'settings' => $this->a_settings,
 			'fields' => $a_fields,
-			'formConfigHtml' => $this->generateFormConfigForm($Form)->generateFormHtml(null, ['main_var' => 'form_config']),
+			'formConfigHtml' => $FormConfigForm->generateFormHtml($FormConfigSubmission, ['main_var' => 'form_config']),
 			'form_id' => ($Form instanceof StoredForm) ? $Form->getFormId() : -1,
 		]);
 		

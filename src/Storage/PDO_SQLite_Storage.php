@@ -142,7 +142,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 		$sth = $this->PDO->prepare("SELECT seq FROM sqlite_sequence WHERE name = ?");
 		$sth->execute([$this->s_table]);
 		$a_result = $sth->fetchAll(PDO::FETCH_ASSOC);
-		return count($a_result) > 0 ? $a_result[0]['seq'] : 1;
+		return count($a_result) > 0 ? $a_result[0]['seq']+1 : 1;
 	}
 	
 	private function getColumnData() : array {

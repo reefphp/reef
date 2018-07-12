@@ -340,5 +340,9 @@ class Updater {
 		
 		$Form->save();
 		
+		if($Form->getStorageName() != $newForm->getStorageName()) {
+			$Form->setStorageName($newForm->getStorageName());
+		}
+		
 	}
 }

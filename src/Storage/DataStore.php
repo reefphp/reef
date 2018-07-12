@@ -63,10 +63,10 @@ class DataStore {
 	
 	public function changeSubmissionStorageName(\Reef\StoredForm $Form, $s_newStorageName) {
 		if(!$this->hasSubmissionStorage($Form->getStorageName())) {
-			return;
+			throw new \Exception("Storage not found for renaming");
 		}
 		
-		$this->StorageFactory->getSubmissionStorage($this->s_prefix.'form_'.$Form->getStorageName())->renameStorage(
+		$this->getSubmissionStorage($Form)->renameStorage(
 			$this->s_prefix.'form_'.$s_newStorageName
 		);
 		
