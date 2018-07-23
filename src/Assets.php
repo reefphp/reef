@@ -4,6 +4,8 @@ namespace Reef;
 
 abstract class Assets {
 	
+	private $customAssets = ['CSS' => [], 'JS' => []];
+	
 	abstract public function getReef() : Reef;
 	abstract protected function getComponents() : array;
 	
@@ -53,6 +55,14 @@ abstract class Assets {
 		return $this->getAssets('JS');
 	}
 	
+	public function addLocalCSS($s_path) {
+		$this->customAssets['CSS'][] = __DIR__ . '/../'.$s_path;
+	}
+	
+	public function addLocalJS($s_path) {
+		$this->customAssets['JS'][] = __DIR__ . '/../'.$s_path;
+	}
+	
 	private function getAssets($s_type) {
 		if($s_type != 'JS' && $s_type != 'CSS') {
 			throw new \Exception("Invalid asset type '".$s_type."'.");
@@ -99,6 +109,10 @@ abstract class Assets {
 			$s_mainFile = __DIR__ . '/../assets/style.css';
 		}
 		$a_localAssets[$s_mainFile] = filemtime($s_mainFile);
+		
+		foreach($this->customAssets[$s_type] as $s_assetPath) {
+			$a_localAssets[$s_assetPath] = filemtime($s_assetPath);
+		}
 		
 		foreach($this->getComponents() as $Component) {
 			$a_assets = $Component->$s_assetFnc();

@@ -1,0 +1,141 @@
+.CSSPRFXbuilder {
+	display: flex;
+	position: relative;
+}
+
+.CSSPRFXbuilder-toolbar {
+	display: flex;
+	flex-direction: column;
+	width: 200px;
+	background-color: #f7f7fe;
+}
+
+.CSSPRFXbuilder-toolbar-general {
+	display: flex;
+	height: 2rem;
+}
+
+.CSSPRFXbuilder-toolbar .CSSPRFXbuilder-toolbar-submit, .CSSPRFXbuilder-toolbar .CSSPRFXbuilder-toolbar-config {
+	display: block;
+	flex: 1;
+	background-color: #c6caed;
+	border: 0;
+	cursor: pointer;
+}
+
+.CSSPRFXbuilder-select {
+	flex: 1;
+	display: flex;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-categories {
+	flex: 1;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-category, .CSSPRFXbuilder-select .CSSPRFXbuilder-component {
+	height: 100px;
+	text-align: center;
+	font-size: 9pt;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-category img, .CSSPRFXbuilder-select  .CSSPRFXbuilder-component img {
+	max-width: 50px;
+	max-height: 50px;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-category span, .CSSPRFXbuilder-select  .CSSPRFXbuilder-component span {
+	display: block;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-components {
+	flex: 1;
+	display: none;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-components.CSSPRFXactive {
+	display: block;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-category {
+	background-color: #cfd1f9;
+	border-bottom: 1px solid #afafd1;
+	cursor: pointer;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-category:hover {
+	background-color: #b8bbf3;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-category.CSSPRFXactive {
+	background-color: #a6aaed;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-component {
+	background-color: #e6e7fe;
+	border-bottom: 1px solid #d0d0e9;
+	cursor: grab;
+}
+
+.CSSPRFXbuilder-select .CSSPRFXbuilder-component:hover {
+	background-color: #d8dafb;
+}
+
+.CSSPRFXbuilder-component.CSSPRFXbuilder-add-ghost {
+	background-color: #f7f7fe;
+}
+
+.CSSPRFXbuilder-component.CSSPRFXbuilder-add-ghost img {
+	max-width: 25px;
+}
+
+.CSSPRFXbuilder-workspace {
+	background-color: #fff;
+	flex: 1;
+}
+
+.CSSPRFXbuilder-workspace .CSSPRFXfields {
+	height: 100%;
+}
+
+.CSSPRFXbuilder-field {
+	display: flex;
+}
+
+.CSSPRFXbuilder-field-preview {
+	flex: 1;
+}
+
+.CSSPRFXbuilder-field-actions {
+	width: 200px;
+	text-align: center;
+	margin-bottom: 1rem;
+}
+
+.CSSPRFXbuilder-btn {
+	display: inline-block;
+	background-color: #a6aaed;
+	padding: 3px 10px;
+	font-size: 20px;
+	cursor: pointer;
+	border-radius: 3px;
+	margin: 1px 3px;
+}
+
+.CSSPRFXbuilder-btn:hover {
+	background-color: #969add;
+}
+
+.CSSPRFXbuilder-template {
+	display: none;
+}
+
+.CSSPRFXbuilder-dialog {
+	position: absolute;
+	width: 300px;
+	background-color: #fff;
+	border: 2px solid #969add;
+	z-index: 75;
+}
