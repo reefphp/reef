@@ -31,7 +31,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 				$s_columnType = 'TEXT NULL';
 				
 				if(isset($a_subfield['default'])) {
-					$s_columnType .= ' DEFAULT "'.$this->PDO->quote($a_subfield['default']).'"';
+					$s_columnType .= ' DEFAULT '.$this->PDO->quote($a_subfield['default']).' ';
 				}
 			break;
 			
@@ -70,11 +70,33 @@ class PDO_SQLite_Storage extends PDOStorage {
 	}
 	
 	public function updateColumns($a_subfields) {
-		// SQLite does not really require any changes
-		// TODO: Except if the default value changes...
+		
+		$a_update = [];
+		
+		foreach($a_subfields as $s_columnOld => $a_fieldUpdate) {
+			$s_columnNew = $a_fieldUpdate['name'];
+			
+			if($s_columnOld != $s_columnNew) {
+				$a_columnUpdate['name'] = $s_columnNew;
+			}
+			
+			if(isset($a_fieldUpdate['structureTo']['default']) && (!isset($a_fieldUpdate['structureFrom']['default']) || $a_fieldUpdate['structureFrom']['default'] != $a_fieldUpdate['structureTo']['default'])) {
+				$a_columnUpdate['default'] = $a_fieldUpdate['structureTo']['default'];
+			}
+			
+			$a_update[$s_columnOld] = $a_columnUpdate;
+		}
+		
+		if(!empty($a_update)) {
+			$this->migrateColumns([], $a_update);
+		}
 	}
 	
-	public function removeColumns($a_columns) {
+	public function removeColumns($a_deleteColumns) {
+		$this->migrateColumns($a_deleteColumns, []);
+	}
+	
+	private function migrateColumns($a_deleteColumns, $a_updateColumns) {
 		$a_columnData = $this->getColumnData();
 		
 		$sth = $this->PDO->prepare("DROP TABLE IF EXISTS __tmp__migration ");
@@ -84,20 +106,38 @@ class PDO_SQLite_Storage extends PDOStorage {
 			throw new \Exception("Could not drop table __tmp__migration.");
 		}
 		
+		$a_columnsOld = $a_columnsNew = [];
+		
 		$s_sql = "CREATE TABLE __tmp__migration (
 			entry_id INTEGER PRIMARY KEY AUTOINCREMENT
 		";
 		foreach($a_columnData as $a_column) {
-			if($a_column['name'] == 'entry_id' || in_array($a_column['name'], $a_columns)) {
+			if($a_column['name'] == 'entry_id' || in_array($a_column['name'], $a_deleteColumns)) {
 				continue;
 			}
 			
-			$s_sql .= ", ".
-				$a_column['name']." ".
-				$a_column['type']." ".
-				(($a_column['notnull'] == 1) ? "NOT NULL" : "NULL")." ".
-				(($a_column['dflt_value'] !== null) ? "DEFAULT '".$a_column['dflt_value']."'" : "")." ".
-				PHP_EOL;
+			$a_columnsOld[] = $a_column['name'];
+			
+			$s_sql .= ", ";
+			if(isset($a_updateColumns[$a_column['name']]['name']) && $a_updateColumns[$a_column['name']]['name'] != $a_column['name']) {
+				$s_sql .= $a_updateColumns[$a_column['name']]['name']." ";
+				$a_columnsNew[] = $a_updateColumns[$a_column['name']]['name'];
+			}
+			else {
+				$s_sql .= $a_column['name']." ";
+				$a_columnsNew[] = $a_column['name'];
+			}
+			$s_sql .= $a_column['type']." ";
+			$s_sql .= (($a_column['notnull'] == 1) ? "NOT NULL" : "NULL")." ";
+			if(isset($a_updateColumns[$a_column['name']]) && array_key_exists('default', $a_updateColumns[$a_column['name']])) {
+				if($a_updateColumns[$a_column['name']] !== null) {
+					$s_sql .= "DEFAULT ".$this->PDO->quote($a_updateColumns[$a_column['name']]['default'])." ";
+				}
+			}
+			else if($a_column['dflt_value'] !== null) {
+				$s_sql .= "DEFAULT ".$this->PDO->quote($a_column['dflt_value'])." ";
+			}
+			$s_sql .= PHP_EOL;
 		}
 		$s_sql .= ");".PHP_EOL;
 		
@@ -108,10 +148,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 			throw new \Exception("Could not create table __tmp__migration.");
 		}
 		
-		$a_columnNames = array_diff(array_column($a_columnData, 'name'), $a_columns);
-		$s_columnNames = implode(', ', $a_columnNames);
-		
-		$sth = $this->PDO->prepare("INSERT INTO __tmp__migration (".$s_columnNames.") SELECT ".$s_columnNames." FROM ".$this->es_table." ");
+		$sth = $this->PDO->prepare("INSERT INTO __tmp__migration (".implode(', ', $a_columnsNew).") SELECT ".implode(', ', $a_columnsOld)." FROM ".$this->es_table." ");
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {

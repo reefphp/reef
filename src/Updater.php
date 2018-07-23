@@ -254,7 +254,8 @@ class Updater {
 						'fieldNameFrom' => $s_fieldName1,
 						'fieldNameTo' => $s_fieldName2,
 						'name' => $a_columnNames2[$s_dataFieldName],
-						'type' => $a_structure2[$s_dataFieldName],
+						'structureFrom' => $a_structure1[$s_dataFieldName],
+						'structureTo' => $a_structure2[$s_dataFieldName],
 					],
 				]);
 			}

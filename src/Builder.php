@@ -243,7 +243,7 @@ class Builder {
 		$a_newDeclaration = array_merge($Form->getFormConfig(), $FormConfigSubmission->toStructured());
 		$a_newDeclaration['fields'] = $a_fields;
 		
-		$Form->updateDeclaration($a_newDeclaration);
+		$Form->updateDeclaration($a_newDeclaration, $a_fieldRenames);
 		
 		return [
 			'result' => true,
