@@ -37,6 +37,13 @@
 					<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-locale-forms">
 						{{#localeForms}}
 						<div class="{{CSSPRFX}}builder-locale-form" data-locale="{{locale}}">
+						{{#multipleLocales}}
+						<div class="{{CSSPRFX}}builder-locale-nav">
+							<div class="{{CSSPRFX}}builder-locale-prev">&#11207;</div>
+							<div class="{{CSSPRFX}}builder-locale-title">{{locale}}</div>
+							<div class="{{CSSPRFX}}builder-locale-next">&#11208;</div>
+						</div>
+						{{/multipleLocales}}
 							{{{form}}}
 						</div>
 						{{/localeForms}}
@@ -59,6 +66,13 @@
 			<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-locale-forms">
 				{{#localeForms}}
 				<div class="{{CSSPRFX}}builder-locale-form" data-locale="{{locale}}">
+					{{#multipleLocales}}
+					<div class="{{CSSPRFX}}builder-locale-nav">
+						<div class="{{CSSPRFX}}builder-locale-prev">&#11207;</div>
+						<div class="{{CSSPRFX}}builder-locale-title">{{locale}}</div>
+						<div class="{{CSSPRFX}}builder-locale-next">&#11208;</div>
+					</div>
+					{{/multipleLocales}}
 					{{{form}}}
 				</div>
 				{{/localeForms}}

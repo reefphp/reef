@@ -16,5 +16,6 @@ $Reef = new Reef\Reef(
 	$Setup,
 	[
 		'cache_dir' => './cache/',
+		'locales' => ['en_US', 'nl_NL'],
 	]
 );

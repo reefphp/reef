@@ -139,3 +139,22 @@
 	border: 2px solid #969add;
 	z-index: 75;
 }
+
+.CSSPRFXbuilder-locale-nav {
+	display: flex;
+	text-align: center;
+}
+
+.CSSPRFXbuilder-locale-prev, .CSSPRFXbuilder-locale-next {
+	flex: 1;
+	cursor: pointer;
+}
+
+.CSSPRFXbuilder-locale-prev.CSSPRFXbuilder-locale-end, .CSSPRFXbuilder-locale-next.CSSPRFXbuilder-locale-end {
+	cursor: default;
+	color: #ccc;
+}
+
+.CSSPRFXbuilder-locale-title {
+	flex: 1;
+}

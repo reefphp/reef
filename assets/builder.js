@@ -276,7 +276,36 @@ var ReefBuilderField = (function() {
 		});
 		
 		this.componentForm = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-component-form'));
-		this.localeForms = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-locale-forms'));
+		this.localeForms = {};
+		
+		var $localeForms = $fieldWrapper.find('.'+CSSPRFX+'builder-locale-form');
+		$localeForms.hide().first().show();
+		if($localeForms.length > 1) {
+			$localeForms.each(function(index) {
+				var $localeForm = $(this);
+				if(index === 0) {
+					$localeForm.find('.'+CSSPRFX+'builder-locale-prev').addClass(''+CSSPRFX+'builder-locale-end');
+				}
+				if(index === $localeForms.length-1) {
+					$localeForm.find('.'+CSSPRFX+'builder-locale-next').addClass(''+CSSPRFX+'builder-locale-end');
+				}
+			});
+			
+			$localeForms.find('.'+CSSPRFX+'builder-locale-prev').not('.'+CSSPRFX+'builder-locale-end').on('click', function() {
+				var $localeForm = $(this).closest('.'+CSSPRFX+'builder-locale-form');
+				$localeForm.hide().prev().show();
+				self.updateField();
+			});
+			$localeForms.find('.'+CSSPRFX+'builder-locale-next').not('.'+CSSPRFX+'builder-locale-end').on('click', function() {
+				var $localeForm = $(this).closest('.'+CSSPRFX+'builder-locale-form');
+				$localeForm.hide().next().show();
+				self.updateField();
+			});
+		}
+		$localeForms.each(function() {
+			var $localeForm = $(this);
+			self.localeForms[$localeForm.data('locale')] = new Reef($localeForm);
+		});
 		
 		this.componentDialog = new ReefDialog($fieldWrapper.find('.'+CSSPRFX+'builder-component-form'), $fieldWrapper.find('.'+CSSPRFX+'builder-component-config'));
 		this.localeDialog = new ReefDialog($fieldWrapper.find('.'+CSSPRFX+'builder-locale-forms'), $fieldWrapper.find('.'+CSSPRFX+'builder-component-locale'));
@@ -309,7 +338,15 @@ var ReefBuilderField = (function() {
 		var template = atob($('.'+CSSPRFX+'builder-select .'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"]').data('html'));
 		
 		var fieldConfig = this.componentForm.getData();
-		fieldConfig.locale = this.localeForms.getData();
+		var $localeForms = this.$fieldWrapper.find('.'+CSSPRFX+'builder-locale-form');
+		var $locale = $localeForms.filter(':visible');
+		if($locale.length == 0) {
+			$locale = $localeForms.first();
+		}
+		var locale = $locale.attr('data-locale');
+		if(typeof this.localeForms[locale] !== 'undefined') {
+			fieldConfig.locale = this.localeForms[locale].getData();
+		}
 		
 		var component;
 		if(Reef.hasComponent(componentName)) {
@@ -364,18 +401,26 @@ var ReefBuilderField = (function() {
 			this.componentDialog.show();
 			return false;
 		}
-		if(!this.localeForms.validate()) {
-			this.localeDialog.show();
-			return false;
+		for(var locale in this.localeForms) {
+			if(!this.localeForms[locale].validate()) {
+				this.localeDialog.show().find('.'+CSSPRFX+'builder-locale-form').hide().find('[data-locale="'+locale+'"]').show();
+				return false;
+			}
 		}
 		return true;
 	};
 	
 	ReefBuilderField.prototype.getDefinition = function() {
+		var locales = {};
+		
+		for(var locale in this.localeForms) {
+			locales[locale] = this.localeForms[locale].getData();
+		}
+		
 		return {
 			component: this.$fieldWrapper.data('component-name'),
 			config: this.componentForm.getData(),
-			locale: this.localeForms.getData()
+			locale: locales
 		};
 	};
 	

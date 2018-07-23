@@ -40,7 +40,7 @@ class Builder {
 		$a_componentMapping = $this->Reef->getSetup()->getComponentMapping();
 		$a_categories = [];
 		
-		$a_locales = ['en_US'];
+		$a_locales = $this->Reef->getOption('locales');
 		
 		foreach($a_componentMapping as $s_name => $Component) {
 			$a_definition = $Component->getDefinition();
@@ -148,6 +148,7 @@ class Builder {
 			'fields' => $a_fields,
 			'formConfigHtml' => $FormConfigForm->generateFormHtml($FormConfigSubmission, ['main_var' => 'form_config']),
 			'form_id' => ($Form instanceof StoredForm) ? $Form->getFormId() : -1,
+			'multipleLocales' => (count($a_locales) > 1),
 		]);
 		
 		return $s_html;
@@ -156,6 +157,7 @@ class Builder {
 	
 	public function applyBuilderData(Form $Form, array $a_data) {
 		$Setup = $this->Reef->getSetup();
+		$a_locales = $this->Reef->getOption('locales');
 		
 		$b_valid = true;
 		$a_errors = [];
@@ -189,20 +191,23 @@ class Builder {
 			}
 			
 			// Validate locale
-			$LocaleForm = $this->generateLocaleForm($Component, 'en_US');
-			$LocaleSubmission = $LocaleForm->newSubmission();
-			
-			$LocaleSubmission->fromUserInput($a_field['locale']);
-			
-			$b_valid = $LocaleSubmission->validate() && $b_valid;
-			if(!$b_valid) {
-				$a_errors[$i_pos]['locale'] = $LocaleSubmission->getErrors();
+			$a_localeSubmissions = [];
+			foreach($a_locales as $s_locale) {
+				$LocaleForm = $this->generateLocaleForm($Component, $s_locale);
+				$LocaleSubmission = $LocaleForm->newSubmission();
+				$LocaleSubmission->fromUserInput($a_field['locale'][$s_locale]??[]);
+				
+				$b_valid = $LocaleSubmission->validate() && $b_valid;
+				if(!$b_valid) {
+					$a_errors[$i_pos]['locale'][$s_locale] = $LocaleSubmission->getErrors();
+				}
+				$a_localeSubmissions[$s_locale] = $LocaleSubmission;
 			}
 			
 			$a_submissions[$i_pos] = [
 				'component' => $Component,
 				'config' => $ConfigSubmission,
-				'locale' => $LocaleSubmission,
+				'locales' => $a_localeSubmissions,
 			];
 		}
 		
@@ -229,7 +234,14 @@ class Builder {
 			
 			$a_fieldDecl = array_merge($a_fieldDecl, $a_fieldConfig);
 			
-			$a_fieldDecl['locale'] = array_merge($a_fieldDecl['locale']??[], $a_fieldSubmissions['locale']->toStructured());
+			if(count($a_locales) == 1 && reset($a_locales) == '-') {
+				$a_fieldDecl['locale'] = array_merge($a_fieldDecl['locales']['-']??[], $a_fieldSubmissions['locales']['-']->toStructured());
+			}
+			else {
+				foreach($a_locales as $s_locale) {
+					$a_fieldDecl['locales'][$s_locale] = array_merge($a_fieldDecl['locales'][$s_locale]??[], $a_fieldSubmissions['locales'][$s_locale]->toStructured());
+				}
+			}
 			
 			$a_fields[] = $a_fieldDecl;
 		}

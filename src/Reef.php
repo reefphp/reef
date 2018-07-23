@@ -63,6 +63,7 @@ class Reef {
 		
 		$this->a_options['css_prefix'] = $a_options['css_prefix'] ?? 'rf-';
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
+		$this->a_options['locales'] = $a_options['locales'] ?? ['-'];
 		
 		$this->ReefSetup = $ReefSetup;
 		$this->ReefSetup->checkSetup($this);
