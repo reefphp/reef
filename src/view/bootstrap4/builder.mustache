@@ -4,19 +4,19 @@
 	position: relative;
 }
 
-.rf-toolbar {
+.rf-builder-toolbar {
 	display: flex;
 	flex-direction: column;
 	width: 200px;
 	background-color: #f7f7fe;
 }
 
-.rf-toolbar-general {
+.rf-builder-toolbar-general {
 	display: flex;
 	height: 2rem;
 }
 
-.rf-toolbar .rf-toolbar-submit, .rf-toolbar .rf-toolbar-config {
+.rf-builder-toolbar .rf-builder-toolbar-submit, .rf-builder-toolbar .rf-builder-toolbar-config {
 	display: block;
 	flex: 1;
 	background-color: #c6caed;
@@ -29,11 +29,11 @@
 	display: flex;
 }
 
-.rf-builder-select .rf-categories {
+.rf-builder-select .rf-builder-categories {
 	flex: 1;
 }
 
-.rf-builder-select .rf-category,.rf-builder-select  .rf-component {
+.rf-builder-select .rf-builder-category, .rf-builder-select .rf-builder-component {
 	height: 100px;
 	text-align: center;
 	font-size: 9pt;
@@ -42,80 +42,80 @@
 	align-items: center;
 }
 
-.rf-builder-select .rf-category img,.rf-builder-select  .rf-component img {
+.rf-builder-select .rf-builder-category img, .rf-builder-select  .rf-builder-component img {
 	max-width: 50px;
 	max-height: 50px;
 }
 
-.rf-builder-select .rf-category span,.rf-builder-select  .rf-component span {
+.rf-builder-select .rf-builder-category span, .rf-builder-select  .rf-builder-component span {
 	display: block;
 }
 
-.rf-builder-select .rf-components {
+.rf-builder-select .rf-builder-components {
 	flex: 1;
 	display: none;
 }
 
-.rf-builder-select .rf-components.rf-active {
+.rf-builder-select .rf-builder-components.rf-active {
 	display: block;
 }
 
-.rf-builder-select .rf-category {
+.rf-builder-select .rf-builder-category {
 	background-color: #cfd1f9;
 	border-bottom: 1px solid #afafd1;
 	cursor: pointer;
 }
 
-.rf-builder-select .rf-category:hover {
+.rf-builder-select .rf-builder-category:hover {
 	background-color: #b8bbf3;
 }
 
-.rf-builder-select .rf-category.rf-active {
+.rf-builder-select .rf-builder-category.rf-active {
 	background-color: #a6aaed;
 }
 
-.rf-builder-select .rf-component {
+.rf-builder-select .rf-builder-component {
 	background-color: #e6e7fe;
 	border-bottom: 1px solid #d0d0e9;
 	cursor: grab;
 }
 
-.rf-builder-select .rf-component:hover {
+.rf-builder-select .rf-builder-component:hover {
 	background-color: #d8dafb;
 }
 
-.rf-component.rf-add-ghost {
+.rf-builder-component.rf-builder-add-ghost {
 	background-color: #f7f7fe;
 }
 
-.rf-component.rf-add-ghost img {
+.rf-builder-component.rf-builder-add-ghost img {
 	max-width: 25px;
 }
 
-.rf-workspace {
+.rf-builder-workspace {
 	background-color: #fff;
 	flex: 1;
 }
 
-.rf-workspace .rf-fields {
+.rf-builder-workspace .rf-fields {
 	height: 100%;
 }
 
-.rfb-field {
+.rf-builder-field {
 	display: flex;
 }
 
-.rfb-field-preview {
+.rf-builder-field-preview {
 	flex: 1;
 }
 
-.rfb-field-actions {
+.rf-builder-field-actions {
 	width: 200px;
 	text-align: center;
 	margin-bottom: 1rem;
 }
 
-.rf-btn {
+.rf-builder-btn {
 	display: inline-block;
 	background-color: #a6aaed;
 	padding: 3px 10px;
@@ -125,15 +125,15 @@
 	margin: 1px 3px;
 }
 
-.rf-btn:hover {
+.rf-builder-btn:hover {
 	background-color: #969add;
 }
 
-.rf-template {
+.rf-builder-template {
 	display: none;
 }
 
-.rf-dialog {
+.rf-builder-dialog {
 	position: absolute;
 	width: 300px;
 	background-color: #fff;
@@ -159,13 +159,13 @@ function escapeRegExp(str) {
 }
 
 $(function() {
-	$('.rf-category').on('click', function() {
-		$('.rf-components').hide().filter('[data-category="'+$(this).data('category')+'"]').show();
-		$('.rf-category').removeClass('rf-active');
+	$('.rf-builder-category').on('click', function() {
+		$('.rf-builder-components').hide().filter('[data-category="'+$(this).data('category')+'"]').show();
+		$('.rf-builder-category').removeClass('rf-active');
 		$(this).addClass('rf-active');
 	});
 	
-	$('.rf-components').each(function() {
+	$('.rf-builder-components').each(function() {
 		Sortable.create(this, {
 				sort: false,
 				group: {
@@ -173,20 +173,20 @@ $(function() {
 					pull: 'clone',
 					put: false
 				},
-				ghostClass: 'rf-add-ghost',
+				ghostClass: 'rf-builder-add-ghost',
 				animation: 150
 			}
 		);
 	});
 	
-	Sortable.create($('.rf-workspace .rf-fields')[0], {
+	Sortable.create($('.rf-builder-workspace .rf-fields')[0], {
 			sort: true,
 			group: {
 				name: 'component-select',
 				pull: false,
 				put: true
 			},
-			handle: '.rf-drag-handle',
+			handle: '.rf-builder-drag-handle',
 			animation: 150,
 			onAdd: function(evt) {
 				var $item = $(evt.item);
@@ -198,7 +198,7 @@ $(function() {
 		}
 	);
 	
-	$('.rf-toolbar-submit').on('click', function() {
+	$('.rf-builder-toolbar-submit').on('click', function() {
 		ReefBuilder.submit();
 	});
 	
@@ -296,17 +296,17 @@ var ReefBuilder = (function() {
 		this.reef = null;
 		
 		$(function() {
-			self.reef = new Reef($('.rf-workspace'));
+			self.reef = new Reef($('.rf-builder-workspace'));
 			
-			self.configForm = new Reef($('.rf-form-config'));
+			self.configForm = new Reef($('.rf-builder-form-config'));
 			
-			self.configDialog = new ReefDialog($('.rf-dialog.rf-form-config'), $('.rf-toolbar-config'));
+			self.configDialog = new ReefDialog($('.rf-builder-dialog.rf-builder-form-config'), $('.rf-builder-toolbar-config'));
 			
 			$('.rf-builder-existing-fields .rf-builder-existing-field').each(function(index) {
 				self.addField($(this), index);
 				$(this).remove();
 			});
-			$('.rf-workspace .rf-fields').append($('.rf-builder-existing-fields .rfb-field'));
+			$('.rf-builder-workspace .rf-fields').append($('.rf-builder-existing-fields .rf-builder-field'));
 		});
 	};
 	
@@ -365,7 +365,7 @@ var ReefBuilder = (function() {
 		
 		// Save form
 		$.ajax({
-			url: $('.rf-toolbar-submit').data('action'),
+			url: $('.rf-builder-toolbar-submit').data('action'),
 			method: 'POST',
 			data: {
 				form_data : form_data
@@ -405,32 +405,32 @@ var ReefBuilderField = (function() {
 		
 		var existingField = $item.is('.rf-builder-existing-field');
 		
-		var $fieldWrapper = $('<div class="rfb-field"><div class="rfb-field-preview"></div><div class="rfb-field-actions"><div class="rf-btn rf-drag-handle">&#8661;</div><div class="rf-btn rf-component-config">&#9881;</div><div class="rf-btn rf-component-locale">&#128483;</div><div class="rf-btn rf-component-delete">&times;</div></div><div class="rfb-field-templates"></div></div>');
+		var $fieldWrapper = $('<div class="rf-builder-field"><div class="rf-builder-field-preview"></div><div class="rf-builder-field-actions"><div class="rf-builder-btn rf-builder-drag-handle">&#8661;</div><div class="rf-builder-btn rf-builder-component-config">&#9881;</div><div class="rf-builder-btn rf-builder-component-locale">&#128483;</div><div class="rf-builder-btn rf-builder-component-delete">&times;</div></div><div class="rf-builder-field-templates"></div></div>');
 		
-		var templates = ['rf-component-form', 'rf-locale-forms'];
+		var templates = ['rf-builder-component-form', 'rf-builder-locale-forms'];
 		var $template;
 		for(var i in templates) {
-			$template = $item.find('.rf-template.'+templates[i]).clone().hide().removeClass('rf-template').addClass('rf-dialog');
+			$template = $item.find('.rf-builder-template.'+templates[i]).clone().hide().removeClass('rf-builder-template').addClass('rf-builder-dialog');
 			$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.rf-main-config').data('form-idpfx')), 'g'), unique_id()));
 			
-			$fieldWrapper.find('.rfb-field-templates').append($template);
+			$fieldWrapper.find('.rf-builder-field-templates').append($template);
 		}
 		
-		$fieldWrapper.find('.rf-component-form input, .rf-locale-forms input').on('change', function() {
+		$fieldWrapper.find('.rf-builder-component-form input, .rf-builder-locale-forms input').on('change', function() {
 			self.updateField($fieldWrapper);
 		});
 		
-		this.componentForm = new Reef($fieldWrapper.find('.rf-component-form'));
-		this.localeForms = new Reef($fieldWrapper.find('.rf-locale-forms'));
+		this.componentForm = new Reef($fieldWrapper.find('.rf-builder-component-form'));
+		this.localeForms = new Reef($fieldWrapper.find('.rf-builder-locale-forms'));
 		
-		this.componentDialog = new ReefDialog($fieldWrapper.find('.rf-component-form'), $fieldWrapper.find('.rf-component-config'));
-		this.localeDialog = new ReefDialog($fieldWrapper.find('.rf-locale-forms'), $fieldWrapper.find('.rf-component-locale'));
+		this.componentDialog = new ReefDialog($fieldWrapper.find('.rf-builder-component-form'), $fieldWrapper.find('.rf-builder-component-config'));
+		this.localeDialog = new ReefDialog($fieldWrapper.find('.rf-builder-locale-forms'), $fieldWrapper.find('.rf-builder-component-locale'));
 		
 		if(this.componentForm.hasField('name') && !existingField) {
 			this.componentForm.getField('name').setValue('field_'+unique_id().substr(0, 16));
 		}
 		
-		$fieldWrapper.find('.rf-component-delete').on('click', function() {
+		$fieldWrapper.find('.rf-builder-component-delete').on('click', function() {
 			self.deleteField();
 		});
 		
@@ -451,7 +451,7 @@ var ReefBuilderField = (function() {
 	ReefBuilderField.prototype.updateField = function() {
 		var componentName = this.$fieldWrapper.data('component-name');
 		
-		var template = atob($('.rf-builder-select .rf-component[data-component-name="'+componentName+'"]').data('html'));
+		var template = atob($('.rf-builder-select .rf-builder-component[data-component-name="'+componentName+'"]').data('html'));
 		
 		var fieldConfig = this.componentForm.getData();
 		fieldConfig.locale = this.localeForms.getData();
@@ -495,8 +495,8 @@ var ReefBuilderField = (function() {
 		
 		var html = Mustache.render(template, vars);
 		
-		this.$fieldWrapper.find('.rfb-field-preview').html(html);
-		this.$field = this.$fieldWrapper.find('.rfb-field-preview .rf-field');
+		this.$fieldWrapper.find('.rf-builder-field-preview').html(html);
+		this.$field = this.$fieldWrapper.find('.rf-builder-field-preview .rf-field');
 		
 		if(Reef.hasComponent(componentName)) {
 			this.field = ReefBuilder.getReef().newField(this.$field.data(CSSPRFX+'type'), this.$field);
@@ -530,22 +530,22 @@ var ReefBuilderField = (function() {
 </script>
 
 <div class="rf-builder" data-form_config="{{formConfig}}" data-form_id="{{form_id}}">
-	<div class="rf-toolbar">
-		<div class="rf-toolbar-general">
-			<button type="button" class="rf-toolbar-submit" data-action="{{settings.submit_action}}">
+	<div class="rf-builder-toolbar">
+		<div class="rf-builder-toolbar-general">
+			<button type="button" class="rf-builder-toolbar-submit" data-action="{{settings.submit_action}}">
 				Save
 			</button>
-			<button type="button" class="rf-toolbar-config">
+			<button type="button" class="rf-builder-toolbar-config">
 				&#9881;
 			</button>
-			<div class="rf-dialog rf-form-config" style="display: none;">
+			<div class="rf-builder-dialog rf-builder-form-config" style="display: none;">
 				{{{formConfigHtml}}}
 			</div>
 		</div>
 		<div class="rf-builder-select">
-			<div class="rf-categories">
+			<div class="rf-builder-categories">
 			{{#categories}}
-				<div class="rf-category {{#open_default}}rf-active{{/open_default}}" data-category="{{category}}">
+				<div class="rf-builder-category {{#open_default}}rf-active{{/open_default}}" data-category="{{category}}">
 					<div>
 						<img title="" alt="" src="../../assets/img/{{category}}.svg" />
 						<span>{{category}}</span>
@@ -555,19 +555,19 @@ var ReefBuilderField = (function() {
 			</div>
 			
 			{{#categories}}
-			<div class="rf-components {{#open_default}}rf-active{{/open_default}}" data-category="{{category}}">
+			<div class="rf-builder-components {{#open_default}}rf-active{{/open_default}}" data-category="{{category}}">
 				{{#components}}
-				<div class="rf-component" data-component-name="{{type}}" data-definition="{{definition}}" data-html="{{html}}">
-					<div class="rf-tile">
+				<div class="rf-builder-component" data-component-name="{{type}}" data-definition="{{definition}}" data-html="{{html}}">
+					<div class="rf-builder-tile">
 						<img title="" alt="" src="../../assets/img/{{image}}" />
 						<span>{{name}}</span>
 					</div>
-					<div class="rf-template rf-component-form">
+					<div class="rf-builder-template rf-builder-component-form">
 						{{{componentForm}}}
 					</div>
-					<div class="rf-template rf-locale-forms">
+					<div class="rf-builder-template rf-builder-locale-forms">
 						{{#localeForms}}
-						<div class="rf-locale-form" data-locale="{{locale}}">
+						<div class="rf-builder-locale-form" data-locale="{{locale}}">
 							{{{form}}}
 						</div>
 						{{/localeForms}}
@@ -578,18 +578,18 @@ var ReefBuilderField = (function() {
 			{{/categories}}
 		</div>
 	</div>
-	<div class="rf-workspace my-3">
+	<div class="rf-builder-workspace my-3">
 		{{{formHtml}}}
 	</div>
 	<div class="rf-builder-existing-fields">
 		{{#fields}}
 		<div class="rf-builder-existing-field" data-component-name="{{type}}" data-config="{{config}}">
-			<div class="rf-template rf-component-form">
+			<div class="rf-builder-template rf-builder-component-form">
 				{{{componentForm}}}
 			</div>
-			<div class="rf-template rf-locale-forms">
+			<div class="rf-builder-template rf-builder-locale-forms">
 				{{#localeForms}}
-				<div class="rf-locale-form" data-locale="{{locale}}">
+				<div class="rf-builder-locale-form" data-locale="{{locale}}">
 					{{{form}}}
 				</div>
 				{{/localeForms}}
