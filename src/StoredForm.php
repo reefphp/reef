@@ -15,16 +15,16 @@ class StoredForm extends Form {
 	}
 	
 	public function getStorageName() {
-		return $this->a_formConfig['storage_name']??null;
+		return $this->a_definition['storage_name']??null;
 	}
 	
 	public function setStorageName($s_newStorageName) {
 		$this->Reef->getDataStore()->changeSubmissionStorageName($this, $s_newStorageName);
-		$this->a_formConfig['storage_name'] = $s_newStorageName;
+		$this->a_definition['storage_name'] = $s_newStorageName;
 	}
 	
 	public function getSubmissionStorage() {
-		if(empty($this->a_formConfig['storage_name']??null)) {
+		if(empty($this->a_definition['storage_name']??null)) {
 			return null;
 		}
 		
@@ -50,7 +50,7 @@ class StoredForm extends Form {
 			throw new \Exception("Missing storage_name");
 		}
 		
-		$this->a_formConfig['storage_name'] = $a_definition['storage_name'];
+		$this->a_definition['storage_name'] = $a_definition['storage_name'];
 		$this->updateDefinition($a_definition);
 	}
 	

@@ -113,10 +113,10 @@ class Builder {
 			];
 		}
 		
-		// Form config
-		$FormConfigForm = $this->generateFormConfigForm($Form);
-		$FormConfigSubmission = $FormConfigForm->newSubmission();
-		$FormConfigSubmission->fromUserInput([
+		// Form definition
+		$DefinitionForm = $this->generateDefinitionForm($Form);
+		$DefinitionSubmission = $DefinitionForm->newSubmission();
+		$DefinitionSubmission->fromUserInput([
 			'storage_name' => ($Form instanceof StoredForm) ? $Form->getStorageName() : 'temporary_form',
 		]);
 		
@@ -137,7 +137,7 @@ class Builder {
 		$s_html = $Template->render([
 			'categories' => $a_categories,
 			'formConfig' => base64_encode(json_encode(array_merge(
-				array_subset($Form->getFormConfig(), ['locale']),
+				array_subset($Form->getDefinition(), ['locale']),
 				[
 					'layout_name' => $Layout->getName(),
 					'layout' => $Layout->getConfig(),
@@ -146,7 +146,7 @@ class Builder {
 			'formHtml' => $s_formHtml,
 			'settings' => $this->a_settings,
 			'fields' => $a_fields,
-			'formConfigHtml' => $FormConfigForm->generateFormHtml($FormConfigSubmission, ['main_var' => 'form_config']),
+			'definitionForm' => $DefinitionForm->generateFormHtml($DefinitionSubmission, ['main_var' => 'definition']),
 			'form_id' => ($Form instanceof StoredForm) ? $Form->getFormId() : -1,
 			'multipleLocales' => (count($a_locales) > 1),
 		]);
@@ -162,15 +162,15 @@ class Builder {
 		$b_valid = true;
 		$a_errors = [];
 		
-		// Validate form config
-		$FormConfigForm = $this->generateFormConfigForm($Form);
-		$FormConfigSubmission = $FormConfigForm->newSubmission();
+		// Validate form definition
+		$DefinitionForm = $this->generateDefinitionForm($Form);
+		$DefinitionSubmission = $DefinitionForm->newSubmission();
 		
-		$FormConfigSubmission->fromUserInput($a_data['form_config']);
+		$DefinitionSubmission->fromUserInput($a_data['definition']);
 		
-		$b_valid = $FormConfigSubmission->validate() && $b_valid;
+		$b_valid = $DefinitionSubmission->validate() && $b_valid;
 		if(!$b_valid) {
-			$a_errors[-1] = $FormConfigSubmission->getErrors();
+			$a_errors[-1] = $DefinitionSubmission->getErrors();
 		}
 		
 		// Validate all fields
@@ -246,17 +246,17 @@ class Builder {
 			$a_fields[] = $a_fieldDecl;
 		}
 		
-	//	$Form->mergeConfig($FormConfigSubmission->toStructured());
+	//	$Form->mergeDefinition($DefinitionSubmission->toStructured());
 	//	$Form->setFields($a_fields);
 		/*
 		$Form2 = clone $Form;
-		$Form2->mergeConfig($FormConfigSubmission->toStructured());
+		$Form2->mergeDefinition($DefinitionSubmission->toStructured());
 		$Form2->setFields($a_fields);
 		
 		$Updater = new Updater();
 		$Form = $Updater->update($Form, $Form2, $a_fieldRenames);*/
 		
-		$a_newDefinition = array_merge($Form->getFormConfig(), $FormConfigSubmission->toStructured());
+		$a_newDefinition = array_merge($Form->getDefinition(), $DefinitionSubmission->toStructured());
 		$a_newDefinition['fields'] = $a_fields;
 		
 		$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
@@ -266,7 +266,7 @@ class Builder {
 		];
 	}
 	
-	private function generateFormConfigForm(Form $Form) {
+	private function generateDefinitionForm(Form $Form) {
 		
 		$a_definition = [
 			'locale' => [],

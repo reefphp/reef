@@ -154,9 +154,9 @@ var ReefBuilder = (function() {
 		
 		this.reef = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace'));
 		
-		this.configForm = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-form-config'));
+		this.definitionForm = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-definition-form'));
 		
-		this.configDialog = new ReefDialog(this.$builderWrapper.find('.'+CSSPRFX+'builder-dialog.'+CSSPRFX+'builder-form-config'), this.$builderWrapper.find('.'+CSSPRFX+'builder-toolbar-config'));
+		this.definitionDialog = new ReefDialog(this.$builderWrapper.find('.'+CSSPRFX+'builder-dialog.'+CSSPRFX+'builder-definition-form'), this.$builderWrapper.find('.'+CSSPRFX+'builder-toolbar-config'));
 		
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-existing-field').each(function(index) {
 			self.addField($(this), index);
@@ -195,8 +195,8 @@ var ReefBuilder = (function() {
 		
 		var i;
 		
-		if(!this.configForm.validate()) {
-			this.configDialog.show();
+		if(!this.definitionForm.validate()) {
+			this.definitionDialog.show();
 			return false;
 		}
 		
@@ -216,7 +216,7 @@ var ReefBuilder = (function() {
 		// Gather all data
 		var form_data = {
 			'form_id' : $('.'+CSSPRFX+'builder').data('form_id'),
-			'form_config' : this.configForm.getData(),
+			'definition' : this.definitionForm.getData(),
 			'fields' : fields
 		};
 		

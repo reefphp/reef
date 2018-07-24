@@ -180,6 +180,6 @@ abstract class Field {
 	}
 	
 	protected function getDefaultLocale() {
-		return $this->getForm()->getFormConfig()['default_locale']??null;
+		return $this->getForm()->getDefinition()['default_locale']??null;
 	}
 }

@@ -15,7 +15,7 @@ abstract class Form {
 	
 	protected $s_idPfx;
 	protected $a_locale;
-	protected $a_formConfig = [];
+	protected $a_definition = [];
 	protected $a_fields = [];
 	
 	/**
@@ -26,8 +26,8 @@ abstract class Form {
 		$this->s_idPfx = unique_id();
 	}
 	
-	public function getFormConfig() {
-		return $this->a_formConfig;
+	public function getDefinition() {
+		return $this->a_definition;
 	}
 	
 	public function getFields() {
@@ -89,14 +89,14 @@ abstract class Form {
 	}
 	
 	public function importDefinition(array $a_definition) {
-		$this->a_formConfig = $a_definition;
-		unset($this->a_formConfig['fields']);
+		$this->a_definition = $a_definition;
+		unset($this->a_definition['fields']);
 		
 		$this->setFields($a_definition['fields']??[]);
 	}
 	
-	public function mergeConfig(array $a_partialDefinition) {
-		$this->a_formConfig = array_merge($this->a_formConfig, $a_partialDefinition);
+	public function mergeDefinition(array $a_partialDefinition) {
+		$this->a_definition = array_merge($this->a_definition, $a_partialDefinition);
 	}
 	
 	public function setFields(array $a_fields) {
@@ -109,7 +109,7 @@ abstract class Form {
 	}
 	
 	public function generateDefinition() : array {
-		$a_definition = $this->a_formConfig;
+		$a_definition = $this->a_definition;
 		
 		$a_definition['fields'] = [];
 		
@@ -128,7 +128,7 @@ abstract class Form {
 			$Submission->emptySubmission();
 		}
 		
-		$a_helpers = $this->a_formConfig;
+		$a_helpers = $this->a_definition;
 		unset($a_helpers['storage_name']);
 		$a_helpers['locale'] = $this->getLocale($a_options['locale']??null);
 		unset($a_helpers['locales']);
@@ -186,11 +186,11 @@ abstract class Form {
 	}
 	
 	protected function fetchBaseLocale($s_locale) {
-		if(!empty($s_locale) && isset($this->a_formConfig['locales'][$s_locale])) {
-			return $this->a_formConfig['locales'][$s_locale];
+		if(!empty($s_locale) && isset($this->a_definition['locales'][$s_locale])) {
+			return $this->a_definition['locales'][$s_locale];
 		}
-		else if(isset($this->a_formConfig['locale'])) {
-			return $this->a_formConfig['locale'];
+		else if(isset($this->a_definition['locale'])) {
+			return $this->a_definition['locale'];
 		}
 		else {
 			return [];
@@ -205,7 +205,7 @@ abstract class Form {
 	}
 	
 	protected function getDefaultLocale() {
-		return $this->a_formConfig['default_locale']??null;
+		return $this->a_definition['default_locale']??null;
 	}
 	
 	abstract public function updateDefinition(array $a_definition, array $a_fieldRenames = []);
