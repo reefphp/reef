@@ -208,6 +208,8 @@ abstract class Form {
 		return $this->a_formConfig['default_locale']??null;
 	}
 	
+	abstract public function updateDeclaration(array $a_declaration, array $a_fieldRenames = []);
+	
 	abstract public function newSubmission();
 	
 }

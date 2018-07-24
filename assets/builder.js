@@ -13,52 +13,6 @@ function escapeRegExp(str) {
 	return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
 
-$(function() {
-	$('.'+CSSPRFX+'builder-category').on('click', function() {
-		$('.'+CSSPRFX+'builder-components').hide().filter('[data-category="'+$(this).data('category')+'"]').show();
-		$('.'+CSSPRFX+'builder-category').removeClass(CSSPRFX+'active');
-		$(this).addClass(CSSPRFX+'active');
-	});
-	
-	$('.'+CSSPRFX+'builder-components').each(function() {
-		Sortable.create(this, {
-				sort: false,
-				group: {
-					name: 'component-select',
-					pull: 'clone',
-					put: false
-				},
-				ghostClass: CSSPRFX+'builder-add-ghost',
-				animation: 150
-			}
-		);
-	});
-	
-	Sortable.create($('.'+CSSPRFX+'builder-workspace .'+CSSPRFX+'fields')[0], {
-			sort: true,
-			group: {
-				name: 'component-select',
-				pull: false,
-				put: true
-			},
-			handle: '.'+CSSPRFX+'builder-drag-handle',
-			animation: 150,
-			onAdd: function(evt) {
-				var $item = $(evt.item);
-				ReefBuilder.addField($item, evt.newIndex);
-			},
-			onUpdate: function(evt) {
-				ReefBuilder.moveField(evt.oldIndex, evt.newIndex);
-			}
-		}
-	);
-	
-	$('.'+CSSPRFX+'builder-toolbar-submit').on('click', function() {
-		ReefBuilder.submit();
-	});
-	
-});
-
 var ReefDialog = (function() {
 	'use strict';
 	
@@ -144,25 +98,71 @@ var ReefDialog = (function() {
 var ReefBuilder = (function() {
 	'use strict';
 	
-	var ReefBuilder = function() {
+	var ReefBuilder = function($builderWrapper, options) {
 		var self = this;
 		
-		this.fields = [];
-		this.reef = null;
+		options = options || {};
+		this.options = {};
+		this.options.success = options.success || $.noop;
 		
-		$(function() {
-			self.reef = new Reef($('.'+CSSPRFX+'builder-workspace'));
-			
-			self.configForm = new Reef($('.'+CSSPRFX+'builder-form-config'));
-			
-			self.configDialog = new ReefDialog($('.'+CSSPRFX+'builder-dialog.'+CSSPRFX+'builder-form-config'), $('.'+CSSPRFX+'builder-toolbar-config'));
-			
-			$('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-existing-field').each(function(index) {
-				self.addField($(this), index);
-				$(this).remove();
-			});
-			$('.'+CSSPRFX+'builder-workspace .'+CSSPRFX+'fields').append($('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-field'));
+		this.$builderWrapper = $($builderWrapper);
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-category').on('click', function() {
+			self.$builderWrapper.find('.'+CSSPRFX+'builder-components').hide().filter('[data-category="'+$(this).data('category')+'"]').show();
+			self.$builderWrapper.find('.'+CSSPRFX+'builder-category').removeClass(CSSPRFX+'active');
+			$(this).addClass(CSSPRFX+'active');
 		});
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-components').each(function() {
+			Sortable.create(this, {
+					sort: false,
+					group: {
+						name: 'component-select',
+						pull: 'clone',
+						put: false
+					},
+					ghostClass: CSSPRFX+'builder-add-ghost',
+					animation: 150
+				}
+			);
+		});
+		
+		Sortable.create(this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace .'+CSSPRFX+'fields')[0], {
+				sort: true,
+				group: {
+					name: 'component-select',
+					pull: false,
+					put: true
+				},
+				handle: '.'+CSSPRFX+'builder-drag-handle',
+				animation: 150,
+				onAdd: function(evt) {
+					var $item = $(evt.item);
+					self.addField($item, evt.newIndex);
+				},
+				onUpdate: function(evt) {
+					self.moveField(evt.oldIndex, evt.newIndex);
+				}
+			}
+		);
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-toolbar-submit').on('click', function() {
+			self.submit();
+		});
+		
+		this.fields = [];
+		
+		this.reef = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace'));
+		
+		this.configForm = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-form-config'));
+		
+		this.configDialog = new ReefDialog(this.$builderWrapper.find('.'+CSSPRFX+'builder-dialog.'+CSSPRFX+'builder-form-config'), this.$builderWrapper.find('.'+CSSPRFX+'builder-toolbar-config'));
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-existing-field').each(function(index) {
+			self.addField($(this), index);
+			$(this).remove();
+		});
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace .'+CSSPRFX+'fields').append(this.$builderWrapper.find('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-field'));
 	};
 	
 	ReefBuilder.prototype.getReef = function() {
@@ -191,6 +191,8 @@ var ReefBuilder = (function() {
 	};
 	
 	ReefBuilder.prototype.submit = function() {
+		var self = this;
+		
 		var i;
 		
 		if(!this.configForm.validate()) {
@@ -235,12 +237,14 @@ var ReefBuilder = (function() {
 					if(typeof response.redirect !== 'undefined') {
 						window.location = response.redirect;
 					}
+					
+					self.options.success(response);
 				}
 			}
 		});
 	};
 	
-	return new ReefBuilder();
+	return ReefBuilder;
 })();
 
 var ReefBuilderField = (function() {
@@ -391,7 +395,7 @@ var ReefBuilderField = (function() {
 		this.$field = this.$fieldWrapper.find('.'+CSSPRFX+'builder-field-preview .'+CSSPRFX+'field');
 		
 		if(Reef.hasComponent(componentName)) {
-			this.field = ReefBuilder.getReef().newField(this.$field.data(CSSPRFX+'type'), this.$field);
+			this.field = this.reefBuilder.getReef().newField(this.$field.data(CSSPRFX+'type'), this.$field);
 			this.field.attach();
 		}
 	};

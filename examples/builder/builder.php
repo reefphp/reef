@@ -67,9 +67,15 @@ $s_JS = $Reef->getReefAssets()->getJSHTML(function($s_assetsHash) {
 	<?php echo($s_JS); ?>
 	
 	<title>Form builder</title>
+	<script>
+	$(function() {
+		var builder = new ReefBuilder('.builderWrapper');
+	});
+	</script>
 </head>
 <body>
-<?php echo($s_html); ?>
-
+<div class="builderWrapper">
+	<?php echo($s_html); ?>
+</div>
 </body>
 </html>

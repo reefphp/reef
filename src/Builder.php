@@ -117,7 +117,7 @@ class Builder {
 		$FormConfigForm = $this->generateFormConfigForm($Form);
 		$FormConfigSubmission = $FormConfigForm->newSubmission();
 		$FormConfigSubmission->fromUserInput([
-			'storage_name' => $Form->getStorageName(),
+			'storage_name' => ($Form instanceof StoredForm) ? $Form->getStorageName() : 'temporary_form',
 		]);
 		
 		$EmptyForm = clone $Form;

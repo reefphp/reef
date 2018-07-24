@@ -13,6 +13,25 @@ class NoStorage implements Storage {
 	/**
 	 * @inherit
 	 */
+	public function deleteStorage() {
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function addColumns($a_subfields) {
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getColumns() : array {
+		return [];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function list() : array {
 		return [];
 	}
