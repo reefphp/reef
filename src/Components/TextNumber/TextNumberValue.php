@@ -18,16 +18,16 @@ class TextNumberValue extends SingleLineTextValue {
 		}
 		else {
 			$f_value = (float)$this->s_value;
-			$a_config = $this->Field->getConfig();
+			$a_declaration = $this->Field->getDeclaration();
 			
-			$b_hasMin = isset($a_config['min']) && strlen($a_config['min']) > 0;
-			$b_hasMax = isset($a_config['max']) && strlen($a_config['max']) > 0;
+			$b_hasMin = isset($a_declaration['min']) && strlen($a_declaration['min']) > 0;
+			$b_hasMax = isset($a_declaration['max']) && strlen($a_declaration['max']) > 0;
 			
-			if($b_hasMin && $f_value < $a_config['min']) {
+			if($b_hasMin && $f_value < $a_declaration['min']) {
 				$b_valid = false;
 				$this->a_errors[] = $this->Field->trans($b_hasMax ? 'error_number_min_max' : 'error_number_min');
 			}
-			else if($b_hasMax && $f_value > $a_config['max']) {
+			else if($b_hasMax && $f_value > $a_declaration['max']) {
 				$b_valid = false;
 				$this->a_errors[] = $this->Field->trans($b_hasMin ? 'error_number_min_max' : 'error_number_max');
 			}
@@ -72,12 +72,12 @@ class TextNumberValue extends SingleLineTextValue {
 	public function fromUpdate($OldValue) {
 		$this->s_value = $OldValue->s_value;
 		
-		$a_config = $this->Field->getConfig();
-		if(isset($a_config['min']) && $this->s_value < $a_config['min']) {
-			$this->s_value = $a_config['min'];
+		$a_declaration = $this->Field->getDeclaration();
+		if(isset($a_declaration['min']) && $this->s_value < $a_declaration['min']) {
+			$this->s_value = $a_declaration['min'];
 		}
-		if(isset($a_config['max']) && $this->s_value > $a_config['max']) {
-			$this->s_value = $a_config['max'];
+		if(isset($a_declaration['max']) && $this->s_value > $a_declaration['max']) {
+			$this->s_value = $a_declaration['max'];
 		}
 		
 		$this->a_errors = null;

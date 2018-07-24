@@ -47,7 +47,7 @@ abstract class Form {
 	public function getValueFieldsByName() {
 		$a_fields = [];
 		foreach($this->getValueFields() as $Field) {
-			$a_fields[$Field->getConfig()['name']] = $Field;
+			$a_fields[$Field->getDeclaration()['name']] = $Field;
 		}
 		return $a_fields;
 	}
@@ -103,8 +103,8 @@ abstract class Form {
 		$Setup = $this->Reef->getSetup();
 		
 		$this->a_fields = [];
-		foreach($a_fields as $s_id => $a_config) {
-			$this->a_fields[$s_id] = $Setup->getField($a_config, $this);
+		foreach($a_fields as $s_id => $a_declaration) {
+			$this->a_fields[$s_id] = $Setup->getField($a_declaration, $this);
 		}
 	}
 	
@@ -114,7 +114,7 @@ abstract class Form {
 		$a_definition['fields'] = [];
 		
 		foreach($this->a_fields as $s_id => $Field) {
-			$a_definition['fields'][$s_id] = $Field->getConfig();
+			$a_definition['fields'][$s_id] = $Field->getDeclaration();
 		}
 		
 		return $a_definition;
@@ -158,12 +158,12 @@ abstract class Form {
 			}
 			
 			if($s_templateDir === null) {
-				throw new \Exception("Could not find form template file for field '".$Field->getConfig()['name']."'.");
+				throw new \Exception("Could not find form template file for field '".$Field->getDeclaration()['name']."'.");
 			}
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
 			$Template = $Mustache->loadTemplate($s_viewfile);
-			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getConfig()['name']);
+			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getDeclaration()['name']);
 			$a_vars = $Field->view_form($Value, array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([

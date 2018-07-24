@@ -21,7 +21,7 @@ abstract class Submission {
 		$a_fields = $this->Form->getValueFields();
 		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
-			$s_name = $Field->getConfig()['name'];
+			$s_name = $Field->getDeclaration()['name'];
 			$this->a_fieldValues[$s_name] = $Field->newValue();
 			$this->a_fieldValues[$s_name]->fromDefault();
 		}
@@ -31,7 +31,7 @@ abstract class Submission {
 		$a_fields = $this->Form->getValueFields();
 		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
-			$s_name = $Field->getConfig()['name'];
+			$s_name = $Field->getDeclaration()['name'];
 			$this->a_fieldValues[$s_name] = $Field->newValue();
 			$this->a_fieldValues[$s_name]->fromUserInput($a_input[$s_name] ?? null);
 		}
@@ -42,7 +42,7 @@ abstract class Submission {
 		
 		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
-			$s_name = $Field->getConfig()['name'];
+			$s_name = $Field->getDeclaration()['name'];
 			$b_valid = $this->a_fieldValues[$s_name]->validate() && $b_valid;
 		}
 		
@@ -54,7 +54,7 @@ abstract class Submission {
 		
 		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
-			$s_name = $Field->getConfig()['name'];
+			$s_name = $Field->getDeclaration()['name'];
 			$a_fieldErrors = $this->a_fieldValues[$s_name]->getErrors();
 			if(!empty($a_fieldErrors)) {
 				$a_errors[$s_name] = $a_fieldErrors;
@@ -77,7 +77,7 @@ abstract class Submission {
 		
 		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
-			$s_name = $Field->getConfig()['name'];
+			$s_name = $Field->getDeclaration()['name'];
 			$a_flatStructure = $Field->getFlatStructure();
 			
 			$a_flatField = $this->a_fieldValues[$s_name]->toFlat();
@@ -102,7 +102,7 @@ abstract class Submission {
 		
 		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
-			$s_name = $Field->getConfig()['name'];
+			$s_name = $Field->getDeclaration()['name'];
 			$a_flatStructure = $Field->getFlatStructure();
 			
 			if(count($a_flatStructure) == 1 && \Reef\array_first_key($a_flatStructure) === 0) {
@@ -127,7 +127,7 @@ abstract class Submission {
 		
 		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
-			$s_name = $Field->getConfig()['name'];
+			$s_name = $Field->getDeclaration()['name'];
 			$a_data[$s_name] = $this->a_fieldValues[$s_name]->toStructured();
 		}
 		

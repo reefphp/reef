@@ -15,7 +15,7 @@ class SingleLineTextValue extends FieldValue {
 		$this->a_errors = [];
 		$s_value = trim($this->s_value);
 		
-		if(($this->Field->getConfig()['required']??false) && $s_value == '') {
+		if(($this->Field->getDeclaration()['required']??false) && $s_value == '') {
 			$this->a_errors[] = $this->Field->getForm()->trans('rf_error_required_empty');
 			return false;
 		}
@@ -27,7 +27,7 @@ class SingleLineTextValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromDefault() {
-		$this->s_value = $this->Field->getConfig()['default']??'';
+		$this->s_value = $this->Field->getDeclaration()['default']??'';
 		$this->a_errors = null;
 	}
 	
@@ -52,7 +52,7 @@ class SingleLineTextValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->s_value = $a_flat[0]??$this->Field->getConfig()['default']??'';
+		$this->s_value = $a_flat[0]??$this->Field->getDeclaration()['default']??'';
 		$this->a_errors = null;
 	}
 	

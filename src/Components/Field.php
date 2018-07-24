@@ -10,12 +10,12 @@ abstract class Field {
 	
 	use Trait_Locale;
 	
-	protected $a_config;
+	protected $a_declaration;
 	protected $Component;
 	protected $Form;
 	
-	public function __construct(array $a_config, Form $Form, Component $Component) {
-		$this->a_config = $a_config;
+	public function __construct(array $a_declaration, Form $Form, Component $Component) {
+		$this->a_declaration = $a_declaration;
 		$this->Form = $Form;
 		$this->Component = $Component;
 	}
@@ -37,11 +37,11 @@ abstract class Field {
 	}
 	
 	/**
-	 * Return the entire configuration array
+	 * Return the entire declaration array
 	 * @return array
 	 */
-	public function getConfig() : array {
-		return $this->a_config;
+	public function getDeclaration() : array {
+		return $this->a_declaration;
 	}
 	
 	/**
@@ -64,7 +64,7 @@ abstract class Field {
 	abstract public function getFlatStructure() : array;
 	
 	final public function getFlatStructureByColumnName() : array {
-		$s_name = $this->getConfig()['name'];
+		$s_name = $this->getDeclaration()['name'];
 		
 		$a_fieldStructure = $this->getFlatStructure();
 		$a_columnStructure = [];
@@ -82,7 +82,7 @@ abstract class Field {
 	}
 	
 	final public function dataFieldNamesToColumnNames() : array {
-		$s_name = $this->getConfig()['name'];
+		$s_name = $this->getDeclaration()['name'];
 		$a_fieldStructure = $this->getFlatStructure();
 		
 		$a_fieldNames = [];
@@ -99,7 +99,7 @@ abstract class Field {
 	}
 	
 	final public function columnNamesToDataFieldNames() : array {
-		$s_name = $this->getConfig()['name'];
+		$s_name = $this->getDeclaration()['name'];
 		$a_fieldStructure = $this->getFlatStructure();
 		
 		$a_columnNames = [];
@@ -144,7 +144,7 @@ abstract class Field {
 	 * @return array The template variables
 	 */
 	public function view_form(?FieldValue $Value, $a_options = []) : array {
-		$a_vars = $this->a_config;
+		$a_vars = $this->a_declaration;
 		
 		$a_vars['errors'] = !empty($Value) ? $Value->getErrors() : [];
 		$a_vars['hasErrors'] = !empty($a_vars['errors']);
@@ -156,11 +156,11 @@ abstract class Field {
 	}
 	
 	protected function fetchBaseLocale($s_locale) {
-		if(!empty($s_locale) && isset($this->a_config['locales'][$s_locale])) {
-			return $this->a_config['locales'][$s_locale];
+		if(!empty($s_locale) && isset($this->a_declaration['locales'][$s_locale])) {
+			return $this->a_declaration['locales'][$s_locale];
 		}
-		else if(isset($this->a_config['locale'])) {
-			return $this->a_config['locale'];
+		else if(isset($this->a_declaration['locale'])) {
+			return $this->a_declaration['locale'];
 		}
 		else {
 			return [];

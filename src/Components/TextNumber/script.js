@@ -10,21 +10,21 @@ Reef.addComponent((function() {
 	
 	Field.componentName = 'reef:text_number';
 	
-	Field.getLanguageReplacements = function(config) {
+	Field.getLanguageReplacements = function(declaration) {
 		var replacements = {};
-		if(typeof config.min !== 'undefined') {
-			replacements.min = config.min;
+		if(typeof declaration.min !== 'undefined') {
+			replacements.min = declaration.min;
 		}
-		if(typeof config.max !== 'undefined') {
-			replacements.max = config.max;
+		if(typeof declaration.max !== 'undefined') {
+			replacements.max = declaration.max;
 		}
 		return replacements;
 	};
 	
-	Field.viewVars = function(config) {
-		config.hasMin = (config.min !== '');
-		config.hasMax = (config.max !== '');
-		return config;
+	Field.viewVars = function(declaration) {
+		declaration.hasMin = (declaration.min !== '');
+		declaration.hasMax = (declaration.max !== '');
+		return declaration;
 	};
 	
 	Field.prototype.attach = function() {

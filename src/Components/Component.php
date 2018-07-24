@@ -31,13 +31,13 @@ abstract class Component {
 	
 	/**
 	 * Return a new field from this component
-	 * @param array $a_config The config array for the field
+	 * @param array $a_declaration The declaration array for the field
 	 * @param Form $Form The form the field belongs to
 	 * @return Field
 	 */
-	public function newField(array $a_config, Form $Form) : Field {
+	public function newField(array $a_declaration, Form $Form) : Field {
 		$s_class = substr(static::class, 0, -9).'Field';
-		return new $s_class($a_config, $Form, $this);
+		return new $s_class($a_declaration, $Form, $this);
 	}
 	
 	/**

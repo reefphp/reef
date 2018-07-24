@@ -281,7 +281,7 @@ class Updater {
 				$a_names[] = PDOStorage::sanitizeName($SubmissionStorage->getTableName());
 				
 				// Column names
-				$s_name = $Field->getConfig()['name'];
+				$s_name = $Field->getDeclaration()['name'];
 				$a_flatStructure = $Field->getFlatStructure();
 				
 				if(count($a_flatStructure) == 1 && \Reef\array_first_key($a_flatStructure) === 0) {

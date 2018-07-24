@@ -14,7 +14,7 @@ class SingleCheckboxValue extends FieldValue {
 	public function validate() : bool {
 		$this->a_errors = [];
 		
-		if(($this->Field->getConfig()['required']??false) && !$this->b_value) {
+		if(($this->Field->getDeclaration()['required']??false) && !$this->b_value) {
 			$this->a_errors[] = $this->Field->getForm()->trans('rf_error_required_empty');
 			return false;
 		}
@@ -26,7 +26,7 @@ class SingleCheckboxValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromDefault() {
-		$this->b_value = (bool)($this->Field->getConfig()['default']??false);
+		$this->b_value = (bool)($this->Field->getDeclaration()['default']??false);
 		$this->a_errors = null;
 	}
 	
@@ -56,7 +56,7 @@ class SingleCheckboxValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->b_value = (bool)($a_flat[0]??$this->Field->getConfig()['default']??false);
+		$this->b_value = (bool)($a_flat[0]??$this->Field->getDeclaration()['default']??false);
 		$this->a_errors = null;
 	}
 	

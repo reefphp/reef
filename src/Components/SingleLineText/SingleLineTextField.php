@@ -12,7 +12,7 @@ class SingleLineTextField extends Field {
 	public function getFlatStructure() : array {
 		return [[
 			'type' => \Reef\Storage\Storage::TYPE_TEXT,
-			'limit' => $this->a_config['max_length'] ?? 1000,
+			'limit' => $this->a_declaration['max_length'] ?? 1000,
 		]];
 	}
 	
@@ -44,7 +44,7 @@ class SingleLineTextField extends Field {
 	 * @inherit
 	 */
 	public function needsValueUpdate($OldField, &$b_dataLoss = null) : bool {
-		if(($OldField->a_config['max_length'] ?? 1000) > ($this->a_config['max_length'] ?? 1000)) {
+		if(($OldField->a_declaration['max_length'] ?? 1000) > ($this->a_declaration['max_length'] ?? 1000)) {
 			$b_dataLoss = true;
 			return true;
 		}

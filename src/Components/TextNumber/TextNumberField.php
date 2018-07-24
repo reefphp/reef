@@ -23,15 +23,15 @@ class TextNumberField extends SingleLineTextField {
 	 * @inherit
 	 */
 	public function getFlatStructure() : array {
-		$b_integer = $this->is_integer($this->a_config['min']) && $this->is_integer($this->a_config['step']);
+		$b_integer = $this->is_integer($this->a_declaration['min']) && $this->is_integer($this->a_declaration['step']);
 		
 		if($b_integer) {
-			$b_signed = (empty($this->a_config['min']) && $this->a_config['min'] != '0') || (!empty($this->a_config['min']) && $this->a_config['min'] < 0);
+			$b_signed = (empty($this->a_declaration['min']) && $this->a_declaration['min'] != '0') || (!empty($this->a_declaration['min']) && $this->a_declaration['min'] < 0);
 			
 			return [[
 				'type' => \Reef\Storage\Storage::TYPE_INTEGER,
-				'min' => $this->a_config['min']??null,
-				'max' => $this->a_config['max']??null,
+				'min' => $this->a_declaration['min']??null,
+				'max' => $this->a_declaration['max']??null,
 			]];
 		}
 		else {
@@ -62,8 +62,8 @@ class TextNumberField extends SingleLineTextField {
 	public function view_form($Value, $a_options = []) : array {
 		$a_vars = parent::view_form($Value, $a_options);
 		$a_vars['value'] = $a_vars['value'];
-		$a_vars['hasMin'] = isset($this->a_config['min']) && strlen($this->a_config['min']) > 0;
-		$a_vars['hasMax'] = isset($this->a_config['max']) && strlen($this->a_config['max']) > 0;
+		$a_vars['hasMin'] = isset($this->a_declaration['min']) && strlen($this->a_declaration['min']) > 0;
+		$a_vars['hasMax'] = isset($this->a_declaration['max']) && strlen($this->a_declaration['max']) > 0;
 		return $a_vars;
 	}
 	
@@ -71,12 +71,12 @@ class TextNumberField extends SingleLineTextField {
 	 * @inherit
 	 */
 	public function needsValueUpdate($OldField, &$b_dataLoss = null) : bool {
-		if(isset($this->a_config['max']) && (!isset($OldField->a_config['max']) || $OldField->a_config['max'] > $this->a_config['max'])) {
+		if(isset($this->a_declaration['max']) && (!isset($OldField->a_declaration['max']) || $OldField->a_declaration['max'] > $this->a_declaration['max'])) {
 			$b_dataLoss = true;
 			return true;
 		}
 		
-		if(isset($this->a_config['min']) && (!isset($OldField->a_config['min']) || $OldField->a_config['min'] < $this->a_config['min'])) {
+		if(isset($this->a_declaration['min']) && (!isset($OldField->a_declaration['min']) || $OldField->a_declaration['min'] < $this->a_declaration['min'])) {
 			$b_dataLoss = true;
 			return true;
 		}
@@ -86,6 +86,6 @@ class TextNumberField extends SingleLineTextField {
 	}
 	
 	protected function getLanguageReplacements() : array {
-		return \Reef\array_subset($this->a_config, ['min', 'max']);
+		return \Reef\array_subset($this->a_declaration, ['min', 'max']);
 	}
 }

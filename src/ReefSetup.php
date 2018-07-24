@@ -71,12 +71,12 @@ class ReefSetup {
 		return $this->a_componentMapping[$s_componentName];
 	}
 	
-	public function getField(array $a_config, Form $Form) {
-		if(!isset($this->a_componentMapping[$a_config['component']])) {
-			throw new \DomainException("Component not loaded: ".$a_config['component']);
+	public function getField(array $a_declaration, Form $Form) {
+		if(!isset($this->a_componentMapping[$a_declaration['component']])) {
+			throw new \DomainException("Component not loaded: ".$a_declaration['component']);
 		}
 		
-		return $this->a_componentMapping[$a_config['component']]->newField($a_config, $Form);
+		return $this->a_componentMapping[$a_declaration['component']]->newField($a_declaration, $Form);
 	}
 	
 	

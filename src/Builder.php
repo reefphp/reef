@@ -82,22 +82,22 @@ class Builder {
 		$a_categories[0]['open_default'] = true;
 		$a_fields = [];
 		foreach($Form->getFields() as $Field) {
-			$s_config = base64_encode(json_encode($Field->getConfig()));
+			$s_declaration = base64_encode(json_encode($Field->getDeclaration()));
 			
 			$ComponentForm = $this->generateConfigForm($Field->getComponent());
 			$ComponentSubmission = $ComponentForm->newSubmission();
-			$a_fieldConfig = $Field->getConfig();
-			if(isset($a_fieldConfig['name'])) {
-				$a_fieldConfig['old_name'] = $a_fieldConfig['name'];
+			$a_declaration = $Field->getDeclaration();
+			if(isset($a_declaration['name'])) {
+				$a_declaration['old_name'] = $a_declaration['name'];
 			}
-			$ComponentSubmission->fromUserInput($a_fieldConfig);
+			$ComponentSubmission->fromUserInput($a_declaration);
 			$s_form = $ComponentForm->generateFormHtml($ComponentSubmission, ['main_var' => 'form_data[config]']);
 			
 			$a_localeForms = [];
 			foreach($a_locales as $s_locale) {
 				$LocaleForm = $this->generateLocaleForm($Field->getComponent(), $s_locale);
 				$LocaleSubmission = $LocaleForm->newSubmission();
-				$LocaleSubmission->fromUserInput($Field->getConfig()['locales'][$s_locale] ?? $Field->getConfig()['locale'] ?? []);
+				$LocaleSubmission->fromUserInput($Field->getDeclaration()['locales'][$s_locale] ?? $Field->getDeclaration()['locale'] ?? []);
 				
 				$a_localeForms[] = [
 					'locale' => $s_locale,
@@ -106,7 +106,7 @@ class Builder {
 			}
 			
 			$a_fields[] = [
-				'config' => $s_config,
+				'declaration' => $s_declaration,
 				'type' => $Field->getComponent()::COMPONENT_NAME,
 				'componentForm' => $s_form,
 				'localeForms' => $a_localeForms,
