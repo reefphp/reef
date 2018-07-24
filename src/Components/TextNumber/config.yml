@@ -9,7 +9,7 @@ configLocale:
     error_number_max: Maximum error
     error_number_min_max: Min/max error
     rf_error_required_empty: Required error
-declaration:
+definition:
     fields:
       - component: reef:text_number
         name: 'default'

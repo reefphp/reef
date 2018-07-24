@@ -59,7 +59,7 @@ abstract class Component {
 		}
 		
 		$a_configuration = $this->getConfiguration();
-		foreach($a_configuration['declaration']['fields']??[] as $a_field) {
+		foreach($a_configuration['definition']['fields']??[] as $a_field) {
 			$a_components[$a_field['component']] = 1;
 		}
 		
@@ -132,7 +132,7 @@ abstract class Component {
 			$a_configuration['valueLocale'] = array_merge($a_parentConfiguration['valueLocale'], $a_configuration['valueLocale']??[]);
 			$a_configuration['configLocale'] = array_merge($a_parentConfiguration['configLocale'], $a_configuration['configLocale']??[]);
 			$a_configuration['locale'] = array_merge($a_configuration['valueLocale'], $a_configuration['configLocale']);
-			$a_configuration['declaration']['fields'] = array_merge($a_parentConfiguration['declaration']['fields'], $a_configuration['declaration']['fields']);
+			$a_configuration['definition']['fields'] = array_merge($a_parentConfiguration['definition']['fields'], $a_configuration['definition']['fields']);
 			
 			return $a_configuration;
 		});

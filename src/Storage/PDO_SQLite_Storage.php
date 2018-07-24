@@ -76,6 +76,8 @@ class PDO_SQLite_Storage extends PDOStorage {
 		foreach($a_subfields as $s_columnOld => $a_fieldUpdate) {
 			$s_columnNew = $a_fieldUpdate['name'];
 			
+			$a_columnUpdate = [];
+			
 			if($s_columnOld != $s_columnNew) {
 				$a_columnUpdate['name'] = $s_columnNew;
 			}
@@ -84,7 +86,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 				$a_columnUpdate['default'] = $a_fieldUpdate['structureTo']['default'];
 			}
 			
-			$a_update[$s_columnOld] = $a_columnUpdate;
+			if(!empty($a_columnUpdate)) {
+				$a_update[$s_columnOld] = $a_columnUpdate;
+			}
 		}
 		
 		if(!empty($a_update)) {

@@ -3,7 +3,7 @@
 require_once('./common.php');
 
 $Form = $Reef->newTempForm();
-$Form->importDeclaration($_SESSION['sandbox']['declaration']);
+$Form->importDefinition($_SESSION['sandbox']['definition']);
 
 // Process a POST request
 if($_SERVER['REQUEST_METHOD'] == 'POST') {

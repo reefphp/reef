@@ -256,10 +256,10 @@ class Builder {
 		$Updater = new Updater();
 		$Form = $Updater->update($Form, $Form2, $a_fieldRenames);*/
 		
-		$a_newDeclaration = array_merge($Form->getFormConfig(), $FormConfigSubmission->toStructured());
-		$a_newDeclaration['fields'] = $a_fields;
+		$a_newDefinition = array_merge($Form->getFormConfig(), $FormConfigSubmission->toStructured());
+		$a_newDefinition['fields'] = $a_fields;
 		
-		$Form->updateDeclaration($a_newDeclaration, $a_fieldRenames);
+		$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
 		
 		return [
 			'result' => true,
@@ -268,7 +268,7 @@ class Builder {
 	
 	private function generateFormConfigForm(Form $Form) {
 		
-		$a_declaration = [
+		$a_definition = [
 			'locale' => [],
 			'submissions' => [
 				'type' => 'none',
@@ -293,7 +293,7 @@ class Builder {
 		];
 		
 		$ConfigForm = $this->Reef->newTempForm();
-		$ConfigForm->importDeclaration($a_declaration);
+		$ConfigForm->importDefinition($a_definition);
 		
 		return $ConfigForm;
 	}
@@ -301,8 +301,8 @@ class Builder {
 	private function generateConfigForm(Component $Component) {
 		$a_configuration = $Component->getConfiguration();
 		
-		$a_configDeclaration = [
-			'locale' => $a_configuration['declaration']['locale']??[],
+		$a_configDefinition = [
+			'locale' => $a_configuration['definition']['locale']??[],
 			'submissions' => [
 				'type' => 'none',
 			],
@@ -312,11 +312,11 @@ class Builder {
 					'col_right' => 'col-12',
 				],
 			],
-			'fields' => $a_configuration['declaration']['fields']??[],
+			'fields' => $a_configuration['definition']['fields']??[],
 		];
 		
 		if($a_configuration['category'] !== 'static') {
-			array_unshift($a_configDeclaration['fields'], [
+			array_unshift($a_configDefinition['fields'], [
 				'component' => 'reef:single_line_text',
 				'name' => 'name',
 				'required' => true,
@@ -330,14 +330,14 @@ class Builder {
 				],
 			]);
 			
-			array_unshift($a_configDeclaration['fields'], [
+			array_unshift($a_configDefinition['fields'], [
 				'component' => 'reef:hidden',
 				'name' => 'old_name',
 			]);
 		}
 		
 		$ComponentForm = $this->Reef->newTempForm();
-		$ComponentForm->importDeclaration($a_configDeclaration);
+		$ComponentForm->importDefinition($a_configDefinition);
 		
 		return $ComponentForm;
 	}
@@ -363,7 +363,7 @@ class Builder {
 			];
 		}
 		
-		$a_localeDeclaration = [
+		$a_localeDefinition = [
 			'locale' => [],
 			'submissions' => [
 				'type' => 'none',
@@ -378,7 +378,7 @@ class Builder {
 		];
 		
 		$LocaleForm = $this->Reef->newTempForm();
-		$LocaleForm->importDeclaration($a_localeDeclaration);
+		$LocaleForm->importDefinition($a_localeDefinition);
 		
 		return $LocaleForm;
 	}

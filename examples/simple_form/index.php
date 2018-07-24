@@ -2,10 +2,10 @@
 
 require_once('./common.php');
 
-// Generate the form object from the declaration
+// Generate the form object from the definition
 if(count($Reef->getFormIds()) == 0) {
 	$Form = $Reef->newStoredForm();
-	$Form->newDeclarationFromFile('./declaration.yml');
+	$Form->newDefinitionFromFile('./definition.yml');
 }
 
 $Form = $Reef->getForm(1);

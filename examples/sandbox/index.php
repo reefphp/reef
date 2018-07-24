@@ -3,7 +3,7 @@
 require_once('./common.php');
 
 $Form = $Reef->newTempForm();
-$Form->importDeclaration($_SESSION['sandbox']['declaration']);
+$Form->importDefinition($_SESSION['sandbox']['definition']);
 
 $Builder = $Reef->getBuilder();
 $Builder->setSettings([
@@ -13,20 +13,20 @@ $Builder->setSettings([
 if(isset($_POST['form_data'])) {
 	$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
 	
-	$_SESSION['sandbox']['declaration'] = $Form->generateDeclaration();
+	$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
 	
-	$a_return['declaration'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['declaration'], 5);
+	$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
 	
 	echo json_encode($a_return);
 	die();
 }
 
-if(isset($_POST['declaration'])) {
-	$Form->importDeclarationString($_POST['declaration']);
+if(isset($_POST['definition'])) {
+	$Form->importDefinitionString($_POST['definition']);
 	
-	$_SESSION['sandbox']['declaration'] = $Form->generateDeclaration();
+	$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
 	
-	$a_return['declaration'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['declaration'], 5);
+	$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
 	
 	echo json_encode($a_return);
 	die();
@@ -99,7 +99,7 @@ $(function() {
 	var fn_initBuilder = function() {
 		builder = new ReefBuilder('.builderWrapper', {
 			success : function(response) {
-				$('#declaration').val(response.declaration);
+				$('#definition').val(response.definition);
 				
 				fn_loadForm();
 			}
@@ -130,14 +130,14 @@ $(function() {
 		builder.submit();
 	});
 	
-	$('#panel_submit_declaration').on('click', function() {
+	$('#panel_submit_definition').on('click', function() {
 		$.ajax({
 			url: 'index.php',
 			method: 'post',
-			data: {'declaration' : $('#declaration').val()},
+			data: {'definition' : $('#definition').val()},
 			dataType: 'JSON',
 			success: function(response) {
-				$('#declaration').val(response.declaration);
+				$('#definition').val(response.definition);
 				
 				$.ajax({
 					url: 'index.php',
@@ -237,10 +237,10 @@ $(function() {
 	<div id="sandbox-right" style="height: 100%;">
 		<div id="sandbox-top-right" class="panel">
 			<div class="panel-head">
-				<span class="panel-title float-right">Declaration</span>
-				<button type="button" class="panel-submit" id="panel_submit_declaration">&laquo; Save</button>
+				<span class="panel-title float-right">Definition</span>
+				<button type="button" class="panel-submit" id="panel_submit_definition">&laquo; Save</button>
 			</div>
-			<textarea id="declaration" style="width: 100%; height: 100%; font-family: courier; font-size: 10pt;"></textarea>
+			<textarea id="definition" style="width: 100%; height: 100%; font-family: courier; font-size: 10pt;"></textarea>
 		</div>
 		<div id="sandbox-bottom-right" class="panel">
 			<div class="panel-head">

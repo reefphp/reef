@@ -7,7 +7,7 @@ valueLocale:
     placeholder: Placeholder
 configLocale:
     rf_error_required_empty: Required error
-declaration:
+definition:
     fields:
       - component: reef:single_checkbox
         name: 'required'

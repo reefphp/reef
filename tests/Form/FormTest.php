@@ -46,7 +46,7 @@ final class FormTest extends TestCase {
 	 */
 	public function testCanCreateForm(): void {
 		static::$Form = static::$Reef->newStoredForm();
-		static::$Form->newDeclaration([
+		static::$Form->newDefinition([
 			'storage_name' => 'test',
 			'fields' => [
 				[
@@ -128,9 +128,9 @@ final class FormTest extends TestCase {
 	 * @depends testCanAddSubmission
 	 */
 	public function testCanAddField(): void {
-		$a_declaration = static::$Form->generateDeclaration();
+		$a_definition = static::$Form->generateDefinition();
 		
-		$a_declaration['fields'][] = [
+		$a_definition['fields'][] = [
 			'component' => 'reef:single_line_text',
 			'name' => 'input_3',
 			'locale' => [
@@ -138,7 +138,7 @@ final class FormTest extends TestCase {
 			],
 		];
 		
-		static::$Form->updateDeclaration($a_declaration);
+		static::$Form->updateDefinition($a_definition);
 		
 		$a_fields = static::$Form->getFields();
 		$this->assertSame(count($a_fields), 4);
@@ -153,15 +153,15 @@ final class FormTest extends TestCase {
 	 * @depends testCanAddField
 	 */
 	public function testCanRemoveField(): void {
-		$a_declaration = static::$Form->generateDeclaration();
+		$a_definition = static::$Form->generateDefinition();
 		
-		foreach($a_declaration['fields'] as $i => $a_field) {
+		foreach($a_definition['fields'] as $i => $a_field) {
 			if(isset($a_field['name']) && $a_field['name'] == 'input_1') {
-				array_splice($a_declaration['fields'], $i, 1);
+				array_splice($a_definition['fields'], $i, 1);
 			}
 		}
 		
-		static::$Form->updateDeclaration($a_declaration);
+		static::$Form->updateDefinition($a_definition);
 		
 		$a_fields = static::$Form->getFields();
 		$this->assertSame(count($a_fields), 3);

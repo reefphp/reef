@@ -22,7 +22,7 @@ class DataStore {
 		
 		if(count($this->FormStorage->getColumns()) == 0) {
 			$this->FormStorage->addColumns([
-				'declaration' => [
+				'definition' => [
 					'type' => Storage::TYPE_TEXT,
 					'limit' => 4194303,
 				],

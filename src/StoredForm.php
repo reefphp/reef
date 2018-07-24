@@ -35,41 +35,41 @@ class StoredForm extends Form {
 		return $this->SubmissionStorage;
 	}
 	
-	public function newDeclarationFromFile(string $s_filename) {
+	public function newDefinitionFromFile(string $s_filename) {
 		if(!file_exists($s_filename) || !is_readable($s_filename)) {
 			throw new IOException('Could not find file "'.$s_filename.'".');
 		}
 		
-		$a_declaration = Yaml::parseFile($s_filename);
+		$a_definition = Yaml::parseFile($s_filename);
 		
-		$this->newDeclaration($a_declaration);
+		$this->newDefinition($a_definition);
 	}
 	
-	public function newDeclaration(array $a_declaration) {
-		if(empty($a_declaration['storage_name'])) {
+	public function newDefinition(array $a_definition) {
+		if(empty($a_definition['storage_name'])) {
 			throw new \Exception("Missing storage_name");
 		}
 		
-		$this->a_formConfig['storage_name'] = $a_declaration['storage_name'];
-		$this->updateDeclaration($a_declaration);
+		$this->a_formConfig['storage_name'] = $a_definition['storage_name'];
+		$this->updateDefinition($a_definition);
 	}
 	
-	public function updateDeclaration(array $a_declaration, array $a_fieldRenames = []) {
+	public function updateDefinition(array $a_definition, array $a_fieldRenames = []) {
 		$Form2 = clone $this;
-		$Form2->importDeclaration($a_declaration);
+		$Form2->importDefinition($a_definition);
 		
 		$Updater = new Updater();
 		$Updater->update($this, $Form2, $a_fieldRenames);
 	}
 	
 	public function save() {
-		$a_declaration = $this->generateDeclaration();
+		$a_definition = $this->generateDefinition();
 		
 		if($this->i_formId == null) {
-			$this->i_formId = $this->Reef->getFormStorage()->insert(['declaration' => json_encode($a_declaration)]);
+			$this->i_formId = $this->Reef->getFormStorage()->insert(['definition' => json_encode($a_definition)]);
 		}
 		else {
-			$this->Reef->getFormStorage()->update($this->i_formId, ['declaration' => json_encode($a_declaration)]);
+			$this->Reef->getFormStorage()->update($this->i_formId, ['definition' => json_encode($a_definition)]);
 		}
 	}
 	
@@ -78,12 +78,12 @@ class StoredForm extends Form {
 			throw new \Exception("Already saved form");
 		}
 		
-		$a_declaration = $this->generateDeclaration();
-		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, ['declaration' => json_encode($a_declaration)]);
+		$a_definition = $this->generateDefinition();
+		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, ['definition' => json_encode($a_definition)]);
 	}
 	
 	public function load(int $i_formId) {
-		$this->importDeclaration(json_decode($this->Reef->getFormStorage()->get($i_formId)['declaration'], true));
+		$this->importDefinition(json_decode($this->Reef->getFormStorage()->get($i_formId)['definition'], true));
 		$this->i_formId = $i_formId;
 	}
 	

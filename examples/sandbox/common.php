@@ -22,6 +22,6 @@ $Reef = new Reef\Reef(
 
 if(!isset($_SESSION['sandbox'])) {
 	$_SESSION['sandbox'] = [
-		'declaration' => [],
+		'definition' => [],
 	];
 }

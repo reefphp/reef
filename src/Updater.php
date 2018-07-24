@@ -329,7 +329,7 @@ class Updater {
 		
 		$SubmissionStorage->removeColumns(array_keys($a_delete));
 		
-		$Form->setFields($newForm->generateDeclaration()['fields']);
+		$Form->setFields($newForm->generateDefinition()['fields']);
 		
 		$a_fields = $Form->getValueFieldsByName();
 		

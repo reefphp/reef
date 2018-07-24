@@ -72,31 +72,31 @@ abstract class Form {
 		$this->s_idPfx = $s_idPfx;
 	}
 	
-	public function importDeclarationFile(string $s_filename) {
+	public function importDefinitionFile(string $s_filename) {
 		if(!file_exists($s_filename) || !is_readable($s_filename)) {
 			throw new IOException('Could not find file "'.$s_filename.'".');
 		}
 		
-		$a_declaration = Yaml::parseFile($s_filename);
+		$a_definition = Yaml::parseFile($s_filename);
 		
-		$this->importDeclaration($a_declaration);
+		$this->importDefinition($a_definition);
 	}
 	
-	public function importDeclarationString(string $s_declaration) {
-		$a_declaration = Yaml::parse($s_declaration);
+	public function importDefinitionString(string $s_definition) {
+		$a_definition = Yaml::parse($s_definition);
 		
-		$this->importDeclaration($a_declaration);
+		$this->importDefinition($a_definition);
 	}
 	
-	public function importDeclaration(array $a_declaration) {
-		$this->a_formConfig = $a_declaration;
+	public function importDefinition(array $a_definition) {
+		$this->a_formConfig = $a_definition;
 		unset($this->a_formConfig['fields']);
 		
-		$this->setFields($a_declaration['fields']??[]);
+		$this->setFields($a_definition['fields']??[]);
 	}
 	
-	public function mergeConfig(array $a_partialDeclaration) {
-		$this->a_formConfig = array_merge($this->a_formConfig, $a_partialDeclaration);
+	public function mergeConfig(array $a_partialDefinition) {
+		$this->a_formConfig = array_merge($this->a_formConfig, $a_partialDefinition);
 	}
 	
 	public function setFields(array $a_fields) {
@@ -108,16 +108,16 @@ abstract class Form {
 		}
 	}
 	
-	public function generateDeclaration() : array {
-		$a_declaration = $this->a_formConfig;
+	public function generateDefinition() : array {
+		$a_definition = $this->a_formConfig;
 		
-		$a_declaration['fields'] = [];
+		$a_definition['fields'] = [];
 		
 		foreach($this->a_fields as $s_id => $Field) {
-			$a_declaration['fields'][$s_id] = $Field->getConfig();
+			$a_definition['fields'][$s_id] = $Field->getConfig();
 		}
 		
-		return $a_declaration;
+		return $a_definition;
 	}
 	
 	public function generateFormHtml(Submission $Submission = null, $a_options = []) {
@@ -208,7 +208,7 @@ abstract class Form {
 		return $this->a_formConfig['default_locale']??null;
 	}
 	
-	abstract public function updateDeclaration(array $a_declaration, array $a_fieldRenames = []);
+	abstract public function updateDefinition(array $a_definition, array $a_fieldRenames = []);
 	
 	abstract public function newSubmission();
 	
