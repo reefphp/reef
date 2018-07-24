@@ -37,7 +37,7 @@ abstract class Form {
 	public function getValueFields() {
 		$a_fields = $this->a_fields;
 		foreach($a_fields as $i => $Field) {
-			if($Field->getComponent()->getDefinition()['category'] == 'static') {
+			if($Field->getComponent()->getConfiguration()['category'] == 'static') {
 				unset($a_fields[$i]);
 			}
 		}
@@ -163,7 +163,7 @@ abstract class Form {
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
 			$Template = $Mustache->loadTemplate($s_viewfile);
-			$Value = ($Field->getComponent()->getDefinition()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getConfig()['name']);
+			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getConfig()['name']);
 			$a_vars = $Field->view_form($Value, array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([

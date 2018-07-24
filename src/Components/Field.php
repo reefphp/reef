@@ -168,7 +168,7 @@ abstract class Field {
 	}
 	
 	protected function getLocaleKeys() {
-		return array_keys($this->getComponent()->getDefinition()['locale']);
+		return array_keys($this->getComponent()->getConfiguration()['locale']);
 	}
 	
 	public function getCombinedLocaleSources($s_locale) {

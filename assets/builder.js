@@ -210,7 +210,7 @@ var ReefBuilder = (function() {
 		var fields = [];
 		
 		for(i in this.fields) {
-			fields.push(this.fields[i].getDefinition());
+			fields.push(this.fields[i].getDeclaration());
 		}
 		
 		// Gather all data
@@ -414,7 +414,7 @@ var ReefBuilderField = (function() {
 		return true;
 	};
 	
-	ReefBuilderField.prototype.getDefinition = function() {
+	ReefBuilderField.prototype.getDeclaration = function() {
 		var locales = {};
 		
 		for(var locale in this.localeForms) {

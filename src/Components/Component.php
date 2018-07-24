@@ -58,8 +58,8 @@ abstract class Component {
 			$a_components[static::PARENT_NAME] = 1;
 		}
 		
-		$a_definition = $this->getDefinition();
-		foreach($a_definition['declaration']['fields']??[] as $a_field) {
+		$a_configuration = $this->getConfiguration();
+		foreach($a_configuration['declaration']['fields']??[] as $a_field) {
 			$a_components[$a_field['component']] = 1;
 		}
 		
@@ -114,27 +114,27 @@ abstract class Component {
 	}
 	
 	/**
-	 * Return the definition array of this component
+	 * Return the configuration array of this component
 	 * @return array
 	 */
-	public function getDefinition() : array {
-		return $this->Reef->cache('definition.component.'.static::COMPONENT_NAME, function() {
-			$a_definition = Yaml::parseFile(static::getDir().'definition.yml');
-			$a_definition['locale'] = array_merge($a_definition['valueLocale']??[], $a_definition['configLocale']??[]);
+	public function getConfiguration() : array {
+		return $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME, function() {
+			$a_configuration = Yaml::parseFile(static::getDir().'config.yml');
+			$a_configuration['locale'] = array_merge($a_configuration['valueLocale']??[], $a_configuration['configLocale']??[]);
 			
 			$ParentComponent = $this->getParent();
 			if(empty($ParentComponent)) {
-				return $a_definition;
+				return $a_configuration;
 			}
 			
-			$a_parentDefinition = $ParentComponent->getDefinition();
+			$a_parentConfiguration = $ParentComponent->getConfiguration();
 			
-			$a_definition['valueLocale'] = array_merge($a_parentDefinition['valueLocale'], $a_definition['valueLocale']??[]);
-			$a_definition['configLocale'] = array_merge($a_parentDefinition['configLocale'], $a_definition['configLocale']??[]);
-			$a_definition['locale'] = array_merge($a_definition['valueLocale'], $a_definition['configLocale']);
-			$a_definition['declaration']['fields'] = array_merge($a_parentDefinition['declaration']['fields'], $a_definition['declaration']['fields']);
+			$a_configuration['valueLocale'] = array_merge($a_parentConfiguration['valueLocale'], $a_configuration['valueLocale']??[]);
+			$a_configuration['configLocale'] = array_merge($a_parentConfiguration['configLocale'], $a_configuration['configLocale']??[]);
+			$a_configuration['locale'] = array_merge($a_configuration['valueLocale'], $a_configuration['configLocale']);
+			$a_configuration['declaration']['fields'] = array_merge($a_parentConfiguration['declaration']['fields'], $a_configuration['declaration']['fields']);
 			
-			return $a_definition;
+			return $a_configuration;
 		});
 	}
 	
@@ -180,7 +180,7 @@ abstract class Component {
 	}
 	
 	protected function getLocaleKeys() {
-		return array_keys($this->getDefinition()['locale']);
+		return array_keys($this->getConfiguration()['locale']);
 	}
 	
 	private function combineOwnAndParentLocaleSource($s_locale) {

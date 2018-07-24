@@ -43,11 +43,11 @@ class Builder {
 		$a_locales = $this->Reef->getOption('locales');
 		
 		foreach($a_componentMapping as $s_name => $Component) {
-			$a_definition = $Component->getDefinition();
+			$a_configuration = $Component->getConfiguration();
 			
-			if(!isset($a_categories[$a_definition['category']])) {
-				$a_categories[$a_definition['category']] = [
-					'category' => $a_definition['category'],
+			if(!isset($a_categories[$a_configuration['category']])) {
+				$a_categories[$a_configuration['category']] = [
+					'category' => $a_configuration['category'],
 					'components' => [],
 				];
 			}
@@ -67,12 +67,12 @@ class Builder {
 				];
 			}
 			
-			$a_categories[$a_definition['category']]['components'][] = [
-				'definition' => base64_encode(json_encode($a_definition)),
+			$a_categories[$a_configuration['category']]['components'][] = [
+				'configuration' => base64_encode(json_encode($a_configuration)),
 				'html' => base64_encode($Component->getTemplate($Layout->getName())),
-				'image' => $a_definition['image'],
-				'name' => $a_definition['name'],
-				'type' => $a_definition['vendor'].':'.$a_definition['name'],
+				'image' => $a_configuration['image'],
+				'name' => $a_configuration['name'],
+				'type' => $a_configuration['vendor'].':'.$a_configuration['name'],
 				'componentForm' => $s_form,
 				'localeForms' => $a_localeForms,
 			];
@@ -299,10 +299,10 @@ class Builder {
 	}
 	
 	private function generateConfigForm(Component $Component) {
-		$a_definition = $Component->getDefinition();
+		$a_configuration = $Component->getConfiguration();
 		
 		$a_configDeclaration = [
-			'locale' => $a_definition['declaration']['locale']??[],
+			'locale' => $a_configuration['declaration']['locale']??[],
 			'submissions' => [
 				'type' => 'none',
 			],
@@ -312,10 +312,10 @@ class Builder {
 					'col_right' => 'col-12',
 				],
 			],
-			'fields' => $a_definition['declaration']['fields']??[],
+			'fields' => $a_configuration['declaration']['fields']??[],
 		];
 		
-		if($a_definition['category'] !== 'static') {
+		if($a_configuration['category'] !== 'static') {
 			array_unshift($a_configDeclaration['fields'], [
 				'component' => 'reef:single_line_text',
 				'name' => 'name',
@@ -346,9 +346,9 @@ class Builder {
 		if(empty($s_locale)) {
 			$s_locale = '-';
 		}
-		$a_definition = $Component->getDefinition();
+		$a_configuration = $Component->getConfiguration();
 		
-		$a_localeTitles = $a_definition['locale'];
+		$a_localeTitles = $a_configuration['locale'];
 		$a_locale = $Component->getLocale($s_locale);
 		
 		$a_fields = [];
