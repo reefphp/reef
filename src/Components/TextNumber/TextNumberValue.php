@@ -49,8 +49,14 @@ class TextNumberValue extends SingleLineTextValue {
 	/**
 	 * @inherit
 	 */
-	public function fromUserInput($s_input) {
-		parent::fromUserInput($s_input);
+	public function isDefault() : bool {
+		return ((string)$this->s_value === (string)($this->Field->getDeclaration()['default']??''));
+	}
+	/**
+	 * @inherit
+	 */
+	public function fromStructured($s_input) {
+		parent::fromStructured($s_input);
 		if($this->s_value !== '') {
 			$this->s_value = (float)$this->s_value;
 		}

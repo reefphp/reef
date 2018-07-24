@@ -22,7 +22,20 @@ class NoFieldValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function isDefault() : bool {
+		return true;
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function fromUserInput($s_input) {
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function fromStructured($s_input) {
 	}
 	
 	/**

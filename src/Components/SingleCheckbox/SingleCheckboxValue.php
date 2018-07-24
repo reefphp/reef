@@ -33,7 +33,21 @@ class SingleCheckboxValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function isDefault() : bool {
+		return ($this->b_value === (bool)($this->Field->getDeclaration()['default']??false));
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function fromUserInput($m_input) {
+		$this->fromStructured($m_input);
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function fromStructured($m_input) {
 		if(is_string($m_input)) {
 			$m_input = strtolower($m_input);
 			$m_input = ($m_input != 'false' && $m_input != 'no' && $m_input != '0');

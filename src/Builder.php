@@ -90,14 +90,14 @@ class Builder {
 			if(isset($a_declaration['name'])) {
 				$a_declaration['old_name'] = $a_declaration['name'];
 			}
-			$ComponentSubmission->fromUserInput($a_declaration);
+			$ComponentSubmission->fromStructured($a_declaration);
 			$s_form = $ComponentForm->generateFormHtml($ComponentSubmission, ['main_var' => 'form_data[config]']);
 			
 			$a_localeForms = [];
 			foreach($a_locales as $s_locale) {
 				$LocaleForm = $this->generateLocaleForm($Field->getComponent(), $s_locale);
 				$LocaleSubmission = $LocaleForm->newSubmission();
-				$LocaleSubmission->fromUserInput($Field->getDeclaration()['locales'][$s_locale] ?? $Field->getDeclaration()['locale'] ?? []);
+				$LocaleSubmission->fromStructured($Field->getDeclaration()['locales'][$s_locale] ?? $Field->getDeclaration()['locale'] ?? []);
 				
 				$a_localeForms[] = [
 					'locale' => $s_locale,
@@ -116,7 +116,7 @@ class Builder {
 		// Form definition
 		$DefinitionForm = $this->generateDefinitionForm($Form);
 		$DefinitionSubmission = $DefinitionForm->newSubmission();
-		$DefinitionSubmission->fromUserInput([
+		$DefinitionSubmission->fromStructured([
 			'storage_name' => ($Form instanceof StoredForm) ? $Form->getStorageName() : 'temporary_form',
 		]);
 		
@@ -226,20 +226,23 @@ class Builder {
 				'component' => $Component::COMPONENT_NAME,
 			];
 			
-			$a_fieldConfig = $a_fieldSubmissions['config']->toStructured();
-			if(isset($a_fieldConfig['name']) && $a_fieldConfig['name'] != $a_fieldConfig['old_name'] && !empty($a_fieldConfig['old_name'])) {
-				$a_fieldRenames[$a_fieldConfig['old_name']] = $a_fieldConfig['name'];
+			$a_fieldConfig = $a_fieldSubmissions['config']->toStructured(['skip_default' => true]);
+			if(isset($a_fieldConfig['name']) && $a_fieldSubmissions['config']->hasField('old_name')) {
+				$s_oldName = $a_fieldSubmissions['config']->getFieldValue('old_name')->toStructured();
+				if($s_oldName != $a_fieldConfig['name']) {
+					$a_fieldRenames[$s_oldName] = $a_fieldConfig['name'];
+				}
 			}
 			unset($a_fieldConfig['old_name']);
 			
 			$a_fieldDecl = array_merge($a_fieldDecl, $a_fieldConfig);
 			
 			if(count($a_locales) == 1 && reset($a_locales) == '-') {
-				$a_fieldDecl['locale'] = array_merge($a_fieldDecl['locales']['-']??[], $a_fieldSubmissions['locales']['-']->toStructured());
+				$a_fieldDecl['locale'] = array_merge($a_fieldDecl['locales']['-']??[], $a_fieldSubmissions['locales']['-']->toStructured(['skip_default' => true]));
 			}
 			else {
 				foreach($a_locales as $s_locale) {
-					$a_fieldDecl['locales'][$s_locale] = array_merge($a_fieldDecl['locales'][$s_locale]??[], $a_fieldSubmissions['locales'][$s_locale]->toStructured());
+					$a_fieldDecl['locales'][$s_locale] = array_merge($a_fieldDecl['locales'][$s_locale]??[], $a_fieldSubmissions['locales'][$s_locale]->toStructured(['skip_default' => true]));
 				}
 			}
 			
@@ -256,7 +259,7 @@ class Builder {
 		$Updater = new Updater();
 		$Form = $Updater->update($Form, $Form2, $a_fieldRenames);*/
 		
-		$a_newDefinition = array_merge($Form->getDefinition(), $DefinitionSubmission->toStructured());
+		$a_newDefinition = array_merge($Form->getDefinition(), $DefinitionSubmission->toStructured(['skip_default' => true]));
 		$a_newDefinition['fields'] = $a_fields;
 		
 		$Form->updateDefinition($a_newDefinition, $a_fieldRenames);

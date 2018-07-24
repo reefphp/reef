@@ -17,10 +17,22 @@ abstract class FieldValue {
 	abstract public function fromDefault();
 	
 	/**
+	 * Determine whether the current value is equal to the default value
+	 * @return bool
+	 */
+	abstract public function isDefault() : bool;
+	
+	/**
 	 * Parse the value from user input
 	 * @param mixed $m_input The user input for the field, e.g. from $_POST
 	 */
 	abstract public function fromUserInput($m_input);
+	
+	/**
+	 * Parse the value from a structured value
+	 * @param mixed $m_input The structured value for the field
+	 */
+	abstract public function fromStructured($m_input);
 	
 	/**
 	 * Serialize the current value into a flat array

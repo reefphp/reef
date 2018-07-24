@@ -26,7 +26,22 @@ class HiddenValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function isDefault() : bool {
+		return ($this->s_value === '');
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function fromUserInput($s_input) {
+		$this->s_value = $s_input;
+		$this->a_errors = null;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function fromStructured($s_input) {
 		$this->s_value = $s_input;
 		$this->a_errors = null;
 	}

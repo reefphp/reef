@@ -7,7 +7,7 @@ use Reef\Components\SingleLineText\SingleLineTextField;
 
 class TextNumberField extends SingleLineTextField {
 	
-	private function is_integer(string $s_var) {
+	private function is_integer_var(string $s_var) {
 		if($s_var === '') {
 			return false;
 		}
@@ -19,15 +19,28 @@ class TextNumberField extends SingleLineTextField {
 		return ctype_digit($s_var);
 	}
 	
+	private function is_integer() {
+		if(array_key_exists('step', $this->a_declaration) && !$this->is_integer_var($this->a_declaration['step'])) {
+			return false;
+		}
+		
+		if(!array_key_exists('min', $this->a_declaration)) {
+			return true;
+		}
+		
+		if(!$this->is_integer_var($this->a_declaration['min'])) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * @inherit
 	 */
 	public function getFlatStructure() : array {
-		$b_integer = $this->is_integer($this->a_declaration['min']) && $this->is_integer($this->a_declaration['step']);
 		
-		if($b_integer) {
-			$b_signed = (empty($this->a_declaration['min']) && $this->a_declaration['min'] != '0') || (!empty($this->a_declaration['min']) && $this->a_declaration['min'] < 0);
-			
+		if($this->is_integer()) {
 			return [[
 				'type' => \Reef\Storage\Storage::TYPE_INTEGER,
 				'min' => $this->a_declaration['min']??null,

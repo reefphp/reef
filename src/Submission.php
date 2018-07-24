@@ -37,6 +37,21 @@ abstract class Submission {
 		}
 	}
 	
+	public function fromStructured($a_structured) {
+		$a_fields = $this->Form->getValueFields();
+		$this->a_fieldValues = [];
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getDeclaration()['name'];
+			$this->a_fieldValues[$s_name] = $Field->newValue();
+			if(isset($a_structured[$s_name])) {
+				$this->a_fieldValues[$s_name]->fromStructured($a_structured[$s_name]);
+			}
+			else {
+				$this->a_fieldValues[$s_name]->fromDefault();
+			}
+		}
+	}
+	
 	public function validate() : bool {
 		$b_valid = true;
 		
@@ -62,6 +77,10 @@ abstract class Submission {
 		}
 		
 		return $a_errors;
+	}
+	
+	public function hasField($s_name) {
+		return isset($this->a_fieldValues[$s_name]);
 	}
 	
 	public function getFieldValue($s_name) {
@@ -122,12 +141,15 @@ abstract class Submission {
 		}
 	}
 	
-	public function toStructured() {
+	public function toStructured($a_options = []) {
 		$a_data = [];
 		
 		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getDeclaration()['name'];
+			if(!empty($a_options['skip_default']) && $this->a_fieldValues[$s_name]->isDefault()) {
+				continue;
+			}
 			$a_data[$s_name] = $this->a_fieldValues[$s_name]->toStructured();
 		}
 		
