@@ -71,21 +71,4 @@ class TextNumberValue extends SingleLineTextValue {
 			$this->s_value = (float)$this->s_value;
 		}
 	}
-	
-	/**
-	 * @inherit
-	 */
-	public function fromUpdate($OldValue) {
-		$this->s_value = $OldValue->s_value;
-		
-		$a_declaration = $this->Field->getDeclaration();
-		if(isset($a_declaration['min']) && $this->s_value < $a_declaration['min']) {
-			$this->s_value = $a_declaration['min'];
-		}
-		if(isset($a_declaration['max']) && $this->s_value > $a_declaration['max']) {
-			$this->s_value = $a_declaration['max'];
-		}
-		
-		$this->a_errors = null;
-	}
 }

@@ -64,10 +64,4 @@ class NoFieldValue extends FieldValue {
 	public function toTemplateVar() {
 		return null;
 	}
-	
-	/**
-	 * @inherit
-	 */
-	public function fromUpdate($OldValue) {
-	}
 }

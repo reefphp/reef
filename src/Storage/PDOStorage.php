@@ -23,6 +23,10 @@ abstract class PDOStorage implements Storage {
 		return $this->PDO;
 	}
 	
+	public function getTableName() {
+		return $this->s_table;
+	}
+	
 	abstract public static function createStorage(\PDO $PDO, string $s_table) : PDOStorage;
 	
 	public function renameStorage(string $s_newTableName) {

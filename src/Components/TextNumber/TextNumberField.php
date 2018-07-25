@@ -88,6 +88,27 @@ class TextNumberField extends SingleLineTextField {
 		return Updater::DATALOSS_NO;
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function beforeSchemaUpdate($a_data) {
+		$NewField = $a_data['new_field'];
+		$a_newDecl = $NewField->getDeclaration();
+		
+		switch($a_data['PDO_DRIVER']) {
+			case 'sqlite':
+			case 'mysql':
+				if(isset($a_newDecl['max']) && (!isset($this->a_declaration['max']) || $this->a_declaration['max'] > $a_newDecl['max'])) {
+					$a_data['content_updater']('UPDATE %1$s SET %2$s = ? WHERE %2$s > ?', [$a_newDecl['max'], $a_newDecl['max']]);
+				}
+				
+				if(isset($a_newDecl['min']) && (!isset($this->a_declaration['min']) || $this->a_declaration['min'] < $a_newDecl['min'])) {
+					$a_data['content_updater']('UPDATE %1$s SET %2$s = ? WHERE %2$s < ?', [$a_newDecl['min'], $a_newDecl['min']]);
+				}
+			break;
+		}
+	}
+	
 	protected function getLanguageReplacements() : array {
 		return \Reef\array_subset($this->a_declaration, ['min', 'max']);
 	}

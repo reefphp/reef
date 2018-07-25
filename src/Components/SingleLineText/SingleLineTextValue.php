@@ -83,12 +83,4 @@ class SingleLineTextValue extends FieldValue {
 	public function toTemplateVar() {
 		return $this->s_value;
 	}
-	
-	/**
-	 * @inherit
-	 */
-	public function fromUpdate($OldValue) {
-		$this->s_value = $OldValue->s_value;
-		$this->a_errors = null;
-	}
 }
