@@ -42,7 +42,7 @@ class TextNumberValue extends SingleLineTextValue {
 	public function fromDefault() {
 		parent::fromDefault();
 		if($this->s_value !== '') {
-			$this->s_value = (float)$this->s_value;
+			$this->s_value = $this->Field->is_integer() ? (int)$this->s_value : (float)$this->s_value;
 		}
 	}
 	
@@ -58,7 +58,7 @@ class TextNumberValue extends SingleLineTextValue {
 	public function fromStructured($s_input) {
 		parent::fromStructured($s_input);
 		if($this->s_value !== '') {
-			$this->s_value = (float)$this->s_value;
+			$this->s_value = $this->Field->is_integer() ? (int)$this->s_value : (float)$this->s_value;
 		}
 	}
 	
@@ -68,7 +68,7 @@ class TextNumberValue extends SingleLineTextValue {
 	public function fromFlat(?array $a_flat) {
 		parent::fromFlat($a_flat);
 		if($this->s_value !== '') {
-			$this->s_value = (float)$this->s_value;
+			$this->s_value = $this->Field->is_integer() ? (int)$this->s_value : (float)$this->s_value;
 		}
 	}
 }

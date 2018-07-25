@@ -20,7 +20,7 @@ class TextNumberField extends SingleLineTextField {
 		return ctype_digit($s_var);
 	}
 	
-	private function is_integer() {
+	public function is_integer() {
 		if(array_key_exists('step', $this->a_declaration) && !$this->is_integer_var($this->a_declaration['step'])) {
 			return false;
 		}
