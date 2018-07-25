@@ -13,6 +13,7 @@ function escapeRegExp(str) {
 	return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
 
+// NOTE: Currently not used
 var ReefDialog = (function() {
 	'use strict';
 	
@@ -105,12 +106,12 @@ var ReefBuilder = (function() {
 		this.options = {};
 		this.options.success = options.success || $.noop;
 		
+		this.selectedField = null;
+		
 		this.$builderWrapper = $($builderWrapper);
 		
-		this.$builderWrapper.find('.'+CSSPRFX+'builder-category').on('click', function() {
-			self.$builderWrapper.find('.'+CSSPRFX+'builder-components').hide().filter('[data-category="'+$(this).data('category')+'"]').show();
-			self.$builderWrapper.find('.'+CSSPRFX+'builder-category').removeClass(CSSPRFX+'active');
-			$(this).addClass(CSSPRFX+'active');
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-tab').on('click', function() {
+			self.openSideTab($(this).data('tab'));
 		});
 		
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-components').each(function() {
@@ -146,7 +147,7 @@ var ReefBuilder = (function() {
 			}
 		);
 		
-		this.$builderWrapper.find('.'+CSSPRFX+'builder-toolbar-submit').on('click', function() {
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-submit').on('click', function() {
 			self.submit();
 		});
 		
@@ -155,8 +156,6 @@ var ReefBuilder = (function() {
 		this.reef = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace'));
 		
 		this.definitionForm = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-definition-form'));
-		
-		this.definitionDialog = new ReefDialog(this.$builderWrapper.find('.'+CSSPRFX+'builder-dialog.'+CSSPRFX+'builder-definition-form'), this.$builderWrapper.find('.'+CSSPRFX+'builder-toolbar-config'));
 		
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-existing-field').each(function(index) {
 			self.addField($(this), index);
@@ -184,9 +183,62 @@ var ReefBuilder = (function() {
 	};
 	
 	ReefBuilder.prototype.removeField = function(field) {
+		this.deselectField();
 		var index = this.fields.indexOf(field);
 		if(index > -1) {
 			this.fields.splice(index, 1);
+		}
+	};
+	
+	ReefBuilder.prototype.selectField = function(field) {
+		if(this.selectedField === field) {
+			return;
+		}
+		
+		if(this.selectedField !== null) {
+			this.deselectField();
+		}
+		
+		var $sidetab = this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field');
+		if($sidetab.children().length > 0) {
+			alert("Corrupt state (#1)!");
+			throw "Corrupt state (#1)!";
+		}
+		
+		field.$declarationForm.appendTo($sidetab).show();
+		field.$fieldWrapper.addClass(CSSPRFX+'active');
+		
+		this.selectedField = field;
+		
+		this.openSideTab('field');
+	};
+	
+	ReefBuilder.prototype.deselectField = function() {
+		if(this.selectedField === null) {
+			return;
+		}
+		
+		var fieldTemplates = this.selectedField.$fieldWrapper.find('.'+CSSPRFX+'builder-field-templates');
+		
+		if(fieldTemplates.children().length > 0) {
+			alert("Corrupt state (#2)!");
+			throw "Corrupt state (#2)!";
+		}
+		
+		this.selectedField.$declarationForm.hide().appendTo(fieldTemplates);
+		
+		this.selectedField.$fieldWrapper.removeClass(CSSPRFX+'active');
+		
+		this.selectedField = null;
+	};
+	
+	ReefBuilder.prototype.openSideTab = function(tab) {
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab').hide().filter('.'+CSSPRFX+'builder-sidetab-'+tab).show();
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-tab').removeClass(CSSPRFX+'builder-tab-active').filter('.'+CSSPRFX+'builder-tab-'+tab).addClass(CSSPRFX+'builder-tab-active');
+		
+		if(tab === 'field' && this.selectedField === null) {
+			this.selectField(this.fields[0]);
 		}
 	};
 	
@@ -195,8 +247,10 @@ var ReefBuilder = (function() {
 		
 		var i;
 		
+		this.deselectField();
+		
 		if(!this.definitionForm.validate()) {
-			this.definitionDialog.show();
+			this.openSideTab('form');
 			return false;
 		}
 		
@@ -215,7 +269,7 @@ var ReefBuilder = (function() {
 		
 		// Gather all data
 		var form_data = {
-			'form_id' : $('.'+CSSPRFX+'builder').data('form_id'),
+			'form_id' : this.$builderWrapper.find('.'+CSSPRFX+'builder').data('form_id'),
 			'definition' : this.definitionForm.getData(),
 			'fields' : fields
 		};
@@ -223,7 +277,7 @@ var ReefBuilder = (function() {
 		(function(fn_apply) {
 			// Check data loss
 			$.ajax({
-				url: $('.'+CSSPRFX+'builder-toolbar-submit').data('action'),
+				url: self.$builderWrapper.find('.'+CSSPRFX+'builder-submit').data('action'),
 				method: 'POST',
 				data: {
 					form_data : form_data,
@@ -263,7 +317,7 @@ var ReefBuilder = (function() {
 		})(function() {
 			// Save form
 			$.ajax({
-				url: $('.'+CSSPRFX+'builder-toolbar-submit').data('action'),
+				url: self.$builderWrapper.find('.'+CSSPRFX+'builder-submit').data('action'),
 				method: 'POST',
 				data: {
 					form_data : form_data,
@@ -300,6 +354,7 @@ var ReefBuilderField = (function() {
 		this.$fieldWrapper = null;
 		this.field = null;
 		this.$field = null;
+		this.$declarationForm = null;
 	};
 	
 	ReefBuilderField.prototype.initFromItem = function($item) {
@@ -307,16 +362,20 @@ var ReefBuilderField = (function() {
 		
 		var existingField = $item.is('.'+CSSPRFX+'builder-existing-field');
 		
-		var $fieldWrapper = $('<div class="'+CSSPRFX+'builder-field"><div class="'+CSSPRFX+'builder-field-preview"></div><div class="'+CSSPRFX+'builder-field-actions"><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-drag-handle">&#8661;</div><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-component-config">&#9881;</div><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-component-locale">&#128483;</div><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-component-delete">&times;</div></div><div class="'+CSSPRFX+'builder-field-templates"></div></div>');
+		var $fieldWrapper = $('<div class="'+CSSPRFX+'builder-field"><div class="'+CSSPRFX+'builder-field-preview"></div><div class="'+CSSPRFX+'builder-field-actions"><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-drag-handle">&#8661;</div><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-component-delete">&times;</div></div><div class="'+CSSPRFX+'builder-field-templates"><div class="'+CSSPRFX+'builder-declaration-form" style="display: none;"></div></div></div>');
 		
 		var templates = [CSSPRFX+'builder-component-form', CSSPRFX+'builder-locale-forms'];
 		var $template;
 		for(var i in templates) {
-			$template = $item.find('.'+CSSPRFX+'builder-template.'+templates[i]).clone().hide().removeClass(CSSPRFX+'builder-template').addClass(CSSPRFX+'builder-dialog');
+			$template = $item.find('.'+CSSPRFX+'builder-template.'+templates[i]).clone().removeClass(CSSPRFX+'builder-template');
 			$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.'+CSSPRFX+'main-config').data('form-idpfx')), 'g'), unique_id()));
 			
-			$fieldWrapper.find('.'+CSSPRFX+'builder-field-templates').append($template);
+			$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-form').append($template);
 		}
+		
+		$fieldWrapper.on('click', function() {
+			self.reefBuilder.selectField(self);
+		});
 		
 		$fieldWrapper.find('.'+CSSPRFX+'builder-component-form input, .'+CSSPRFX+'builder-locale-forms input').on('change', function() {
 			self.updateField($fieldWrapper);
@@ -354,9 +413,6 @@ var ReefBuilderField = (function() {
 			self.localeForms[$localeForm.data('locale')] = new Reef($localeForm);
 		});
 		
-		this.componentDialog = new ReefDialog($fieldWrapper.find('.'+CSSPRFX+'builder-component-form'), $fieldWrapper.find('.'+CSSPRFX+'builder-component-config'));
-		this.localeDialog = new ReefDialog($fieldWrapper.find('.'+CSSPRFX+'builder-locale-forms'), $fieldWrapper.find('.'+CSSPRFX+'builder-component-locale'));
-		
 		if(this.componentForm.hasField('name') && !existingField) {
 			this.componentForm.getField('name').setValue('field_'+unique_id().substr(0, 16));
 		}
@@ -370,6 +426,7 @@ var ReefBuilderField = (function() {
 		$item.replaceWith($fieldWrapper);
 		
 		this.$fieldWrapper = $fieldWrapper;
+		this.$declarationForm = $fieldWrapper.find('.'+CSSPRFX+'builder-declaration-form');
 		
 		this.updateField();
 	};
@@ -382,10 +439,10 @@ var ReefBuilderField = (function() {
 	ReefBuilderField.prototype.updateField = function() {
 		var componentName = this.$fieldWrapper.data('component-name');
 		
-		var template = atob($('.'+CSSPRFX+'builder-select .'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"]').data('html'));
+		var template = atob(this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-components .'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"]').data('html'));
 		
 		var fieldConfig = this.componentForm.getData();
-		var $localeForms = this.$fieldWrapper.find('.'+CSSPRFX+'builder-locale-form');
+		var $localeForms = this.$declarationForm.find('.'+CSSPRFX+'builder-locale-form');
 		var $locale = $localeForms.filter(':visible');
 		if($locale.length == 0) {
 			$locale = $localeForms.first();
@@ -426,7 +483,7 @@ var ReefBuilderField = (function() {
 			}
 		}
 		
-		var vars = JSON.parse(atob($('.'+CSSPRFX+'builder').attr('data-form_config')));
+		var vars = JSON.parse(atob(this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder').attr('data-form_config')));
 		vars.form_idpfx = unique_id();
 		vars.CSSPRFX = CSSPRFX+'';
 		vars.main_var = 'preview';
@@ -445,12 +502,13 @@ var ReefBuilderField = (function() {
 	
 	ReefBuilderField.prototype.validate = function() {
 		if(!this.componentForm.validate()) {
-			this.componentDialog.show();
+			this.reefBuilder.selectField(this);
 			return false;
 		}
 		for(var locale in this.localeForms) {
 			if(!this.localeForms[locale].validate()) {
-				this.localeDialog.show().find('.'+CSSPRFX+'builder-locale-form').hide().find('[data-locale="'+locale+'"]').show();
+				this.reefBuilder.selectField(this);
+				this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field .'+CSSPRFX+'builder-locale-form').hide().find('[data-locale="'+locale+'"]').show();
 				return false;
 			}
 		}

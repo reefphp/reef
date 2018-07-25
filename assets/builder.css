@@ -4,83 +4,62 @@
 }
 
 .CSSPRFXbuilder-toolbar {
-	display: flex;
 	flex-direction: column;
-	width: 200px;
+	width: 300px;
 	background-color: #f7f7fe;
+	font-size: 9pt;
 }
 
-.CSSPRFXbuilder-toolbar-general {
+.CSSPRFXbuilder-toolbar input, .CSSPRFXbuilder-toolbar textarea, .CSSPRFXbuilder-toolbar select {
+	font-size: inherit;
+}
+
+.CSSPRFXbuilder-toolbar .CSSPRFXbuilder-toolbar-tabs {
 	display: flex;
-	height: 2rem;
+	height: 2em;
 }
 
-.CSSPRFXbuilder-toolbar .CSSPRFXbuilder-toolbar-submit, .CSSPRFXbuilder-toolbar .CSSPRFXbuilder-toolbar-config {
+.CSSPRFXbuilder-toolbar .CSSPRFXbuilder-tab {
 	display: block;
 	flex: 1;
 	background-color: #c6caed;
 	border: 0;
 	cursor: pointer;
+	font-size: 12pt;
 }
 
-.CSSPRFXbuilder-select {
-	flex: 1;
-	display: flex;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-categories {
-	flex: 1;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-category, .CSSPRFXbuilder-select .CSSPRFXbuilder-component {
-	height: 100px;
-	text-align: center;
-	font-size: 9pt;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-category img, .CSSPRFXbuilder-select  .CSSPRFXbuilder-component img {
-	max-width: 50px;
-	max-height: 50px;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-category span, .CSSPRFXbuilder-select  .CSSPRFXbuilder-component span {
-	display: block;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-components {
-	flex: 1;
-	display: none;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-components.CSSPRFXactive {
-	display: block;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-category {
-	background-color: #cfd1f9;
-	border-bottom: 1px solid #afafd1;
-	cursor: pointer;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-category:hover {
-	background-color: #b8bbf3;
-}
-
-.CSSPRFXbuilder-select .CSSPRFXbuilder-category.CSSPRFXactive {
+.CSSPRFXbuilder-tab.CSSPRFXbuilder-tab-active {
 	background-color: #a6aaed;
 }
 
-.CSSPRFXbuilder-select .CSSPRFXbuilder-component {
+.CSSPRFXbuilder-sidetab-components .CSSPRFXbuilder-component {
+	display: flex;
+	height: 2.5em;
+	padding: 0.1em 0.25em;
+	margin: 0.25em;
+	font-size: 9pt;
 	background-color: #e6e7fe;
-	border-bottom: 1px solid #d0d0e9;
+	border: 1px solid #d0d0e9;
 	cursor: grab;
 }
 
-.CSSPRFXbuilder-select .CSSPRFXbuilder-component:hover {
+.CSSPRFXbuilder-sidetab-components .CSSPRFXbuilder-component:hover {
 	background-color: #d8dafb;
+}
+
+.CSSPRFXbuilder-sidetab-components .CSSPRFXbuilder-component img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.CSSPRFXbuilder-sidetab-components .CSSPRFXbuilder-category {
+	margin-bottom: 0.5em;
+}
+
+.CSSPRFXbuilder-sidetab-components .CSSPRFXbuilder-category-name {
+	font-size: 11pt;
+	font-weight: bold;
+	margin-left: 1em;
 }
 
 .CSSPRFXbuilder-component.CSSPRFXbuilder-add-ghost {
@@ -102,6 +81,17 @@
 
 .CSSPRFXbuilder-field {
 	display: flex;
+	border: 1px solid transparent;
+	padding: 0.2em;
+}
+
+.CSSPRFXbuilder-field:hover {
+	border: 1px dashed #ccc;
+}
+
+.CSSPRFXbuilder-field.CSSPRFXactive {
+	border: 1px solid #ccc;
+	background-color: #f9f9fc;
 }
 
 .CSSPRFXbuilder-field-preview {
@@ -109,9 +99,9 @@
 }
 
 .CSSPRFXbuilder-field-actions {
-	width: 200px;
+	width: 100px;
 	text-align: center;
-	margin-bottom: 1rem;
+	margin-bottom: 1em;
 }
 
 .CSSPRFXbuilder-btn {
@@ -126,6 +116,11 @@
 
 .CSSPRFXbuilder-btn:hover {
 	background-color: #969add;
+}
+
+.CSSPRFXbuilder-btn.CSSPRFXbuilder-submit {
+	border: 0;
+	font-size: 12pt;
 }
 
 .CSSPRFXbuilder-template {

@@ -1,57 +1,60 @@
 <div class="{{CSSPRFX}}builder" data-form_config="{{formConfig}}" data-form_id="{{form_id}}">
 	<div class="{{CSSPRFX}}builder-toolbar">
-		<div class="{{CSSPRFX}}builder-toolbar-general">
-			<button type="button" class="{{CSSPRFX}}builder-toolbar-submit" data-action="{{settings.submit_action}}">
-				Save
+		<div class="{{CSSPRFX}}builder-toolbar-tabs">
+			<button type="button" class="{{CSSPRFX}}builder-tab {{CSSPRFX}}builder-tab-components {{CSSPRFX}}builder-tab-active" data-tab="components">
+				+
 			</button>
-			<button type="button" class="{{CSSPRFX}}builder-toolbar-config">
+			<button type="button" class="{{CSSPRFX}}builder-tab {{CSSPRFX}}builder-tab-field" data-tab="field">
 				&#9881;
 			</button>
-			<div class="{{CSSPRFX}}builder-dialog {{CSSPRFX}}builder-definition-form" style="display: none;">
+			<button type="button" class="{{CSSPRFX}}builder-tab {{CSSPRFX}}builder-tab-form" data-tab="form">
+				&#128295;
+			</button>
+		</div>
+		<div class="{{CSSPRFX}}builder-sidetab {{CSSPRFX}}builder-sidetab-components">
+			{{#categories}}
+			<div class="{{CSSPRFX}}builder-category" data-category="{{category}}">
+				<span class="{{CSSPRFX}}builder-category-name">{{category}}</span>
+				<div class="{{CSSPRFX}}builder-components" data-category="{{category}}">
+					{{#components}}
+					<div class="{{CSSPRFX}}builder-component" data-component-name="{{type}}" data-configuration="{{configuration}}" data-html="{{html}}">
+						<div class="{{CSSPRFX}}builder-tile">
+							<img title="" alt="" src="../../assets/img/{{image}}" />
+							<span>{{title}}</span>
+						</div>
+						<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-component-form">
+							{{{componentForm}}}
+						</div>
+						<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-locale-forms">
+							{{#localeForms}}
+							<div class="{{CSSPRFX}}builder-locale-form" data-locale="{{locale}}">
+							{{#multipleLocales}}
+							<div class="{{CSSPRFX}}builder-locale-nav">
+								<div class="{{CSSPRFX}}builder-locale-prev">&#11207;</div>
+								<div class="{{CSSPRFX}}builder-locale-title">{{locale}}</div>
+								<div class="{{CSSPRFX}}builder-locale-next">&#11208;</div>
+							</div>
+							{{/multipleLocales}}
+								{{{form}}}
+							</div>
+							{{/localeForms}}
+						</div>
+					</div>
+					{{/components}}
+				</div>
+			</div>
+			{{/categories}}
+		</div>
+		<div class="{{CSSPRFX}}builder-sidetab {{CSSPRFX}}builder-sidetab-field" style="display: none;">
+		</div>
+		<div class="{{CSSPRFX}}builder-sidetab {{CSSPRFX}}builder-sidetab-form" style="display: none;">
+			<div class="{{CSSPRFX}}builder-definition-form">
 				{{{definitionForm}}}
 			</div>
-		</div>
-		<div class="{{CSSPRFX}}builder-select">
-			<div class="{{CSSPRFX}}builder-categories">
-			{{#categories}}
-				<div class="{{CSSPRFX}}builder-category {{#open_default}}{{CSSPRFX}}active{{/open_default}}" data-category="{{category}}">
-					<div>
-						<img title="" alt="" src="../../assets/img/{{category}}.svg" />
-						<span>{{category}}</span>
-					</div>
-				</div>
-			{{/categories}}
-			</div>
 			
-			{{#categories}}
-			<div class="{{CSSPRFX}}builder-components {{#open_default}}{{CSSPRFX}}active{{/open_default}}" data-category="{{category}}">
-				{{#components}}
-				<div class="{{CSSPRFX}}builder-component" data-component-name="{{type}}" data-configuration="{{configuration}}" data-html="{{html}}">
-					<div class="{{CSSPRFX}}builder-tile">
-						<img title="" alt="" src="../../assets/img/{{image}}" />
-						<span>{{title}}</span>
-					</div>
-					<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-component-form">
-						{{{componentForm}}}
-					</div>
-					<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-locale-forms">
-						{{#localeForms}}
-						<div class="{{CSSPRFX}}builder-locale-form" data-locale="{{locale}}">
-						{{#multipleLocales}}
-						<div class="{{CSSPRFX}}builder-locale-nav">
-							<div class="{{CSSPRFX}}builder-locale-prev">&#11207;</div>
-							<div class="{{CSSPRFX}}builder-locale-title">{{locale}}</div>
-							<div class="{{CSSPRFX}}builder-locale-next">&#11208;</div>
-						</div>
-						{{/multipleLocales}}
-							{{{form}}}
-						</div>
-						{{/localeForms}}
-					</div>
-				</div>
-				{{/components}}
-			</div>
-			{{/categories}}
+			<button type="button" class="{{CSSPRFX}}builder-btn {{CSSPRFX}}builder-submit" data-action="{{settings.submit_action}}">
+				Save
+			</button>
 		</div>
 	</div>
 	<div class="{{CSSPRFX}}builder-workspace my-3">
