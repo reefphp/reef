@@ -152,11 +152,13 @@ class PDO_SQLite_Storage extends PDOStorage {
 			throw new \Exception("Could not create table __tmp__migration.");
 		}
 		
-		$sth = $this->PDO->prepare("INSERT INTO __tmp__migration (".implode(', ', $a_columnsNew).") SELECT ".implode(', ', $a_columnsOld)." FROM ".$this->es_table." ");
-		$sth->execute();
-		
-		if($sth->errorCode() !== '00000') {
-			throw new \Exception("Could not fill table __tmp__migration.");
+		if(count($a_columnsOld) > 0) {
+			$sth = $this->PDO->prepare("INSERT INTO __tmp__migration (".implode(', ', $a_columnsNew).") SELECT ".implode(', ', $a_columnsOld)." FROM ".$this->es_table." ");
+			$sth->execute();
+			
+			if($sth->errorCode() !== '00000') {
+				throw new \Exception("Could not fill table __tmp__migration.");
+			}
 		}
 		
 		$sth = $this->PDO->prepare("DROP TABLE ".$this->es_table." ");
