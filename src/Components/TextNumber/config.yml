@@ -2,7 +2,9 @@ vendor: reef
 name: text_number
 category: text
 image: text-number.svg
-valueLocale: []
+valueLocale:
+    title: Field title
+    placeholder: Placeholder
 configLocale:
     error_not_a_number: Validation error
     error_number_min: Minimum error
@@ -11,6 +13,13 @@ configLocale:
     rf_error_required_empty: Required error
 definition:
     fields:
+      - component: reef:single_checkbox
+        name: 'required'
+        locales:
+            en_US:
+                title_right: 'Required'
+            nl_NL:
+                title_right: 'Verplicht'
       - component: reef:text_number
         name: 'default'
         locales:

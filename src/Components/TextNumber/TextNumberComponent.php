@@ -2,12 +2,12 @@
 
 namespace Reef\Components\TextNumber;
 
-use Reef\Components\SingleLineText\SingleLineTextComponent;
+use Reef\Components\Component;
 
-class TextNumberComponent extends SingleLineTextComponent {
+class TextNumberComponent extends Component {
 	
 	const COMPONENT_NAME = 'reef:text_number';
-	const PARENT_NAME = 'reef:single_line_text';
+	const PARENT_NAME = null;
 	
 	/**
 	 * @inherit
@@ -20,12 +20,12 @@ class TextNumberComponent extends SingleLineTextComponent {
 	 * @inherit
 	 */
 	public function getJS() : array {
-		return array_merge(parent::getJS(), [
+		return [
 			[
 				'type' => 'local',
 				'path' => self::getDir().'script.js',
 			]
-		]);
+		];
 	}
 	
 	/**

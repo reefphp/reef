@@ -3,10 +3,9 @@
 namespace Reef\Components\TextNumber;
 
 use Reef\Components\Field;
-use Reef\Components\SingleLineText\SingleLineTextField;
 use Reef\Updater;
 
-class TextNumberField extends SingleLineTextField {
+class TextNumberField extends Field {
 	
 	private function is_integer_var(string $s_var) {
 		if($s_var === '') {
@@ -67,7 +66,7 @@ class TextNumberField extends SingleLineTextField {
 	 */
 	public function view_form($Value, $a_options = []) : array {
 		$a_vars = parent::view_form($Value, $a_options);
-		$a_vars['value'] = $a_vars['value'];
+		$a_vars['value'] = $Value->toTemplateVar();
 		$a_vars['hasMin'] = isset($this->a_declaration['min']) && strlen($this->a_declaration['min']) > 0;
 		$a_vars['hasMax'] = isset($this->a_declaration['max']) && strlen($this->a_declaration['max']) > 0;
 		return $a_vars;

@@ -5,7 +5,6 @@ Reef.addComponent((function() {
 	var Field = function(Reef, $field) {
 		this.$field = $field;
 		this.Reef = Reef;
-		this.parent = this.Reef.newField('reef:single_line_text', $field);
 	};
 	
 	Field.componentName = 'reef:text_number';
@@ -42,37 +41,64 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.getValue = function() {
-		return this.parent.getValue();
+		return this.$field.find('input').val();
 	};
 	
 	Field.prototype.setValue = function(value) {
-		this.parent.setValue(parseFloat(value));
+		this.$field.find('input').val(value);
 	};
 	
 	Field.prototype.validate = function() {
-		var valid = this.parent.validate();
+		var valid = true;
+		
+		this.removeErrors();
 		
 		var $input = this.$field.find('input');
 		var val = $input.val();
 		
+		if($input.prop('required')) {
+			if($.trim(val) == '') {
+				valid = false;
+				this.setError('error-required-empty');
+			}
+		}
+		
 		if($.trim(val) != '' && (isNaN(parseFloat(val)) || !isFinite(val))) {
 			valid = false;
-			this.parent.setError('error-not-a-number');
+			this.setError('error-not-a-number');
 		}
 		else {
 			val = parseFloat(val);
 			
 			if($input.is('[min]') && val < $input.attr('min')) {
 				valid = false;
-				this.parent.setError($input.is('[max]') ? 'error-number-min-max' : 'error-number-min');
+				this.setError($input.is('[max]') ? 'error-number-min-max' : 'error-number-min');
 			}
 			else if($input.is('[max]') && val > $input.attr('max')) {
 				valid = false;
-				this.parent.setError($input.is('[min]') ? 'error-number-min-max' : 'error-number-max');
+				this.setError($input.is('[min]') ? 'error-number-min-max' : 'error-number-max');
 			}
 		}
 		
 		return valid;
+	};
+	
+	Field.prototype.setError = function(message_key) {
+		this.$field.addClass(CSSPRFX+'invalid');
+		
+		if(this.Reef.config.layout_name == 'bootstrap4') {
+			this.$field.find('input').addClass('is-invalid');
+			this.$field.find('.invalid-feedback').hide().filter('.'+CSSPRFX+message_key).show();
+		}
+	};
+	
+	Field.prototype.removeErrors = function() {
+		this.$field.removeClass(CSSPRFX+'invalid');
+		
+		if(this.Reef.config.layout_name == 'bootstrap4') {
+			this.$field.find('input').removeClass('is-invalid');
+			this.$field.find('.invalid-feedback').hide();
+		}
 	};
 	
 	return Field;
