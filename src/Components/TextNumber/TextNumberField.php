@@ -4,6 +4,7 @@ namespace Reef\Components\TextNumber;
 
 use Reef\Components\Field;
 use Reef\Components\SingleLineText\SingleLineTextField;
+use Reef\Updater;
 
 class TextNumberField extends SingleLineTextField {
 	
@@ -75,19 +76,16 @@ class TextNumberField extends SingleLineTextField {
 	/**
 	 * @inherit
 	 */
-	public function needsValueUpdate($OldField, &$b_dataLoss = null) : bool {
+	public function updateDataLoss($OldField) {
 		if(isset($this->a_declaration['max']) && (!isset($OldField->a_declaration['max']) || $OldField->a_declaration['max'] > $this->a_declaration['max'])) {
-			$b_dataLoss = true;
-			return true;
+			return Updater::DATALOSS_POTENTIAL;
 		}
 		
 		if(isset($this->a_declaration['min']) && (!isset($OldField->a_declaration['min']) || $OldField->a_declaration['min'] < $this->a_declaration['min'])) {
-			$b_dataLoss = true;
-			return true;
+			return Updater::DATALOSS_POTENTIAL;
 		}
 		
-		$b_dataLoss = false;
-		return false;
+		return Updater::DATALOSS_NO;
 	}
 	
 	protected function getLanguageReplacements() : array {

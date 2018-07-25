@@ -210,6 +210,8 @@ abstract class Form {
 	
 	abstract public function updateDefinition(array $a_definition, array $a_fieldRenames = []);
 	
+	abstract public function checkUpdateDataLoss(array $a_definition, array $a_fieldRenames = []);
+	
 	abstract public function newSubmission();
 	
 }

@@ -8,6 +8,10 @@ class TempForm extends Form {
 		$this->importDefinition($a_definition);
 	}
 	
+	public function checkUpdateDataLoss(array $a_definition, array $a_fieldRenames = []) {
+		return [];
+	}
+	
 	public function newSubmission() {
 		return new TempSubmission($this);
 	}

@@ -62,6 +62,14 @@ class StoredForm extends Form {
 		$Updater->update($this, $Form2, $a_fieldRenames);
 	}
 	
+	public function checkUpdateDataLoss(array $a_definition, array $a_fieldRenames = []) {
+		$Form2 = clone $this;
+		$Form2->importDefinition($a_definition);
+		
+		$Updater = new Updater();
+		return $Updater->determineUpdateDataLoss($this, $Form2, $a_fieldRenames);
+	}
+	
 	public function save() {
 		$a_definition = $this->generateDefinition();
 		

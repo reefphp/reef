@@ -8,6 +8,10 @@ use Reef\Storage\PDOStorage;
 
 class Updater {
 	
+	const DATALOSS_DEFINITE = 'definite';
+	const DATALOSS_POTENTIAL = 'potential';
+	const DATALOSS_NO = 'no';
+	
 	public function __construct() {
 	}
 	/*
@@ -146,7 +150,7 @@ class Updater {
 		return $Form;
 	}*/
 	
-	public function computeFieldUpdatePlan(StoredForm $Form1, StoredForm $Form2, array $a_fieldRenames) {
+	private function computeFieldUpdatePlan(StoredForm $Form1, StoredForm $Form2, array $a_fieldRenames) {
 		$a_create = $a_update = $a_delete = [];
 		
 		$a_fields1 = $Form1->getValueFieldsByName();
@@ -185,7 +189,7 @@ class Updater {
 		return [$a_create, $a_update, $a_delete];
 	}
 	
-	public function computeSchemaUpdatePlan(StoredForm $Form1, StoredForm $Form2, array $a_fieldRenames) {
+	private function computeSchemaUpdatePlan(StoredForm $Form1, StoredForm $Form2, array $a_fieldRenames) {
 		
 		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form1, $Form2, $a_fieldRenames);
 		
@@ -345,5 +349,30 @@ class Updater {
 			$Form->setStorageName($newForm->getStorageName());
 		}
 		
+	}
+	
+	public function determineUpdateDataLoss(StoredForm $Form, StoredForm $newForm, $a_fieldRenames) {
+		
+		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form, $newForm, $a_fieldRenames);
+		
+		$a_loss = [];
+		
+		$a_fields1 = $Form->getValueFieldsByName();
+		$a_fields2 = $newForm->getValueFieldsByName();
+		
+		foreach($a_deleteFields as $s_deleteFieldName) {
+			$Field = $a_fields1[$s_deleteFieldName];
+			if($Field->hasValue()) {
+				$a_loss[$s_deleteFieldName] = self::DATALOSS_DEFINITE;
+			}
+		}
+		
+		foreach($a_updateFields as $s_updateFieldName1 => $s_updateFieldName2) {
+			$Field1 = $a_fields1[$s_updateFieldName1];
+			$Field2 = $a_fields2[$s_updateFieldName2];
+			$a_loss[$s_updateFieldName2] = $Field2->updateDataLoss($Field1);
+		}
+		
+		return $a_loss;
 	}
 }

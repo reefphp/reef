@@ -220,27 +220,65 @@ var ReefBuilder = (function() {
 			'fields' : fields
 		};
 		
-		// Save form
-		$.ajax({
-			url: $('.'+CSSPRFX+'builder-toolbar-submit').data('action'),
-			method: 'POST',
-			data: {
-				form_data : form_data
-			},
-			dataType: 'json',
-			success: function(response) {
-				if(typeof response == 'object') {
-					if(typeof response.result !== 'undefined') {
+		(function(fn_apply) {
+			// Check data loss
+			$.ajax({
+				url: $('.'+CSSPRFX+'builder-toolbar-submit').data('action'),
+				method: 'POST',
+				data: {
+					form_data : form_data,
+					mode : 'check'
+				},
+				dataType: 'json',
+				success: function(response) {
+					if(typeof response == 'object') {
+						var definite = [], potential = [];
 						
+						for(var field_name in response.dataloss) {
+							if(response.dataloss[field_name] == 'definite') {
+								definite.push(field_name);
+							}
+							else if(response.dataloss[field_name] == 'potential') {
+								potential.push(field_name);
+							}
+						}
 						
+						if(definite.length == 0 && potential.length == 0) {
+							fn_apply();
+							return;
+						}
+						
+						var txt = 'Potential data loss in '+potential.join(', ')+'; definite data loss in '+definite.join(', ')+'. Continue?';
+						if(confirm(txt)) {
+							fn_apply();
+						}
 					}
-					if(typeof response.redirect !== 'undefined') {
-						window.location = response.redirect;
-					}
-					
-					self.options.success(response);
 				}
-			}
+			});
+		})(function() {
+			// Save form
+			$.ajax({
+				url: $('.'+CSSPRFX+'builder-toolbar-submit').data('action'),
+				method: 'POST',
+				data: {
+					form_data : form_data,
+					mode : 'apply'
+				},
+				dataType: 'json',
+				success: function(response) {
+					if(typeof response == 'object') {
+						if(typeof response.result !== 'undefined') {
+							
+							
+						}
+						if(typeof response.redirect !== 'undefined') {
+							window.location = response.redirect;
+						}
+						
+						self.options.success(response);
+					}
+				}
+			});
 		});
 	};
 	

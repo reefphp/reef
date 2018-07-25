@@ -11,11 +11,18 @@ $Builder->setSettings([
 ]);
 
 if(isset($_POST['form_data'])) {
-	$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
-	
-	$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
-	
-	$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
+	if($_POST['mode'] == 'apply') {
+		$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
+		
+		$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
+		
+		$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
+	}
+	else {
+		$a_return = [
+			'dataloss' => $Builder->checkBuilderDataLoss($Form, $_POST['form_data']),
+		];
+	}
 	
 	echo json_encode($a_return);
 	die();

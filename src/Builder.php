@@ -155,7 +155,7 @@ class Builder {
 	}
 	
 	
-	public function applyBuilderData(Form $Form, array $a_data) {
+	private function parseBuilderData(Form $Form, array $a_data) {
 		$Setup = $this->Reef->getSetup();
 		$a_locales = $this->Reef->getOption('locales');
 		
@@ -249,24 +249,27 @@ class Builder {
 			$a_fields[] = $a_fieldDecl;
 		}
 		
-	//	$Form->mergeDefinition($DefinitionSubmission->toStructured());
-	//	$Form->setFields($a_fields);
-		/*
-		$Form2 = clone $Form;
-		$Form2->mergeDefinition($DefinitionSubmission->toStructured());
-		$Form2->setFields($a_fields);
-		
-		$Updater = new Updater();
-		$Form = $Updater->update($Form, $Form2, $a_fieldRenames);*/
-		
 		$a_newDefinition = array_merge($Form->getDefinition(), $DefinitionSubmission->toStructured(['skip_default' => true]));
 		$a_newDefinition['fields'] = $a_fields;
+		
+		return [$a_newDefinition, $a_fieldRenames];
+	}
+	
+	
+	public function applyBuilderData(Form $Form, array $a_data) {
+		[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
 		
 		$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
 		
 		return [
 			'result' => true,
 		];
+	}
+	
+	public function checkBuilderDataLoss(Form $Form, array $a_data) {
+		[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
+		
+		return $Form->checkUpdateDataLoss($a_newDefinition, $a_fieldRenames);;
 	}
 	
 	private function generateDefinitionForm(Form $Form) {

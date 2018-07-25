@@ -3,6 +3,7 @@
 namespace Reef\Components\SingleLineText;
 
 use Reef\Components\Field;
+use Reef\Updater;
 
 class SingleLineTextField extends Field {
 	
@@ -42,13 +43,11 @@ class SingleLineTextField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function needsValueUpdate($OldField, &$b_dataLoss = null) : bool {
+	public function updateDataLoss($OldField) {
 		if(($OldField->a_declaration['max_length'] ?? 1000) > ($this->a_declaration['max_length'] ?? 1000)) {
-			$b_dataLoss = true;
-			return true;
+			return Updater::DATALOSS_POTENTIAL;
 		}
 		
-		$b_dataLoss = false;
-		return false;
+		return Updater::DATALOSS_NO;
 	}
 }

@@ -63,6 +63,10 @@ abstract class Field {
 	 */
 	abstract public function getFlatStructure() : array;
 	
+	public function hasValue() {
+		return !empty($this->getFlatStructure());
+	}
+	
 	final public function getFlatStructureByColumnName() : array {
 		$s_name = $this->getDeclaration()['name'];
 		
@@ -122,13 +126,12 @@ abstract class Field {
 	}
 	
 	/**
-	 * Determine whether a field update would require the value to be updated as well
+	 * Determine whether a field update would lead to data loss
 	 * @param Field $OldField The old field
-	 * @param ?bool $b_dataLoss (Out) Whether data loss may occur when updating the field, or null if it is unknown
-	 * @return boolean Whether the value has to be updated
+	 * @return string One of the Updater::DATALOSS_* constants
 	 */
-	public function needsValueUpdate(Field $OldField, ?bool &$b_dataLoss = null) : bool {
-		return false;
+	public function updateDataLoss(Field $OldField) {
+		return Reef\Updater::DATALOSS_POTENTIAL;
 	}
 	
 	/**

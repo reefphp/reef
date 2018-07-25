@@ -28,10 +28,17 @@ $Builder->setSettings([
 ]);
 
 if(isset($_POST['form_data'])) {
-	$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
-	$Form->save();
-	
-	$a_return['redirect'] = 'index.php';
+	if($_POST['mode'] == 'apply') {
+		$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
+		$Form->save();
+		
+		$a_return['redirect'] = 'index.php';
+	}
+	else {
+		$a_return = [
+			'dataloss' => $Builder->checkBuilderDataLoss($Form, $_POST['form_data']),
+		];
+	}
 	
 	echo json_encode($a_return);
 	die();
