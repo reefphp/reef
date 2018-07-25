@@ -25,6 +25,13 @@ class SingleCheckboxField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function isRequired() {
+		return (bool)($this->a_declaration['required']??false);
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function view_builder() : array {
 		
 		

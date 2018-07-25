@@ -132,6 +132,14 @@ abstract class Field {
 	}
 	
 	/**
+	 * Return whether this field is required
+	 * @return bool
+	 */
+	public function isRequired() {
+		return false;
+	}
+	
+	/**
 	 * Build template variables for the form builder
 	 * @return array The template variables
 	 */

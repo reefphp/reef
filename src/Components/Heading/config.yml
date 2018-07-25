@@ -13,6 +13,7 @@ definition:
         max: 6
         step: 1
         default: 4
+        required: true
         locales:
             en_US:
                 title: 'Size'
