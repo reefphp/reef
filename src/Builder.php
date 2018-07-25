@@ -176,7 +176,7 @@ class Builder {
 		// Validate all fields
 		$a_submissions = [];
 		
-		foreach($a_data['fields'] as $i_pos => $a_field) {
+		foreach($a_data['fields']??[] as $i_pos => $a_field) {
 			$Component = $Setup->getComponent($a_field['component']);
 			
 			// Validate config

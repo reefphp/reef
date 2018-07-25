@@ -8,7 +8,7 @@ $Form->importDefinition($_SESSION['sandbox']['definition']);
 // Process a POST request
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$Submission = $Form->newSubmission();
-	$Submission->fromUserInput($_POST['form_data']);
+	$Submission->fromUserInput($_POST['form_data']??[]);
 	if($Submission->validate()) {
 		var_dump($Submission->toStructured());
 		die();

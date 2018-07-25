@@ -35,7 +35,7 @@ if(isset($_GET['mode']) && $_GET['mode'] == 'delete') {
 
 // Process a POST request
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-	$Submission->fromUserInput($_POST['form_data']);
+	$Submission->fromUserInput($_POST['form_data']??[]);
 	if($Submission->validate()) {
 		$Submission->save();
 		header("Location: submission.php?form_id=".$Form->getFormId()."&submission_id=".$Submission->getSubmissionId());
