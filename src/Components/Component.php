@@ -179,7 +179,7 @@ abstract class Component {
 		});
 	}
 	
-	protected function getLocaleKeys() {
+	public function getLocaleKeys() {
 		return array_keys($this->getConfiguration()['locale']);
 	}
 	

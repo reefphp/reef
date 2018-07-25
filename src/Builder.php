@@ -71,7 +71,7 @@ class Builder {
 				'configuration' => base64_encode(json_encode($a_configuration)),
 				'html' => base64_encode($Component->getTemplate($Layout->getName())),
 				'image' => $a_configuration['image'],
-				'name' => $a_configuration['name'],
+				'title' => $Component->trans('component_title'),
 				'type' => $a_configuration['vendor'].':'.$a_configuration['name'],
 				'componentForm' => $s_form,
 				'localeForms' => $a_localeForms,
@@ -355,7 +355,9 @@ class Builder {
 		$a_locale = $Component->getLocale($s_locale);
 		
 		$a_fields = [];
-		foreach($a_locale as $s_name => $s_val) {
+		foreach($Component->getLocaleKeys() as $s_name) {
+			$s_val = $a_locale[$s_name]??'';
+			
 			$a_fields[] = [
 				'component' => 'reef:single_line_text',
 				'name' => $s_name,
