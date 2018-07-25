@@ -19,12 +19,4 @@ class HeadingField extends Field {
 	public function newValue() {
 		return new HeadingValue($this);
 	}
-	
-	/**
-	 * @inherit
-	 */
-	public function view_builder() : array {
-		
-		
-	}
 }

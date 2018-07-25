@@ -140,12 +140,6 @@ abstract class Field {
 	}
 	
 	/**
-	 * Build template variables for the form builder
-	 * @return array The template variables
-	 */
-	abstract public function view_builder() : array;
-	
-	/**
 	 * Build template variables for the form
 	 * @param ?FieldValue $Value The value object, may be null for static components
 	 * @param array $a_options Options
