@@ -89,6 +89,11 @@ abstract class Form {
 	}
 	
 	public function importDefinition(array $a_definition) {
+		$this->Reef->checkDefinition($a_definition);
+		$this->importValidatedDefinition($a_definition);
+	}
+	
+	public function importValidatedDefinition(array $a_definition) {
 		$this->a_definition = $a_definition;
 		unset($this->a_definition['fields']);
 		

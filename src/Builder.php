@@ -52,7 +52,7 @@ class Builder {
 				];
 			}
 			
-			$ComponentForm = $this->generateConfigForm($Component);
+			$ComponentForm = $Component->generateDeclarationForm();
 			$ComponentForm->setIdPfx('__form_idpfx__'.$ComponentForm->getIdPfx());
 			$s_form = $ComponentForm->generateFormHtml(null, ['main_var' => 'form_data[config]']);
 			
@@ -84,7 +84,7 @@ class Builder {
 		foreach($Form->getFields() as $Field) {
 			$s_declaration = base64_encode(json_encode($Field->getDeclaration()));
 			
-			$ComponentForm = $this->generateConfigForm($Field->getComponent());
+			$ComponentForm = $Field->getComponent()->generateDeclarationForm();
 			$ComponentSubmission = $ComponentForm->newSubmission();
 			$a_declaration = $Field->getDeclaration();
 			if(isset($a_declaration['name'])) {
@@ -180,7 +180,7 @@ class Builder {
 			$Component = $Setup->getComponent($a_field['component']);
 			
 			// Validate config
-			$ConfigForm = $this->generateConfigForm($Component);
+			$ConfigForm = $Component->generateDeclarationForm();
 			$ConfigSubmission = $ConfigForm->newSubmission();
 			
 			$ConfigSubmission->fromUserInput($a_field['config']);
@@ -276,9 +276,6 @@ class Builder {
 		
 		$a_definition = [
 			'locale' => [],
-			'submissions' => [
-				'type' => 'none',
-			],
 			'layout' => [
 				'bootstrap4' => [
 					'col_left' => 'col-12',
@@ -299,53 +296,9 @@ class Builder {
 		];
 		
 		$ConfigForm = $this->Reef->newTempForm();
-		$ConfigForm->importDefinition($a_definition);
+		$ConfigForm->importValidatedDefinition($a_definition);
 		
 		return $ConfigForm;
-	}
-	
-	private function generateConfigForm(Component $Component) {
-		$a_configuration = $Component->getConfiguration();
-		
-		$a_configDefinition = [
-			'locale' => $a_configuration['definition']['locale']??[],
-			'submissions' => [
-				'type' => 'none',
-			],
-			'layout' => [
-				'bootstrap4' => [
-					'col_left' => 'col-12',
-					'col_right' => 'col-12',
-				],
-			],
-			'fields' => $a_configuration['definition']['fields']??[],
-		];
-		
-		if($a_configuration['category'] !== 'static') {
-			array_unshift($a_configDefinition['fields'], [
-				'component' => 'reef:single_line_text',
-				'name' => 'name',
-				'required' => true,
-				'locales' => [
-					'en_US' => [
-						'title' => 'Field name',
-					],
-					'nl_NL' => [
-						'title' => 'Veldnaam',
-					],
-				],
-			]);
-			
-			array_unshift($a_configDefinition['fields'], [
-				'component' => 'reef:hidden',
-				'name' => 'old_name',
-			]);
-		}
-		
-		$ComponentForm = $this->Reef->newTempForm();
-		$ComponentForm->importDefinition($a_configDefinition);
-		
-		return $ComponentForm;
 	}
 	
 	private function generateLocaleForm(Component $Component, string $s_locale) {
@@ -373,9 +326,6 @@ class Builder {
 		
 		$a_localeDefinition = [
 			'locale' => [],
-			'submissions' => [
-				'type' => 'none',
-			],
 			'layout' => [
 				'bootstrap4' => [
 					'col_left' => 'col-12',
@@ -386,7 +336,7 @@ class Builder {
 		];
 		
 		$LocaleForm = $this->Reef->newTempForm();
-		$LocaleForm->importDefinition($a_localeDefinition);
+		$LocaleForm->importValidatedDefinition($a_localeDefinition);
 		
 		return $LocaleForm;
 	}

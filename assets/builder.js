@@ -232,6 +232,11 @@ var ReefBuilder = (function() {
 				dataType: 'json',
 				success: function(response) {
 					if(typeof response == 'object') {
+						if(typeof response.errors !== 'undefined') {
+							alert(response.errors.join("\n"));
+							return;
+						}
+						
 						var definite = [], potential = [];
 						
 						for(var field_name in response.dataloss) {

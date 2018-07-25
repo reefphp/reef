@@ -91,7 +91,7 @@ class StoredForm extends Form {
 	}
 	
 	public function load(int $i_formId) {
-		$this->importDefinition(json_decode($this->Reef->getFormStorage()->get($i_formId)['definition'], true));
+		$this->importValidatedDefinition(json_decode($this->Reef->getFormStorage()->get($i_formId)['definition'], true));
 		$this->i_formId = $i_formId;
 	}
 	

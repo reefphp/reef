@@ -6,6 +6,7 @@ use \Reef\Trait_Locale;
 use \Reef\Storage\DataStore;
 use \Reef\Storage\StorageFactory;
 use \Reef\Storage\Storage;
+use \Reef\Exception\ValidationException;
 use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Yaml\Yaml;
 
@@ -165,6 +166,59 @@ class Reef {
 		}
 		
 		return $this->ReefAssets;
+	}
+	
+	public function checkDefinition(array $a_definition) {
+		$a_unknown = array_diff(array_keys($a_definition), ['storage_name', 'fields', 'locale', 'locales', 'layout']);
+		if(count($a_unknown) > 0) {
+			throw new ValidationException('Unknown form values '.implode(', ', $a_unknown).'');
+		}
+		
+		foreach($a_definition['fields']??[] as $a_fieldDecl) {
+			$this->checkDeclaration($a_fieldDecl);
+		}
+	}
+	
+	public function checkDeclaration(array $a_declaration) {
+		foreach(['component'] as $s_key) {
+			if(!array_key_exists($s_key, $a_declaration)) {
+				throw new ValidationException('Field value for '.$s_key.' not present');
+			}
+		}
+		
+		if(!$this->ReefSetup->hasComponent($a_declaration['component'])) {
+			throw new ValidationException('Invalid component name "'.$a_declaration['component'].'"');
+		}
+		
+		$Component = $this->ReefSetup->getComponent($a_declaration['component']);
+		$DeclarationForm = $Component->generateDeclarationForm();
+		
+		$DeclarationSubmission = $DeclarationForm->newSubmission();
+		$DeclarationSubmission->fromStructured($a_declaration);
+		
+		if(!$DeclarationSubmission->validate()) {
+			$a_errors = $DeclarationSubmission->getErrors();
+			
+			foreach($a_errors as $s_name => $a_fieldErrors) {
+				$a_errors[$s_name] = '('.$s_name.') '.implode(', ', $a_fieldErrors);
+				
+				if(isset($a_declaration['name'])) {
+					$a_errors[$s_name] = '['.$a_declaration['name'].'] '.$a_errors[$s_name];
+				}
+			}
+			
+			throw new ValidationException(implode('; ', $a_errors));
+		}
+		
+		if(!$Component->validateDeclaration($a_declaration, $a_errors)) {
+			
+			foreach($a_errors as $s_name => $s_error) {
+				$a_errors[$s_name] = '('.$s_name.') '.$s_error;
+			}
+			
+			throw new ValidationException(implode('; ', $a_errors));
+		}
+		
 	}
 	
 }

@@ -67,6 +67,10 @@ class ReefSetup {
 		$this->a_componentMapping[$Component::COMPONENT_NAME] = $Component;
 	}
 	
+	public function hasComponent($s_componentName) {
+		return isset($this->a_componentMapping[$s_componentName]);
+	}
+	
 	public function getComponent($s_componentName) {
 		return $this->a_componentMapping[$s_componentName];
 	}

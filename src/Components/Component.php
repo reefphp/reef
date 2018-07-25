@@ -30,6 +30,16 @@ abstract class Component {
 	}
 	
 	/**
+	 * Perform validation on a declaration, additional to the default form validation
+	 * @param array $a_declaration The declaration array for the field
+	 * @param array &$a_errors Array of errors
+	 * @return bool True if valid
+	 */
+	public function validateDeclaration(array $a_declaration, array &$a_errors = null) : bool {
+		return true;
+	}
+	
+	/**
 	 * Return a new field from this component
 	 * @param array $a_declaration The declaration array for the field
 	 * @param Form $Form The form the field belongs to
@@ -198,6 +208,47 @@ abstract class Component {
 			$this->combineOwnAndParentLocaleSource($s_locale),
 			\Reef\array_subset($this->Reef->getOwnLocaleSource($s_locale), $this->getLocaleKeys())
 		);
+	}
+	
+	public function generateDeclarationForm() {
+		$a_configuration = $this->getConfiguration();
+		
+		$a_formDefinition = [
+			'locale' => $a_configuration['definition']['locale']??[],
+			'layout' => [
+				'bootstrap4' => [
+					'col_left' => 'col-12',
+					'col_right' => 'col-12',
+				],
+			],
+			'fields' => $a_configuration['definition']['fields']??[],
+		];
+		
+		if($a_configuration['category'] !== 'static') {
+			array_unshift($a_formDefinition['fields'], [
+				'component' => 'reef:single_line_text',
+				'name' => 'name',
+				'required' => true,
+				'locales' => [
+					'en_US' => [
+						'title' => 'Field name',
+					],
+					'nl_NL' => [
+						'title' => 'Veldnaam',
+					],
+				],
+			]);
+			
+			array_unshift($a_formDefinition['fields'], [
+				'component' => 'reef:hidden',
+				'name' => 'old_name',
+			]);
+		}
+		
+		$DeclarationForm = $this->Reef->newTempForm();
+		$DeclarationForm->importValidatedDefinition($a_formDefinition);
+		
+		return $DeclarationForm;
 	}
 	
 }
