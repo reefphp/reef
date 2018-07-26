@@ -174,7 +174,18 @@ class Reef {
 			throw new ValidationException('Unknown form values '.implode(', ', $a_unknown).'');
 		}
 		
+		$a_names = [];
 		foreach($a_definition['fields']??[] as $a_fieldDecl) {
+			
+			// Check for duplicates
+			if(isset($a_fieldDecl['name'])) {
+				if(isset($a_names[$a_fieldDecl['name']])) {
+					throw new ValidationException('Duplicate name found: '.$a_fieldDecl['name'].'');
+				}
+				$a_names[$a_fieldDecl['name']] = true;
+			}
+			
+			// Check field declaration
 			$this->checkDeclaration($a_fieldDecl);
 		}
 	}

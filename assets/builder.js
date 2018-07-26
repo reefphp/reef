@@ -254,7 +254,7 @@ var ReefBuilder = (function() {
 	ReefBuilder.prototype.submit = function() {
 		var self = this;
 		
-		var i;
+		var i, declaration;
 		
 		this.deselectField();
 		
@@ -271,9 +271,20 @@ var ReefBuilder = (function() {
 		
 		// All is valid, gather fields
 		var fields = [];
+		var names = [], name;
 		
 		for(i in this.fields) {
-			fields.push(this.fields[i].getDeclaration());
+			declaration = this.fields[i].getDeclaration();
+			if(typeof declaration.config.name !== 'undefined') {
+				name = declaration.config.name;
+				if(typeof names[name] !== 'undefined') {
+					alert("Found duplicate name: "+name);
+					return;
+				}
+				names[name] = true;
+			}
+			
+			fields.push(declaration);
 		}
 		
 		// Gather all data
