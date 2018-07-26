@@ -7,6 +7,8 @@ valueLocale:
     placeholder: Placeholder
 configLocale:
     rf_error_required_empty: Required error
+internalLocale:
+    error_regexp:
 definition:
     fields:
       - component: reef:single_checkbox
@@ -34,3 +36,6 @@ definition:
                 title: 'Max. input length'
             nl_NL:
                 title: 'Max. aantal tekens'
+props:
+  - name: 'regexp'
+    default: null

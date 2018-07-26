@@ -173,7 +173,8 @@ abstract class Field {
 	}
 	
 	protected function getLocaleKeys() {
-		return array_keys($this->getComponent()->getConfiguration()['locale']);
+		$a_configuration = $this->getComponent()->getConfiguration();
+		return array_keys(array_merge($a_configuration['locale'], $a_configuration['internalLocale']));
 	}
 	
 	public function getCombinedLocaleSources($s_locale) {

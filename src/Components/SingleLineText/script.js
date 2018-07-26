@@ -32,20 +32,25 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.validate = function() {
-		var valid = true;
-		
 		this.removeErrors();
 		
 		var $input = this.$field.find('input');
 		
 		if($input.prop('required')) {
 			if($.trim($input.val()) == '') {
-				valid = false;
 				this.setError('error-required-empty');
+				return false;
 			}
 		}
 		
-		return valid;
+		if($input.prop('pattern')) {
+			if(!$input.val().match(new RegExp($input.prop('pattern')))) {
+				this.setError('error-regexp');
+				return false;
+			}
+		}
+		
+		return true;
 	};
 	
 	Field.prototype.setError = function(message_key) {

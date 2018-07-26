@@ -131,6 +131,7 @@ abstract class Component {
 		return $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME, function() {
 			$a_configuration = Yaml::parseFile(static::getDir().'config.yml');
 			$a_configuration['locale'] = array_merge($a_configuration['valueLocale']??[], $a_configuration['configLocale']??[]);
+			$a_configuration['internalLocale'] = $a_configuration['internalLocale']??[];
 			
 			$ParentComponent = $this->getParent();
 			if(empty($ParentComponent)) {
@@ -142,10 +143,88 @@ abstract class Component {
 			$a_configuration['valueLocale'] = array_merge($a_parentConfiguration['valueLocale'], $a_configuration['valueLocale']??[]);
 			$a_configuration['configLocale'] = array_merge($a_parentConfiguration['configLocale'], $a_configuration['configLocale']??[]);
 			$a_configuration['locale'] = array_merge($a_configuration['valueLocale'], $a_configuration['configLocale']);
-			$a_configuration['definition']['fields'] = array_merge($a_parentConfiguration['definition']['fields'], $a_configuration['definition']['fields']);
+			$a_configuration['internalLocale'] = array_merge($a_configuration['internalLocale']??[], $a_configuration['internalLocale']??[]);
+			
+			[$a_configuration['definition']['fields'], $a_configuration['props']] = $this->mergeConfigurationFieldsProps(
+				$a_configuration['definition']['fields'],
+				$a_configuration['props'],
+				$a_parentConfiguration['definition']['fields'],
+				$a_parentConfiguration['props']
+			);
 			
 			return $a_configuration;
 		});
+	}
+	
+	/**
+	 * Merge configuration fields & properties of this component with its parents fields & properties
+	 * @param array $a_fields
+	 * @param array $a_props
+	 * @param array $a_parentFields
+	 * @param array $a_parentProps
+	 * @return [array, array] merged fields & props
+	 */
+	private function mergeConfigurationFieldsProps($a_fields, $a_props, $a_parentFields, $a_parentProps) {
+		
+		// Create mapping from name to position
+		$a_parentFieldsKeys = [];
+		foreach($a_parentFields as $i_pos => $a_field) {
+			if(isset($a_field['name'])) {
+				$a_parentFieldsKeys[$a_field['name']] = $i_pos;
+			}
+		}
+		
+		$a_parentPropsKeys = array_flip(array_column($a_parentProps, 'name'));
+		
+		// We take the parent fields & props as base
+		$a_returnFields = $a_parentFields;
+		$a_returnProps = $a_parentProps;
+		
+		// Merge new fields
+		foreach($a_fields as $a_field) {
+			if(!isset($a_field['name'])) {
+				$a_returnFields[] = $a_field;
+				continue;
+			}
+			
+			if(isset($a_parentPropsKeys[$a_field['name']])) {
+				unset($a_returnProps[$a_parentPropsKeys[$a_field['name']]]);
+			}
+			
+			if(isset($a_parentFieldsKeys[$a_field['name']])) {
+				$a_returnFields[$a_parentFieldsKeys[$a_field['name']]] = $a_field;
+			}
+			else {
+				$a_returnFields[] = $a_field;
+			}
+		}
+		
+		// Merge new props
+		foreach($a_props as $a_prop) {
+			if(isset($a_parentFieldsKeys[$a_prop['name']])) {
+				unset($a_returnFields[$a_parentFieldsKeys[$a_prop['name']]]);
+			}
+			
+			if(isset($a_parentPropsKeys[$a_prop['name']])) {
+				$a_returnProps[$a_parentPropsKeys[$a_prop['name']]] = $a_prop;
+			}
+			else {
+				$a_returnProps[] = $a_prop;
+			}
+		}
+		
+		// Use array_values() to make sure we don't leave gaps in the keys
+		return [array_values($a_returnFields), array_values($a_returnProps)];
+	}
+	
+	/**
+	 * Get names of this component's props
+	 * @return array<string>
+	 */
+	public function getPropNames() {
+		$a_props = $this->getConfiguration()['props']??[];
+		
+		return array_column($a_props, 'name');
 	}
 	
 	/**
@@ -189,7 +268,12 @@ abstract class Component {
 		});
 	}
 	
-	public function getLocaleKeys() {
+	protected function getLocaleKeys() {
+		$a_configuration = $this->getConfiguration();
+		return array_keys(array_merge($a_configuration['locale'], $a_configuration['internalLocale']));
+	}
+	
+	public function getFormLocaleKeys() {
 		return array_keys($this->getConfiguration()['locale']);
 	}
 	
@@ -229,6 +313,7 @@ abstract class Component {
 				'component' => 'reef:single_line_text',
 				'name' => 'name',
 				'required' => true,
+				'regexp' => '^[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?$',
 				'locales' => [
 					'en_US' => [
 						'title' => 'Field name',

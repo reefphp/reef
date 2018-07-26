@@ -312,7 +312,7 @@ class Builder {
 		$a_locale = $Component->getLocale($s_locale);
 		
 		$a_fields = [];
-		foreach($Component->getLocaleKeys() as $s_name) {
+		foreach($Component->getFormLocaleKeys() as $s_name) {
 			$s_val = $a_locale[$s_name]??'';
 			
 			$a_fields[] = [

@@ -15,9 +15,18 @@ class SingleLineTextValue extends FieldValue {
 		$this->a_errors = [];
 		$s_value = trim($this->s_value);
 		
-		if(($this->Field->getDeclaration()['required']??false) && $s_value == '') {
+		$a_declaration = $this->Field->getDeclaration();
+		
+		if(($a_declaration['required']??false) && $s_value == '') {
 			$this->a_errors[] = $this->Field->trans('rf_error_required_empty');
 			return false;
+		}
+		
+		if(isset($a_declaration['regexp']) && $s_value != '') {
+			if(!preg_match('/'.str_replace('/', '\\/', $a_declaration['regexp']).'/', $s_value)) {
+				$this->a_errors[] = "Value does not match the regular expression";
+				return false;
+			}
 		}
 		
 		return true;

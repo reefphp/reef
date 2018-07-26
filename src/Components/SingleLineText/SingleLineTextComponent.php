@@ -19,6 +19,22 @@ class SingleLineTextComponent extends Component {
 	/**
 	 * @inherit
 	 */
+	public function validateDeclaration(array $a_declaration, array &$a_errors = null) : bool {
+		$b_valid = true;
+		
+		if(isset($a_declaration['regexp'])) {
+			if(preg_match('/'.str_replace('/', '\\/', $a_declaration['regexp']).'/', null) === false) {
+				$a_errors['regexp'] = "Invalid regexp '".$a_declaration['regexp']."'";
+				$b_valid = false;
+			}
+		}
+		
+		return $b_valid;
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function getJS() : array {
 		return [
 			[
