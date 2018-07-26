@@ -12,6 +12,7 @@ abstract class Component {
 	use Trait_Locale;
 	
 	protected $Reef;
+	protected $a_configuration;
 	
 	/**
 	 * Set the Reef object
@@ -128,7 +129,11 @@ abstract class Component {
 	 * @return array
 	 */
 	public function getConfiguration() : array {
-		return $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME, function() {
+		if($this->a_configuration !== null) {
+			return $this->a_configuration;
+		}
+		
+		$this->a_configuration = $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME, function() {
 			$a_configuration = Yaml::parseFile(static::getDir().'config.yml');
 			$a_configuration['locale'] = array_merge($a_configuration['valueLocale']??[], $a_configuration['configLocale']??[]);
 			$a_configuration['internalLocale'] = $a_configuration['internalLocale']??[];
@@ -154,6 +159,8 @@ abstract class Component {
 			
 			return $a_configuration;
 		});
+		
+		return $this->a_configuration;
 	}
 	
 	/**
