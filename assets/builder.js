@@ -237,7 +237,7 @@ var ReefBuilder = (function() {
 		
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-tab').removeClass(CSSPRFX+'builder-tab-active').filter('.'+CSSPRFX+'builder-tab-'+tab).addClass(CSSPRFX+'builder-tab-active');
 		
-		if(tab === 'field' && this.selectedField === null) {
+		if(tab === 'field' && this.selectedField === null && this.fields.length > 0) {
 			this.selectField(this.fields[0]);
 		}
 	};

@@ -148,6 +148,7 @@ abstract class Form {
 		
 		$Mustache = new \Mustache_Engine([
 			'helpers' => $a_helpers,
+			'cache' => $this->Reef->getOption('cache_dir').'mustache/',
 		]);
 		
 		foreach($this->a_fields as $Field) {

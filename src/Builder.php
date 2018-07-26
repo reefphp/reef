@@ -129,6 +129,7 @@ class Builder {
 		
 		$Mustache = new \Mustache_Engine([
 			'helpers' => $a_helpers,
+			'cache' => $this->Reef->getOption('cache_dir').'mustache/',
 		]);
 		
 		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
