@@ -211,7 +211,7 @@ abstract class Form {
 	}
 	
 	protected function getDefaultLocale() {
-		return $this->a_definition['default_locale']??null;
+		return $this->a_definition['default_locale']??$this->Reef->getOption('default_locale');
 	}
 	
 	abstract public function updateDefinition(array $a_definition, array $a_fieldRenames = []);

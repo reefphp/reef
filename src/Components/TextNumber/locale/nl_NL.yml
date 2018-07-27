@@ -1,0 +1,9 @@
+component_title: Getal
+error_not_a_number_title: Validatie fout
+error_not_a_number: Vul aub een geldig getal in
+error_number_min_max_title: Min/max fout
+error_number_min_max: Kies een getal tussen [[min]] en [[max]]
+error_number_min_title: Minimum fout
+error_number_min: Kies een getal niet lager dan [[min]]
+error_number_max_title: Maximum fout
+error_number_max: Kies een getal niet hoger dan [[max]]

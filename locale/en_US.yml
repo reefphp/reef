@@ -1,1 +1,7 @@
+rf_error_required_empty_title: Required notification
 rf_error_required_empty: This field is required
+rf_field_title: Field title
+rf_field_placeholder: Placeholder
+builder_basic: Basic
+builder_advanced: Advanced
+builder_save: Save

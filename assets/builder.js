@@ -265,7 +265,7 @@ var ReefBuilder = (function() {
 			.filter('[data-type="'+tab+'"]').addClass(CSSPRFX+'builder-sidetab-field-tab-active');
 	};
 	
-	ReefBuilder.prototype.submit = function() {
+	ReefBuilder.prototype.submit = function(callback) {
 		var self = this;
 		
 		var i, declaration;
@@ -369,6 +369,10 @@ var ReefBuilder = (function() {
 						}
 						
 						self.options.success(response);
+						
+						if(typeof callback !== 'undefined') {
+							callback(response);
+						}
 					}
 				}
 			});

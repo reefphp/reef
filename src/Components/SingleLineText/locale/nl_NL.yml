@@ -1,0 +1,3 @@
+component_title: Enkele regel tekst
+error_regexp: Bevat ongeldige karakters
+error_value_too_long: Waarde is te lang

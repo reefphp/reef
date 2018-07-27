@@ -23,6 +23,14 @@ abstract class Component {
 	}
 	
 	/**
+	 * Get the Reef object
+	 * @return Reef The Reef we are currently working in
+	 */
+	public function getReef() {
+		return $this->Reef;
+	}
+	
+	/**
 	 * Get the parent component
 	 * @return Component The parent component
 	 */
@@ -277,7 +285,7 @@ abstract class Component {
 	
 	protected function getLocaleKeys() {
 		$a_configuration = $this->getConfiguration();
-		return array_keys(array_merge($a_configuration['locale'], $a_configuration['internalLocale']));
+		return array_merge(array_filter(array_keys($a_configuration['locale'])), array_values($a_configuration['locale']));
 	}
 	
 	private function combineOwnAndParentLocaleSource($s_locale) {
@@ -297,6 +305,10 @@ abstract class Component {
 		);
 	}
 	
+	protected function getDefaultLocale() {
+		return $this->getReef()->getOption('default_locale');
+	}
+	
 	public function generateBasicDeclarationForm() {
 		return $this->generateDeclarationForm('basic');
 	}
@@ -312,18 +324,15 @@ abstract class Component {
 	private function generateDeclarationForm(string $s_type) {
 		$a_configuration = $this->getConfiguration();
 		
-		$a_locale = $a_fields = [];
+		$a_fields = [];
 		if($s_type == 'basic' || $s_type == 'combined') {
-			$a_locale = $a_configuration['basicDefinition']['locale']??[];
 			$a_fields = $a_configuration['basicDefinition']['fields']??[];
 		}
 		if($s_type == 'advanced' || $s_type == 'combined') {
-			$a_locale = array_merge($a_locale, $a_configuration['advancedDefinition']['locale']??[]);
 			$a_fields = array_merge($a_fields, $a_configuration['advancedDefinition']['fields']??[]);
 		}
 		
 		$a_formDefinition = [
-			'locale' => $a_locale,
 			'layout' => [
 				'bootstrap4' => [
 					'col_left' => 'col-12',
@@ -381,12 +390,13 @@ abstract class Component {
 		$a_fields = [];
 		foreach($a_keys as $s_name) {
 			$s_val = $a_locale[$s_name]??'';
+			$s_title = $a_locale[$a_localeTitles[$s_name]]??'';
 			
 			$a_fields[] = [
 				'component' => 'reef:single_line_text',
 				'name' => $s_name,
 				'locale' => [
-					'title' => $a_localeTitles[$s_name]??$s_name
+					'title' => $s_title,
 				],
 				'default' => $s_val,
 			];

@@ -141,6 +141,9 @@ $(function() {
 		$.ajax({
 			url: 'submission.php',
 			method: 'get',
+			data: {
+				locale : $('#locale_setter_form').val()
+			},
 			success: function(response) {
 				$('.form-wrapper').html(response);
 				reef = new Reef($('.form-wrapper'));
@@ -206,7 +209,10 @@ $(function() {
 				$.ajax({
 					url: 'index.php',
 					method: 'get',
-					data: {'builder_only' : 1},
+					data: {
+						builder_only : 1,
+						locale : $('#locale_setter_form').val()
+					},
 					success: function(response) {
 						$('.builderWrapper').html(response);
 						fn_initBuilder();
@@ -220,6 +226,16 @@ $(function() {
 	
 	$('#panel_submit_form').on('click', function() {
 		$('#submission_form').trigger('submit');
+	});
+	
+	$('#locale_setter_builder').on('change', function() {
+		builder.submit(function(response) {
+			location.href = 'index.php?locale='+$('#locale_setter_builder').val();
+		});
+	});
+	
+	$('#locale_setter_form').on('change', function() {
+		fn_loadForm();
 	});
 });
 </script>
@@ -252,6 +268,7 @@ $(function() {
 	height: 50%;
 	display: flex;
 	flex-direction: column;
+	overflow: auto;
 }
 
 .panel .panel-head {
@@ -280,6 +297,13 @@ $(function() {
 		<div id="sandbox-top-left" class="panel">
 			<div class="panel-head">
 				<span class="panel-title">Builder</span>
+				
+				<select id="locale_setter_builder" style="font-size: 7pt; vertical-align: top;">
+				<?php foreach($a_locales as $s_locale) { ?>
+					<option value="<?php echo($s_locale); ?>"><?php echo($s_locale); ?></option>
+				<?php } ?>
+				</select>
+				
 				<button type="button" class="panel-submit float-right" id="panel_submit_builder">Save &raquo;</button>
 			</div>
 			<div class="builderWrapper" style="height: 100%; overflow: auto;">
@@ -289,6 +313,13 @@ $(function() {
 		<div id="sandbox-bottom-left" class="panel">
 			<div class="panel-head">
 				<span class="panel-title">Form</span>
+				
+				<select id="locale_setter_form" style="font-size: 7pt; vertical-align: top;">
+				<?php foreach($a_locales as $s_locale) { ?>
+					<option value="<?php echo($s_locale); ?>"><?php echo($s_locale); ?></option>
+				<?php } ?>
+				</select>
+				
 				<button type="button" class="panel-submit float-right" id="panel_submit_form">Submit &raquo;</button>
 			</div>
 			<form action="submission.php" method="post" id="submission_form">

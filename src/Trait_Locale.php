@@ -44,9 +44,7 @@ trait Trait_Locale {
 	/**
 	 * @override
 	 */
-	protected function getDefaultLocale() : ?string {
-		return null;
-	}
+	abstract protected function getDefaultLocale() : ?string;
 	
 	/**
 	 * @override
@@ -172,6 +170,17 @@ trait Trait_Locale {
 	
 	public function trans($s_key, $a_locales = null) {
 		return $this->getLocale($a_locales)[$s_key]??null;
+	}
+	
+	public function transMultiple($a_keys, $a_locales = null) {
+		$a_locale = $this->getLocale($a_locales);
+		
+		$a_trans = [];
+		foreach($a_keys as $s_key) {
+			$a_trans[$s_key] = $a_locale[$s_key]??null;
+		}
+		
+		return $a_trans;
 	}
 	
 	

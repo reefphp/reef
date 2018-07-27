@@ -3,7 +3,7 @@ name: heading
 category: static
 image: text-freeform.svg
 basicLocale:
-    title: Heading content
+    title: heading_content_title
 basicDefinition:
     fields:
       - component: reef:text_number

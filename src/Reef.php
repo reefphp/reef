@@ -65,6 +65,7 @@ class Reef {
 		$this->a_options['css_prefix'] = $a_options['css_prefix'] ?? 'rf-';
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
 		$this->a_options['locales'] = $a_options['locales'] ?? ['-'];
+		$this->a_options['default_locale'] = $a_options['default_locale'] ?? 'en_US';
 		
 		$this->ReefSetup = $ReefSetup;
 		$this->ReefSetup->checkSetup($this);
@@ -158,6 +159,10 @@ class Reef {
 			
 			return [];
 		});
+	}
+	
+	protected function getDefaultLocale() {
+		return $this->getOption('default_locale');
 	}
 	
 	public function getReefAssets() {

@@ -3,10 +3,10 @@ name: single_line_text
 category: text
 image: text-freeform.svg
 basicLocale:
-    title: Field title
-    placeholder: Placeholder
+    title: rf_field_title
+    placeholder: rf_field_placeholder
 advancedLocale:
-    rf_error_required_empty: Required error
+    rf_error_required_empty: rf_error_required_empty_title
 internalLocale:
     error_regexp:
     error_value_too_long:

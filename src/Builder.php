@@ -129,6 +129,7 @@ class Builder {
 			'definitionForm' => $DefinitionForm->generateFormHtml($DefinitionSubmission, ['main_var' => 'definition']),
 			'form_id' => ($Form instanceof StoredForm) ? $Form->getFormId() : -1,
 			'multipleLocales' => (count($a_locales) > 1),
+			'builder_lang' => $this->Reef->transMultiple(['builder_basic', 'builder_advanced', 'builder_save']),
 		]);
 		
 		return $s_html;
@@ -293,8 +294,13 @@ class Builder {
 					'component' => 'reef:single_line_text',
 					'name' => 'storage_name',
 					'required' => true,
-					'locale' => [
-						'title' => 'Form storage name',
+					'locales' => [
+						'en_US' => [
+							'title' => 'Form storage name',
+						],
+						'nl_NL' => [
+							'title' => 'Formulier opslag naam',
+						],
 					],
 					'default' => 'form_'.$Form->getReef()->getFormStorage()->next(),
 				]

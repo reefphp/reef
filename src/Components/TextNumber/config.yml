@@ -3,14 +3,14 @@ name: text_number
 category: text
 image: text-number.svg
 basicLocale:
-    title: Field title
-    placeholder: Placeholder
+    title: rf_field_title
+    placeholder: rf_field_placeholder
 advancedLocale:
-    error_not_a_number: Validation error
-    error_number_min: Minimum error
-    error_number_max: Maximum error
-    error_number_min_max: Min/max error
-    rf_error_required_empty: Required error
+    error_not_a_number: error_not_a_number_title
+    error_number_min: error_number_min_title
+    error_number_max: error_number_max_title
+    error_number_min_max: error_number_min_max_title
+    rf_error_required_empty: rf_error_required_empty_title
 basicDefinition:
     fields:
       - component: reef:single_checkbox
