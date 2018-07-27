@@ -71,5 +71,14 @@ Reef.addComponent((function() {
 		}
 	};
 	
+	Field.prototype.addError = function(message) {
+		this.$field.addClass(CSSPRFX+'invalid');
+		
+		if(this.Reef.config.layout_name == 'bootstrap4') {
+			this.$field.find('input').addClass('is-invalid');
+			this.$field.find('input').parent().append($('<div class="invalid-feedback"></div>').text(message));
+		}
+	};
+	
 	return Field;
 })());

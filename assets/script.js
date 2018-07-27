@@ -75,6 +75,19 @@ if(typeof Reef === 'undefined') {
 			return (valid && this.$wrapper.find('.'+CSSPRFX+'invalid').length == 0);
 		};
 		
+		Reef.prototype.addErrors = function(errors) {
+			var name;
+			
+			for(name in errors) {
+				if(typeof(this.fields[name].addError) !== 'undefined') {
+					this.fields[name].addError(errors[name]);
+				}
+				else {
+					alert(errors[name]);
+				}
+			}
+		};
+		
 		return Reef;
 	})();
 }

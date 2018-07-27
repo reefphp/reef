@@ -97,6 +97,34 @@ $s_JS = $Reef->getReefAssets()->getJSHTML(function($s_assetsHash) {
 <script>
 var reef;
 
+function recursive_table(data) {
+	var name, value, $table, $tr;
+	
+	$table = $('<table class="table">');
+	
+	for(name in data) {
+		value = data[name];
+		
+		$tr = $('<tr>').append($('<th>').text(name));
+		
+		if(typeof(value) === 'object') {
+			$tr.append($('<td>').html(recursive_table(value)));
+		}
+		else {
+			if(value == '') {
+				$tr.append($('<td>').html('<span class="text-muted font-italic">Empty</span>'));
+			}
+			else {
+				$tr.append($('<td>').text(value));
+			}
+		}
+		
+		$table.append($tr);
+	}
+	
+	return $table;
+}
+
 $(function() {
 	Split(['#sandbox-left', '#sandbox-right']);
 	
@@ -145,8 +173,14 @@ $(function() {
 			url: 'submission.php',
 			method: 'post',
 			data: $form.serialize(),
+			dataType : 'json',
 			success: function(response) {
-				$('#submission').html(response);
+				if(typeof(response.errors) != 'undefined') {
+					reef.addErrors(response.errors);
+				}
+				else {
+					$('#submission').html(recursive_table(response.data));
+				}
 			}
 		});
 	});

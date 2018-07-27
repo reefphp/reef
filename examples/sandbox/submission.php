@@ -10,9 +10,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$Submission = $Form->newSubmission();
 	$Submission->fromUserInput($_POST['form_data']??[]);
 	if($Submission->validate()) {
-		var_dump($Submission->toStructured());
-		die();
+		$a_return = [
+			'data' => $Submission->toStructured(),
+		];
 	}
+	else {
+		$a_return = [
+			'errors' => $Submission->getErrors(),
+		];
+	}
+	
+	echo(json_encode($a_return));
+	die();
 }
 
 $s_form = $Form->generateFormHtml(null, ['main_var' => 'form_data']);
