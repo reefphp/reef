@@ -235,7 +235,9 @@ var ReefBuilder = (function() {
 		
 		this.selectedField = null;
 		
-		this.openSideTab('components');
+		if($('.'+CSSPRFX+'builder-tab-active').data('tab') == 'field') {
+			this.openSideTab('components');
+		}
 	};
 	
 	ReefBuilder.prototype.openSideTab = function(tab) {
