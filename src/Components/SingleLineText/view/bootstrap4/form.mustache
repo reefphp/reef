@@ -3,9 +3,20 @@
 		{{field.locale.title}}
 	</label>
 	<div class="{{layout.col_right}}">
-		<input type="text" class="form-control {{#field.hasErrors}}is-invalid{{/field.hasErrors}}" id="{{form_idpfx}}-{{field.name}}" name="{{main_var}}[{{field.name}}]" placeholder="{{field.locale.placeholder}}" value="{{field.value}}" {{#field.required}}required{{/field.required}} {{#field.regexp}}pattern="{{field.regexp}}"{{/field.regexp}}>
+		<input
+			type="text"
+			class="form-control {{#field.hasErrors}}is-invalid{{/field.hasErrors}}"
+			id="{{form_idpfx}}-{{field.name}}"
+			name="{{main_var}}[{{field.name}}]"
+			placeholder="{{field.locale.placeholder}}"
+			value="{{field.value}}"
+			{{#field.required}}required{{/field.required}}
+			{{#field.regexp}}pattern="{{field.regexp}}"{{/field.regexp}}
+			{{#field.max_length}}maxlength="{{field.max_length}}"{{/field.max_length}}
+		>
 		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>
 		{{#field.regexp}}<div class="invalid-feedback {{CSSPRFX}}error-regexp" style="display: none;">{{field.locale.error_regexp}}</div>{{/field.regexp}}
+		{{#field.max_length}}<div class="invalid-feedback {{CSSPRFX}}error-value-too-long" style="display: none;">{{field.locale.error_value_too_long}}</div>{{/field.max_length}}
 		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>
 		{{/field.errors}}

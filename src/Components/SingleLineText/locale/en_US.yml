@@ -1,2 +1,3 @@
 component_title: Single Line Text
 error_regexp: Invalid characters found
+error_value_too_long: Value is too long

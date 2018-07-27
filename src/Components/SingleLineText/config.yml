@@ -9,6 +9,7 @@ advancedLocale:
     rf_error_required_empty: Required error
 internalLocale:
     error_regexp:
+    error_value_too_long:
 basicDefinition:
     fields:
       - component: reef:single_checkbox

@@ -22,6 +22,11 @@ class SingleLineTextValue extends FieldValue {
 			return false;
 		}
 		
+		if(isset($a_declaration['max_length']) && $a_declaration['max_length'] > 0 && strlen($s_value) > $a_declaration['max_length']) {
+			$this->a_errors[] = $this->Field->trans('error_value_too_long');
+			return false;
+		}
+		
 		if(isset($a_declaration['regexp']) && $s_value != '') {
 			if(!preg_match('/'.str_replace('/', '\\/', $a_declaration['regexp']).'/', $s_value)) {
 				$this->a_errors[] = "Value does not match the regular expression";

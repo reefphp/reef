@@ -43,8 +43,13 @@ Reef.addComponent((function() {
 			}
 		}
 		
-		if($input.prop('pattern')) {
-			if(!$input.val().match(new RegExp($input.prop('pattern')))) {
+		if($input.attr('maxlength') && $input.attr('maxlength') > 0 && $input.val().length > $input.attr('maxlength')) {
+			this.setError('error-value-too-long');
+			return false;
+		}
+		
+		if($input.attr('pattern')) {
+			if(!$input.val().match(new RegExp($input.attr('pattern')))) {
 				this.setError('error-regexp');
 				return false;
 			}
