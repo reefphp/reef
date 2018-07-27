@@ -2,10 +2,9 @@ vendor: reef
 name: heading
 category: static
 image: text-freeform.svg
-valueLocale:
+basicLocale:
     title: Heading content
-configLocale: []
-definition:
+basicDefinition:
     fields:
       - component: reef:text_number
         name: 'size'

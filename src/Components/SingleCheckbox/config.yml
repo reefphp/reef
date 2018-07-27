@@ -2,12 +2,12 @@ vendor: reef
 name: single_checkbox
 category: choice
 image: choice-check.svg
-valueLocale:
+basicLocale:
     title_left: Left title
     title_right: Right title
-configLocale:
+advancedLocale:
     rf_error_required_empty: Required error
-definition:
+basicDefinition:
     fields:
       - component: reef:single_checkbox
         name: 'required'

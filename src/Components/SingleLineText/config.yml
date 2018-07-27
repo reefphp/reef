@@ -2,14 +2,14 @@ vendor: reef
 name: single_line_text
 category: text
 image: text-freeform.svg
-valueLocale:
+basicLocale:
     title: Field title
     placeholder: Placeholder
-configLocale:
+advancedLocale:
     rf_error_required_empty: Required error
 internalLocale:
     error_regexp:
-definition:
+basicDefinition:
     fields:
       - component: reef:single_checkbox
         name: 'required'
@@ -25,6 +25,8 @@ definition:
                 title: 'Default value'
             nl_NL:
                 title: 'Standaardwaarde'
+advancedDefinition:
+    fields:
       - component: reef:text_number
         name: 'max_length'
         required: true

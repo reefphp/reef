@@ -22,11 +22,14 @@
 							<img title="" alt="" src="../../assets/img/{{image}}" />
 							<span>{{title}}</span>
 						</div>
-						<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-component-form">
-							{{{componentForm}}}
+						{{#declarationForms}}
+						<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-{{declType}}-declaration-form">
+							{{{form}}}
 						</div>
-						<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-locale-forms">
-							{{#localeForms}}
+						{{/declarationForms}}
+						{{#localeForms}}
+						<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-{{declType}}-locale-forms {{#multipleLocales}}{{CSSPRFX}}builder-multiple-locales{{/multipleLocales}}">
+							{{#forms}}
 							<div class="{{CSSPRFX}}builder-locale-form" data-locale="{{locale}}">
 							{{#multipleLocales}}
 							<div class="{{CSSPRFX}}builder-locale-nav">
@@ -37,8 +40,9 @@
 							{{/multipleLocales}}
 								{{{form}}}
 							</div>
-							{{/localeForms}}
+							{{/forms}}
 						</div>
+						{{/localeForms}}
 					</div>
 					{{/components}}
 				</div>
@@ -46,6 +50,13 @@
 			{{/categories}}
 		</div>
 		<div class="{{CSSPRFX}}builder-sidetab {{CSSPRFX}}builder-sidetab-field" style="display: none;">
+			<div class="{{CSSPRFX}}builder-sidetab-field-tabs">
+				<div class="{{CSSPRFX}}builder-sidetab-field-tab" data-type="basic">Basic</div>
+				<div class="{{CSSPRFX}}builder-sidetab-field-tab" data-type="advanced">Advanced</div>
+			</div>
+			<div class="{{CSSPRFX}}builder-sidetab-field-content">
+			
+			</div>
 		</div>
 		<div class="{{CSSPRFX}}builder-sidetab {{CSSPRFX}}builder-sidetab-form" style="display: none;">
 			<div class="{{CSSPRFX}}builder-definition-form">
@@ -63,23 +74,27 @@
 	<div class="{{CSSPRFX}}builder-existing-fields">
 		{{#fields}}
 		<div class="{{CSSPRFX}}builder-existing-field" data-component-name="{{type}}" data-declaration="{{declaration}}">
-			<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-component-form">
-				{{{componentForm}}}
+			{{#declarationForms}}
+			<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-{{declType}}-declaration-form">
+				{{{form}}}
 			</div>
-			<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-locale-forms">
-				{{#localeForms}}
+			{{/declarationForms}}
+			{{#localeForms}}
+			<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-{{declType}}-locale-forms {{#multipleLocales}}{{CSSPRFX}}builder-multiple-locales{{/multipleLocales}}">
+				{{#forms}}
 				<div class="{{CSSPRFX}}builder-locale-form" data-locale="{{locale}}">
-					{{#multipleLocales}}
-					<div class="{{CSSPRFX}}builder-locale-nav">
-						<div class="{{CSSPRFX}}builder-locale-prev">&#11207;</div>
-						<div class="{{CSSPRFX}}builder-locale-title">{{locale}}</div>
-						<div class="{{CSSPRFX}}builder-locale-next">&#11208;</div>
-					</div>
-					{{/multipleLocales}}
+				{{#multipleLocales}}
+				<div class="{{CSSPRFX}}builder-locale-nav">
+					<div class="{{CSSPRFX}}builder-locale-prev">&#11207;</div>
+					<div class="{{CSSPRFX}}builder-locale-title">{{locale}}</div>
+					<div class="{{CSSPRFX}}builder-locale-next">&#11208;</div>
+				</div>
+				{{/multipleLocales}}
 					{{{form}}}
 				</div>
-				{{/localeForms}}
+				{{/forms}}
 			</div>
+			{{/localeForms}}
 		</div>
 		{{/fields}}
 	</div>

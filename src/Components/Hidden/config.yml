@@ -2,9 +2,7 @@ vendor: reef
 name: hidden
 category: text
 image: text-freeform.svg
-valueLocale:
-configLocale:
-definition:
+basicDefinition:
     fields:
       - component: reef:single_line_text
         name: 'default'

@@ -202,7 +202,7 @@ class Reef {
 		}
 		
 		$Component = $this->ReefSetup->getComponent($a_declaration['component']);
-		$DeclarationForm = $Component->generateDeclarationForm();
+		$DeclarationForm = $Component->generateCombinedDeclarationForm();
 		
 		$DeclarationSubmission = $DeclarationForm->newSubmission();
 		$DeclarationSubmission->fromStructured($a_declaration);

@@ -4,6 +4,7 @@ namespace Reef;
 
 use Symfony\Component\Yaml\Yaml;
 use Reef\Components\Component;
+use Reef\Components\Field;
 
 class Builder {
 	
@@ -52,29 +53,20 @@ class Builder {
 				];
 			}
 			
-			$ComponentForm = $Component->generateDeclarationForm();
-			$ComponentForm->setIdPfx('__form_idpfx__'.$ComponentForm->getIdPfx());
-			$s_form = $ComponentForm->generateFormHtml(null, ['main_var' => 'form_data[config]']);
-			
-			$a_localeForms = [];
-			foreach($a_locales as $s_locale) {
-				$LocaleForm = $this->generateLocaleForm($Component, $s_locale);
-				$LocaleForm->setIdPfx('__form_idpfx__'.$LocaleForm->getIdPfx());
-				
-				$a_localeForms[] = [
-					'locale' => $s_locale,
-					'form' => $LocaleForm->generateFormHtml(null, ['main_var' => 'form_data[locale]['.$s_locale.']']),
-				];
-			}
-			
 			$a_categories[$a_configuration['category']]['components'][] = [
 				'configuration' => base64_encode(json_encode($a_configuration)),
 				'html' => base64_encode($Component->getTemplate($Layout->getName())),
 				'image' => $a_configuration['image'],
 				'title' => $Component->trans('component_title'),
 				'type' => $a_configuration['vendor'].':'.$a_configuration['name'],
-				'componentForm' => $s_form,
-				'localeForms' => $a_localeForms,
+				'declarationForms' => [
+					['declType' => 'basic',    'form' => $this->generateDeclarationForm($Component, null, 'basic'   )],
+					['declType' => 'advanced', 'form' => $this->generateDeclarationForm($Component, null, 'advanced')],
+				],
+				'localeForms' => [
+					['declType' => 'basic',    'forms' => $this->generateLocaleForms($Component, null, 'basic'   )],
+					['declType' => 'advanced', 'forms' => $this->generateLocaleForms($Component, null, 'advanced')],
+				],
 			];
 			
 		}
@@ -84,32 +76,19 @@ class Builder {
 		foreach($Form->getFields() as $Field) {
 			$s_declaration = base64_encode(json_encode($Field->getDeclaration()));
 			
-			$ComponentForm = $Field->getComponent()->generateDeclarationForm();
-			$ComponentSubmission = $ComponentForm->newSubmission();
-			$a_declaration = $Field->getDeclaration();
-			if(isset($a_declaration['name'])) {
-				$a_declaration['old_name'] = $a_declaration['name'];
-			}
-			$ComponentSubmission->fromStructured($a_declaration);
-			$s_form = $ComponentForm->generateFormHtml($ComponentSubmission, ['main_var' => 'form_data[config]']);
-			
-			$a_localeForms = [];
-			foreach($a_locales as $s_locale) {
-				$LocaleForm = $this->generateLocaleForm($Field->getComponent(), $s_locale);
-				$LocaleSubmission = $LocaleForm->newSubmission();
-				$LocaleSubmission->fromStructured($Field->getDeclaration()['locales'][$s_locale] ?? $Field->getDeclaration()['locale'] ?? []);
-				
-				$a_localeForms[] = [
-					'locale' => $s_locale,
-					'form' => $LocaleForm->generateFormHtml($LocaleSubmission, ['main_var' => 'form_data[locale]['.$s_locale.']']),
-				];
-			}
+			$Component = $Field->getComponent();
 			
 			$a_fields[] = [
 				'declaration' => $s_declaration,
-				'type' => $Field->getComponent()::COMPONENT_NAME,
-				'componentForm' => $s_form,
-				'localeForms' => $a_localeForms,
+				'type' => $Component::COMPONENT_NAME,
+				'declarationForms' => [
+					['declType' => 'basic',    'form' => $this->generateDeclarationForm($Component, $Field, 'basic'   )],
+					['declType' => 'advanced', 'form' => $this->generateDeclarationForm($Component, $Field, 'advanced')],
+				],
+				'localeForms' => [
+					['declType' => 'basic',    'forms' => $this->generateLocaleForms($Component, $Field, 'basic'   )],
+					['declType' => 'advanced', 'forms' => $this->generateLocaleForms($Component, $Field, 'advanced')],
+				],
 			];
 		}
 		
@@ -180,34 +159,49 @@ class Builder {
 		foreach($a_data['fields']??[] as $i_pos => $a_field) {
 			$Component = $Setup->getComponent($a_field['component']);
 			
-			// Validate config
-			$ConfigForm = $Component->generateDeclarationForm();
-			$ConfigSubmission = $ConfigForm->newSubmission();
-			
-			$ConfigSubmission->fromUserInput($a_field['config']);
-			
-			$b_valid = $ConfigSubmission->validate() && $b_valid;
-			if(!$b_valid) {
-				$a_errors[$i_pos]['config'] = $ConfigSubmission->getErrors();
-			}
-			
-			// Validate locale
+			// Validate declaration
+			$a_declSubmissions = [];
 			$a_localeSubmissions = [];
-			foreach($a_locales as $s_locale) {
-				$LocaleForm = $this->generateLocaleForm($Component, $s_locale);
-				$LocaleSubmission = $LocaleForm->newSubmission();
-				$LocaleSubmission->fromUserInput($a_field['locale'][$s_locale]??[]);
-				
-				$b_valid = $LocaleSubmission->validate() && $b_valid;
-				if(!$b_valid) {
-					$a_errors[$i_pos]['locale'][$s_locale] = $LocaleSubmission->getErrors();
+			foreach(['basic', 'advanced'] as $s_type) {
+				if($s_type == 'basic') {
+					$DeclForm = $Component->generateBasicDeclarationForm();
 				}
-				$a_localeSubmissions[$s_locale] = $LocaleSubmission;
+				else {
+					$DeclForm = $Component->generateAdvancedDeclarationForm();
+				}
+				$DeclSubmission = $DeclForm->newSubmission();
+				
+				$DeclSubmission->fromUserInput($a_field['declaration'][$s_type]??[]);
+				
+				$b_valid = $DeclSubmission->validate() && $b_valid;
+				if(!$b_valid) {
+					$a_errors[$i_pos]['declaration'][$s_type] = $DeclSubmission->getErrors();
+				}
+				$a_declSubmissions[$s_type] = $DeclSubmission;
+				
+				// Validate locale
+				$a_localeSubmissions[$s_type] = [];
+				foreach($a_locales as $s_locale) {
+					if($s_type == 'basic') {
+						$LocaleForm = $Component->generateBasicLocaleForm($s_locale);
+					}
+					else {
+						$LocaleForm = $Component->generateAdvancedLocaleForm($s_locale);
+					}
+					$LocaleSubmission = $LocaleForm->newSubmission();
+					$LocaleSubmission->fromUserInput($a_field['locale'][$s_type][$s_locale]??[]);
+					
+					$b_valid = $LocaleSubmission->validate() && $b_valid;
+					if(!$b_valid) {
+						$a_errors[$i_pos]['locale'][$s_locale] = $LocaleSubmission->getErrors();
+					}
+					$a_localeSubmissions[$s_type][$s_locale] = $LocaleSubmission;
+				}
 			}
 			
 			$a_submissions[$i_pos] = [
 				'component' => $Component,
-				'config' => $ConfigSubmission,
+				'declaration' => $a_declSubmissions,
 				'locales' => $a_localeSubmissions,
 			];
 		}
@@ -227,9 +221,12 @@ class Builder {
 				'component' => $Component::COMPONENT_NAME,
 			];
 			
-			$a_fieldConfig = $a_fieldSubmissions['config']->toStructured(['skip_default' => true]);
-			if(isset($a_fieldConfig['name']) && $a_fieldSubmissions['config']->hasField('old_name')) {
-				$s_oldName = $a_fieldSubmissions['config']->getFieldValue('old_name')->toStructured();
+			$a_fieldConfig = array_merge(
+				$a_fieldSubmissions['declaration']['basic']->toStructured(['skip_default' => true]),
+				$a_fieldSubmissions['declaration']['advanced']->toStructured(['skip_default' => true])
+			);
+			if(isset($a_fieldConfig['name']) && $a_fieldSubmissions['declaration']['basic']->hasField('old_name')) {
+				$s_oldName = $a_fieldSubmissions['declaration']['basic']->getFieldValue('old_name')->toStructured();
 				if($s_oldName != $a_fieldConfig['name']) {
 					$a_fieldRenames[$s_oldName] = $a_fieldConfig['name'];
 				}
@@ -239,11 +236,19 @@ class Builder {
 			$a_fieldDecl = array_merge($a_fieldDecl, $a_fieldConfig);
 			
 			if(count($a_locales) == 1 && reset($a_locales) == '-') {
-				$a_fieldDecl['locale'] = array_merge($a_fieldDecl['locales']['-']??[], $a_fieldSubmissions['locales']['-']->toStructured(['skip_default' => true]));
+				$a_fieldDecl['locale'] = array_merge(
+					$a_fieldDecl['locales']['-']??[],
+					$a_fieldSubmissions['locales']['basic']['-']->toStructured(['skip_default' => true]),
+					$a_fieldSubmissions['locales']['advanced']['-']->toStructured(['skip_default' => true])
+				);
 			}
 			else {
 				foreach($a_locales as $s_locale) {
-					$a_fieldDecl['locales'][$s_locale] = array_merge($a_fieldDecl['locales'][$s_locale]??[], $a_fieldSubmissions['locales'][$s_locale]->toStructured(['skip_default' => true]));
+					$a_fieldDecl['locales'][$s_locale] = array_merge(
+						$a_fieldDecl['locales'][$s_locale]??[],
+						$a_fieldSubmissions['locales']['basic'][$s_locale]->toStructured(['skip_default' => true]),
+						$a_fieldSubmissions['locales']['advanced'][$s_locale]->toStructured(['skip_default' => true])
+					);
 				}
 			}
 			
@@ -302,43 +307,60 @@ class Builder {
 		return $ConfigForm;
 	}
 	
-	private function generateLocaleForm(Component $Component, string $s_locale) {
-		if(empty($s_locale)) {
-			$s_locale = '-';
+	private function generateDeclarationForm(Component $Component, ?Field $Field, string $s_type) {
+		if($s_type == 'advanced') {
+			$DeclarationForm = $Component->generateAdvancedDeclarationForm();
 		}
-		$a_configuration = $Component->getConfiguration();
+		else {
+			$DeclarationForm = $Component->generateBasicDeclarationForm();
+		}
 		
-		$a_localeTitles = $a_configuration['locale'];
-		$a_locale = $Component->getLocale($s_locale);
+		if($Field === null) {
+			$DeclarationForm->setIdPfx('__form_idpfx__'.$DeclarationForm->getIdPfx());
+			$DeclarationSubmission = null;
+		}
+		else {
+			$DeclarationSubmission = $DeclarationForm->newSubmission();
+			$a_declaration = $Field->getDeclaration();
+			if(isset($a_declaration['name'])) {
+				$a_declaration['old_name'] = $a_declaration['name'];
+			}
+			$DeclarationSubmission->fromStructured($a_declaration);
+		}
 		
-		$a_fields = [];
-		foreach($Component->getFormLocaleKeys() as $s_name) {
-			$s_val = $a_locale[$s_name]??'';
+		return $DeclarationForm->generateFormHtml($DeclarationSubmission, ['main_var' => 'form_data['.$s_type.'_declaration]']);
+	}
+	
+	private function generateLocaleForms(Component $Component, ?Field $Field, string $s_type) {
+		$a_locales = $this->Reef->getOption('locales');
+		
+		$a_localeForms = [];
+		foreach($a_locales as $s_locale) {
+			if($s_type == 'advanced') {
+				$LocaleForm = $Component->generateAdvancedLocaleForm($s_locale);
+			}
+			else {
+				$LocaleForm = $Component->generateBasicLocaleForm($s_locale);
+			}
 			
-			$a_fields[] = [
-				'component' => 'reef:single_line_text',
-				'name' => $s_name,
-				'locale' => [
-					'title' => $a_localeTitles[$s_name]??$s_name
-				],
-				'default' => $s_val,
+			if($Field === null) {
+				$LocaleForm->setIdPfx('__form_idpfx__'.$LocaleForm->getIdPfx());
+				$LocaleSubmission = null;
+			}
+			else {
+				$LocaleSubmission = $LocaleForm->newSubmission();
+				$LocaleSubmission->fromStructured($Field->getDeclaration()['locales'][$s_locale] ?? $Field->getDeclaration()['locale'] ?? []);
+			}
+			
+			$a_localeForms[] = [
+				'locale' => $s_locale,
+				'form' => $LocaleForm->generateFormHtml($LocaleSubmission, ['main_var' => 'form_data['.$s_type.'_locale]['.$s_locale.']']),
 			];
 		}
 		
-		$a_localeDefinition = [
-			'locale' => [],
-			'layout' => [
-				'bootstrap4' => [
-					'col_left' => 'col-12',
-					'col_right' => 'col-12',
-				],
-			],
-			'fields' => $a_fields,
-		];
-		
-		$LocaleForm = $this->Reef->newTempForm();
-		$LocaleForm->importValidatedDefinition($a_localeDefinition);
-		
-		return $LocaleForm;
+		return $a_localeForms;
 	}
+	
+	
+	
 }

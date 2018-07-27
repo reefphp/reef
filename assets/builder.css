@@ -135,6 +135,28 @@
 	z-index: 75;
 }
 
+.CSSPRFXbuilder-sidetab-field-tabs {
+	display: flex;
+}
+
+.CSSPRFXbuilder-sidetab-field-tab {
+	flex: 1;
+	background-color: #d6dafd;
+	font-weight: bold;
+	text-align: center;
+	cursor: pointer;
+}
+
+.CSSPRFXbuilder-sidetab-field-tab.CSSPRFXbuilder-sidetab-field-tab-active {
+	background-color: #b6bafd;
+}
+
+.CSSPRFXbuilder-multiple-locales .CSSPRFXbuilder-locale-form {
+	margin: 0.4em;
+	padding: 0.4em 0;
+	border: 1px solid #c7b3ce;
+}
+
 .CSSPRFXbuilder-locale-nav {
 	display: flex;
 	text-align: center;

@@ -162,6 +162,10 @@ var ReefBuilder = (function() {
 			$(this).remove();
 		});
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace .'+CSSPRFX+'fields').append(this.$builderWrapper.find('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-field'));
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-tab').on('click', function() {
+			self.openFieldTab($(this).data('type'));
+		});
 	};
 	
 	ReefBuilder.prototype.getReef = function() {
@@ -199,13 +203,13 @@ var ReefBuilder = (function() {
 			this.deselectField();
 		}
 		
-		var $sidetab = this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field');
+		var $sidetab = this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-content');
 		if($sidetab.children().length > 0) {
 			alert("Corrupt state (#1)!");
 			throw "Corrupt state (#1)!";
 		}
 		
-		field.$declarationForm.appendTo($sidetab).show();
+		field.$declarationForms.appendTo($sidetab).show();
 		field.$fieldWrapper.addClass(CSSPRFX+'active');
 		
 		this.selectedField = field;
@@ -225,7 +229,7 @@ var ReefBuilder = (function() {
 			throw "Corrupt state (#2)!";
 		}
 		
-		this.selectedField.$declarationForm.hide().appendTo(fieldTemplates);
+		this.selectedField.$declarationForms.hide().appendTo(fieldTemplates);
 		
 		this.selectedField.$fieldWrapper.removeClass(CSSPRFX+'active');
 		
@@ -243,12 +247,22 @@ var ReefBuilder = (function() {
 			}
 			
 			if(this.selectedField !== null) {
+				this.openFieldTab('basic');
 				this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-'+tab).find(':input').filter(':visible').first().focus();
 			}
 		}
 		else {
 			this.deselectField();
 		}
+	};
+	
+	ReefBuilder.prototype.openFieldTab = function(tab) {
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-content .'+CSSPRFX+'builder-declaration-forms')
+			.children().hide()
+			.filter('.'+CSSPRFX+'builder-'+tab+'-declaration-form, .'+CSSPRFX+'builder-'+tab+'-locale-forms').show();
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-tab').removeClass(CSSPRFX+'builder-sidetab-field-tab-active')
+			.filter('[data-type="'+tab+'"]').addClass(CSSPRFX+'builder-sidetab-field-tab-active');
 	};
 	
 	ReefBuilder.prototype.submit = function() {
@@ -275,8 +289,8 @@ var ReefBuilder = (function() {
 		
 		for(i in this.fields) {
 			declaration = this.fields[i].getDeclaration();
-			if(typeof declaration.config.name !== 'undefined') {
-				name = declaration.config.name;
+			if(typeof declaration.declaration.basic.name !== 'undefined') {
+				name = declaration.declaration.basic.name;
 				if(typeof names[name] !== 'undefined') {
 					alert("Found duplicate name: "+name);
 					return;
@@ -369,12 +383,12 @@ var ReefBuilderField = (function() {
 	
 	var ReefBuilderField = function(reefBuilder) {
 		this.reefBuilder = reefBuilder;
-		this.componentForm = null;
-		this.localeForms = null;
+		this.declarationForm = {};
+		this.localeForms = {};
 		this.$fieldWrapper = null;
 		this.field = null;
 		this.$field = null;
-		this.$declarationForm = null;
+		this.$declarationForms = null;
 	};
 	
 	ReefBuilderField.prototype.initFromItem = function($item) {
@@ -382,29 +396,61 @@ var ReefBuilderField = (function() {
 		
 		var existingField = $item.is('.'+CSSPRFX+'builder-existing-field');
 		
-		var $fieldWrapper = $('<div class="'+CSSPRFX+'builder-field"><div class="'+CSSPRFX+'builder-field-preview"></div><div class="'+CSSPRFX+'builder-field-actions"><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-drag-handle">&#8661;</div><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-component-delete">&times;</div></div><div class="'+CSSPRFX+'builder-field-templates"><div class="'+CSSPRFX+'builder-declaration-form" style="display: none;"></div></div></div>');
+		var $fieldWrapper = $('<div class="'+CSSPRFX+'builder-field"><div class="'+CSSPRFX+'builder-field-preview"></div><div class="'+CSSPRFX+'builder-field-actions"><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-drag-handle">&#8661;</div><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-component-delete">&times;</div></div><div class="'+CSSPRFX+'builder-field-templates"><div class="'+CSSPRFX+'builder-declaration-forms" style="display: none;"></div></div></div>');
 		
-		var templates = [CSSPRFX+'builder-component-form', CSSPRFX+'builder-locale-forms'];
+		var templates = [
+			CSSPRFX+'builder-basic-locale-forms',
+			CSSPRFX+'builder-basic-declaration-form',
+			CSSPRFX+'builder-advanced-declaration-form',
+			CSSPRFX+'builder-advanced-locale-forms'
+		];
+		
 		var $template;
 		for(var i in templates) {
 			$template = $item.find('.'+CSSPRFX+'builder-template.'+templates[i]).clone().removeClass(CSSPRFX+'builder-template');
 			$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.'+CSSPRFX+'main-config').data('form-idpfx')), 'g'), unique_id()));
+			$template = $($template);
 			
-			$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-form').append($template);
+			$template.find('input').on('change', function() {
+				self.updateField($fieldWrapper);
+			});
+			
+			$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms').append($template);
 		}
 		
 		$fieldWrapper.on('click', function() {
 			self.reefBuilder.selectField(self);
 		});
 		
-		$fieldWrapper.find('.'+CSSPRFX+'builder-component-form input, .'+CSSPRFX+'builder-locale-forms input').on('change', function() {
-			self.updateField($fieldWrapper);
+		this.declarationForm.basic = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-basic-declaration-form'));
+		this.declarationForm.advanced = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-advanced-declaration-form'));
+		
+		this.initLocaleWidget($fieldWrapper, 'basic');
+		this.initLocaleWidget($fieldWrapper, 'advanced');
+		
+		if(this.declarationForm.basic.hasField('name') && !existingField) {
+			this.declarationForm.basic.getField('name').setValue('field_'+unique_id().substr(0, 16));
+		}
+		
+		$fieldWrapper.find('.'+CSSPRFX+'builder-component-delete').on('click', function() {
+			self.deleteField();
 		});
 		
-		this.componentForm = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-component-form'));
-		this.localeForms = {};
+		$fieldWrapper.attr('data-component-name', $item.data('component-name'));
 		
-		var $localeForms = $fieldWrapper.find('.'+CSSPRFX+'builder-locale-form');
+		$item.replaceWith($fieldWrapper);
+		
+		this.$fieldWrapper = $fieldWrapper;
+		this.$declarationForms = $fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms');
+		
+		this.updateField();
+	};
+	
+	ReefBuilderField.prototype.initLocaleWidget = function($fieldWrapper, type) {
+		var self = this;
+		var $localeForms = $fieldWrapper.find('.'+CSSPRFX+'builder-'+type+'-locale-forms .'+CSSPRFX+'builder-locale-form');
+		this.localeForms[type] = {};
+		
 		$localeForms.hide().first().show();
 		if($localeForms.length > 1) {
 			$localeForms.each(function(index) {
@@ -430,25 +476,8 @@ var ReefBuilderField = (function() {
 		}
 		$localeForms.each(function() {
 			var $localeForm = $(this);
-			self.localeForms[$localeForm.data('locale')] = new Reef($localeForm);
+			self.localeForms[type][$localeForm.data('locale')] = new Reef($localeForm);
 		});
-		
-		if(this.componentForm.hasField('name') && !existingField) {
-			this.componentForm.getField('name').setValue('field_'+unique_id().substr(0, 16));
-		}
-		
-		$fieldWrapper.find('.'+CSSPRFX+'builder-component-delete').on('click', function() {
-			self.deleteField();
-		});
-		
-		$fieldWrapper.attr('data-component-name', $item.data('component-name'));
-		
-		$item.replaceWith($fieldWrapper);
-		
-		this.$fieldWrapper = $fieldWrapper;
-		this.$declarationForm = $fieldWrapper.find('.'+CSSPRFX+'builder-declaration-form');
-		
-		this.updateField();
 	};
 	
 	ReefBuilderField.prototype.deleteField = function() {
@@ -461,15 +490,22 @@ var ReefBuilderField = (function() {
 		
 		var template = atob(this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-components .'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"]').data('html'));
 		
-		var fieldConfig = this.componentForm.getData();
-		var $localeForms = this.$declarationForm.find('.'+CSSPRFX+'builder-locale-form');
+		var fieldConfig = Object.assign({}, this.declarationForm.basic.getData(), this.declarationForm.advanced.getData(), {'locale' : {}});
+		
+		// Determine used locale
+		var $localeForms = this.$declarationForms.find('.'+CSSPRFX+'builder-locale-form');
 		var $locale = $localeForms.filter(':visible');
 		if($locale.length == 0) {
 			$locale = $localeForms.first();
 		}
 		var locale = $locale.attr('data-locale');
-		if(typeof this.localeForms[locale] !== 'undefined') {
-			fieldConfig.locale = this.localeForms[locale].getData();
+		
+		// Fetch locale data
+		if(typeof this.localeForms.basic[locale] !== 'undefined') {
+			Object.assign(fieldConfig.locale, this.localeForms.basic[locale].getData());
+		}
+		if(typeof this.localeForms.advanced[locale] !== 'undefined') {
+			Object.assign(fieldConfig.locale, this.localeForms.advanced[locale].getData());
 		}
 		
 		var component;
@@ -521,30 +557,45 @@ var ReefBuilderField = (function() {
 	};
 	
 	ReefBuilderField.prototype.validate = function() {
-		if(!this.componentForm.validate()) {
-			this.reefBuilder.selectField(this);
-			return false;
-		}
-		for(var locale in this.localeForms) {
-			if(!this.localeForms[locale].validate()) {
+		var types = ['basic', 'advanced'], i, type;
+		for(i in types) {
+			type = types[i];
+				
+			if(!this.declarationForm[type].validate()) {
 				this.reefBuilder.selectField(this);
-				this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field .'+CSSPRFX+'builder-locale-form').hide().find('[data-locale="'+locale+'"]').show();
+				this.reefBuilder.openFieldTab(type);
 				return false;
+			}
+			for(var locale in this.localeForms[type]) {
+				if(!this.localeForms[type][locale].validate()) {
+					this.reefBuilder.selectField(this);
+					this.reefBuilder.openFieldTab(type);
+					this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field .'+CSSPRFX+'builder-locale-form').hide().find('[data-locale="'+locale+'"]').show();
+					return false;
+				}
 			}
 		}
 		return true;
 	};
 	
 	ReefBuilderField.prototype.getDeclaration = function() {
-		var locales = {};
+		var locales = {}, declaration = {};
 		
-		for(var locale in this.localeForms) {
-			locales[locale] = this.localeForms[locale].getData();
+		var types = ['basic', 'advanced'], i, type;
+		for(i in types) {
+			type = types[i];
+			
+			locales[type] = {};
+			for(var locale in this.localeForms[type]) {
+				locales[type][locale] = this.localeForms[type][locale].getData();
+			}
+			
+			declaration[type] = this.declarationForm[type].getData();
 		}
 		
 		return {
 			component: this.$fieldWrapper.data('component-name'),
-			config: this.componentForm.getData(),
+			declaration: declaration,
 			locale: locales
 		};
 	};

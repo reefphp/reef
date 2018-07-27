@@ -135,7 +135,7 @@ abstract class Component {
 		
 		$this->a_configuration = $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME, function() {
 			$a_configuration = Yaml::parseFile(static::getDir().'config.yml');
-			$a_configuration['locale'] = array_merge($a_configuration['valueLocale']??[], $a_configuration['configLocale']??[]);
+			$a_configuration['locale'] = array_merge($a_configuration['basicLocale']??[], $a_configuration['advancedLocale']??[]);
 			$a_configuration['internalLocale'] = $a_configuration['internalLocale']??[];
 			
 			$ParentComponent = $this->getParent();
@@ -145,9 +145,9 @@ abstract class Component {
 			
 			$a_parentConfiguration = $ParentComponent->getConfiguration();
 			
-			$a_configuration['valueLocale'] = array_merge($a_parentConfiguration['valueLocale'], $a_configuration['valueLocale']??[]);
-			$a_configuration['configLocale'] = array_merge($a_parentConfiguration['configLocale'], $a_configuration['configLocale']??[]);
-			$a_configuration['locale'] = array_merge($a_configuration['valueLocale'], $a_configuration['configLocale']);
+			$a_configuration['basicLocale'] = array_merge($a_parentConfiguration['basicLocale'], $a_configuration['basicLocale']??[]);
+			$a_configuration['advancedLocale'] = array_merge($a_parentConfiguration['advancedLocale'], $a_configuration['advancedLocale']??[]);
+			$a_configuration['locale'] = array_merge($a_configuration['basicLocale'], $a_configuration['advancedLocale']);
 			$a_configuration['internalLocale'] = array_merge($a_configuration['internalLocale']??[], $a_configuration['internalLocale']??[]);
 			
 			[$a_configuration['definition']['fields'], $a_configuration['props']] = $this->mergeConfigurationFieldsProps(
@@ -280,10 +280,6 @@ abstract class Component {
 		return array_keys(array_merge($a_configuration['locale'], $a_configuration['internalLocale']));
 	}
 	
-	public function getFormLocaleKeys() {
-		return array_keys($this->getConfiguration()['locale']);
-	}
-	
 	private function combineOwnAndParentLocaleSource($s_locale) {
 		
 		$ParentComponent = $this->getParent();
@@ -301,22 +297,44 @@ abstract class Component {
 		);
 	}
 	
-	public function generateDeclarationForm() {
+	public function generateBasicDeclarationForm() {
+		return $this->generateDeclarationForm('basic');
+	}
+	
+	public function generateAdvancedDeclarationForm() {
+		return $this->generateDeclarationForm('advanced');
+	}
+	
+	public function generateCombinedDeclarationForm() {
+		return $this->generateDeclarationForm('combined');
+	}
+	
+	private function generateDeclarationForm(string $s_type) {
 		$a_configuration = $this->getConfiguration();
 		
+		$a_locale = $a_fields = [];
+		if($s_type == 'basic' || $s_type == 'combined') {
+			$a_locale = $a_configuration['basicDefinition']['locale']??[];
+			$a_fields = $a_configuration['basicDefinition']['fields']??[];
+		}
+		if($s_type == 'advanced' || $s_type == 'combined') {
+			$a_locale = array_merge($a_locale, $a_configuration['advancedDefinition']['locale']??[]);
+			$a_fields = array_merge($a_fields, $a_configuration['advancedDefinition']['fields']??[]);
+		}
+		
 		$a_formDefinition = [
-			'locale' => $a_configuration['definition']['locale']??[],
+			'locale' => $a_locale,
 			'layout' => [
 				'bootstrap4' => [
 					'col_left' => 'col-12',
 					'col_right' => 'col-12',
 				],
 			],
-			'fields' => $a_configuration['definition']['fields']??[],
+			'fields' => $a_fields,
 		];
 		
-		if($a_configuration['category'] !== 'static') {
-			array_unshift($a_formDefinition['fields'], [
+		if($s_type != 'advanced' && $a_configuration['category'] !== 'static') {
+			array_push($a_formDefinition['fields'], [
 				'component' => 'reef:single_line_text',
 				'name' => 'name',
 				'required' => true,
@@ -331,7 +349,7 @@ abstract class Component {
 				],
 			]);
 			
-			array_unshift($a_formDefinition['fields'], [
+			array_push($a_formDefinition['fields'], [
 				'component' => 'reef:hidden',
 				'name' => 'old_name',
 			]);
@@ -341,6 +359,54 @@ abstract class Component {
 		$DeclarationForm->importValidatedDefinition($a_formDefinition);
 		
 		return $DeclarationForm;
+	}
+	
+	public function generateBasicLocaleForm(string $s_locale) {
+		return $this->generateLocaleForm(array_keys($this->getConfiguration()['basicLocale']??[]), $s_locale);
+	}
+	
+	public function generateAdvancedLocaleForm(string $s_locale) {
+		return $this->generateLocaleForm(array_keys($this->getConfiguration()['advancedLocale']??[]), $s_locale);
+	}
+	
+	private function generateLocaleForm(array $a_keys, string $s_locale) {
+		if(empty($s_locale)) {
+			$s_locale = '-';
+		}
+		$a_configuration = $this->getConfiguration();
+		
+		$a_localeTitles = $a_configuration['locale'];
+		$a_locale = $this->getLocale($s_locale);
+		
+		$a_fields = [];
+		foreach($a_keys as $s_name) {
+			$s_val = $a_locale[$s_name]??'';
+			
+			$a_fields[] = [
+				'component' => 'reef:single_line_text',
+				'name' => $s_name,
+				'locale' => [
+					'title' => $a_localeTitles[$s_name]??$s_name
+				],
+				'default' => $s_val,
+			];
+		}
+		
+		$a_localeDefinition = [
+			'locale' => [],
+			'layout' => [
+				'bootstrap4' => [
+					'col_left' => 'col-12',
+					'col_right' => 'col-12',
+				],
+			],
+			'fields' => $a_fields,
+		];
+		
+		$LocaleForm = $this->Reef->newTempForm();
+		$LocaleForm->importValidatedDefinition($a_localeDefinition);
+		
+		return $LocaleForm;
 	}
 	
 }
