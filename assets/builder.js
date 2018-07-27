@@ -234,6 +234,8 @@ var ReefBuilder = (function() {
 		this.selectedField.$fieldWrapper.removeClass(CSSPRFX+'active');
 		
 		this.selectedField = null;
+		
+		this.openSideTab('components');
 	};
 	
 	ReefBuilder.prototype.openSideTab = function(tab) {
