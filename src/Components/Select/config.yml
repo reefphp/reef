@@ -1,0 +1,18 @@
+vendor: reef
+name: select
+category: choice
+image: text-freeform.svg
+basicLocale:
+    title: rf_field_title
+basicDefinition:
+    fields:
+      - component: reef:option_list
+        name: 'options'
+        min_num_options: 2
+        default_num_options: 3
+        max_checked_defaults: 1
+        locales:
+            en_US:
+                title: 'Options'
+            nl_NL:
+                title: 'Opties'

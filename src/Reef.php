@@ -16,6 +16,8 @@ class Reef {
 	
 	use Trait_Locale;
 	
+	const NAME_REGEXP = '^[a-zA-Z](((?!__)[a-zA-Z0-9_])*[a-zA-Z0-9])?$';
+	
 	/**
 	 * All setup that cannot change after Reef is initialized
 	 * @type ReefSetup

@@ -24,6 +24,8 @@ class ReefSetup {
 		$this->addComponent(new \Reef\Components\TextNumber\TextNumberComponent);
 		$this->addComponent(new \Reef\Components\Heading\HeadingComponent);
 		$this->addComponent(new \Reef\Components\Hidden\HiddenComponent);
+		$this->addComponent(new \Reef\Components\OptionList\OptionListComponent);
+		$this->addComponent(new \Reef\Components\Select\SelectComponent);
 	}
 	
 	public function getStorageFactory() : StorageFactory {

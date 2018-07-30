@@ -420,7 +420,7 @@ var ReefBuilderField = (function() {
 			$template = $($template);
 			
 			$template.find('input').on('change', function() {
-				self.updateField($fieldWrapper);
+				self.updateField();
 			});
 			
 			$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms').append($template);
@@ -450,6 +450,10 @@ var ReefBuilderField = (function() {
 		
 		this.$fieldWrapper = $fieldWrapper;
 		this.$declarationForms = $fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms');
+		
+		this.$declarationForms.find('.'+CSSPRFX+'field').on(EVTPRFX+'change', function() {
+			self.updateField();
+		});
 		
 		this.updateField();
 	};

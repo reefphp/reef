@@ -347,7 +347,7 @@ abstract class Component {
 				'component' => 'reef:single_line_text',
 				'name' => 'name',
 				'required' => true,
-				'regexp' => '^[a-zA-Z](((?!__)[a-zA-Z0-9_])*[a-zA-Z0-9])?$',
+				'regexp' => \Reef\Reef::NAME_REGEXP,
 				'locales' => [
 					'en_US' => [
 						'title' => 'Field name',

@@ -209,8 +209,9 @@ class Builder {
 		
 		if(!$b_valid) {
 			return [
-				'result' => false,
-				'errors' => $a_errors,
+				null,
+				null,
+				$a_errors,
 			];
 		}
 		
@@ -259,12 +260,19 @@ class Builder {
 		$a_newDefinition = array_merge($Form->getDefinition(), $DefinitionSubmission->toStructured(['skip_default' => true]));
 		$a_newDefinition['fields'] = $a_fields;
 		
-		return [$a_newDefinition, $a_fieldRenames];
+		return [$a_newDefinition, $a_fieldRenames, []];
 	}
 	
 	
 	public function applyBuilderData(Form $Form, array $a_data) {
-		[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
+		[$a_newDefinition, $a_fieldRenames, $a_errors] = $this->parseBuilderData($Form, $a_data);
+		
+		if(!empty($a_errors)) {
+			return [
+				'result' => false,
+				'errors' => $a_errors,
+			];
+		}
 		
 		$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
 		
@@ -274,9 +282,13 @@ class Builder {
 	}
 	
 	public function checkBuilderDataLoss(Form $Form, array $a_data) {
-		[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
+		[$a_newDefinition, $a_fieldRenames, $a_errors] = $this->parseBuilderData($Form, $a_data);
 		
-		return $Form->checkUpdateDataLoss($a_newDefinition, $a_fieldRenames);;
+		if(!empty($a_errors)) {
+			throw new \Exception(json_encode($a_errors));
+		}
+		
+		return $Form->checkUpdateDataLoss($a_newDefinition, $a_fieldRenames);
 	}
 	
 	private function generateDefinitionForm(Form $Form) {

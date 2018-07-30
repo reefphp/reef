@@ -96,6 +96,7 @@ $s_JS = $Reef->getReefAssets()->getJSHTML(function($s_assetsHash) {
 	<title>Form sandbox</title>
 <script>
 var reef;
+var builder;
 
 function recursive_table(data) {
 	var name, value, $table, $tr;
@@ -151,7 +152,6 @@ $(function() {
 		});
 	};
 	
-	var builder;
 	var fn_initBuilder = function() {
 		builder = new ReefBuilder('.builderWrapper', {
 			success : function(response) {

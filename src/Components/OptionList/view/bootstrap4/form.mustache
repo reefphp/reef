@@ -1,0 +1,61 @@
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:option_list" data-{{CSSPRFX}}name="{{field.name}}" data-num_opt_def="{{field.default_num_options}}" data-num_opt_min="{{field.min_num_options}}" data-max_checked_def="{{field.max_checked_defaults}}">
+	<label class="{{layout.col_left}} col-form-label" for="{{form_idpfx}}-{{field.name}}">
+		{{field.locale.title}}
+	</label>
+	<div class="{{layout.col_right}}">
+		<table style="width: 100%;">
+			<thead>
+				<tr>
+					<th></th>
+					<th>{{field.locale.option_name_title}}</th>
+					<th>
+					{{#field.multipleLocales}}
+					{{#field.locales}}
+						<div class="{{CSSPRFX}}ol-locale" data-locale="{{.}}" style="display: none;">
+							<div class="{{CSSPRFX}}ol-locale-prev">&#11207;</div>
+							<div class="{{CSSPRFX}}ol-locale-title">{{.}}</div>
+							<div class="{{CSSPRFX}}ol-locale-next">&#11208;</div>
+						</div>
+					{{/field.locales}}
+					{{/field.multipleLocales}}
+					{{^field.multipleLocales}}
+						{{field.locale.option_title_title}}
+					{{/field.multipleLocales}}
+					</th>
+					<th></th>
+				</tr>
+				<tr class="{{CSSPRFX}}ol-option {{CSSPRFX}}template">
+					<td>
+						<input type="checkbox" name="{{main_var}}[{{field.name}}][default][]" class="{{CSSPRFX}}ol-default" value="1" style="width: 100%;" />
+					</td>
+					<td style="width: 30%;">
+						<input type="text" name="{{main_var}}[{{field.name}}][name][]" class="{{CSSPRFX}}ol-name" value="" style="width: 100%;" pattern="{{field.name_regexp}}" />
+					</td>
+					<td>
+					{{#field.locales}}
+						<div class="{{CSSPRFX}}ol-locale" data-locale="{{.}}" style="display: none;">
+							<input type="text" name="{{main_var}}[{{field.name}}][locale][{{.}}][]" value="" style="width: 100%;" />
+						</div>
+					{{/field.locales}}
+					</td>
+					<td>
+						<div class="{{CSSPRFX}}ol-btns">
+							<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-btn-icon {{CSSPRFX}}ol-drag-handle">&#8661;</div>
+							<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-btn-icon {{CSSPRFX}}ol-remove-option">&times;</div>
+						</div>
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+		<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-add">+ {{field.locale.add_button}}</div>
+		
+		<div class="invalid-feedback {{CSSPRFX}}error-min-options" style="display: none;">{{field.locale.error_min_options}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}max-checked-def" style="display: none;">{{field.locale.error_max_checked_defaults}}</div>
+		{{#field.errors}}
+			<div class="invalid-feedback">{{.}}</div>
+		{{/field.errors}}
+	</div>
+</div>

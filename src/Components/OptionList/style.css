@@ -1,0 +1,40 @@
+
+.CSSPRFXol-locale {
+	display: flex;
+	text-align: center;
+}
+
+.CSSPRFXol-locale-prev, .CSSPRFXol-locale-next {
+	flex: 1;
+	cursor: pointer;
+}
+
+.CSSPRFXol-locale-prev.CSSPRFXol-locale-end, .CSSPRFXol-locale-next.CSSPRFXol-locale-end {
+	cursor: default;
+	color: #ccc;
+}
+
+.CSSPRFXol-locale-title {
+	flex: 1;
+}
+
+.CSSPRFXol-btns {
+	display: flex;
+}
+
+.CSSPRFXol-btn {
+	display: inline-block;
+	background-color: #a6aaed;
+	padding: 2px 4px;
+	cursor: pointer;
+	border-radius: 3px;
+	margin: 1px 1px;
+}
+
+.CSSPRFXol-btn-icon {
+	font-size: 15px;
+}
+
+.CSSPRFXol-btn:hover {
+	background-color: #969add;
+}

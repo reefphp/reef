@@ -76,3 +76,19 @@ function rmTree($s_dir, $b_rmRoot = false, $b_rmHidden = false) {
 	// Delete the root folder itself?
 	return ($b_rmRoot ? rmdir($s_dir) : true);
 }
+
+/**
+ * Interpret a boolean value. Returns false if the input is either falsey, 'false', 'no' or '0', or true otherwise
+ *
+ * @param mixed $m_input The input
+ *
+ * @return bool
+ */
+function interpretBool($m_input) {
+	if(is_string($m_input)) {
+		$m_input = strtolower($m_input);
+		$m_input = ($m_input != 'false' && $m_input != 'no' && $m_input != '0');
+	}
+	
+	return (bool)$m_input;
+}

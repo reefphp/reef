@@ -48,12 +48,7 @@ class SingleCheckboxValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromStructured($m_input) {
-		if(is_string($m_input)) {
-			$m_input = strtolower($m_input);
-			$m_input = ($m_input != 'false' && $m_input != 'no' && $m_input != '0');
-		}
-		
-		$this->b_value = (bool)$m_input;
+		$this->b_value = \Reef\interpretBool($m_input);
 		$this->a_errors = null;
 	}
 	

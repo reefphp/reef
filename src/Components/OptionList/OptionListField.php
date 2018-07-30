@@ -1,0 +1,56 @@
+<?php
+
+namespace Reef\Components\OptionList;
+
+use Reef\Components\Field;
+use Reef\Updater;
+
+class OptionListField extends Field {
+	
+	/**
+	 * @inherit
+	 */
+	public function getFlatStructure() : array {
+		return [[
+			'type' => \Reef\Storage\Storage::TYPE_TEXT,
+			'limit' => 16000,
+		]];
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function newValue() {
+		return new OptionListValue($this);
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function isRequired() {
+		return ($this->a_declaration['min_num_options'] > 0);
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function view_form($Value, $a_options = []) : array {
+		$a_vars = parent::view_form($Value, $a_options);
+		$a_vars['value'] = (array)$Value->toTemplateVar();
+		$a_vars['locales'] = $this->getComponent()->getReef()->getOption('locales');
+		$a_vars['multipleLocales'] = count($a_vars['locales']) > 1;
+		$a_vars['name_regexp'] = \Reef\Reef::NAME_REGEXP;
+		return $a_vars;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function updateDataLoss($OldField) {
+		return Updater::DATALOSS_NO;
+	}
+	
+	protected function getLanguageReplacements() : array {
+		return \Reef\array_subset($this->a_declaration, ['min_num_options', 'max_checked_defaults']);
+	}
+}

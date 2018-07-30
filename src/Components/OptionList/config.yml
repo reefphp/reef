@@ -1,0 +1,42 @@
+vendor: reef
+name: option_list
+category: text
+image: text-freeform.svg
+basicLocale:
+    title: rf_field_title
+internalLocale:
+    option_name_title:
+    option_title_title:
+    add_button:
+    error_min_options:
+basicDefinition:
+    fields:
+      - component: reef:text_number
+        name: 'min_num_options'
+        min: 0
+        step: 1
+        default: 2
+        locales:
+            en_US:
+                title: 'Min. number of options'
+            nl_NL:
+                title: 'Min. aantal opties'
+      - component: reef:text_number
+        name: 'max_checked_defaults'
+        min: 0
+        step: 1
+        locales:
+            en_US:
+                title: 'Max. number of checked defaults'
+            nl_NL:
+                title: 'Max. aantal aangevinkte opties'
+      - component: reef:text_number
+        name: 'default_num_options'
+        min: 0
+        step: 1
+        default: 3
+        locales:
+            en_US:
+                title: 'Default number of options'
+            nl_NL:
+                title: 'Standaard aantal opties'
