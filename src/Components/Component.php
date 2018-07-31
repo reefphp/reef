@@ -143,9 +143,27 @@ abstract class Component {
 		
 		$this->a_configuration = $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME, function() {
 			$a_configuration = Yaml::parseFile(static::getDir().'config.yml');
+			
+			// Parse locale declaration lists
+			foreach(['basicLocale', 'advancedLocale'] as $s_localeType) {
+				if(!isset($a_configuration[$s_localeType])) {
+					continue;
+				}
+				
+				foreach($a_configuration[$s_localeType] as $s_langKey => $m_langConfig) {
+					if(is_string($m_langConfig)) {
+						$a_configuration[$s_localeType][$s_langKey] = [
+							'title_key' => $m_langConfig,
+						];
+					}
+				}
+			}
+			
+			// Merge locale
 			$a_configuration['locale'] = array_merge($a_configuration['basicLocale']??[], $a_configuration['advancedLocale']??[]);
 			$a_configuration['internalLocale'] = $a_configuration['internalLocale']??[];
 			
+			// Merge parent
 			$ParentComponent = $this->getParent();
 			if(empty($ParentComponent)) {
 				return $a_configuration;
@@ -285,7 +303,7 @@ abstract class Component {
 	
 	protected function getLocaleKeys() {
 		$a_configuration = $this->getConfiguration();
-		return array_merge(array_filter(array_keys($a_configuration['locale'])), array_values($a_configuration['locale']));
+		return array_merge(array_filter(array_keys($a_configuration['locale'])), array_column($a_configuration['locale'], 'title_key'));
 	}
 	
 	private function combineOwnAndParentLocaleSource($s_locale) {
@@ -384,16 +402,16 @@ abstract class Component {
 		}
 		$a_configuration = $this->getConfiguration();
 		
-		$a_localeTitles = $a_configuration['locale'];
+		$a_localeConfig = $a_configuration['locale'];
 		$a_locale = $this->getLocale($s_locale);
 		
 		$a_fields = [];
 		foreach($a_keys as $s_name) {
 			$s_val = $a_locale[$s_name]??'';
-			$s_title = $a_locale[$a_localeTitles[$s_name]]??'';
+			$s_title = $a_locale[$a_localeConfig[$s_name]['title_key']]??'';
 			
 			$a_fields[] = [
-				'component' => 'reef:single_line_text',
+				'component' => (($a_localeConfig[$s_name]['type']??'') == 'textarea') ? 'reef:textarea' : 'reef:single_line_text',
 				'name' => $s_name,
 				'locale' => [
 					'title' => $s_title,

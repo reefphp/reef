@@ -1,0 +1,10 @@
+vendor: reef
+name: paragraph
+category: static
+image: static-paragraph.svg
+basicLocale:
+    content:
+        title_key: content_title
+        type: textarea
+basicDefinition:
+    fields: []

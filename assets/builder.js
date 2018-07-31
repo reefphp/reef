@@ -419,7 +419,7 @@ var ReefBuilderField = (function() {
 			$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.'+CSSPRFX+'main-config').data('form-idpfx')), 'g'), unique_id()));
 			$template = $($template);
 			
-			$template.find('input').on('change', function() {
+			$template.find(':input').on('change', function() {
 				self.updateField();
 			});
 			

@@ -24,6 +24,7 @@ class ReefSetup {
 		$this->addComponent(new \Reef\Components\SingleCheckbox\SingleCheckboxComponent);
 		$this->addComponent(new \Reef\Components\TextNumber\TextNumberComponent);
 		$this->addComponent(new \Reef\Components\Heading\HeadingComponent);
+		$this->addComponent(new \Reef\Components\Paragraph\ParagraphComponent);
 		$this->addComponent(new \Reef\Components\Hidden\HiddenComponent);
 		$this->addComponent(new \Reef\Components\OptionList\OptionListComponent);
 		$this->addComponent(new \Reef\Components\Select\SelectComponent);
@@ -66,6 +67,7 @@ class ReefSetup {
 	public function getDefaultBuilderComponents() {
 		$a_components = [
 			'reef:heading',
+			'reef:paragraph',
 			'reef:single_line_text',
 			'reef:textarea',
 			'reef:text_number',
