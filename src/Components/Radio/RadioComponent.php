@@ -2,9 +2,9 @@
 
 namespace Reef\Components\Radio;
 
-use Reef\Components\Component;
+use Reef\Components\AbstractSingleChoice\AbstractSingleChoiceComponent;
 
-class RadioComponent extends Component {
+class RadioComponent extends AbstractSingleChoiceComponent {
 	
 	const COMPONENT_NAME = 'reef:radio';
 	const PARENT_NAME = null;

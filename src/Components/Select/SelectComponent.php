@@ -2,9 +2,9 @@
 
 namespace Reef\Components\Select;
 
-use Reef\Components\Component;
+use Reef\Components\AbstractSingleChoice\AbstractSingleChoiceComponent;
 
-class SelectComponent extends Component {
+class SelectComponent extends AbstractSingleChoiceComponent {
 	
 	const COMPONENT_NAME = 'reef:select';
 	const PARENT_NAME = null;
