@@ -8,9 +8,17 @@ use Reef\Components\Field;
 
 class Builder {
 	
+	const CATEGORIES = [
+		'static',
+		'text',
+		'choice',
+		'other',
+	];
+	
 	private $Reef;
 	private $a_settings = [
 		'submit_action' => null,
+		'components' => null,
 	];
 	
 	/**
@@ -40,17 +48,29 @@ class Builder {
 		$Layout = $this->Reef->getSetup()->getLayout();
 		$a_componentMapping = $this->Reef->getSetup()->getComponentMapping();
 		$a_categories = [];
+		foreach(self::CATEGORIES as $s_category) {
+			$a_categories[$s_category] = [
+				'category' => $s_category,
+				'category_title' => $this->Reef->trans('cat_'.$s_category),
+				'components' => [],
+			];
+		}
+		
+		$a_components = $this->a_settings['components'] ?? $this->Reef->getSetup()->getDefaultBuilderComponents();
+		
+		$a_inexistentComponents = array_diff($a_components, array_keys($a_componentMapping));
+		if(!empty($a_inexistentComponents)) {
+			throw new \Exception("Inexistent components ".implode(', ', $a_inexistentComponents));
+		}
 		
 		$a_locales = $this->Reef->getOption('locales');
 		
-		foreach($a_componentMapping as $s_name => $Component) {
+		foreach($a_components as $s_name) {
+			$Component = $a_componentMapping[$s_name];
 			$a_configuration = $Component->getConfiguration();
 			
 			if(!isset($a_categories[$a_configuration['category']])) {
-				$a_categories[$a_configuration['category']] = [
-					'category' => $a_configuration['category'],
-					'components' => [],
-				];
+				throw new \Exception('Category "'.$a_configuration['category'].'" does not exist.');
 			}
 			
 			$a_categories[$a_configuration['category']]['components'][] = [
@@ -70,8 +90,12 @@ class Builder {
 			];
 			
 		}
+		foreach($a_categories as $s_category => $a_category) {
+			if(empty($a_category['components'])) {
+				unset($a_categories[$s_category]);
+			}
+		}
 		$a_categories = array_values($a_categories);
-		$a_categories[0]['open_default'] = true;
 		$a_fields = [];
 		foreach($Form->getFields() as $Field) {
 			$s_declaration = base64_encode(json_encode($Field->getDeclaration()));

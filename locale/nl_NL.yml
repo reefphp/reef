@@ -5,3 +5,7 @@ rf_field_placeholder: Plaatshouder
 builder_basic: Basis
 builder_advanced: Geavanceerd
 builder_save: Opslaan
+cat_static: Statisch
+cat_text: Tekst
+cat_choice: Keuze
+cat_other: Anders

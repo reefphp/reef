@@ -62,6 +62,18 @@ class ReefSetup {
 		return $this->a_componentMapping;
 	}
 	
+	public function getDefaultBuilderComponents() {
+		$a_components = [
+			'reef:heading',
+			'reef:single_line_text',
+			'reef:text_number',
+			'reef:single_checkbox',
+			'reef:select',
+		];
+		
+		return array_intersect($a_components, array_keys($this->a_componentMapping));
+	}
+	
 	public function addComponent(Component $Component) {
 		if(!empty($this->Reef)) {
 			throw new \Exception("Can only add components during Reef setup.");

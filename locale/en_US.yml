@@ -5,3 +5,7 @@ rf_field_placeholder: Placeholder
 builder_basic: Basic
 builder_advanced: Advanced
 builder_save: Save
+cat_static: Static
+cat_text: Text
+cat_choice: Choice
+cat_other: Other

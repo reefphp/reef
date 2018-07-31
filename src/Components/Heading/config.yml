@@ -1,7 +1,7 @@
 vendor: reef
 name: heading
 category: static
-image: text-freeform.svg
+image: static-heading.svg
 basicLocale:
     title: heading_content_title
 basicDefinition:

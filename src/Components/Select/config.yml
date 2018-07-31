@@ -1,7 +1,7 @@
 vendor: reef
 name: select
 category: choice
-image: text-freeform.svg
+image: choice-select.svg
 basicLocale:
     title: rf_field_title
 basicDefinition:
