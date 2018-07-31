@@ -1,0 +1,27 @@
+vendor: reef
+name: radio
+category: choice
+image: choice-radio.svg
+basicLocale:
+    title: rf_field_title
+advancedLocale:
+    rf_error_required_empty: rf_error_required_empty_title
+basicDefinition:
+    fields:
+      - component: reef:option_list
+        name: 'options'
+        min_num_options: 2
+        default_num_options: 2
+        max_checked_defaults: 1
+        locales:
+            en_US:
+                title: 'Options'
+            nl_NL:
+                title: 'Opties'
+      - component: reef:single_checkbox
+        name: 'required'
+        locales:
+            en_US:
+                title_right: 'Required'
+            nl_NL:
+                title_right: 'Verplicht'

@@ -1,0 +1,28 @@
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:single_line_text" data-{{CSSPRFX}}name="{{field.name}}">
+	<label class="{{layout.col_left}} col-form-label">
+		{{field.locale.title}}
+	</label>
+	<div class="{{layout.col_right}}">
+		{{#field.options}}
+			<div class="form-check">
+				<input
+					class="form-check-input {{#field.hasErrors}}is-invalid{{/field.hasErrors}}"
+					type="radio"
+					name="{{main_var}}[{{field.name}}]"
+					id="{{form_idpfx}}-{{field.name}}-{{name}}"
+					value="{{name}}"
+					{{#default}}checked{{/default}}
+					{{#field.required}}required{{/field.required}}
+				>
+				<label class="form-check-label" for="{{form_idpfx}}-{{field.name}}-{{name}}">
+					{{title}}
+				</label>
+			</div>
+		{{/field.options}}
+		
+		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>
+		{{#field.errors}}
+			<div class="invalid-feedback">{{.}}</div>
+		{{/field.errors}}
+	</div>
+</div>

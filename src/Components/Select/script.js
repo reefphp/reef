@@ -42,8 +42,8 @@ Reef.addComponent((function() {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
 		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('input').parent().append($('<div class="invalid-feedback"></div>').text(message));
+			this.$field.find('select').addClass('is-invalid');
+			this.$field.find('select').parent().append($('<div class="invalid-feedback"></div>').text(message));
 		}
 	};
 	
