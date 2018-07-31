@@ -134,6 +134,24 @@ class Updater {
 		return [$a_createColumns, $a_updateColumns, $a_deleteColumns];
 	}
 	
+	private function getColumns(\Reef\Components\Field $Field) {
+		// Column names
+		$s_name = $Field->getDeclaration()['name'];
+		$a_flatStructure = $Field->getFlatStructure();
+		
+		$a_names = [];
+		
+		if(count($a_flatStructure) == 1 && \Reef\array_first_key($a_flatStructure) === 0) {
+			$a_names[0] = PDOStorage::sanitizeName($s_name);
+		}
+		else {
+			foreach($a_flatStructure as $s_dataFieldName => $a_dataFieldStructure) {
+				$a_names[$s_dataFieldName] = PDOStorage::sanitizeName($s_name.'__'.$s_dataFieldName);
+			}
+		}
+		return $a_names;
+	}
+	
 	public function update(StoredForm $Form, StoredForm $newForm, $a_fieldRenames) {
 		
 		[$a_create, $a_update, $a_delete] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
@@ -151,17 +169,7 @@ class Updater {
 				$a_names[] = PDOStorage::sanitizeName($SubmissionStorage->getTableName());
 				
 				// Column names
-				$s_name = $Field->getDeclaration()['name'];
-				$a_flatStructure = $Field->getFlatStructure();
-				
-				if(count($a_flatStructure) == 1 && \Reef\array_first_key($a_flatStructure) === 0) {
-					$a_names[] = PDOStorage::sanitizeName($s_name);
-				}
-				else {
-					foreach($a_flatStructure as $s_dataFieldName => $a_dataFieldStructure) {
-						$a_names[] = PDOStorage::sanitizeName($s_name.'__'.$s_dataFieldName);
-					}
-				}
+				$a_names = array_merge($a_names, array_values($this->getColumns($Field)));
 				
 				// Compute query
 				$s_query = vsprintf($s_query, $a_names);
@@ -192,6 +200,8 @@ class Updater {
 			$a_fields1[$s_fieldName1]->beforeSchemaUpdate(array_merge($a_info, [
 				'content_updater' => $fn_getContentUpdater($a_fields1[$s_fieldName1]),
 				'new_field' => $a_fields2[$s_fieldName2],
+				'old_columns' => $this->getColumns($a_fields1[$s_fieldName1]),
+				'new_columns' => $this->getColumns($a_fields2[$s_fieldName2]),
 			]));
 		}
 		
@@ -206,6 +216,8 @@ class Updater {
 		foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
 			$a_fields[$s_fieldName2]->afterSchemaUpdate(array_merge($a_info, [
 				'content_updater' => $fn_getContentUpdater($a_fields[$s_fieldName2]),
+				'old_columns' => $this->getColumns($a_fields1[$s_fieldName1]),
+				'new_columns' => $this->getColumns($a_fields[$s_fieldName2]),
 			]));
 		}
 		

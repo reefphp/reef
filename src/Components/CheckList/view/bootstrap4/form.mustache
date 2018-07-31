@@ -1,0 +1,26 @@
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:checklist" data-{{CSSPRFX}}name="{{field.name}}">
+	<label class="{{layout.col_left}} col-form-label">
+		{{field.locale.title}}
+	</label>
+	<div class="{{layout.col_right}}">
+		{{#field.options}}
+			<div class="form-check">
+				<input
+					class="form-check-input {{#field.hasErrors}}is-invalid{{/field.hasErrors}}"
+					type="checkbox"
+					name="{{main_var}}[{{field.name}}][{{name}}]"
+					id="{{form_idpfx}}-{{field.name}}-{{name}}"
+					value="1"
+					{{#default}}checked{{/default}}
+				>
+				<label class="form-check-label" for="{{form_idpfx}}-{{field.name}}-{{name}}">
+					{{title}}
+				</label>
+			</div>
+		{{/field.options}}
+		
+		{{#field.errors}}
+			<div class="invalid-feedback">{{.}}</div>
+		{{/field.errors}}
+	</div>
+</div>

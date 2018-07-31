@@ -1,0 +1,17 @@
+vendor: reef
+name: checklist
+category: choice
+image: choice-checklist.svg
+basicLocale:
+    title: rf_field_title
+basicDefinition:
+    fields:
+      - component: reef:option_list
+        name: 'options'
+        min_num_options: 2
+        default_num_options: 2
+        locales:
+            en_US:
+                title: 'Options'
+            nl_NL:
+                title: 'Opties'

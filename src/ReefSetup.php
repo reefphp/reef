@@ -23,6 +23,7 @@ class ReefSetup {
 		$this->addComponent(new \Reef\Components\Textarea\TextareaComponent);
 		$this->addComponent(new \Reef\Components\SingleCheckbox\SingleCheckboxComponent);
 		$this->addComponent(new \Reef\Components\Radio\RadioComponent);
+		$this->addComponent(new \Reef\Components\CheckList\CheckListComponent);
 		$this->addComponent(new \Reef\Components\TextNumber\TextNumberComponent);
 		$this->addComponent(new \Reef\Components\Heading\HeadingComponent);
 		$this->addComponent(new \Reef\Components\Paragraph\ParagraphComponent);
@@ -73,6 +74,7 @@ class ReefSetup {
 			'reef:textarea',
 			'reef:text_number',
 			'reef:single_checkbox',
+			'reef:checklist',
 			'reef:radio',
 			'reef:select',
 		];
