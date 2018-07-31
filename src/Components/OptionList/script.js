@@ -21,7 +21,7 @@ Reef.addComponent((function() {
 		});
 		
 		var options = this.$field.find('table tbody').data('options');
-		options = (typeof options !== 'undefined') ? JSON.parse(atob(options)) : {};
+		options = (typeof options !== 'undefined' && options != '') ? JSON.parse(atob(options)) : {};
 		if(options.length > 0) {
 			var option;
 			for(var i in options) {
