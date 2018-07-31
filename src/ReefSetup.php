@@ -20,6 +20,7 @@ class ReefSetup {
 		$this->Layout = $Layout;
 		
 		$this->addComponent(new \Reef\Components\SingleLineText\SingleLineTextComponent);
+		$this->addComponent(new \Reef\Components\Textarea\TextareaComponent);
 		$this->addComponent(new \Reef\Components\SingleCheckbox\SingleCheckboxComponent);
 		$this->addComponent(new \Reef\Components\TextNumber\TextNumberComponent);
 		$this->addComponent(new \Reef\Components\Heading\HeadingComponent);
@@ -66,6 +67,7 @@ class ReefSetup {
 		$a_components = [
 			'reef:heading',
 			'reef:single_line_text',
+			'reef:textarea',
 			'reef:text_number',
 			'reef:single_checkbox',
 			'reef:select',
