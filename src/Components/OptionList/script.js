@@ -20,8 +20,22 @@ Reef.addComponent((function() {
 			self.newDefaultOption();
 		});
 		
-		if(false) {
-			
+		var options = this.$field.find('table tbody').data('options');
+		options = (typeof options !== 'undefined') ? JSON.parse(atob(options)) : {};
+		if(options.length > 0) {
+			var option;
+			for(var i in options) {
+				option = options[i];
+				
+				var $option = this.newOption();
+				$option.find('.'+CSSPRFX+'ol-default').prop('checked', option.default);
+				$option.find('.'+CSSPRFX+'ol-name').val(option.name);
+				$option.find('.'+CSSPRFX+'ol-old-name').val(option.name);
+				
+				for(var l in option.locale) {
+					$option.find('div.'+CSSPRFX+'ol-locale[data-locale="'+l+'"] input').val(option.locale[l]);
+				}
+			}
 		}
 		else {
 			for(var i=0; i<this.$field.attr('data-num_opt_def'); i++) {
@@ -46,6 +60,7 @@ Reef.addComponent((function() {
 		var name = 'option_'+this.auto_inc;
 		var $option = this.newOption();
 		$option.find('.'+CSSPRFX+'ol-name').val(name);
+		$option.find('.'+CSSPRFX+'ol-old-name').val('__new__');
 		$option.find('div.'+CSSPRFX+'ol-locale input').filter(':visible').first().focus();
 		return $option;
 	};
@@ -179,17 +194,26 @@ Reef.addComponent((function() {
 				locale[$this.attr('data-locale')] = $this.children('input').val();
 			});
 			
-			options.push({
+			var option = {
 				default: $this.find('.'+CSSPRFX+'ol-default').prop('checked'),
 				name: $this.find('.'+CSSPRFX+'ol-name').val(),
 				locale: locale
-			});
+			};
+			
+			var old_name = $this.find('.'+CSSPRFX+'ol-old-name').val();
+			if(old_name != '__new__' && old_name != option.name) {
+				option.old_name = old_name;
+			}
+			
+			options.push(option);
 		});
 		
 		return options;
 	};
 	
 	Field.prototype.validate = function() {
+		var self = this;
+		
 		this.removeErrors();
 		
 		var $trs = this.$field.find('table tbody tr');
@@ -201,6 +225,28 @@ Reef.addComponent((function() {
 		
 		if(this.$field.attr('data-max_checked_def') > 0 && $trs.find('.'+CSSPRFX+'ol-default').filter(':checked').length > this.$field.attr('data-max_checked_def')) {
 			this.setError('error-max-checked-def');
+			return false;
+		}
+		
+		var valid = true;
+		var uniqueCheck = {};
+		$trs.find('.'+CSSPRFX+'ol-name').each(function() {
+			var $input = $(this);
+			var name = $input.val();
+			
+			if(name == '' || !name.match(new RegExp($input.attr('pattern')))) {
+				self.setError('error-regexp');
+				valid = false;
+			}
+			
+			if(typeof(uniqueCheck[name]) !== 'undefined') {
+				self.setError('error-duplicate');
+				valid = false;
+			}
+			
+			uniqueCheck[name] = true;
+		});
+		if(!valid) {
 			return false;
 		}
 		

@@ -81,10 +81,11 @@ class Updater {
 			$a_structure2 = $Field2->getFlatStructure();
 			
 			$a_structureDelete = $a_structureUpdate = $a_structureCreate = $a_structureUnchanged = [];
+			$b_forceUpdate = $Field2->needsSchemaUpdate($Field1);
 			
 			foreach($a_structure2 as $s_dataFieldName => $a_dataFieldStructure) {
 				if(isset($a_structure1[$s_dataFieldName])) {
-					if($s_fieldName1 != $s_fieldName2 || $a_dataFieldStructure != $a_structure1[$s_dataFieldName]) {
+					if($b_forceUpdate || $s_fieldName1 != $s_fieldName2 || $a_dataFieldStructure != $a_structure1[$s_dataFieldName]) {
 						$a_structureUpdate[] = $s_dataFieldName;
 					}
 					else {

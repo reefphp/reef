@@ -40,6 +40,7 @@ class OptionListField extends Field {
 		$a_vars['locales'] = $this->getComponent()->getReef()->getOption('locales');
 		$a_vars['multipleLocales'] = count($a_vars['locales']) > 1;
 		$a_vars['name_regexp'] = \Reef\Reef::NAME_REGEXP;
+		$a_vars['options_base64'] = base64_encode(json_encode($a_vars['value']??[]));
 		return $a_vars;
 	}
 	

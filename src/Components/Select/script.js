@@ -10,11 +10,11 @@ Reef.addComponent((function() {
 	Field.componentName = 'reef:select';
 	
 	Field.viewVars = function(declaration) {
-		var i, j;
+		var i, l;
 		
 		for(i in declaration.options) {
-			for(j in declaration.options[i].locale) {
-				declaration.options[i].title = declaration.options[i].locale[j];
+			for(l in declaration.options[i].locale) {
+				declaration.options[i].title = declaration.options[i].locale[l];
 				break;
 			}
 		}
@@ -23,7 +23,7 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.attach = function() {
-		var self = this;
+		
 	};
 	
 	Field.prototype.getValue = function() {

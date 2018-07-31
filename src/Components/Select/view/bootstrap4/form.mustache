@@ -12,7 +12,6 @@
 			<option value="{{name}}" {{#default}}selected{{/default}}>{{title}}</option>
 		{{/field.options}}
 		</select>
-		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>
 		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>
 		{{/field.errors}}

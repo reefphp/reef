@@ -36,12 +36,12 @@ class OptionListValue extends FieldValue {
 			}
 			
 			if(!preg_match('/'.str_replace('/', '\\/', \Reef\Reef::NAME_REGEXP).'/', $a_option['name'])) {
-				$this->a_errors[] = "Invalid option name '".$a_option['name']."'";
+				$this->a_errors[] = $this->Field->trans('error_regexp');
 				return false;
 			}
 			
 			if(isset($a_uniqueCheck[$a_option['name']])) {
-				$this->a_errors[] = "Duplicate option name '".$a_option['name']."'";
+				$this->a_errors[] = $this->Field->trans('error_duplicate');
 				return false;
 			}
 			$a_uniqueCheck[$a_option['name']] = true;
@@ -85,6 +85,10 @@ class OptionListValue extends FieldValue {
 				'default' => \Reef\interpretBool($a_option['default']??false),
 				'locale' => $a_option['locale'],
 			];
+			
+			if(isset($a_option['old_name'])) {
+				$this->a_value[$i]['old_name'] = $a_option['old_name'];
+			}
 		}
 	}
 	

@@ -119,6 +119,10 @@ abstract class Field {
 		return $a_columnNames;
 	}
 	
+	public function needsSchemaUpdate(Field $OldField) {
+		return false;
+	}
+	
 	public function beforeSchemaUpdate($a_data) {
 	}
 	

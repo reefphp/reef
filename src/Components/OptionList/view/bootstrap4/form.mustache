@@ -29,6 +29,7 @@
 						<input type="checkbox" name="{{main_var}}[{{field.name}}][default][]" class="{{CSSPRFX}}ol-default" value="1" style="width: 100%;" />
 					</td>
 					<td style="width: 30%;">
+						<input type="hidden" name="{{main_var}}[{{field.name}}][old_name][]" class="{{CSSPRFX}}ol-old-name" value="" />
 						<input type="text" name="{{main_var}}[{{field.name}}][name][]" class="{{CSSPRFX}}ol-name" value="" style="width: 100%;" pattern="{{field.name_regexp}}" />
 					</td>
 					<td>
@@ -46,14 +47,16 @@
 					</td>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody data-options="{{field.options_base64}}">
 				
 			</tbody>
 		</table>
 		<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-add">+ {{field.locale.add_button}}</div>
 		
 		<div class="invalid-feedback {{CSSPRFX}}error-min-options" style="display: none;">{{field.locale.error_min_options}}</div>
-		<div class="invalid-feedback {{CSSPRFX}}max-checked-def" style="display: none;">{{field.locale.error_max_checked_defaults}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-max-checked-def" style="display: none;">{{field.locale.error_max_checked_defaults}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-regexp" style="display: none;">{{field.locale.error_regexp}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-duplicate" style="display: none;">{{field.locale.error_duplicate}}</div>
 		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>
 		{{/field.errors}}
