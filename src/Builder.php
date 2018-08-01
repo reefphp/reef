@@ -164,7 +164,6 @@ class Builder {
 		$Setup = $this->Reef->getSetup();
 		$a_locales = $this->Reef->getOption('locales');
 		
-		$b_valid = true;
 		$a_errors = [];
 		
 		// Validate form definition
@@ -173,8 +172,7 @@ class Builder {
 		
 		$DefinitionSubmission->fromUserInput($a_data['definition']);
 		
-		$b_valid = $DefinitionSubmission->validate() && $b_valid;
-		if(!$b_valid) {
+		if(!$DefinitionSubmission->validate()) {
 			$a_errors[-1] = $DefinitionSubmission->getErrors();
 		}
 		
@@ -198,8 +196,7 @@ class Builder {
 				
 				$DeclSubmission->fromUserInput($a_field['declaration'][$s_type]??[]);
 				
-				$b_valid = $DeclSubmission->validate() && $b_valid;
-				if(!$b_valid) {
+				if(!$DeclSubmission->validate()) {
 					$a_errors[$i_pos]['declaration'][$s_type] = $DeclSubmission->getErrors();
 				}
 				$a_declSubmissions[$s_type] = $DeclSubmission;
@@ -216,8 +213,7 @@ class Builder {
 					$LocaleSubmission = $LocaleForm->newSubmission();
 					$LocaleSubmission->fromUserInput($a_field['locale'][$s_type][$s_locale]??[]);
 					
-					$b_valid = $LocaleSubmission->validate() && $b_valid;
-					if(!$b_valid) {
+					if(!$LocaleSubmission->validate()) {
 						$a_errors[$i_pos]['locale'][$s_locale] = $LocaleSubmission->getErrors();
 					}
 					$a_localeSubmissions[$s_type][$s_locale] = $LocaleSubmission;
@@ -231,7 +227,7 @@ class Builder {
 			];
 		}
 		
-		if(!$b_valid) {
+		if(!empty($a_errors)) {
 			return [
 				null,
 				null,

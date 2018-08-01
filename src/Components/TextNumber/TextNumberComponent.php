@@ -19,6 +19,22 @@ class TextNumberComponent extends Component {
 	/**
 	 * @inherit
 	 */
+	public function validateDeclaration(array $a_declaration, array &$a_errors = null) : bool {
+		$b_valid = true;
+		
+		if(isset($a_declaration['min']) && isset($a_declaration['max'])) {
+			if($a_declaration['max'] < $a_declaration['min']) {
+				$a_errors['max'] = "Max is lower than min";
+				$b_valid = false;
+			}
+		}
+		
+		return $b_valid;
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function getJS() : array {
 		return [
 			[

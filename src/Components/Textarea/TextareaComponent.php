@@ -19,15 +19,6 @@ class TextareaComponent extends Component {
 	/**
 	 * @inherit
 	 */
-	public function validateDeclaration(array $a_declaration, array &$a_errors = null) : bool {
-		$b_valid = true;
-		
-		return $b_valid;
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function getJS() : array {
 		return [
 			[
