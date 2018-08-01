@@ -53,12 +53,8 @@ else {
 	$s_form = $Form->generateFormHtml(null, ['main_var' => 'form_data']);
 }
 
-$s_CSS = $Form->getFormAssets()->getCSSHTML(function($s_assetsHash) {
-	return './assets.php?type=css&amp;hash='.$s_assetsHash;
-});
-$s_JS = $Form->getFormAssets()->getJSHTML(function($s_assetsHash) {
-	return './assets.php?type=js&amp;hash='.$s_assetsHash;
-});
+$s_CSS = $Form->getFormAssets()->getCSSHTML();
+$s_JS = $Form->getFormAssets()->getJSHTML();
 
 ?>
 <!DOCTYPE html>

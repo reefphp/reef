@@ -9,7 +9,7 @@ abstract class Assets {
 	abstract public function getReef() : Reef;
 	abstract protected function getComponents() : array;
 	
-	public function getCSSHTML($fnc_local) {
+	public function getCSSHTML() {
 		$a_assets = $this->getCSS();
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
@@ -22,13 +22,13 @@ abstract class Assets {
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_html .= '<link href="'.$fnc_local($a_asset['hash']).'" rel="stylesheet">'.PHP_EOL;
+				$s_html .= '<link href="'.str_replace('[[assets_hash]]', $a_asset['hash'], $this->getReef()->getOption('assets_url')).'" rel="stylesheet">'.PHP_EOL;
 			}
 		}
 		return $s_html;
 	}
 	
-	public function getJSHTML($fnc_local) {
+	public function getJSHTML() {
 		$a_assets = $this->getJS();
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
@@ -41,7 +41,7 @@ abstract class Assets {
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_html .= '<script src="'.$fnc_local($a_asset['hash']).'"></script>'.PHP_EOL;
+				$s_html .= '<script src="'.str_replace('[[assets_hash]]', $a_asset['hash'], $this->getReef()->getOption('assets_url')).'"></script>'.PHP_EOL;
 			}
 		}
 		return $s_html;
@@ -166,24 +166,6 @@ abstract class Assets {
 			$Cache->set($s_cacheKey, $a_cache);
 		}
 		
-		$s_assetsHash = $s_assetsHash . '/' . $a_cache['created'];
+		$s_assetsHash = strtolower($s_type).':'.$s_assetsHash . '/' . $a_cache['created'];
 	}
-	
-	public static function getAssetByHash(Reef $Reef, $s_type, $s_assetsHash) {
-		$i_slashPos = strpos($s_assetsHash, '/');
-		if($i_slashPos !== false) {
-			$s_assetsHash = substr($s_assetsHash, 0, $i_slashPos);
-		}
-		
-		$s_cacheKey = 'asset.'.$s_assetsHash.'.'.strtolower($s_type);
-		
-		if(!$Reef->getCache()->has($s_cacheKey)) {
-			throw new \Exception("Invalid assets hash");
-		}
-		
-		$a_cache = $Reef->getCache()->get($s_cacheKey);
-		
-		return $a_cache['content'];
-	}
-	
 }

@@ -1,7 +1,8 @@
 vendor: reef
 name: heading
 category: static
-image: static-heading.svg
+assets:
+    component_image: ../../../assets/img/static-heading.svg
 basicLocale:
     title: heading_content_title
 basicDefinition:

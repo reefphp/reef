@@ -133,23 +133,16 @@ abstract class Form {
 			$Submission->emptySubmission();
 		}
 		
-		$a_helpers = $this->a_definition;
-		unset($a_helpers['storage_name']);
-		$a_helpers['locale'] = $this->getLocale($a_options['locale']??null);
-		unset($a_helpers['locales']);
-		
-		$a_helpers['CSSPRFX'] = $this->Reef->getOption('css_prefix');
-		$a_helpers['form_idpfx'] = $this->s_idPfx;
-		$a_helpers['main_var'] = $a_options['main_var'] ?? 'reef_data';
-		
+		$a_data = [];
+		$a_data['main_var'] = $a_options['main_var'] ?? 'reef_data';
 		$Layout = $this->Reef->getSetup()->getLayout();
-		$a_helpers['layout_name'] = $Layout->getName();
-		$a_helpers['layout'] = $Layout->getMergedConfig($a_helpers['layout'][$Layout->getName()] ?? []);
+		$a_data['layout_name'] = $Layout->getName();
+		$a_data['layout'] = $Layout->getMergedConfig($this->a_definition['layout'][$Layout->getName()] ?? []);
 		
-		$Mustache = new \Mustache_Engine([
-			'helpers' => $a_helpers,
-			'cache' => $this->Reef->getOption('cache_dir').'mustache/',
-		]);
+		$Mustache = $this->Reef->newMustache();
+		$Mustache->addHelper('form_idpfx', $this->s_idPfx);
+		$Mustache->addHelper('main_var', $a_data['main_var']);
+		$Mustache->addHelper('layout', $a_data['layout']);
 		
 		foreach($this->a_fields as $Field) {
 			$s_templateDir = null;
@@ -185,7 +178,7 @@ abstract class Form {
 		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/form.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,
-			'config_base64' => base64_encode(json_encode(\Reef\array_subset($a_helpers, ['main_var', 'layout_name', 'layout']))),
+			'config_base64' => base64_encode(json_encode($a_data)),
 		]);
 		
 		return $s_html;

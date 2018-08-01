@@ -16,5 +16,6 @@ $Reef = new Reef\Reef(
 	$Setup,
 	[
 		'cache_dir' => './cache/',
+		'assets_url' => './assets.php?hash=[[assets_hash]]',
 	]
 );

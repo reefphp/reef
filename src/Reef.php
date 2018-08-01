@@ -68,6 +68,7 @@ class Reef {
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
 		$this->a_options['locales'] = $a_options['locales'] ?? ['-'];
 		$this->a_options['default_locale'] = $a_options['default_locale'] ?? 'en_US';
+		$this->a_options['assets_url'] = $a_options['assets_url'] ?? './reef.php?hash=[[assets_hash]]';
 		
 		$this->ReefSetup = $ReefSetup;
 		$this->ReefSetup->checkSetup($this);
@@ -148,8 +149,29 @@ class Reef {
 		return $this->ReefSetup;
 	}
 	
-	public function getAsset($s_type, $s_assetsHash) {
-		return FormAssets::getAssetByHash($this, $s_type, $s_assetsHash);
+	public function writeAsset($s_assetsHash) {
+		$this->getReefAssets()->writeAssetByHash($s_assetsHash);
+	}
+	
+	public function getAssets() {
+		return [];
+	}
+	
+	public function newMustache() : \Mustache_Engine {
+		$a_helpers = [];
+		
+		$a_helpers['CSSPRFX'] = $this->getOption('css_prefix');
+		
+		$a_helpers['asset'] = function($s_assetHash, $Mustache) {
+			return $this->getReefAssets()->assetHelper($Mustache->render($s_assetHash));
+		};
+		
+		$Mustache = new \Mustache_Engine([
+			'helpers' => $a_helpers,
+			'cache' => $this->getOption('cache_dir').'mustache/',
+		]);
+		
+		return $Mustache;
 	}
 	
 	protected function fetchBaseLocale($s_locale) {

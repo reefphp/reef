@@ -76,7 +76,7 @@ class Builder {
 			$a_categories[$a_configuration['category']]['components'][] = [
 				'configuration' => base64_encode(json_encode($a_configuration)),
 				'html' => base64_encode($Component->getTemplate($Layout->getName())),
-				'image' => $a_configuration['image'],
+				'component_image_hash' => 'component:'.$Component::COMPONENT_NAME.':/component_image',
 				'title' => $Component->trans('component_title'),
 				'type' => $a_configuration['vendor'].':'.$a_configuration['name'],
 				'declarationForms' => [
@@ -127,13 +127,7 @@ class Builder {
 		$EmptyForm->setFields([]);
 		$s_formHtml = $EmptyForm->generateFormHtml();
 		
-		$a_helpers = [];
-		$a_helpers['CSSPRFX'] = $this->Reef->getOption('css_prefix');
-		
-		$Mustache = new \Mustache_Engine([
-			'helpers' => $a_helpers,
-			'cache' => $this->Reef->getOption('cache_dir').'mustache/',
-		]);
+		$Mustache = $this->Reef->newMustache();
 		
 		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
 		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/builder.mustache');

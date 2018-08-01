@@ -19,7 +19,7 @@
 					{{#components}}
 					<div class="{{CSSPRFX}}builder-component" data-component-name="{{type}}" data-configuration="{{configuration}}" data-html="{{html}}">
 						<div class="{{CSSPRFX}}builder-tile">
-							<img title="" alt="" src="../../assets/img/{{image}}" />
+							<img title="" alt="" src="{{#asset}}{{component_image_hash}}{{/asset}}" />
 							<span>{{title}}</span>
 						</div>
 						{{#declarationForms}}

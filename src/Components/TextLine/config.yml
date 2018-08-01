@@ -1,7 +1,8 @@
 vendor: reef
 name: text_line
 category: text
-image: text-freeform.svg
+assets:
+    component_image: ../../../assets/img/text-freeform.svg
 basicLocale:
     title: rf_field_title
     placeholder: rf_field_placeholder

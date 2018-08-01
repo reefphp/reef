@@ -1,7 +1,8 @@
 vendor: reef
 name: text_number
 category: text
-image: text-number.svg
+assets:
+    component_image: ../../../assets/img/text-number.svg
 basicLocale:
     title: rf_field_title
     placeholder: rf_field_placeholder

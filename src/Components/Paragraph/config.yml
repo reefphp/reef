@@ -1,7 +1,8 @@
 vendor: reef
 name: paragraph
 category: static
-image: static-paragraph.svg
+assets:
+    component_image: ../../../assets/img/static-paragraph.svg
 basicLocale:
     content:
         title_key: content_title

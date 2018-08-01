@@ -64,12 +64,8 @@ if(isset($_GET['builder_only'])) {
 	die();
 }
 
-$s_CSS = $Reef->getReefAssets()->getCSSHTML(function($s_assetsHash) {
-	return './assets.php?type=css&amp;hash='.$s_assetsHash;
-});
-$s_JS = $Reef->getReefAssets()->getJSHTML(function($s_assetsHash) {
-	return './assets.php?type=js&amp;hash='.$s_assetsHash;
-});
+$s_CSS = $Reef->getReefAssets()->getCSSHTML();
+$s_JS = $Reef->getReefAssets()->getJSHTML();
 
 ?>
 <!DOCTYPE html>

@@ -1,7 +1,8 @@
 vendor: reef
 name: select
 category: choice
-image: choice-select.svg
+assets:
+    component_image: ../../../assets/img/choice-select.svg
 basicLocale:
     title: rf_field_title
 basicDefinition:

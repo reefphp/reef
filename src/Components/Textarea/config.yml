@@ -1,7 +1,8 @@
 vendor: reef
 name: textarea
 category: text
-image: text-textarea.svg
+assets:
+    component_image: ../../../assets/img/text-textarea.svg
 basicLocale:
     title: rf_field_title
     placeholder: rf_field_placeholder

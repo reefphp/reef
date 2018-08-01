@@ -39,6 +39,14 @@ abstract class Component {
 	}
 	
 	/**
+	 * Define the assets for this component
+	 * @return array The assets, where key is the asset name and value is the path to the asset
+	 */
+	public function getAssets() : array {
+		return $this->getConfiguration()['assets']??[];
+	}
+	
+	/**
 	 * Perform validation on a declaration, additional to the default form validation
 	 * @param array $a_declaration The declaration array for the field
 	 * @param array &$a_errors Array of errors
