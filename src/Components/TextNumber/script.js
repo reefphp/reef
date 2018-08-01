@@ -63,7 +63,11 @@ Reef.addComponent((function() {
 			}
 		}
 		
-		if($.trim(val) != '' && (isNaN(parseFloat(val)) || !isFinite(val))) {
+		if($input[0].validity && $input[0].validity.badInput) {
+			valid = false;
+			this.setError('error-not-a-number');
+		}
+		else if($.trim(val) != '' && (isNaN(parseFloat(val)) || !isFinite(val))) {
 			valid = false;
 			this.setError('error-not-a-number');
 		}
