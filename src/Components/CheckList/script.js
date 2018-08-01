@@ -7,7 +7,7 @@ Reef.addComponent((function() {
 		this.Reef = Reef;
 	};
 	
-	Field.componentName = 'reef:radio';
+	Field.componentName = 'reef:checklist';
 	
 	Field.viewVars = function(declaration) {
 		var i, l;
@@ -27,20 +27,24 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.getValue = function() {
-		return this.$field.find('input:checked').val();
+		var values = {};
+		this.$field.find('input').each(function() {
+			var $input = $(this);
+			values[$input.attr('data-name')] = $input.prop('checked');
+		});
+		return values;
 	};
 	
-	Field.prototype.setValue = function(value) {
-		this.$field.find('input').filter('[value="'+value+'"]').prop('checked', true);
+	Field.prototype.setValue = function(values) {
+		this.$field.find('input').each(function() {
+			var $input = $(this);
+			var name = $input.attr('data-name');
+			$input.prop('checked', (typeof values[name] !== 'undefined' && values[name]) ? true : false);
+		});
 	};
 	
 	Field.prototype.validate = function() {
 		this.removeErrors();
-		
-		if(this.$field.find('input[required]').length > 0 && this.$field.find('input:checked').length == 0) {
-			this.setError('error-required-empty');
-			return false;
-		}
 		
 		return true;
 	};
