@@ -1,11 +1,11 @@
 <?php
 
-namespace Reef\Components\SingleLineText;
+namespace Reef\Components\TextLine;
 
 use Reef\Components\Field;
 use Reef\Updater;
 
-class SingleLineTextField extends Field {
+class TextLineField extends Field {
 	
 	/**
 	 * @inherit
@@ -21,7 +21,7 @@ class SingleLineTextField extends Field {
 	 * @inherit
 	 */
 	public function newValue() {
-		return new SingleLineTextValue($this);
+		return new TextLineValue($this);
 	}
 	
 	/**

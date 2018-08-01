@@ -1,5 +1,5 @@
 vendor: reef
-name: single_line_text
+name: text_line
 category: text
 image: text-freeform.svg
 basicLocale:
@@ -19,7 +19,7 @@ basicDefinition:
                 title_right: 'Required'
             nl_NL:
                 title_right: 'Verplicht'
-      - component: reef:single_line_text
+      - component: reef:text_line
         name: 'default'
         locales:
             en_US:

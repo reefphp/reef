@@ -7,7 +7,7 @@ Reef.addComponent((function() {
 		this.Reef = Reef;
 	};
 	
-	Field.componentName = 'reef:single_line_text';
+	Field.componentName = 'reef:text_line';
 	
 	Field.prototype.attach = function() {
 		var self = this;

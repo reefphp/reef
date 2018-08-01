@@ -362,7 +362,7 @@ abstract class Component {
 		
 		if($s_type != 'advanced' && $a_configuration['category'] !== 'static') {
 			array_push($a_formDefinition['fields'], [
-				'component' => 'reef:single_line_text',
+				'component' => 'reef:text_line',
 				'name' => 'name',
 				'required' => true,
 				'regexp' => \Reef\Reef::NAME_REGEXP,
@@ -411,7 +411,7 @@ abstract class Component {
 			$s_title = $a_locale[$a_localeConfig[$s_name]['title_key']]??'';
 			
 			$a_fields[] = [
-				'component' => (($a_localeConfig[$s_name]['type']??'') == 'textarea') ? 'reef:textarea' : 'reef:single_line_text',
+				'component' => (($a_localeConfig[$s_name]['type']??'') == 'textarea') ? 'reef:textarea' : 'reef:text_line',
 				'name' => $s_name,
 				'locale' => [
 					'title' => $s_title,

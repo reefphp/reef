@@ -1,10 +1,10 @@
 <?php
 
-namespace Reef\Components\SingleLineText;
+namespace Reef\Components\TextLine;
 
 use Reef\Components\FieldValue;
 
-class SingleLineTextValue extends FieldValue {
+class TextLineValue extends FieldValue {
 	
 	protected $s_value;
 	

@@ -1,12 +1,12 @@
 <?php
 
-namespace Reef\Components\SingleLineText;
+namespace Reef\Components\TextLine;
 
 use Reef\Components\Component;
 
-class SingleLineTextComponent extends Component {
+class TextLineComponent extends Component {
 	
-	const COMPONENT_NAME = 'reef:single_line_text';
+	const COMPONENT_NAME = 'reef:text_line';
 	const PARENT_NAME = null;
 	
 	/**

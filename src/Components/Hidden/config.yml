@@ -4,7 +4,7 @@ category: text
 image: text-freeform.svg
 basicDefinition:
     fields:
-      - component: reef:single_line_text
+      - component: reef:text_line
         name: 'default'
         locales:
             en_US:

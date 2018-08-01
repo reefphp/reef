@@ -6,13 +6,13 @@ fields:
     size: 2
     locale:
         title: 'Example form'
-  - component: reef:single_line_text
+  - component: reef:text_line
     name: 'name'
     required: true
     locale:
         title: 'Your name'
         placeholder: 'Fill in your name please'
-  - component: reef:single_line_text
+  - component: reef:text_line
     name: 'fav_film'
     required: false
     locales:

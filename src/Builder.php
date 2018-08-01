@@ -327,7 +327,7 @@ class Builder {
 			],
 			'fields' => [
 				[
-					'component' => 'reef:single_line_text',
+					'component' => 'reef:text_line',
 					'name' => 'storage_name',
 					'required' => true,
 					'locales' => [

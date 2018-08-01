@@ -19,7 +19,7 @@ class ReefSetup {
 		$this->StorageFactory = $StorageFactory;
 		$this->Layout = $Layout;
 		
-		$this->addComponent(new \Reef\Components\SingleLineText\SingleLineTextComponent);
+		$this->addComponent(new \Reef\Components\TextLine\TextLineComponent);
 		$this->addComponent(new \Reef\Components\Textarea\TextareaComponent);
 		$this->addComponent(new \Reef\Components\SingleCheckbox\SingleCheckboxComponent);
 		$this->addComponent(new \Reef\Components\Radio\RadioComponent);
@@ -70,7 +70,7 @@ class ReefSetup {
 		$a_components = [
 			'reef:heading',
 			'reef:paragraph',
-			'reef:single_line_text',
+			'reef:text_line',
 			'reef:textarea',
 			'reef:text_number',
 			'reef:single_checkbox',

@@ -57,7 +57,7 @@ final class FormTest extends TestCase {
 					],
 				],
 				[
-					'component' => 'reef:single_line_text',
+					'component' => 'reef:text_line',
 					'name' => 'input_1',
 					'required' => true,
 					'locale' => [
@@ -131,7 +131,7 @@ final class FormTest extends TestCase {
 		$a_definition = static::$Form->generateDefinition();
 		
 		$a_definition['fields'][] = [
-			'component' => 'reef:single_line_text',
+			'component' => 'reef:text_line',
 			'name' => 'input_3',
 			'locale' => [
 				'title' => 'Input 3',
