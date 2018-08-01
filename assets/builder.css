@@ -32,15 +32,23 @@
 	background-color: #a6aaed;
 }
 
+.CSSPRFXbuilder-components {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 0.75em;
+}
+
 .CSSPRFXbuilder-sidetab-components .CSSPRFXbuilder-component {
+	flex-basis: calc(50% - 0.375em);
 	display: flex;
 	height: 2.5em;
 	padding: 0.1em 0.25em;
-	margin: 0.25em;
+	margin: 0.25em 0em 0 0.25em;
 	font-size: 9pt;
 	background-color: #e6e7fe;
 	border: 1px solid #d0d0e9;
 	cursor: grab;
+	overflow: hidden;
 }
 
 .CSSPRFXbuilder-sidetab-components .CSSPRFXbuilder-component:hover {
