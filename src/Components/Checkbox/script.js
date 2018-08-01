@@ -7,7 +7,7 @@ Reef.addComponent((function() {
 		this.Reef = Reef;
 	};
 	
-	Field.componentName = 'reef:single_checkbox';
+	Field.componentName = 'reef:checkbox';
 	
 	Field.prototype.attach = function() {
 		var self = this;

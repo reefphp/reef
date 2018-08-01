@@ -65,7 +65,7 @@ final class FormTest extends TestCase {
 					],
 				],
 				[
-					'component' => 'reef:single_checkbox',
+					'component' => 'reef:checkbox',
 					'name' => 'input_2',
 					'locale' => [
 						'title_left' => 'Input 2',

@@ -1,10 +1,10 @@
 <?php
 
-namespace Reef\Components\SingleCheckbox;
+namespace Reef\Components\Checkbox;
 
 use Reef\Components\FieldValue;
 
-class SingleCheckboxValue extends FieldValue {
+class CheckboxValue extends FieldValue {
 	
 	private $b_value;
 	

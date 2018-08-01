@@ -1,10 +1,10 @@
 <?php
 
-namespace Reef\Components\SingleCheckbox;
+namespace Reef\Components\Checkbox;
 
 use Reef\Components\Field;
 
-class SingleCheckboxField extends Field {
+class CheckboxField extends Field {
 	
 	/**
 	 * @inherit
@@ -18,8 +18,8 @@ class SingleCheckboxField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function newValue() : SingleCheckboxValue {
-		return new SingleCheckboxValue($this);
+	public function newValue() : CheckboxValue {
+		return new CheckboxValue($this);
 	}
 	
 	/**

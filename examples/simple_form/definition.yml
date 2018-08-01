@@ -29,7 +29,7 @@ fields:
         en_US:
             title: 'What grade did you get?'
             placeholder: '0-10'
-  - component: reef:single_checkbox
+  - component: reef:checkbox
     name: 'agree'
     required: true
     locales:

@@ -1,12 +1,12 @@
 <?php
 
-namespace Reef\Components\SingleCheckbox;
+namespace Reef\Components\Checkbox;
 
 use Reef\Components\Component;
 
-class SingleCheckboxComponent extends Component {
+class CheckboxComponent extends Component {
 	
-	const COMPONENT_NAME = 'reef:single_checkbox';
+	const COMPONENT_NAME = 'reef:checkbox';
 	const PARENT_NAME = null;
 	
 	/**

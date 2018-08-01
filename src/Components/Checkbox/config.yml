@@ -1,5 +1,5 @@
 vendor: reef
-name: single_checkbox
+name: checkbox
 category: choice
 image: choice-check.svg
 basicLocale:
@@ -9,14 +9,14 @@ advancedLocale:
     rf_error_required_empty: rf_error_required_empty_title
 basicDefinition:
     fields:
-      - component: reef:single_checkbox
+      - component: reef:checkbox
         name: 'required'
         locales:
             en_US:
                 title_right: 'Required'
             nl_NL:
                 title_right: 'Verplicht'
-      - component: reef:single_checkbox
+      - component: reef:checkbox
         name: 'default'
         locales:
             en_US:

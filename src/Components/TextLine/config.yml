@@ -12,7 +12,7 @@ internalLocale:
     error_value_too_long:
 basicDefinition:
     fields:
-      - component: reef:single_checkbox
+      - component: reef:checkbox
         name: 'required'
         locales:
             en_US:

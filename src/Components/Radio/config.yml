@@ -18,7 +18,7 @@ basicDefinition:
                 title: 'Options'
             nl_NL:
                 title: 'Opties'
-      - component: reef:single_checkbox
+      - component: reef:checkbox
         name: 'required'
         locales:
             en_US:

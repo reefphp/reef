@@ -13,7 +13,7 @@ advancedLocale:
     rf_error_required_empty: rf_error_required_empty_title
 basicDefinition:
     fields:
-      - component: reef:single_checkbox
+      - component: reef:checkbox
         name: 'required'
         locales:
             en_US:
