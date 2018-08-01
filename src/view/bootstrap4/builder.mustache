@@ -20,7 +20,7 @@
 					<div class="{{CSSPRFX}}builder-component" data-component-name="{{type}}" data-configuration="{{configuration}}" data-html="{{html}}">
 						<div class="{{CSSPRFX}}builder-tile">
 							<img title="" alt="" src="{{#asset}}{{component_image_hash}}{{/asset}}" />
-							<span>{{title}}</span>
+							<span class="{{CSSPRFX}}builder-component-title">{{title}}</span>
 						</div>
 						{{#declarationForms}}
 						<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-{{declType}}-declaration-form">
@@ -50,6 +50,8 @@
 			{{/categories}}
 		</div>
 		<div class="{{CSSPRFX}}builder-sidetab {{CSSPRFX}}builder-sidetab-field" style="display: none;">
+			<div class="{{CSSPRFX}}builder-sidetab-field-component-name">
+			</div>
 			<div class="{{CSSPRFX}}builder-sidetab-field-tabs">
 				<div class="{{CSSPRFX}}builder-sidetab-field-tab" data-type="basic">{{builder_lang.builder_basic}}</div>
 				<div class="{{CSSPRFX}}builder-sidetab-field-tab" data-type="advanced">{{builder_lang.builder_advanced}}</div>

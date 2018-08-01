@@ -159,6 +159,13 @@
 	background-color: #b6bafd;
 }
 
+.CSSPRFXbuilder-sidetab-field-component-name {
+	background-color: #e6eaff;
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.5em;
+}
+
 .CSSPRFXbuilder-multiple-locales .CSSPRFXbuilder-locale-form {
 	margin: 0.4em;
 	padding: 0.4em 0;

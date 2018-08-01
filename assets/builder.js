@@ -212,6 +212,10 @@ var ReefBuilder = (function() {
 		field.$declarationForms.appendTo($sidetab).show();
 		field.$fieldWrapper.addClass(CSSPRFX+'active');
 		
+		var componentName = field.$fieldWrapper.attr('data-component-name');
+		var componentTitle = this.$builderWrapper.find('.'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"] span.'+CSSPRFX+'builder-component-title').text();
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name').text(componentTitle);
+		
 		this.selectedField = field;
 		
 		this.openSideTab('field');
