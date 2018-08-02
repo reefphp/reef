@@ -2,6 +2,8 @@
 
 namespace Reef;
 
+use \Reef\Exception\BadMethodCallException;
+
 class StoredSubmission extends Submission {
 	
 	private $i_submissionId;
@@ -23,7 +25,7 @@ class StoredSubmission extends Submission {
 	
 	public function saveAs(int $i_submissionId) {
 		if($this->i_submissionId !== null) {
-			throw new \Exception("Already saved submission");
+			throw new BadMethodCallException("Already saved submission");
 		}
 		
 		$a_submission = $this->toFlat();
@@ -41,7 +43,7 @@ class StoredSubmission extends Submission {
 	
 	public function delete() {
 		if($this->i_submissionId == null) {
-			throw new \Exception("Unsaved submission.");
+			throw new BadMethodCallException("Unsaved submission.");
 		}
 		$this->Form->getSubmissionStorage()->delete($this->i_submissionId);
 	}

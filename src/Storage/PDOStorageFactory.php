@@ -3,6 +3,7 @@
 namespace Reef\Storage;
 
 use \PDO;
+use \Reef\Exception\InvalidArgumentException;
 
 class PDOStorageFactory implements StorageFactory {
 	private $PDO;
@@ -28,10 +29,6 @@ class PDOStorageFactory implements StorageFactory {
 		return $s_storageClass::table_exists($this->PDO, $s_tableName);
 	}
 	
-	public function renameStorage(string $s_oldTableName, string $s_newTableName) {
-		throw new \Exception("Deprecated");
-	}
-	
 	private function getStorageClass() {
 		switch($this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME)) {
 			case 'sqlite':
@@ -39,7 +36,7 @@ class PDOStorageFactory implements StorageFactory {
 			case 'mysql':
 				return '\Reef\Storage\PDO_MySQL_Storage';
 			default:
-				throw new \Exception("Unsupported PDO driver ".$this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME).".");
+				throw new InvalidArgumentException("Unsupported PDO driver ".$this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME).".");
 		}
 	}
 	

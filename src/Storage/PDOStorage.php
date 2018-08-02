@@ -3,6 +3,8 @@
 namespace Reef\Storage;
 
 use \PDO;
+use \Reef\Exception\RuntimeException;
+use \Reef\Exception\ResourceNotFoundException;
 
 abstract class PDOStorage implements Storage {
 	protected $PDO;
@@ -15,7 +17,7 @@ abstract class PDOStorage implements Storage {
 		$this->es_table = static::sanitizeName($this->s_table);
 		
 		if(!static::table_exists($this->PDO, $this->s_table)) {
-			throw new \Exception("Table ".$this->s_table." does note exist.");
+			throw new ResourceNotFoundException("Table ".$this->s_table." does not exist.");
 		}
 	}
 	
@@ -34,7 +36,7 @@ abstract class PDOStorage implements Storage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
-			throw new \Exception("Could not alter table ".$this->s_table.".");
+			throw new RuntimeException("Could not alter table ".$this->s_table.".");
 		}
 		
 		$this->s_table = $s_newTableName;
@@ -190,7 +192,7 @@ abstract class PDOStorage implements Storage {
 		$a_keys = array_keys($a_data);
 		
 		if(count($a_columns) != count($a_keys) || !empty(array_diff($a_columns, $a_keys))) {
-			throw new \Exception("Invalid data array.");
+			throw new RuntimeException("Invalid data array.");
 		}
 	}
 	

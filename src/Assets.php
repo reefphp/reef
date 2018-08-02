@@ -2,6 +2,8 @@
 
 namespace Reef;
 
+use \Reef\Exception\InvalidArgumentException;
+
 abstract class Assets {
 	
 	private $customAssets = ['CSS' => [], 'JS' => []];
@@ -65,7 +67,7 @@ abstract class Assets {
 	
 	private function getAssets($s_type) {
 		if($s_type != 'JS' && $s_type != 'CSS') {
-			throw new \Exception("Invalid asset type '".$s_type."'.");
+			throw new InvalidArgumentException("Invalid asset type '".$s_type."'.");
 		}
 		$s_assetFnc = 'get'.$s_type;
 		
@@ -95,7 +97,7 @@ abstract class Assets {
 	
 	private function checkLocalAsset($s_type, &$s_assetsHash = null) {
 		if($s_type != 'JS' && $s_type != 'CSS') {
-			throw new \Exception("Invalid asset type '".$s_type."'.");
+			throw new InvalidArgumentException("Invalid asset type '".$s_type."'.");
 		}
 		$s_assetFnc = 'get'.$s_type;
 		

@@ -5,7 +5,7 @@ namespace tests\Form;
 use PHPUnit\Framework\TestCase;
 use Reef\Storage\PDO_SQLite_Storage;
 use \Reef\Storage\Storage;
-use \Reef\Exception\IOException;
+use \Reef\Exception\OutOfBoundsException;
 
 final class FormTest extends TestCase {
 	
@@ -169,7 +169,7 @@ final class FormTest extends TestCase {
 		$Submission = static::$Form->getSubmission(static::$i_submissionId);
 		$this->assertSame(count($Submission->toStructured()), 2);
 		
-		$this->expectException(IOException::class);
+		$this->expectException(OutOfBoundsException::class);
 		$Submission->getFieldValue('input_1');
 	}
 	

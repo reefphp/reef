@@ -2,6 +2,8 @@
 
 namespace Reef\Storage;
 
+use \Reef\Exception\ResourceNotFoundException;
+
 class DataStore {
 	
 	private $StorageFactory;
@@ -63,7 +65,7 @@ class DataStore {
 	
 	public function changeSubmissionStorageName(\Reef\StoredForm $Form, $s_newStorageName) {
 		if(!$this->hasSubmissionStorage($Form->getStorageName())) {
-			throw new \Exception("Storage not found for renaming");
+			throw new ResourceNotFoundException("Storage not found for renaming");
 		}
 		
 		$this->getSubmissionStorage($Form)->renameStorage(

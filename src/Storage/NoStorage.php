@@ -2,7 +2,7 @@
 
 namespace Reef\Storage;
 
-use Reef\Exception\IOException;
+use Reef\Exception\BadMethodCallException;
 
 class NoStorage implements Storage {
 	
@@ -40,28 +40,28 @@ class NoStorage implements Storage {
 	 * @inherit
 	 */
 	public function insert(array $a_data) : int {
-		throw new IOException("No storage attached.");
+		throw new BadMethodCallException("No storage attached.");
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function update(int $i_entryId, array $a_data) {
-		throw new IOException("No storage attached.");
+		throw new BadMethodCallException("No storage attached.");
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function delete(int $i_entryId) {
-		throw new IOException("No storage attached.");
+		throw new BadMethodCallException("No storage attached.");
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function get(int $i_entryId) : ?array {
-		throw new IOException("No storage attached.");
+		throw new BadMethodCallException("No storage attached.");
 	}
 	
 	/**

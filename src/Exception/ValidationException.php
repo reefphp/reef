@@ -2,7 +2,7 @@
 
 namespace Reef\Exception;
 
-class ValidationException extends \RuntimeException {
+class ValidationException extends RuntimeException {
 	private $a_errors;
 	
 	public function __construct(array $a_errors, int $i_code = 0, \Throwable $previous = null) {

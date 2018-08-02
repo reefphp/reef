@@ -5,6 +5,8 @@ namespace Reef;
 use Symfony\Component\Yaml\Yaml;
 use Reef\Components\Component;
 use Reef\Components\Field;
+use \Reef\Exception\LogicException;
+use \Reef\Exception\RuntimeException;
 use \Reef\Exception\ValidationException;
 
 class Builder {
@@ -61,7 +63,7 @@ class Builder {
 		
 		$a_inexistentComponents = array_diff($a_components, array_keys($a_componentMapping));
 		if(!empty($a_inexistentComponents)) {
-			throw new \Exception("Inexistent components ".implode(', ', $a_inexistentComponents));
+			throw new RuntimeException("Inexistent components ".implode(', ', $a_inexistentComponents));
 		}
 		
 		$a_locales = $this->Reef->getOption('locales');
@@ -71,7 +73,7 @@ class Builder {
 			$a_configuration = $Component->getConfiguration();
 			
 			if(!isset($a_categories[$a_configuration['category']])) {
-				throw new \Exception('Category "'.$a_configuration['category'].'" does not exist.');
+				throw new LogicException('Category "'.$a_configuration['category'].'" does not exist.');
 			}
 			
 			$a_categories[$a_configuration['category']]['components'][] = [

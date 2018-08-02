@@ -2,4 +2,4 @@
 
 namespace Reef\Exception;
 
-class ResourceNotFoundException extends \RuntimeException {}
+class ResourceNotFoundException extends OutOfBoundsException {}

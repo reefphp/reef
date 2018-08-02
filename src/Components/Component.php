@@ -134,7 +134,7 @@ abstract class Component {
 		}
 		
 		if($s_templateDir === null) {
-			throw new \Exception("Could not find form template file for component '".static::COMPONENT_NAME."'.");
+			throw new ResourceNotFoundException("Could not find form template file for component '".static::COMPONENT_NAME."'.");
 		}
 		
 		return file_get_contents($s_templateDir.$s_viewfile);

@@ -2,7 +2,9 @@
 
 namespace Reef;
 
-use \Reef\Exception\IOException;
+use \Reef\Exception\ResourceNotFoundException;
+use \Reef\Exception\BadMethodCallException;
+use \Reef\Exception\ValidationException;
 use Symfony\Component\Yaml\Yaml;
 
 class StoredForm extends Form {
@@ -37,7 +39,7 @@ class StoredForm extends Form {
 	
 	public function newDefinitionFromFile(string $s_filename) {
 		if(!file_exists($s_filename) || !is_readable($s_filename)) {
-			throw new IOException('Could not find file "'.$s_filename.'".');
+			throw new ResourceNotFoundException('Could not find file "'.$s_filename.'".');
 		}
 		
 		$a_definition = Yaml::parseFile($s_filename);
@@ -47,7 +49,7 @@ class StoredForm extends Form {
 	
 	public function newDefinition(array $a_definition) {
 		if(empty($a_definition['storage_name'])) {
-			throw new \Exception("Missing storage_name");
+			throw new ValidationException("Missing storage_name");
 		}
 		
 		$this->a_definition['storage_name'] = $a_definition['storage_name'];
@@ -83,7 +85,7 @@ class StoredForm extends Form {
 	
 	public function saveAs(int $i_formId) {
 		if($this->i_formId !== null) {
-			throw new \Exception("Already saved form");
+			throw new BadMethodCallException("Already saved form");
 		}
 		
 		$a_definition = $this->generateDefinition();
@@ -93,7 +95,7 @@ class StoredForm extends Form {
 	public function load(int $i_formId) {
 		$a_result = $this->Reef->getFormStorage()->get($i_formId);
 		if($a_result === null) {
-			throw new \Reef\Exception\ResourceNotFoundException('Could not find form with id "'.$i_formId.'"');
+			throw new ResourceNotFoundException('Could not find form with id "'.$i_formId.'"');
 		}
 		$this->importValidatedDefinition(json_decode($a_result['definition'], true));
 		$this->i_formId = $i_formId;

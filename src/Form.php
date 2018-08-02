@@ -3,7 +3,7 @@
 namespace Reef;
 
 use \Reef\Trait_Locale;
-use \Reef\Exception\IOException;
+use \Reef\Exception\ResourceNotFoundException;
 use Symfony\Component\Yaml\Yaml;
 
 abstract class Form {
@@ -74,7 +74,7 @@ abstract class Form {
 	
 	public function importDefinitionFile(string $s_filename) {
 		if(!file_exists($s_filename) || !is_readable($s_filename)) {
-			throw new IOException('Could not find file "'.$s_filename.'".');
+			throw new ResourceNotFoundException('Could not find file "'.$s_filename.'".');
 		}
 		
 		$a_definition = Yaml::parseFile($s_filename);
@@ -158,7 +158,7 @@ abstract class Form {
 			}
 			
 			if($s_templateDir === null) {
-				throw new \Exception("Could not find form template file for field '".$Field->getDeclaration()['name']."'.");
+				throw new ResourceNotFoundException("Could not find form template file for field '".$Field->getDeclaration()['name']."'.");
 			}
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));

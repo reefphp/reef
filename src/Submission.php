@@ -2,7 +2,7 @@
 
 namespace Reef;
 
-use \Reef\Exception\IOException;
+use \Reef\Exception\OutOfBoundsException;
 
 abstract class Submission {
 	
@@ -85,7 +85,7 @@ abstract class Submission {
 	
 	public function getFieldValue($s_name) {
 		if(!isset($this->a_fieldValues[$s_name])) {
-			throw new IOException("Could not find value for field '".$s_name."'.");
+			throw new OutOfBoundsException("Could not find value for field '".$s_name."'.");
 		}
 		
 		return $this->a_fieldValues[$s_name];

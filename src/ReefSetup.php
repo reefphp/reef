@@ -5,6 +5,9 @@ namespace Reef;
 use Reef\Components\Component;
 use \Reef\Storage\StorageFactory;
 use \Reef\Layout\Layout;
+use \Reef\Exception\LogicException;
+use \Reef\Exception\DomainException;
+use \Reef\Exception\BadMethodCallException;
 
 class ReefSetup {
 	
@@ -52,12 +55,12 @@ class ReefSetup {
 		foreach($this->a_componentMapping as $Component) {
 			foreach($Component->requiredComponents() as $s_requiredComponent) {
 				if(!isset($this->a_componentMapping[$s_requiredComponent])) {
-					throw new \Exception("Component ".$Component::COMPONENT_NAME." requires component ".$s_requiredComponent.".");
+					throw new LogicException("Component ".$Component::COMPONENT_NAME." requires component ".$s_requiredComponent.".");
 				}
 			}
 			
 			if(!in_array($s_layout, $Component->supportedLayouts())) {
-				throw new \Exception("Component ".$Component::COMPONENT_NAME." does not support layout ".$s_layout.".");
+				throw new LogicException("Component ".$Component::COMPONENT_NAME." does not support layout ".$s_layout.".");
 			}
 		}
 	}
@@ -84,7 +87,7 @@ class ReefSetup {
 	
 	public function addComponent(Component $Component) {
 		if(!empty($this->Reef)) {
-			throw new \Exception("Can only add components during Reef setup.");
+			throw new BadMethodCallException("Can only add components during Reef setup.");
 		}
 		$this->a_componentMapping[$Component::COMPONENT_NAME] = $Component;
 	}
@@ -99,7 +102,7 @@ class ReefSetup {
 	
 	public function getField(array $a_declaration, Form $Form) {
 		if(!isset($this->a_componentMapping[$a_declaration['component']])) {
-			throw new \DomainException("Component not loaded: ".$a_declaration['component']);
+			throw new DomainException("Component not loaded: ".$a_declaration['component']);
 		}
 		
 		return $this->a_componentMapping[$a_declaration['component']]->newField($a_declaration, $Form);

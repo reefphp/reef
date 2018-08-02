@@ -6,6 +6,7 @@ use \Reef\Trait_Locale;
 use \Reef\Storage\DataStore;
 use \Reef\Storage\StorageFactory;
 use \Reef\Storage\Storage;
+use \Reef\Exception\BadMethodCallException;
 use \Reef\Exception\ValidationException;
 use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Yaml\Yaml;
@@ -135,7 +136,7 @@ class Reef {
 	
 	public function newStoredForm() : StoredForm {
 		if($this->ReefSetup->getStorageFactory() instanceof \Reef\Storage\NoStorageFactory) {
-			throw new \Exception("Cannot create stored form using NoStorage");
+			throw new BadMethodCallException("Cannot create stored form using NoStorage");
 		}
 		
 		return new StoredForm($this);

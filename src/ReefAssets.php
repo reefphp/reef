@@ -2,6 +2,9 @@
 
 namespace Reef;
 
+use \Reef\Exception\DomainException;
+use \Reef\Exception\InvalidArgumentException;
+
 class ReefAssets extends Assets {
 	
 	private $Reef;
@@ -55,7 +58,7 @@ class ReefAssets extends Assets {
 		$s_cacheKey = 'asset.'.$s_assetsHash.'.'.strtolower($s_type);
 		
 		if(!$this->Reef->getCache()->has($s_cacheKey)) {
-			throw new \Exception("Invalid assets hash");
+			throw new DomainException("Invalid assets hash");
 		}
 		
 		$a_cache = $this->Reef->getCache()->get($s_cacheKey);
@@ -73,13 +76,13 @@ class ReefAssets extends Assets {
 	
 	private function writeStaticAsset($s_assetName, $s_dir, $a_assets) {
 		if(!isset($a_assets[$s_assetName])) {
-			throw new \Exception("Unknown asset name");
+			throw new DomainException("Unknown asset name");
 		}
 		
 		$s_filename = $s_dir . $a_assets[$s_assetName];
 		
 		if(!file_exists($s_filename)) {
-			throw new \Exception("Unknown asset");
+			throw new DomainException("Unknown asset");
 		}
 		
 		header('Content-type: '.mime_content_type($s_filename));
@@ -91,20 +94,20 @@ class ReefAssets extends Assets {
 		
 		$i_colPos = strpos($s_assetHash, ':');
 		if($i_colPos === false) {
-			throw new \Exception("Illegal asset name");
+			throw new InvalidArgumentException("Illegal asset name");
 		}
 		
 		$s_assetType = substr($s_assetHash, 0, $i_colPos);
 		$s_assetHash = substr($s_assetHash, $i_colPos+1);
 		
 		if(!in_array($s_assetType, ['reef', 'component'])) {
-			throw new \Exception("Illegal asset type");
+			throw new InvalidArgumentException("Illegal asset type");
 		}
 		
 		// reef:/asset_name@12345
 		if($s_assetType == 'reef') {
 			if(substr($s_assetHash, 0, 1) != '/') {
-				throw new \Exception("Illegal asset hash");
+				throw new InvalidArgumentException("Illegal asset hash");
 			}
 			$s_assetHash = substr($s_assetHash, 1);
 			
@@ -116,7 +119,7 @@ class ReefAssets extends Assets {
 			
 			$i_csPos = strpos($s_assetHash, ':/');
 			if($i_csPos === false) {
-				throw new \Exception("Invalid asset name");
+				throw new InvalidArgumentException("Invalid asset name");
 			}
 			
 			$s_subName = substr($s_assetHash, 0, $i_csPos);

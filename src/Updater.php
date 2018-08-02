@@ -5,6 +5,7 @@ namespace Reef;
 use Symfony\Component\Yaml\Yaml;
 use Reef\Components\Component;
 use Reef\Storage\PDOStorage;
+use Reef\Exception\RuntimeException;
 use Reef\Exception\ValidationException;
 
 class Updater {
@@ -29,7 +30,7 @@ class Updater {
 				$s_fieldName2 = $a_fieldRenames[$s_fieldName1];
 				
 				if($s_fieldName2 !== null && (!isset($a_fields2[$s_fieldName2]) || get_class($a_fields1[$s_fieldName1]) != get_class($a_fields2[$s_fieldName2]))) {
-					throw new \Exception("Invalid rename from '".$s_fieldName1."' to '".$s_fieldName2."'.");
+					throw new RuntimeException("Invalid rename from '".$s_fieldName1."' to '".$s_fieldName2."'.");
 				}
 			}
 			else {

@@ -3,6 +3,7 @@
 namespace Reef\Storage;
 
 use \PDO;
+use \Reef\Exception\RuntimeException;
 
 class PDO_MySQL_Storage extends PDOStorage {
 	
@@ -18,7 +19,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
-			throw new \Exception("Could not create table ".$s_table.".");
+			throw new RuntimeException("Could not create table ".$s_table.".");
 		}
 		
 		return new static($PDO, $s_table);
@@ -129,7 +130,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
-				throw new \Exception("Could not alter table ".$this->s_table.".");
+				throw new RuntimeException("Could not alter table ".$this->s_table.".");
 			}
 		}
 	}
@@ -155,7 +156,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
-			throw new \Exception("Could not alter table ".$this->s_table.".");
+			throw new RuntimeException("Could not alter table ".$this->s_table.".");
 		}
 		
 	}
@@ -178,7 +179,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
-			throw new \Exception("Could not alter table ".$this->s_table.".");
+			throw new RuntimeException("Could not alter table ".$this->s_table.".");
 		}
 	}
 	
