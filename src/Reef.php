@@ -201,7 +201,7 @@ class Reef {
 		$a_unknown = array_diff(array_keys($a_definition), ['storage_name', 'fields', 'locale', 'locales', 'layout']);
 		if(count($a_unknown) > 0) {
 			throw new ValidationException([
-				-1 => 'Unknown form values '.implode(', ', $a_unknown).'',
+				-1 => ['Unknown form values '.implode(', ', $a_unknown).''],
 			]);
 		}
 		
@@ -212,7 +212,7 @@ class Reef {
 			if(isset($a_fieldDecl['name'])) {
 				if(isset($a_names[$a_fieldDecl['name']])) {
 					throw new ValidationException([
-						-1 => 'Duplicate name found: '.$a_fieldDecl['name'].'',
+						-1 => ['Duplicate name found: '.$a_fieldDecl['name'].''],
 					]);
 				}
 				$a_names[$a_fieldDecl['name']] = true;
@@ -234,14 +234,14 @@ class Reef {
 		foreach(['component'] as $s_key) {
 			if(!array_key_exists($s_key, $a_declaration)) {
 				throw new ValidationException([
-					-1 => 'Field value for '.$s_key.' not present',
+					-1 => ['Field value for '.$s_key.' not present'],
 				]);
 			}
 		}
 		
 		if(!$this->ReefSetup->hasComponent($a_declaration['component'])) {
 			throw new ValidationException([
-				-1 => 'Invalid component name "'.$a_declaration['component'].'"',
+				-1 => ['Invalid component name "'.$a_declaration['component'].'"'],
 			]);
 		}
 		

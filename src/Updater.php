@@ -5,6 +5,7 @@ namespace Reef;
 use Symfony\Component\Yaml\Yaml;
 use Reef\Components\Component;
 use Reef\Storage\PDOStorage;
+use Reef\Exception\ValidationException;
 
 class Updater {
 	
@@ -34,6 +35,10 @@ class Updater {
 			else {
 				if(isset($a_fields2[$s_fieldName1])) {
 					$s_fieldName2 = $s_fieldName1;
+					
+					if(get_class($a_fields1[$s_fieldName1]) != get_class($a_fields2[$s_fieldName2])) {
+						throw new ValidationException([-1 => ["Cannot delete & add field using the same name '".$s_fieldName1."' in the same update."]]);
+					}
 				}
 			}
 			
