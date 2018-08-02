@@ -295,6 +295,8 @@ var ReefBuilder = (function() {
 		}
 		
 		// All is valid, gather fields
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-field.'+CSSPRFX+'builder-field-error').removeClass(CSSPRFX+'builder-field-error');
+		
 		var fields = [];
 		var names = [], name;
 		
