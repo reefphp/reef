@@ -126,4 +126,15 @@ abstract class PDOStorageTestCase extends TestCase {
 		
 		$this->assertFalse(static::$Storage->exists($i_entryId));
 	}
+	
+	/**
+	 * @depends testCanDeleteData
+	 */
+	public function testCanDeleteStorage(): void {
+		$s_storageName = static::$Storage->getTableName();
+		
+		static::$Storage->deleteStorage();
+		
+		$this->assertFalse(static::$PDO_Factory->hasStorage($s_storageName));
+	}
 }

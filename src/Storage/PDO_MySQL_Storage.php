@@ -46,7 +46,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 					$s_columnType = 'LONGTEXT';
 				}
 				
-				$s_columnType .= ' utf8mb4';
+				$s_columnType .= ' CHARACTER SET utf8mb4';
 				
 				$s_columnType .= ' NULL';
 				
@@ -135,7 +135,29 @@ class PDO_MySQL_Storage extends PDOStorage {
 	}
 	
 	public function updateColumns($a_subfields) {
-		// TODO
+		
+		$s_query = "ALTER TABLE ".$this->es_table." ";
+		
+		$b_first = true;
+		foreach($a_subfields as $s_columnOld => $a_fieldUpdate) {
+			$s_columnNew = $a_fieldUpdate['name'];
+			
+			if(!$b_first) {
+				$s_query .= " , ";
+			}
+			
+			$s_query .= " CHANGE ".static::sanitizeName($s_columnOld)." ".static::sanitizeName($s_columnNew)." ".$this->subfield2type($a_fieldUpdate['structureTo'])." ";
+			
+			$b_first = false;
+		}
+		
+		$sth = $this->PDO->prepare($s_query);
+		$sth->execute();
+		
+		if($sth->errorCode() !== '00000') {
+			throw new \Exception("Could not alter table ".$this->s_table.".");
+		}
+		
 	}
 	
 	public function removeColumns($a_columns) {
@@ -148,6 +170,8 @@ class PDO_MySQL_Storage extends PDOStorage {
 				$s_query .= " , ";
 			}
 			$s_query .= " DROP ".static::sanitizeName($s_column);
+			
+			$b_first = false;
 		}
 		
 		$sth = $this->PDO->prepare($s_query);
@@ -181,6 +205,10 @@ class PDO_MySQL_Storage extends PDOStorage {
 		
 		for($i = 0; $i < $i_columns; $i++) {
 			$a_column = $sth->getColumnMeta($i);
+			if($a_column['name'] == 'entry_id') {
+				continue;
+			}
+			
 			$this->a_columns[] = $a_column['name'];
 		}
 		
