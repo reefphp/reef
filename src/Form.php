@@ -138,6 +138,7 @@ abstract class Form {
 		$Layout = $this->Reef->getSetup()->getLayout();
 		$a_data['layout_name'] = $Layout->getName();
 		$a_data['layout'] = $Layout->getMergedConfig($this->a_definition['layout'][$Layout->getName()] ?? []);
+		$a_data['assets_url'] = $this->Reef->getOption('assets_url');
 		
 		$Mustache = $this->Reef->newMustache();
 		$Mustache->addHelper('form_idpfx', $this->s_idPfx);

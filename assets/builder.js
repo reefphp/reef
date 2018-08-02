@@ -502,6 +502,8 @@ var ReefBuilderField = (function() {
 	};
 	
 	ReefBuilderField.prototype.updateField = function() {
+		var self = this;
+		
 		var componentName = this.$fieldWrapper.data('component-name');
 		
 		var template = atob(this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-components .'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"]').data('html'));
@@ -560,6 +562,9 @@ var ReefBuilderField = (function() {
 		vars.CSSPRFX = CSSPRFX+'';
 		vars.main_var = 'preview';
 		vars.field = fieldConfig;
+		vars.asset = function() {
+			return self.reefBuilder.getReef().assetHelper();
+		};
 		
 		var html = Mustache.render(template, vars);
 		

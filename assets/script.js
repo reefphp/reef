@@ -10,6 +10,7 @@ if(typeof Reef === 'undefined') {
 			
 			this.$wrapper = $(selector);
 			this.fields = {};
+			this.initTime = Date.now();
 			
 			if(this.$wrapper.length == 0) {
 				throw "Cannot initialize Reef with an empty selector set";
@@ -86,6 +87,14 @@ if(typeof Reef === 'undefined') {
 					alert(errors[name]);
 				}
 			}
+		};
+		
+		Reef.prototype.assetHelper = function() {
+			var self = this;
+			
+			return function(text, render) {
+				return self.config.assets_url.replace('[[assets_hash]]', render(text)+'@'+self.initTime);
+			};
 		};
 		
 		return Reef;
