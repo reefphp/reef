@@ -11,26 +11,24 @@ $Builder->setSettings([
 ]);
 
 if(isset($_POST['form_data'])) {
-	if($_POST['mode'] == 'apply') {
-		$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
-		
-		$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
-		
-		$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
-	}
-	else {
-		try {
+	try {
+		if($_POST['mode'] == 'apply') {
+			$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
+			
+			$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
+			
+			$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
+		}
+		else {
 			$a_return = [
 				'dataloss' => $Builder->checkBuilderDataLoss($Form, $_POST['form_data']),
 			];
 		}
-		catch(\Reef\Exception\ValidationException $e) {
-			$a_return = [
-				'errors' => [
-					$e->getMessage(),
-				],
-			];
-		}
+	}
+	catch(\Reef\Exception\ValidationException $e) {
+		$a_return = [
+			'errors' => $e->getErrors(),
+		];
 	}
 	
 	echo json_encode($a_return);
@@ -47,9 +45,7 @@ if(isset($_POST['definition'])) {
 	}
 	catch(\Reef\Exception\ValidationException $e) {
 		$a_return = [
-			'errors' => [
-				$e->getMessage(),
-			],
+			'errors' => $e->getErrors(),
 		];
 	}
 	
@@ -196,7 +192,7 @@ $(function() {
 			dataType: 'JSON',
 			success: function(response) {
 				if(typeof response.errors !== 'undefined') {
-					alert(response.errors.join("\n"));
+					builder.addErrors(response.errors);
 					return;
 				}
 				

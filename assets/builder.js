@@ -236,11 +236,12 @@ var ReefBuilder = (function() {
 		this.selectedField.$declarationForms.hide().appendTo(fieldTemplates);
 		
 		this.selectedField.$fieldWrapper.removeClass(CSSPRFX+'active');
+		this.selectedField.checkValid();
 		
 		this.selectedField = null;
 		
 		if($('.'+CSSPRFX+'builder-tab-active').data('tab') == 'field') {
-			this.openSideTab('components');
+			this.openSideTab('form');
 		}
 	};
 	
@@ -276,6 +277,8 @@ var ReefBuilder = (function() {
 	ReefBuilder.prototype.submit = function(callback) {
 		var self = this;
 		
+		self.clearGeneralErrors();
+		
 		var i, declaration;
 		
 		this.deselectField();
@@ -300,7 +303,7 @@ var ReefBuilder = (function() {
 			if(typeof declaration.declaration.basic.name !== 'undefined') {
 				name = declaration.declaration.basic.name;
 				if(typeof names[name] !== 'undefined') {
-					alert("Found duplicate name: "+name);
+					self.generalErrors(["Found duplicate name: "+name]);
 					return;
 				}
 				names[name] = true;
@@ -329,7 +332,7 @@ var ReefBuilder = (function() {
 				success: function(response) {
 					if(typeof response == 'object') {
 						if(typeof response.errors !== 'undefined') {
-							alert(response.errors.join("\n"));
+							self.addErrors(response.errors);
 							return;
 						}
 						
@@ -368,6 +371,11 @@ var ReefBuilder = (function() {
 				dataType: 'json',
 				success: function(response) {
 					if(typeof response == 'object') {
+						if(typeof response.errors !== 'undefined') {
+							self.addErrors(response.errors);
+							return;
+						}
+						
 						if(typeof response.result !== 'undefined') {
 							
 							
@@ -385,6 +393,35 @@ var ReefBuilder = (function() {
 				}
 			});
 		});
+	};
+	
+	ReefBuilder.prototype.addErrors = function(errors) {
+		var pos, fieldErrors;
+		
+		this.clearGeneralErrors();
+		
+		for(pos in errors) {
+			fieldErrors = errors[pos];
+			
+			if(typeof this.fields[pos] === 'undefined') {
+				this.generalErrors(fieldErrors);
+				continue;
+			}
+			
+			this.fields[pos].addErrors(fieldErrors);
+		}
+	};
+	
+	ReefBuilder.prototype.clearGeneralErrors = function() {
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-form-errors').html('');
+	};
+	
+	ReefBuilder.prototype.generalErrors = function(errors) {
+		for(var name in errors) {
+			this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-form-errors').append($('<div class="'+CSSPRFX+'builder-error"></div>').text(errors[name]));
+		}
+		
+		this.openSideTab('form');
 	};
 	
 	return ReefBuilder;
@@ -599,6 +636,10 @@ var ReefBuilderField = (function() {
 		return true;
 	};
 	
+	ReefBuilderField.prototype.checkValid = function() {
+		this.$fieldWrapper.toggleClass(CSSPRFX+'builder-field-error', this.$fieldWrapper.find('.'+CSSPRFX+'invalid').length > 0);
+	};
+	
 	ReefBuilderField.prototype.getDeclaration = function() {
 		var locales = {}, declaration = {};
 		
@@ -619,6 +660,37 @@ var ReefBuilderField = (function() {
 			declaration: declaration,
 			locale: locales
 		};
+	};
+	
+	ReefBuilderField.prototype.addErrors = function(errors) {
+		var errorSection, errorSubSection;
+		
+		for(errorSection in errors) {
+			if(errorSection == '-1') {
+				for(var name in errors[errorSection]) {
+					var tmpError = {};
+					tmpError[name] = errors[errorSection][name];
+					if(this.declarationForm.basic.hasField(name)) {
+						this.declarationForm.basic.addErrors(tmpError);
+						delete errors[errorSection][name];
+					}
+					else if(this.declarationForm.advanced.hasField(name)) {
+						this.declarationForm.advanced.addErrors(tmpError);
+						delete errors[errorSection][name];
+					}
+				}
+				
+				this.reefBuilder.generalErrors(errors[errorSection]);
+			}
+			
+			if(errorSection == 'declaration') {
+				for(errorSubSection in errors[errorSection]) {
+					this.declarationForm[errorSubSection].addErrors(errors[errorSection][errorSubSection]);
+				}
+			}
+		}
+		
+		this.checkValid();
 	};
 	
 	return ReefBuilderField;

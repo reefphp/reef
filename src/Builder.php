@@ -5,6 +5,7 @@ namespace Reef;
 use Symfony\Component\Yaml\Yaml;
 use Reef\Components\Component;
 use Reef\Components\Field;
+use \Reef\Exception\ValidationException;
 
 class Builder {
 	
@@ -208,7 +209,7 @@ class Builder {
 					$LocaleSubmission->fromUserInput($a_field['locale'][$s_type][$s_locale]??[]);
 					
 					if(!$LocaleSubmission->validate()) {
-						$a_errors[$i_pos]['locale'][$s_locale] = $LocaleSubmission->getErrors();
+						$a_errors[$i_pos]['locale'][$s_type][$s_locale] = $LocaleSubmission->getErrors();
 					}
 					$a_localeSubmissions[$s_type][$s_locale] = $LocaleSubmission;
 				}
@@ -222,11 +223,7 @@ class Builder {
 		}
 		
 		if(!empty($a_errors)) {
-			return [
-				null,
-				null,
-				$a_errors,
-			];
+			throw new ValidationException($a_errors);
 		}
 		
 		$a_fields = $a_fieldRenames = [];
@@ -274,19 +271,12 @@ class Builder {
 		$a_newDefinition = array_merge($Form->getDefinition(), $DefinitionSubmission->toStructured(['skip_default' => true]));
 		$a_newDefinition['fields'] = $a_fields;
 		
-		return [$a_newDefinition, $a_fieldRenames, []];
+		return [$a_newDefinition, $a_fieldRenames];
 	}
 	
 	
 	public function applyBuilderData(Form $Form, array $a_data) {
-		[$a_newDefinition, $a_fieldRenames, $a_errors] = $this->parseBuilderData($Form, $a_data);
-		
-		if(!empty($a_errors)) {
-			return [
-				'result' => false,
-				'errors' => $a_errors,
-			];
-		}
+		[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
 		
 		$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
 		
@@ -296,11 +286,7 @@ class Builder {
 	}
 	
 	public function checkBuilderDataLoss(Form $Form, array $a_data) {
-		[$a_newDefinition, $a_fieldRenames, $a_errors] = $this->parseBuilderData($Form, $a_data);
-		
-		if(!empty($a_errors)) {
-			throw new \Exception(json_encode($a_errors));
-		}
+		[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
 		
 		return $Form->checkUpdateDataLoss($a_newDefinition, $a_fieldRenames);
 	}

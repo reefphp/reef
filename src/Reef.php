@@ -200,34 +200,49 @@ class Reef {
 	public function checkDefinition(array $a_definition) {
 		$a_unknown = array_diff(array_keys($a_definition), ['storage_name', 'fields', 'locale', 'locales', 'layout']);
 		if(count($a_unknown) > 0) {
-			throw new ValidationException('Unknown form values '.implode(', ', $a_unknown).'');
+			throw new ValidationException([
+				-1 => 'Unknown form values '.implode(', ', $a_unknown).'',
+			]);
 		}
 		
 		$a_names = [];
-		foreach($a_definition['fields']??[] as $a_fieldDecl) {
+		foreach($a_definition['fields']??[] as $i_pos => $a_fieldDecl) {
 			
 			// Check for duplicates
 			if(isset($a_fieldDecl['name'])) {
 				if(isset($a_names[$a_fieldDecl['name']])) {
-					throw new ValidationException('Duplicate name found: '.$a_fieldDecl['name'].'');
+					throw new ValidationException([
+						-1 => 'Duplicate name found: '.$a_fieldDecl['name'].'',
+					]);
 				}
 				$a_names[$a_fieldDecl['name']] = true;
 			}
 			
-			// Check field declaration
-			$this->checkDeclaration($a_fieldDecl);
+			try {
+				// Check field declaration
+				$this->checkDeclaration($a_fieldDecl);
+			}
+			catch(ValidationException $e) {
+				throw new ValidationException([
+					$i_pos => $e->getErrors(),
+				]);
+			}
 		}
 	}
 	
 	public function checkDeclaration(array $a_declaration) {
 		foreach(['component'] as $s_key) {
 			if(!array_key_exists($s_key, $a_declaration)) {
-				throw new ValidationException('Field value for '.$s_key.' not present');
+				throw new ValidationException([
+					-1 => 'Field value for '.$s_key.' not present',
+				]);
 			}
 		}
 		
 		if(!$this->ReefSetup->hasComponent($a_declaration['component'])) {
-			throw new ValidationException('Invalid component name "'.$a_declaration['component'].'"');
+			throw new ValidationException([
+				-1 => 'Invalid component name "'.$a_declaration['component'].'"',
+			]);
 		}
 		
 		$Component = $this->ReefSetup->getComponent($a_declaration['component']);
@@ -239,24 +254,15 @@ class Reef {
 		if(!$DeclarationSubmission->validate()) {
 			$a_errors = $DeclarationSubmission->getErrors();
 			
-			foreach($a_errors as $s_name => $a_fieldErrors) {
-				$a_errors[$s_name] = '('.$s_name.') '.implode(', ', $a_fieldErrors);
-				
-				if(isset($a_declaration['name'])) {
-					$a_errors[$s_name] = '['.$a_declaration['name'].'] '.$a_errors[$s_name];
-				}
-			}
-			
-			throw new ValidationException(implode('; ', $a_errors));
+			throw new ValidationException([
+				-1 => $a_errors,
+			]);
 		}
 		
 		if(!$Component->validateDeclaration($a_declaration, $a_errors)) {
-			
-			foreach($a_errors as $s_name => $s_error) {
-				$a_errors[$s_name] = '('.$s_name.') '.$s_error;
-			}
-			
-			throw new ValidationException(implode('; ', $a_errors));
+			throw new ValidationException([
+				-1 => $a_errors,
+			]);
 		}
 		
 	}

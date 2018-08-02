@@ -102,6 +102,10 @@
 	background-color: #f9f9fc;
 }
 
+.CSSPRFXbuilder-field.CSSPRFXbuilder-field-error {
+	border: 1px solid #e23;
+}
+
 .CSSPRFXbuilder-field-preview {
 	flex: 1;
 }
@@ -189,4 +193,10 @@
 
 .CSSPRFXbuilder-locale-title {
 	flex: 1;
+}
+
+.CSSPRFXbuilder-sidetab-form-errors {
+	margin: .25em 0.5em;
+	font-size: 90%;
+	color: #e23;
 }
