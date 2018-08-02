@@ -91,7 +91,11 @@ class StoredForm extends Form {
 	}
 	
 	public function load(int $i_formId) {
-		$this->importValidatedDefinition(json_decode($this->Reef->getFormStorage()->get($i_formId)['definition'], true));
+		$a_result = $this->Reef->getFormStorage()->get($i_formId);
+		if($a_result === null) {
+			throw new \Reef\Exception\ResourceNotFoundException('Could not find form with id "'.$i_formId.'"');
+		}
+		$this->importValidatedDefinition(json_decode($a_result['definition'], true));
 		$this->i_formId = $i_formId;
 	}
 	
