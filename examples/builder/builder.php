@@ -28,15 +28,22 @@ $Builder->setSettings([
 ]);
 
 if(isset($_POST['form_data'])) {
-	if($_POST['mode'] == 'apply') {
-		$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
-		$Form->save();
-		
-		$a_return['redirect'] = 'index.php';
+	try {
+		if($_POST['mode'] == 'apply') {
+			$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
+			$Form->save();
+			
+			$a_return['redirect'] = 'index.php';
+		}
+		else {
+			$a_return = [
+				'dataloss' => $Builder->checkBuilderDataLoss($Form, $_POST['form_data']),
+			];
+		}
 	}
-	else {
+	catch(\Reef\Exception\ValidationException $e) {
 		$a_return = [
-			'dataloss' => $Builder->checkBuilderDataLoss($Form, $_POST['form_data']),
+			'errors' => $e->getErrors(),
 		];
 	}
 	
