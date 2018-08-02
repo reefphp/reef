@@ -11,11 +11,28 @@ abstract class PDOStorageTestCase extends TestCase {
 	protected static $PDO;
 	protected static $PDO_Factory;
 	protected static $Storage;
+	protected static $s_storageName = 'test';
+	
+	public function testSanitization(): void {
+		$this->assertSame('jfiei395Vxx__0fe0ee3', \Reef\Storage\PDOStorage::sanitizeName('!@#$%jfiei395()Vxx__0fe0-ee3#-'));
+	}
 	
 	abstract public function testCanBeCreated(): void;
 	
 	/**
 	 * @depends testCanBeCreated
+	 */
+	public function testVerifyCreate(): void {
+		$this->assertTrue(static::$PDO_Factory->hasStorage(static::$s_storageName));
+		
+		// Refetching the storage will create a new instance, hence we check Equals() instead of Same()
+		$this->assertEquals(static::$Storage, static::$PDO_Factory->getStorage(static::$s_storageName));
+		
+		$this->assertSame(static::$s_storageName, static::$Storage->getTableName());
+	}
+	
+	/**
+	 * @depends testVerifyCreate
 	 */
 	public function testCanAddColumns(): void {
 		static::$Storage->addColumns([
@@ -40,10 +57,15 @@ abstract class PDOStorageTestCase extends TestCase {
 			'number' => '42',
 		];
 		
+		$this->assertSame(1, static::$Storage->next());
+		
 		$i_entryId = static::$Storage->insert($a_data);
 		$this->assertInternalType('int', $i_entryId);
 		
 		$this->assertTrue(static::$Storage->exists($i_entryId));
+		
+		$this->assertSame(['1'], static::$Storage->list());
+		$this->assertSame(2, static::$Storage->next());
 		
 		$a_data2 = static::$Storage->get($i_entryId);
 		$this->assertInternalType('array', $a_data2);
@@ -51,6 +73,20 @@ abstract class PDOStorageTestCase extends TestCase {
 		$this->assertSame($a_data, $a_data2);
 		
 		return $i_entryId;
+	}
+	
+	/**
+	 * @depends testCanAddColumns
+	 */
+	public function testRejectsInvalidData(): int {
+		$this->expectException(\Reef\Exception\RuntimeException::class);
+		
+		$a_data = [
+			'value' => 'Test value',
+			'invalid_key' => '33',
+		];
+		
+		static::$Storage->insert($a_data);
 	}
 	
 	/**
@@ -131,10 +167,8 @@ abstract class PDOStorageTestCase extends TestCase {
 	 * @depends testCanDeleteData
 	 */
 	public function testCanDeleteStorage(): void {
-		$s_storageName = static::$Storage->getTableName();
-		
 		static::$Storage->deleteStorage();
 		
-		$this->assertFalse(static::$PDO_Factory->hasStorage($s_storageName));
+		$this->assertFalse(static::$PDO_Factory->hasStorage(static::$s_storageName));
 	}
 }

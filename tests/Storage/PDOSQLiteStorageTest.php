@@ -23,10 +23,8 @@ final class PDOSQLiteStorageTest extends PDOStorageTestCase {
 		
 		$this->assertInstanceOf(
 			PDO_SQLite_Storage::class,
-			static::$Storage = static::$PDO_Factory->getStorage('test')
+			static::$Storage = static::$PDO_Factory->getStorage(static::$s_storageName)
 		);
-		
-		$this->assertTrue(static::$Storage::table_exists(static::$PDO, 'test'));
 	}
 	
 	public static function tearDownAfterClass() {

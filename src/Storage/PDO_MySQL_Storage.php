@@ -19,7 +19,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not create table ".$s_table.".");
+			// @codeCoverageIgnoreEnd
 		}
 		
 		return new static($PDO, $s_table);
@@ -130,7 +132,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
+				// @codeCoverageIgnoreStart
 				throw new RuntimeException("Could not alter table ".$this->s_table.".");
+				// @codeCoverageIgnoreEnd
 			}
 		}
 	}
@@ -156,7 +160,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not alter table ".$this->s_table.".");
+			// @codeCoverageIgnoreEnd
 		}
 		
 	}
@@ -179,7 +185,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not alter table ".$this->s_table.".");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 	

@@ -35,8 +35,10 @@ class PDOStorageFactory implements StorageFactory {
 				return '\Reef\Storage\PDO_SQLite_Storage';
 			case 'mysql':
 				return '\Reef\Storage\PDO_MySQL_Storage';
+			// @codeCoverageIgnoreStart
 			default:
 				throw new InvalidArgumentException("Unsupported PDO driver ".$this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME).".");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 	

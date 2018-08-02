@@ -18,7 +18,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not create table ".$s_table.".");
+			// @codeCoverageIgnoreEnd
 		}
 		
 		return new static($PDO, $s_table);
@@ -63,7 +65,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
+				// @codeCoverageIgnoreStart
 				throw new RuntimeException("Could not alter table ".$this->s_table.".");
+				// @codeCoverageIgnoreEnd
 			}
 		}
 		
@@ -108,7 +112,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not drop table __tmp__migration.");
+			// @codeCoverageIgnoreEnd
 		}
 		
 		$a_columnsOld = $a_columnsNew = [];
@@ -150,7 +156,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not create table __tmp__migration.");
+			// @codeCoverageIgnoreEnd
 		}
 		
 		if(count($a_columnsOld) > 0) {
@@ -158,7 +166,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
+				// @codeCoverageIgnoreStart
 				throw new RuntimeException("Could not fill table __tmp__migration.");
+				// @codeCoverageIgnoreEnd
 			}
 		}
 		
@@ -166,14 +176,18 @@ class PDO_SQLite_Storage extends PDOStorage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not drop table ".$this->s_table.".");
+			// @codeCoverageIgnoreEnd
 		}
 		
 		$sth = $this->PDO->prepare("ALTER TABLE __tmp__migration RENAME TO ".$this->es_table." ");
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not rename table __tmp__migration to ".$this->s_table.".");
+			// @codeCoverageIgnoreEnd
 		}
 		
 		$this->a_columnData = null;

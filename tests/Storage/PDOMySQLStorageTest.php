@@ -38,10 +38,8 @@ final class PDOMySQLStorageTest extends PDOStorageTestCase {
 		
 		$this->assertInstanceOf(
 			PDO_MySQL_Storage::class,
-			static::$Storage = static::$PDO_Factory->getStorage('test')
+			static::$Storage = static::$PDO_Factory->getStorage(static::$s_storageName)
 		);
-		
-		$this->assertTrue(static::$Storage::table_exists(static::$PDO, 'test'));
 	}
 	
 	public static function tearDownAfterClass() {
@@ -51,7 +49,7 @@ final class PDOMySQLStorageTest extends PDOStorageTestCase {
 		
 		// Make sure the test table is removed, even if some test has failed
 		$sth = static::$PDO->prepare("
-			DROP TABLE IF EXISTS test;
+			DROP TABLE IF EXISTS ".static::$s_storageName.";
 		");
 		$sth->execute();
 	}

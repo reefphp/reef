@@ -36,7 +36,9 @@ abstract class PDOStorage implements Storage {
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException("Could not alter table ".$this->s_table.".");
+			// @codeCoverageIgnoreEnd
 		}
 		
 		$this->s_table = $s_newTableName;
