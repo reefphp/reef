@@ -158,7 +158,9 @@ abstract class Form {
 			}
 			
 			if($s_templateDir === null) {
+				// @codeCoverageIgnoreStart
 				throw new ResourceNotFoundException("Could not find form template file for field '".$Field->getDeclaration()['name']."'.");
+				// @codeCoverageIgnoreEnd
 			}
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));

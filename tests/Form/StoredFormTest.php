@@ -7,7 +7,7 @@ use Reef\Storage\PDO_SQLite_Storage;
 use \Reef\Storage\Storage;
 use \Reef\Exception\OutOfBoundsException;
 
-final class FormTest extends TestCase {
+final class StoredFormTest extends TestCase {
 	
 	const STORAGE_DIR = 'var/tmp/test/sqlite_storage';
 	
@@ -77,10 +77,10 @@ final class FormTest extends TestCase {
 		$this->assertInstanceOf(\Reef\Form::class, static::$Form);
 		
 		$a_fields = static::$Form->getFields();
-		$this->assertSame(count($a_fields), 3);
+		$this->assertSame(3, count($a_fields));
 		
 		static::$Form->save();
-		$this->assertSame(count(static::$Reef->getFormIds()), 1);
+		$this->assertSame(1, count(static::$Reef->getFormIds()));
 	}
 	
 	/**
@@ -92,7 +92,7 @@ final class FormTest extends TestCase {
 		// We have not set the required input_1 parameter, hence it is invalid
 		$Submission->fromUserInput([]);
 		
-		$this->assertSame($Submission->validate(), false);
+		$this->assertSame(false, $Submission->validate());
 		
 	}
 	
@@ -108,14 +108,14 @@ final class FormTest extends TestCase {
 			'input_1' => 'asdf',
 		]);
 		
-		$this->assertSame($Submission->validate(), true);
+		$this->assertSame(true, $Submission->validate());
 		if(!$Submission->validate()) {
 			return;
 		}
 		
 		$Submission->save();
 		
-		$this->assertSame(count(static::$Form->getSubmissionIds()), 1);
+		$this->assertSame(1, count(static::$Form->getSubmissionIds()));
 		
 		static::$i_submissionId = $Submission->getSubmissionId();
 		
@@ -141,12 +141,12 @@ final class FormTest extends TestCase {
 		static::$Form->updateDefinition($a_definition);
 		
 		$a_fields = static::$Form->getFields();
-		$this->assertSame(count($a_fields), 4);
+		$this->assertSame(4, count($a_fields));
 		
 		$Submission = static::$Form->getSubmission(static::$i_submissionId);
-		$this->assertSame(count($Submission->toStructured()), 3);
+		$this->assertSame(3, count($Submission->toStructured()));
 		
-		$this->assertSame($Submission->getFieldValue('input_3')->toStructured(), '');
+		$this->assertSame('', $Submission->getFieldValue('input_3')->toStructured());
 	}
 	
 	/**
@@ -164,10 +164,10 @@ final class FormTest extends TestCase {
 		static::$Form->updateDefinition($a_definition);
 		
 		$a_fields = static::$Form->getFields();
-		$this->assertSame(count($a_fields), 3);
+		$this->assertSame(3, count($a_fields));
 		
 		$Submission = static::$Form->getSubmission(static::$i_submissionId);
-		$this->assertSame(count($Submission->toStructured()), 2);
+		$this->assertSame(2, count($Submission->toStructured()));
 		
 		$this->expectException(OutOfBoundsException::class);
 		$Submission->getFieldValue('input_1');
@@ -186,20 +186,20 @@ final class FormTest extends TestCase {
 			'input_3' => 'value',
 		]);
 		
-		$this->assertSame($Submission->validate(), true);
+		$this->assertSame(true, $Submission->validate());
 		if(!$Submission->validate()) {
 			return;
 		}
 		
-		$this->assertSame(count(static::$Form->getSubmissionIds()), 1);
+		$this->assertSame(1, count(static::$Form->getSubmissionIds()));
 		
 		$Submission->save();
 		
-		$this->assertSame(count(static::$Form->getSubmissionIds()), 2);
+		$this->assertSame(2, count(static::$Form->getSubmissionIds()));
 		
 		$Submission->delete();
 		
-		$this->assertSame(count(static::$Form->getSubmissionIds()), 1);
+		$this->assertSame(1, count(static::$Form->getSubmissionIds()));
 	}
 	
 	/**
@@ -208,7 +208,7 @@ final class FormTest extends TestCase {
 	public function testCanDeleteForm(): void {
 		static::$Form->delete();
 		
-		$this->assertSame(count(static::$Reef->getFormIds()), 0);
+		$this->assertSame(0, count(static::$Reef->getFormIds()));
 	}
 	
 	public static function tearDownAfterClass() {

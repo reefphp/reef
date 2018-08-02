@@ -1,0 +1,18 @@
+locale: {}
+fields:
+  - component: reef:heading
+    size: 2
+    locale:
+        title: 'Test form'
+  - component: reef:text_line
+    name: 'name'
+    locale:
+        title: 'Your name'
+  - component: reef:text_number
+    name: 'grade'
+    min: 0
+    max: 10
+    locales:
+        en_US:
+            title: 'Fill in a number'
+            placeholder: '0-10'
