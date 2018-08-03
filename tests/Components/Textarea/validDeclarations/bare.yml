@@ -1,4 +1,4 @@
-component: reef:text_line
+component: reef:textarea
 name: 'name'
 
 valid_values:

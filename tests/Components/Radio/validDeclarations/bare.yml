@@ -1,0 +1,15 @@
+component: reef:radio
+name: 'choose'
+options:
+  - name: option_1
+    locale: Option 1
+  - name: option_2
+    locale: Option 2
+    default: true
+
+valid_values:
+  - option_1
+  - ''
+
+invalid_values:
+  - option_3

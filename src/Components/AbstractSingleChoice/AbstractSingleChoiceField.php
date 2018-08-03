@@ -56,7 +56,7 @@ abstract class AbstractSingleChoiceField extends Field {
 			
 			$a_opts[$i] = [
 				'name' => $a_option['name'],
-				'default' => (!empty($s_selectedName)) ? $a_option['name'] == $s_selectedName : $a_option['default'],
+				'default' => (!empty($s_selectedName)) ? $a_option['name'] == $s_selectedName : ($a_option['default']??false),
 				'title' => $s_title,
 			];
 		}

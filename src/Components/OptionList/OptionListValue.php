@@ -46,7 +46,7 @@ class OptionListValue extends FieldValue {
 			}
 			$a_uniqueCheck[$a_option['name']] = true;
 			
-			if(\Reef\interpretBool($a_option['default'])) {
+			if(\Reef\interpretBool($a_option['default']??false)) {
 				$i_defaults++;
 			}
 		}

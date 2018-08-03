@@ -1,4 +1,4 @@
-component: reef:text_line
+component: reef:textarea
 name: 'the_field_name'
 max_length: 6
 required: true
