@@ -121,9 +121,11 @@ abstract class FieldValueTestCase extends TestCase {
 			$this->assertEquals($m_structured, $NewValue->toStructured($NewValue->fromStructured($m_structured)));
 			
 			// Test flat
-			$m_flat = $Value->toFlat();
+			$a_flat = $Value->toFlat();
 			$NewValue = $Field->newValue();
-			$this->assertEquals($m_flat, $NewValue->toFlat($NewValue->fromFlat($m_flat)));
+			$this->assertEquals($a_flat, $NewValue->toFlat($NewValue->fromFlat($a_flat)));
+			
+			$this->assertEquals(array_keys($a_flat), array_keys($Field->getFlatStructure()));
 			
 			// Test view_form()
 			$this->assertInternalType('array', $Field->view_form($Value));
