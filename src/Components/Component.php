@@ -86,7 +86,10 @@ abstract class Component {
 		}
 		
 		$a_configuration = $this->getConfiguration();
-		foreach($a_configuration['definition']['fields']??[] as $a_field) {
+		foreach($a_configuration['basicDefinition']['fields']??[] as $a_field) {
+			$a_components[$a_field['component']] = 1;
+		}
+		foreach($a_configuration['advancedDefinition']['fields']??[] as $a_field) {
 			$a_components[$a_field['component']] = 1;
 		}
 		
@@ -134,7 +137,9 @@ abstract class Component {
 		}
 		
 		if($s_templateDir === null) {
+			// @codeCoverageIgnoreStart
 			throw new ResourceNotFoundException("Could not find form template file for component '".static::COMPONENT_NAME."'.");
+			// @codeCoverageIgnoreEnd
 		}
 		
 		return file_get_contents($s_templateDir.$s_viewfile);
@@ -184,11 +189,17 @@ abstract class Component {
 			$a_configuration['locale'] = array_merge($a_configuration['basicLocale'], $a_configuration['advancedLocale']);
 			$a_configuration['internalLocale'] = array_merge($a_configuration['internalLocale']??[], $a_configuration['internalLocale']??[]);
 			
-			[$a_configuration['definition']['fields'], $a_configuration['props']] = $this->mergeConfigurationFieldsProps(
-				$a_configuration['definition']['fields'],
-				$a_configuration['props'],
-				$a_parentConfiguration['definition']['fields'],
-				$a_parentConfiguration['props']
+			[
+				$a_configuration['basicDefinition']['fields'],
+				$a_configuration['advancedDefinition']['fields'],
+				$a_configuration['props']
+			] = $this->mergeConfigurationFieldsProps(
+				$a_configuration['basicDefinition']['fields']??[],
+				$a_configuration['advancedDefinition']['fields']??[],
+				$a_configuration['props']??[],
+				$a_parentConfiguration['basicDefinition']['fields']??[],
+				$a_parentConfiguration['advancedDefinition']['fields']??[],
+				$a_parentConfiguration['props']??[]
 			);
 			
 			return $a_configuration;
@@ -199,52 +210,97 @@ abstract class Component {
 	
 	/**
 	 * Merge configuration fields & properties of this component with its parents fields & properties
-	 * @param array $a_fields
+	 * @param array $a_basicFields
+	 * @param array $a_advancedFields
 	 * @param array $a_props
-	 * @param array $a_parentFields
+	 * @param array $a_parentBasicFields
+	 * @param array $a_parentAdvancedFields
 	 * @param array $a_parentProps
-	 * @return [array, array] merged fields & props
+	 * @return [array, array, array] merged fields & props
 	 */
-	private function mergeConfigurationFieldsProps($a_fields, $a_props, $a_parentFields, $a_parentProps) {
+	private function mergeConfigurationFieldsProps($a_basicFields, $a_advancedFields, $a_props, $a_parentBasicFields, $a_parentAdvancedFields, $a_parentProps) {
 		
 		// Create mapping from name to position
-		$a_parentFieldsKeys = [];
-		foreach($a_parentFields as $i_pos => $a_field) {
+		$a_parentBasicFieldsKeys = [];
+		foreach($a_parentBasicFields as $i_pos => $a_field) {
 			if(isset($a_field['name'])) {
-				$a_parentFieldsKeys[$a_field['name']] = $i_pos;
+				$a_parentBasicFieldsKeys[$a_field['name']] = $i_pos;
+			}
+		}
+		
+		$a_parentAdvancedFieldsKeys = [];
+		foreach($a_parentAdvancedFields as $i_pos => $a_field) {
+			if(isset($a_field['name'])) {
+				$a_parentAdvancedFieldsKeys[$a_field['name']] = $i_pos;
 			}
 		}
 		
 		$a_parentPropsKeys = array_flip(array_column($a_parentProps, 'name'));
 		
 		// We take the parent fields & props as base
-		$a_returnFields = $a_parentFields;
+		$a_returnBasicFields = $a_parentBasicFields;
+		$a_returnAdvancedFields = $a_parentAdvancedFields;
 		$a_returnProps = $a_parentProps;
 		
-		// Merge new fields
-		foreach($a_fields as $a_field) {
+		$fn_rmBasic = function($s_name) use(&$a_returnBasicFields, $a_parentBasicFieldsKeys)  {
+			if(isset($a_parentBasicFieldsKeys[$s_name])) {
+				unset($a_returnBasicFields[$a_parentBasicFieldsKeys[$s_name]]);
+			}
+		};
+		
+		$fn_rmAdv = function($s_name) use(&$a_returnAdvancedFields, $a_parentAdvancedFieldsKeys)  {
+			if(isset($a_parentAdvancedFieldsKeys[$s_name])) {
+				unset($a_returnAdvancedFields[$a_parentAdvancedFieldsKeys[$s_name]]);
+			}
+		};
+		
+		$fn_rmProp = function($s_name) use(&$a_returnProps, $a_parentPropsKeys)  {
+			if(isset($a_parentPropsKeys[$s_name])) {
+				unset($a_returnProps[$a_parentPropsKeys[$s_name]]);
+			}
+		};
+		
+		// Merge new basic fields
+		foreach($a_basicFields as $a_field) {
 			if(!isset($a_field['name'])) {
-				$a_returnFields[] = $a_field;
+				$a_returnBasicFields[] = $a_field;
 				continue;
 			}
 			
-			if(isset($a_parentPropsKeys[$a_field['name']])) {
-				unset($a_returnProps[$a_parentPropsKeys[$a_field['name']]]);
-			}
+			$fn_rmProp($a_field['name']);
+			$fn_rmAdv($a_field['name']);
 			
-			if(isset($a_parentFieldsKeys[$a_field['name']])) {
-				$a_returnFields[$a_parentFieldsKeys[$a_field['name']]] = $a_field;
+			if(isset($a_parentBasicFieldsKeys[$a_field['name']])) {
+				$a_returnBasicFields[$a_parentBasicFieldsKeys[$a_field['name']]] = $a_field;
 			}
 			else {
-				$a_returnFields[] = $a_field;
+				$a_returnBasicFields[] = $a_field;
+			}
+		}
+		
+		// Merge new advanced fields
+		foreach($a_advancedFields as $a_field) {
+			if(!isset($a_field['name'])) {
+				$a_returnAdvancedFields[] = $a_field;
+				continue;
+			}
+			
+			$fn_rmProp($a_field['name']);
+			$fn_rmBasic($a_field['name']);
+			
+			if(isset($a_parentAdvancedFieldsKeys[$a_field['name']])) {
+				$a_returnAdvancedFields[$a_parentAdvancedFieldsKeys[$a_field['name']]] = $a_field;
+			}
+			else {
+				$a_returnAdvancedFields[] = $a_field;
 			}
 		}
 		
 		// Merge new props
 		foreach($a_props as $a_prop) {
-			if(isset($a_parentFieldsKeys[$a_prop['name']])) {
-				unset($a_returnFields[$a_parentFieldsKeys[$a_prop['name']]]);
-			}
+			
+			$fn_rmBasic($a_field['name']);
+			$fn_rmAdv($a_field['name']);
 			
 			if(isset($a_parentPropsKeys[$a_prop['name']])) {
 				$a_returnProps[$a_parentPropsKeys[$a_prop['name']]] = $a_prop;
@@ -255,7 +311,7 @@ abstract class Component {
 		}
 		
 		// Use array_values() to make sure we don't leave gaps in the keys
-		return [array_values($a_returnFields), array_values($a_returnProps)];
+		return [array_values($a_returnBasicFields), array_values($a_returnAdvancedFields), array_values($a_returnProps)];
 	}
 	
 	/**
