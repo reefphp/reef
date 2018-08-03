@@ -1,0 +1,6 @@
+component: reef:text_line
+name: 'name'
+
+valid_values:
+  - Some value
+  - ''

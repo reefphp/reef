@@ -1,0 +1,5 @@
+component: reef:text_line
+name: 'name'
+max_length: notSomeNumber
+locale:
+    title: 'The title'
