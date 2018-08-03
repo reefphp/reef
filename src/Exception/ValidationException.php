@@ -9,6 +9,7 @@ class ValidationException extends RuntimeException {
 	public function __construct(array $a_errors, int $i_code = 0, \Throwable $previous = null) {
 		
 		$this->a_errors = $a_errors;
+		$this->a_flatErrors = [];
 		
 		$this->toFlatErrors($a_errors);
 		$s_message = implode('; ', $this->a_flatErrors);
@@ -21,7 +22,6 @@ class ValidationException extends RuntimeException {
 	}
 	
 	private function toFlatErrors(array $a_errors, $s_prefix = '') {
-		$this->a_flatErrors = [];
 		
 		foreach($a_errors as $s_name => $m_subErrors) {
 			$s_newPrefix = is_string($s_name) ? '('.$s_name.') '.$s_prefix : $s_prefix;
