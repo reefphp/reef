@@ -50,7 +50,7 @@ abstract class FieldValueTestCase extends TestCase {
 			if($fileinfo->isDot() || !$fileinfo->isFile() || substr($s_file, -4) != '.yml') {
 				continue;
 			}
-			$a_declaration = Yaml::parse(file_get_contents($s_dir.'/'.$s_file));
+			$a_declaration = Yaml::parse(file_get_contents($s_dir.'/'.$s_file))??[];
 			yield $s_file => [array_diff_key($a_declaration, ['valid_values', 'invalid_values']), $a_declaration['valid_values']??[], $a_declaration['invalid_values']??[]];
 		}
 	}
@@ -113,7 +113,7 @@ abstract class FieldValueTestCase extends TestCase {
 		foreach($a_validValues as $i => $m_validValue) {
 			$Value = $Field->newValue();
 			$Value->fromUserInput($m_validValue);
-			$this->assertTrue($Value->validate(), "Errors found for valid value ".$i.": ".implode($Value->getErrors()));
+			$this->assertTrue($Value->validate(), "Errors found for valid value ".$i.": ".implode('; ', $Value->getErrors()??[]));
 			
 			// Test structured
 			$m_structured = $Value->toStructured();

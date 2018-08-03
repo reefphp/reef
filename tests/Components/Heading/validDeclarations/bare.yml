@@ -1,0 +1,6 @@
+component: reef:heading
+name: 'title'
+size: 2
+
+valid_values:
+  - null

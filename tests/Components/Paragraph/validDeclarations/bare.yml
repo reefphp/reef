@@ -1,0 +1,5 @@
+component: reef:paragraph
+name: 'text'
+
+valid_values:
+  - null

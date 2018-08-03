@@ -59,7 +59,7 @@ abstract class FieldTestCase extends TestCase {
 			if($fileinfo->isDot() || !$fileinfo->isFile() || substr($s_file, -4) != '.yml') {
 				continue;
 			}
-			$a_declaration = Yaml::parse(file_get_contents($s_dir.'/'.$s_file));
+			$a_declaration = Yaml::parse(file_get_contents($s_dir.'/'.$s_file))??[];
 			yield $s_file => [array_diff_key($a_declaration, ['valid_values', 'invalid_values'])];
 		}
 	}
