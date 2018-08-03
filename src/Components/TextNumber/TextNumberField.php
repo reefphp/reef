@@ -9,7 +9,8 @@ class TextNumberField extends Field {
 	
 	private function is_integer_var(string $s_var) {
 		if($s_var === '') {
-			return false;
+			// An empty value is more like an int than like a float...
+			return true;
 		}
 		
 		if(substr($s_var, 0, 1) == '-') {

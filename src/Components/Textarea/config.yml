@@ -30,7 +30,6 @@ advancedDefinition:
     fields:
       - component: reef:text_number
         name: 'max_length'
-        required: true
         default: 15000
         min: 0
         step: 1

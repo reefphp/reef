@@ -49,6 +49,10 @@ final class TempFormTest extends TestCase {
 		}
 	}
 	
+	public static function tearDownAfterClass() {
+		\Reef\rmTree(static::CACHE_DIR, true);
+	}
+	
 	public function testCanCreateReef(): void {
 		
 		// Specify which components we want to use

@@ -1,0 +1,21 @@
+component: reef:text_number
+name: 'the_field_name'
+min: 3
+max: 9
+step: 2
+required: false
+default: 5
+locale:
+    title: 'The title'
+    placeholder: 'Fill in'
+
+valid_values:
+  - 3
+  - 9
+  - ''
+
+invalid_values:
+  - 1
+  - 4
+  - 10
+  - 'text'

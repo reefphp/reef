@@ -1,0 +1,17 @@
+component: reef:text_number
+name: 'the_field_name'
+min: -3
+max: 3
+required: true
+locale:
+    title: 'The title'
+
+valid_values:
+  - '-2'
+  - 0
+  - 1
+
+invalid_values:
+  - '-4'
+  - ''
+  - 4

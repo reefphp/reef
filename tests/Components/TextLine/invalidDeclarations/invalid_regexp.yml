@@ -1,0 +1,5 @@
+component: reef:text_line
+name: 'name'
+regexp: some(invalid(regex
+locale:
+    title: 'The title'

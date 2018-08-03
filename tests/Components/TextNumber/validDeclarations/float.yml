@@ -1,0 +1,17 @@
+component: reef:text_number
+name: 'the_field_name'
+min: 2
+max: 9
+step: 0.4
+locale:
+    title: 'The title'
+
+valid_values:
+  - 3.6
+  - 6
+  - 8.0
+
+invalid_values:
+  - 1
+  - 4.6
+  - 10.0

@@ -7,13 +7,22 @@ use Reef\Updater;
 
 class TextLineField extends Field {
 	
+	public function getMaxLength() {
+		if(!empty($this->a_declaration['max_length'])) {
+			return (int)$this->a_declaration['max_length'];
+		}
+		else {
+			return 1000;
+		}
+	}
+	
 	/**
 	 * @inherit
 	 */
 	public function getFlatStructure() : array {
 		return [[
 			'type' => \Reef\Storage\Storage::TYPE_TEXT,
-			'limit' => $this->a_declaration['max_length'] ?? 1000,
+			'limit' => $this->getMaxLength(),
 		]];
 	}
 	
@@ -37,7 +46,7 @@ class TextLineField extends Field {
 	 * @inherit
 	 */
 	public function updateDataLoss($OldField) {
-		if(($OldField->a_declaration['max_length'] ?? 1000) > ($this->a_declaration['max_length'] ?? 1000)) {
+		if($OldField->getMaxLength() > $this->getMaxLength()) {
 			return Updater::DATALOSS_POTENTIAL;
 		}
 		
@@ -49,13 +58,12 @@ class TextLineField extends Field {
 	 */
 	public function beforeSchemaUpdate($a_data) {
 		$NewField = $a_data['new_field'];
-		$a_newDecl = $NewField->getDeclaration();
 		
 		switch($a_data['PDO_DRIVER']) {
 			case 'sqlite':
 			case 'mysql':
-				if(isset($a_newDecl['max_length']) && (!isset($this->a_declaration['max_length']) || $this->a_declaration['max_length'] > $a_newDecl['max_length'])) {
-					$a_data['content_updater']('UPDATE %1$s SET %2$s = SUBSTR(%2$s, 0, '.((int)$a_newDecl['max_length']).') WHERE LENGTH(%2$s) > '.((int)$a_newDecl['max_length']).' ');
+				if($this->getMaxLength() > $NewField->getMaxLength()) {
+					$a_data['content_updater']('UPDATE %1$s SET %2$s = SUBSTR(%2$s, 1, '.$NewField->getMaxLength().') WHERE LENGTH(%2$s) > '.$NewField->getMaxLength().' ');
 				}
 			break;
 		}

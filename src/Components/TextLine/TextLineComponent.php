@@ -23,7 +23,7 @@ class TextLineComponent extends Component {
 		$b_valid = true;
 		
 		if(isset($a_declaration['regexp'])) {
-			if(preg_match('/'.str_replace('/', '\\/', $a_declaration['regexp']).'/', null) === false) {
+			if(@preg_match('/'.str_replace('/', '\\/', $a_declaration['regexp']).'/', null) === false) {
 				$a_errors['regexp'] = "Invalid regexp '".$a_declaration['regexp']."'";
 				$b_valid = false;
 			}

@@ -1,0 +1,15 @@
+component: reef:text_line
+name: 'the_field_name'
+max_length: 6
+required: false
+default: 'Some default'
+locale:
+    title: 'The title'
+    placeholder: 'Fill in'
+
+valid_values:
+  - Small
+  - ''
+
+invalid_values:
+  - Some large value

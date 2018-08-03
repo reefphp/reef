@@ -1,0 +1,11 @@
+component: reef:text_line
+name: 'the_field_name'
+required: true
+locale:
+    title: 'The title'
+
+valid_values:
+  - Some value
+
+invalid_values:
+  - ''

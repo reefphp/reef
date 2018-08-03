@@ -22,7 +22,7 @@ class TextLineValue extends FieldValue {
 			return false;
 		}
 		
-		if(isset($a_declaration['max_length']) && $a_declaration['max_length'] > 0 && strlen($s_value) > $a_declaration['max_length']) {
+		if(strlen($s_value) > $this->Field->getMaxLength()) {
 			$this->a_errors[] = $this->Field->trans('error_value_too_long');
 			return false;
 		}
