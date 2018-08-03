@@ -1,0 +1,5 @@
+component: reef:checklist
+name: 'choose'
+options:
+  - name: option_1
+    locale: Option 1
