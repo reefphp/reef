@@ -1,0 +1,10 @@
+component: reef:checkbox
+name: 'tick'
+required: true
+
+valid_values:
+  - true
+
+invalid_values:
+  - false
+  - null
