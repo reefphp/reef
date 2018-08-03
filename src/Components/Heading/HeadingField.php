@@ -13,10 +13,4 @@ class HeadingField extends Field {
 		return [];
 	}
 	
-	/**
-	 * @inherit
-	 */
-	public function newValue() {
-		return new HeadingValue($this);
-	}
 }

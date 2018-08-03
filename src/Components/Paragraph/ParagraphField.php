@@ -13,10 +13,4 @@ class ParagraphField extends Field {
 		return [];
 	}
 	
-	/**
-	 * @inherit
-	 */
-	public function newValue() {
-		return new ParagraphValue($this);
-	}
 }

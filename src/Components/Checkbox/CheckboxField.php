@@ -18,13 +18,6 @@ class CheckboxField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function newValue() : CheckboxValue {
-		return new CheckboxValue($this);
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function isRequired() {
 		return (bool)($this->a_declaration['required']??false);
 	}

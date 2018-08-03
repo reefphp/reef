@@ -9,13 +9,6 @@ class SelectField extends AbstractSingleChoiceField {
 	/**
 	 * @inherit
 	 */
-	public function newValue() {
-		return new SelectValue($this);
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function isRequired() {
 		return false;
 	}

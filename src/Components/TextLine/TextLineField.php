@@ -20,13 +20,6 @@ class TextLineField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function newValue() {
-		return new TextLineValue($this);
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function isRequired() {
 		return (bool)($this->a_declaration['required']??false);
 	}

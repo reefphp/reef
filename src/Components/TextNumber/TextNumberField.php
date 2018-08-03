@@ -57,13 +57,6 @@ class TextNumberField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function newValue() {
-		return new TextNumberValue($this);
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function isRequired() {
 		return (bool)($this->a_declaration['required']??false);
 	}

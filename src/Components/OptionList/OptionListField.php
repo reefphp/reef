@@ -20,13 +20,6 @@ class OptionListField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function newValue() {
-		return new OptionListValue($this);
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function isRequired() {
 		return ($this->a_declaration['min_num_options'] > 0);
 	}

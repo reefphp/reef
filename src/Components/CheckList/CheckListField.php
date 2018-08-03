@@ -25,13 +25,6 @@ class CheckListField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function newValue() {
-		return new CheckListValue($this);
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function isRequired() {
 		return false;
 	}

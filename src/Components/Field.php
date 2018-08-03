@@ -45,6 +45,15 @@ abstract class Field {
 	}
 	
 	/**
+	 * Return a new value for this field
+	 * @return FieldValue
+	 */
+	public function newValue() : FieldValue {
+		$s_class = substr(static::class, 0, -5).'Value';
+		return new $s_class($this);
+	}
+	
+	/**
 	 * Obtain information on how this field should be saved in a flat structure
 	 * 
 	 * This function should return an array of definition arrays. Each definition array defines the type of
