@@ -1,0 +1,7 @@
+component: reef:hidden
+name: 'hidden'
+
+valid_values:
+  - null
+  - 'text'
+  - 3
