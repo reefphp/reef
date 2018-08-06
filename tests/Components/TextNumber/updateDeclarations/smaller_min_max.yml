@@ -1,0 +1,24 @@
+declaration_before:
+    component: reef:text_number
+    name: 'the_field_name'
+    min: -50
+    max: 100
+
+values_before:
+  - 5
+  - 80
+  - -20
+
+declaration_after:
+    component: reef:text_number
+    name: 'the_field_name'
+    min: -10
+    max: 20
+
+dataloss:
+    the_field_name: potential
+
+values_after:
+  - 5
+  - 20
+  - -10

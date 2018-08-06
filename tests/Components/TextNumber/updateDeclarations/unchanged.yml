@@ -1,0 +1,20 @@
+declaration_before:
+    component: reef:text_number
+    name: 'the_field_name'
+
+values_before:
+  - 5
+  - 15685
+  - -3045
+
+declaration_after:
+    component: reef:text_number
+    name: 'the_field_name'
+
+dataloss:
+    the_field_name: no
+
+values_after:
+  - 5
+  - 15685
+  - -3045
