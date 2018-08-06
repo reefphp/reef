@@ -34,11 +34,10 @@ function array_first_key(array $a_array) {
  *
  * @param string $s_dir       The directory path
  * @param bool   $b_rmRoot    Whether to delete the directory itself
- * @param bool   $b_rmHidden  Whether to delete hidden files
  *
  * @return bool TRUE on success, otherwise FALSE
  */
-function rmTree($s_dir, $b_rmRoot = false, $b_rmHidden = false) {
+function rmTree($s_dir, $b_rmRoot = false) {
 	// Handle trivial arguments
 	if (empty($s_dir) || !file_exists($s_dir)) {
 		return true;
@@ -55,19 +54,7 @@ function rmTree($s_dir, $b_rmRoot = false, $b_rmHidden = false) {
 	
 	foreach ($a_files as $fileinfo) {
 		$s_action = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-		if(!$b_rmHidden) {
-			// Keep hidden files
-			if(substr($fileinfo->getFilename(), 0, 1) == '.') {
-				continue;
-			}
-			// Keep a directory if it is not empty; this is (presumably?) if there are still hidden files present
-			if($fileinfo->isDir()) {
-				$a_files = glob($fileinfo->getRealPath().'/*');
-				if($a_files !== false && count($a_files) > 0) {
-					continue;
-				}
-			}
-		}
+		
 		if (!$s_action($fileinfo->getRealPath())) {
 			return false;
 		}
