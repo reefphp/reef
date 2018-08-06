@@ -1,0 +1,28 @@
+declaration_before:
+    component: reef:checklist
+    name: 'the_field_name'
+    options:
+      - {name: a, locale: a}
+      - {name: b, locale: b}
+      - {name: c, locale: c}
+
+values_before:
+  - {a: true, b: true, c: true}
+  - {a: false, b: false, c: false}
+  - {a: true, b: false, c: true}
+
+declaration_after:
+    component: reef:checklist
+    name: 'the_field_name'
+    options:
+      - {name: d, locale: d, old_name: b}
+      - {name: a, locale: a}
+      - {name: e, locale: e}
+
+dataloss:
+    the_field_name: potential
+
+values_after:
+  - {d: true,  a: true,  e: false}
+  - {d: false, a: false, e: false}
+  - {d: false, a: true,  e: false}
