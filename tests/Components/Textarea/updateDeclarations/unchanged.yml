@@ -1,0 +1,22 @@
+declaration_before:
+    component: reef:textarea
+    name: 'the_field_name'
+    max_length: 15
+
+values_before:
+  - asdf
+  - ''
+  - Some larger value
+
+declaration_after:
+    component: reef:textarea
+    name: 'the_field_name'
+    max_length: 15
+
+dataloss:
+    the_field_name: no
+
+values_after:
+  - asdf
+  - ''
+  - Some larger value
