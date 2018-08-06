@@ -1,0 +1,22 @@
+declaration_before:
+    component: reef:text_line
+    name: 'the_field_name'
+    max_length: 15
+
+values_before:
+  - asdf
+  - ''
+  - Some large value
+
+declaration_after:
+    component: reef:text_line
+    name: 'the_field_name'
+    max_length: 10
+
+dataloss:
+    the_field_name: potential
+
+values_after:
+  - asdf
+  - ''
+  - Some large
