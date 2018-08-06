@@ -220,18 +220,18 @@ abstract class Component {
 	 */
 	private function mergeConfigurationFieldsProps($a_basicFields, $a_advancedFields, $a_props, $a_parentBasicFields, $a_parentAdvancedFields, $a_parentProps) {
 		
-		// Create mapping from name to position
+		// Create mapping from name to field index
 		$a_parentBasicFieldsKeys = [];
-		foreach($a_parentBasicFields as $i_pos => $a_field) {
+		foreach($a_parentBasicFields as $i_index => $a_field) {
 			if(isset($a_field['name'])) {
-				$a_parentBasicFieldsKeys[$a_field['name']] = $i_pos;
+				$a_parentBasicFieldsKeys[$a_field['name']] = $i_index;
 			}
 		}
 		
 		$a_parentAdvancedFieldsKeys = [];
-		foreach($a_parentAdvancedFields as $i_pos => $a_field) {
+		foreach($a_parentAdvancedFields as $i_index => $a_field) {
 			if(isset($a_field['name'])) {
-				$a_parentAdvancedFieldsKeys[$a_field['name']] = $i_pos;
+				$a_parentAdvancedFieldsKeys[$a_field['name']] = $i_index;
 			}
 		}
 		

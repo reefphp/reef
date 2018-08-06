@@ -72,6 +72,10 @@ abstract class Form {
 		$this->s_idPfx = $s_idPfx;
 	}
 	
+	public function newCreator() {
+		return new \Reef\Creator\Creator($this);
+	}
+	
 	public function importDefinitionFile(string $s_filename) {
 		if(!file_exists($s_filename) || !is_readable($s_filename)) {
 			throw new ResourceNotFoundException('Could not find file "'.$s_filename.'".');

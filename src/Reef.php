@@ -207,7 +207,7 @@ class Reef {
 		}
 		
 		$a_names = [];
-		foreach($a_definition['fields']??[] as $i_pos => $a_fieldDecl) {
+		foreach($a_definition['fields']??[] as $i_index => $a_fieldDecl) {
 			
 			// Check for duplicates
 			if(isset($a_fieldDecl['name'])) {
@@ -225,7 +225,7 @@ class Reef {
 			}
 			catch(ValidationException $e) {
 				throw new ValidationException([
-					$i_pos => $e->getErrors(),
+					$i_index => $e->getErrors(),
 				]);
 			}
 		}
