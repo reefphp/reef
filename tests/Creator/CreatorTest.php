@@ -227,7 +227,7 @@ final class CreatorTest extends TestCase {
 	 */
 	public function testLocale(): void {
 		
-		// Test set()
+		// Test en_US set()
 		$a_localeSet = [
 			'name' => 'Field name',
 		];
@@ -239,7 +239,7 @@ final class CreatorTest extends TestCase {
 		
 		$this->assertSame($a_localeSet, $a_localeGet['en_US']);
 		
-		// Test add()
+		// Test en_US add()
 		$a_localeAdd = [
 			'placeholder' => 'Placeholder',
 		];
@@ -250,6 +250,31 @@ final class CreatorTest extends TestCase {
 				->get('locales', $a_localeGet);
 		
 		$this->assertSame(array_merge($a_localeSet, $a_localeAdd), $a_localeGet['en_US']);
+		
+		
+		// Test general set()
+		$a_localeSet = [
+			'name' => 'Field name 2',
+		];
+		
+		static::$Creator
+			->getFirstField()
+				->setLocale($a_localeSet)
+				->get('locale', $a_localeGet);
+		
+		$this->assertSame($a_localeSet, $a_localeGet);
+		
+		// Test general add()
+		$a_localeAdd = [
+			'placeholder' => 'Placeholder 2',
+		];
+		
+		static::$Creator
+			->getFirstField()
+				->addLocale($a_localeAdd)
+				->get('locale', $a_localeGet);
+		
+		$this->assertSame(array_merge($a_localeSet, $a_localeAdd), $a_localeGet);
 		
 	}
 	

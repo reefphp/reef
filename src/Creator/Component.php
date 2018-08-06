@@ -270,22 +270,42 @@ class Component extends Context {
 		return $this->setIndex(-1);
 	}
 	
-	public function setLocale(string $s_locale, array $a_locale) : Component {
+	public function setLocale($s_locale, $a_locale = null) : Component {
 		$this->requireIndex();
+		
+		if(func_num_args() == 1) {
+			$a_locale = $s_locale;
+			$s_locale = null;
+		}
 		
 		$a_field = &$this->a_fields[$this->i_index];
 		
-		$a_field['locales'][$s_locale] = $a_locale;
+		if($s_locale !== null) {
+			$a_field['locales'][$s_locale] = $a_locale;
+		}
+		else {
+			$a_field['locale'] = $a_locale;
+		}
 		
 		return $this;
 	}
 	
-	public function addLocale(string $s_locale, array $a_locale) : Component {
+	public function addLocale($s_locale, $a_locale = null) : Component {
 		$this->requireIndex();
+		
+		if(func_num_args() == 1) {
+			$a_locale = $s_locale;
+			$s_locale = null;
+		}
 		
 		$a_field = &$this->a_fields[$this->i_index];
 		
-		$a_field['locales'][$s_locale] = array_merge($a_field['locales'][$s_locale], $a_locale);
+		if($s_locale !== null) {
+			$a_field['locales'][$s_locale] = array_merge($a_field['locales'][$s_locale]??[], $a_locale);
+		}
+		else {
+			$a_field['locale'] = array_merge($a_field['locale']??[], $a_locale);
+		}
 		
 		return $this;
 	}
