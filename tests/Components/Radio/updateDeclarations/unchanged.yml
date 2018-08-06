@@ -1,0 +1,28 @@
+declaration_before:
+    component: reef:radio
+    name: 'the_field_name'
+    options:
+      - {name: a, locale: a}
+      - {name: b, locale: b}
+      - {name: c, locale: c}
+
+values_before:
+  - a
+  - b
+  - c
+
+declaration_after:
+    component: reef:radio
+    name: 'the_field_name'
+    options:
+      - {name: a, locale: a}
+      - {name: b, locale: b}
+      - {name: c, locale: c}
+
+dataloss:
+    the_field_name: no
+
+values_after:
+  - a
+  - b
+  - c
