@@ -113,7 +113,6 @@ final class TempFormTest extends TestCase {
 	 * @depends testCanCreateForm
 	 */
 	public function testCanCreateSubmission(): void {
-		// Test HTML
 		$this->assertInstanceOf(\Reef\TempSubmission::class, static::$Form->newSubmission());
 	}
 	
@@ -134,6 +133,10 @@ final class TempFormTest extends TestCase {
 	public function testCanCreateHTML(): void {
 		// Test HTML
 		$this->assertInternalType('string', static::$Form->generateFormHtml());
+		
+		$Submission = static::$Form->newSubmission();
+		$Submission->emptySubmission();
+		$this->assertInternalType('string', static::$Form->generateSubmissionHtml($Submission));
 	}
 	
 	/**

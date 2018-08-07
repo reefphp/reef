@@ -32,6 +32,7 @@ if(isset($_GET['mode']) && $_GET['mode'] == 'delete') {
 	header("Location: index.php");
 	exit();
 }
+$b_view = (isset($_GET['mode']) && $_GET['mode'] == 'view');
 
 // Process a POST request
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -45,7 +46,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 if($b_load) {
 	// If $b_load is true, we should display an existing submission
 	$i_submissionId = $Submission->getSubmissionId();
-	$s_form = $Form->generateFormHtml($Submission, ['main_var' => 'form_data']);
+	if($b_view) {
+		$s_form = $Form->generateSubmissionHtml($Submission, []);
+	}
+	else {
+		$s_form = $Form->generateFormHtml($Submission, ['main_var' => 'form_data']);
+	}
 }
 else {
 	// Else, we display the form for adding a new submission
@@ -78,8 +84,27 @@ $s_JS = $Form->getFormAssets()->getJSHTML();
 <body>
 <div class="m-2 ml-3">
 	<a href="index.php">&laquo; Terug</a>
+	<?php
+	if($b_view) {
+	?>
+	<a class="ml-3" href="submission.php?form_id=<?php echo($Form->getFormId()); ?>&amp;submission_id=<?php echo($i_submissionId); ?>">Edit</a>
+	<?php
+	} else {
+	?>
+	<a class="ml-3" href="submission.php?form_id=<?php echo($Form->getFormId()); ?>&amp;submission_id=<?php echo($i_submissionId); ?>&amp;mode=view">View</a>
+	<?php
+	}
+	?>
 </div>
-
+<?php
+if($b_view) {
+?>
+<div class="form-wrapper">
+	<?php echo($s_form); ?>
+</div>
+<?php
+} else {
+?>
 <form action="" method="post" onsubmit="return reef.validate();">
 	<input type="hidden" name="submission_id" value="<?php echo($i_submissionId); ?>" />
 	<div class="form-wrapper">
@@ -93,5 +118,8 @@ $(function() {
 	reef = new Reef($('.form-wrapper'));
 });
 </script>
+<?php
+}
+?>
 </body>
 </html>

@@ -66,6 +66,13 @@ class CheckListField extends Field {
 		return $a_vars;
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function view_submission($Value, $a_options = []) : array {
+		return $this->view_form($Value, $a_options);
+	}
+	
 	private function getOptionUpdatePlan($OldField, $NewField) {
 		$a_oldNames = array_column($OldField->a_declaration['options'], 'name');
 		$a_newNames = array_column($NewField->a_declaration['options'], 'name');

@@ -30,4 +30,13 @@ class CheckboxField extends Field {
 		$a_vars['value'] = (bool)$Value->toTemplateVar();
 		return $a_vars;
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function view_submission($Value, $a_options = []) : array {
+		$a_vars = parent::view_submission($Value, $a_options);
+		$a_vars['value'] = (bool)$Value->toTemplateVar();
+		return $a_vars;
+	}
 }

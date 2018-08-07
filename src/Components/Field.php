@@ -173,6 +173,21 @@ abstract class Field {
 		return $a_vars;
 	}
 	
+	/**
+	 * Build template variables for the submission
+	 * @param ?FieldValue $Value The value object, may be null for static components
+	 * @param array $a_options Options
+	 * @return array The template variables
+	 */
+	public function view_submission(?FieldValue $Value, $a_options = []) : array {
+		$a_vars = $this->a_declaration;
+		
+		$a_vars['locale'] = $this->getLocale($a_options['locale']??null);
+		unset($a_vars['locales']);
+		
+		return $a_vars;
+	}
+	
 	protected function fetchBaseLocale($s_locale) {
 		if(!empty($s_locale) && isset($this->a_declaration['locales'][$s_locale])) {
 			return $this->a_declaration['locales'][$s_locale];

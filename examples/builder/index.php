@@ -57,6 +57,9 @@ if(empty($a_formIds)) {
 					?>
 					<tr>
 						<td>
+							<a class="btn btn-link" href="submission.php?form_id=<?php echo($i_id); ?>&amp;submission_id=<?php echo($i_submissionId); ?>&amp;mode=view">View submission <?php echo($i_submissionId); ?></a>
+						</td>
+						<td>
 							<a class="btn btn-link" href="submission.php?form_id=<?php echo($i_id); ?>&amp;submission_id=<?php echo($i_submissionId); ?>">Edit submission <?php echo($i_submissionId); ?></a>
 						</td>
 						<td>

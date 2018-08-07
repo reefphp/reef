@@ -130,6 +130,9 @@ abstract class FieldValueTestCase extends TestCase {
 			// Test view_form()
 			$this->assertInternalType('array', $Field->view_form($Value));
 			
+			// Test view_submission()
+			$this->assertInternalType('array', $Field->view_submission($Value));
+			
 		}
 		
 		$this->assertTrue(true);

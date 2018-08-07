@@ -45,6 +45,15 @@ class TextLineField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function view_submission($Value, $a_options = []) : array {
+		$a_vars = parent::view_submission($Value, $a_options);
+		$a_vars['value'] = (string)$Value->toTemplateVar();
+		return $a_vars;
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function updateDataLoss($OldField) {
 		if($OldField->getMaxLength() > $this->getMaxLength()) {
 			return Updater::DATALOSS_POTENTIAL;

@@ -76,6 +76,15 @@ class TextNumberField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function view_submission($Value, $a_options = []) : array {
+		$a_vars = parent::view_submission($Value, $a_options);
+		$a_vars['value'] = $Value->toTemplateVar();
+		return $a_vars;
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function updateDataLoss($OldField) {
 		if(isset($this->a_declaration['max']) && (!isset($OldField->a_declaration['max']) || $OldField->a_declaration['max'] > $this->a_declaration['max'])) {
 			return Updater::DATALOSS_POTENTIAL;

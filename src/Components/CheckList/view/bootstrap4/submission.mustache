@@ -1,0 +1,21 @@
+<div class="form-group row {{CSSPRFX}}field" data-{{CSSPRFX}}type="reef:checklist" data-{{CSSPRFX}}name="{{field.name}}">
+	<label class="{{layout.col_left}} col-form-label">
+		{{field.locale.title}}
+	</label>
+	<div class="{{layout.col_right}}">
+		{{#field.options}}
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="checkbox"
+					data-name="{{name}}"
+					{{#default}}checked{{/default}}
+					readonly
+				>
+				<label class="form-check-label">
+					{{title}}
+				</label>
+			</div>
+		{{/field.options}}
+	</div>
+</div>

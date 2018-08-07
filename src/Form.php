@@ -191,6 +191,61 @@ abstract class Form {
 		return $s_html;
 	}
 	
+	public function generateSubmissionHtml(Submission $Submission, $a_options = []) {
+		$a_fields = [];
+		
+		$a_data = [];
+		$Layout = $this->Reef->getSetup()->getLayout();
+		$a_data['layout_name'] = $Layout->getName();
+		$a_data['layout'] = $Layout->getMergedConfig($this->a_definition['layout'][$Layout->getName()] ?? []);
+		$a_data['assets_url'] = $this->Reef->getOption('assets_url');
+		
+		$Mustache = $this->Reef->newMustache();
+		$Mustache->addHelper('form_idpfx', $this->s_idPfx);
+		$Mustache->addHelper('layout', $a_data['layout']);
+		
+		foreach($this->a_fields as $Field) {
+			$s_templateDir = null;
+			$s_viewfile = 'view/'.$Layout->getName().'/submission.mustache';
+			
+			$a_classes = $Field->getComponent()->getInheritanceList();
+			foreach($a_classes as $s_class) {
+				if(file_exists($s_class::getDir() . $s_viewfile)) {
+					$s_templateDir = $s_class::getDir();
+					break;
+				}
+			}
+			
+			if($s_templateDir === null) {
+				// @codeCoverageIgnoreStart
+				throw new ResourceNotFoundException("Could not find submission template file for field '".$Field->getDeclaration()['name']."'.");
+				// @codeCoverageIgnoreEnd
+			}
+			
+			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
+			$Template = $Mustache->loadTemplate($s_viewfile);
+			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getDeclaration()['name']);
+			$a_vars = $Field->view_submission($Value, array_subset($a_options, ['locale']));
+			
+			$s_html = $Template->render([
+				'field' => $a_vars,
+			]);
+			
+			$a_fields[] = [
+				'html' => $s_html,
+			];
+		}
+		
+		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
+		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/submission.mustache');
+		$s_html = $Template->render([
+			'fields' => $a_fields,
+			'config_base64' => base64_encode(json_encode($a_data)),
+		]);
+		
+		return $s_html;
+	}
+	
 	protected function fetchBaseLocale($s_locale) {
 		if(!empty($s_locale) && isset($this->a_definition['locales'][$s_locale])) {
 			return $this->a_definition['locales'][$s_locale];
