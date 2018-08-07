@@ -197,41 +197,55 @@ class Updater {
 			'PDO_DRIVER' => $PDO->getAttribute(\PDO::ATTR_DRIVER_NAME),
 		];
 		
-		$SubmissionStorage->addColumns($a_create);
-		
-		$a_fields1 = $Form->getValueFieldsByName();
-		$a_fields2 = $newForm->getValueFieldsByName();
-		
-		foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
-			$a_fields1[$s_fieldName1]->beforeSchemaUpdate(array_merge($a_info, [
-				'content_updater' => $fn_getContentUpdater($a_fields1[$s_fieldName1]),
-				'new_field' => $a_fields2[$s_fieldName2],
-				'old_columns' => $this->getColumns($a_fields1[$s_fieldName1]),
-				'new_columns' => $this->getColumns($a_fields2[$s_fieldName2]),
-			]));
-		}
-		
-		$SubmissionStorage->updateColumns($a_update);
-		
-		$SubmissionStorage->removeColumns(array_keys($a_delete));
-		
-		$Form->setFields($newForm->generateDefinition()['fields']);
-		
-		$a_fields = $Form->getValueFieldsByName();
-		
-		foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
-			$a_fields[$s_fieldName2]->afterSchemaUpdate(array_merge($a_info, [
-				'content_updater' => $fn_getContentUpdater($a_fields[$s_fieldName2]),
-				'old_columns' => $this->getColumns($a_fields1[$s_fieldName1]),
-				'new_columns' => $this->getColumns($a_fields[$s_fieldName2]),
-			]));
-		}
-		
-		$Form->save();
-		
-		if($Form->getStorageName() != $newForm->getStorageName()) {
-			$Form->setStorageName($newForm->getStorageName());
-		}
+		$Form->getReef()->getDataStore()->ensureTransaction(function() use(
+			$SubmissionStorage,
+			$Form,
+			$newForm,
+			$a_info,
+			$a_create,
+			$a_update,
+			$a_delete,
+			$a_updateFields,
+			$fn_getContentUpdater
+			) {
+			
+			$SubmissionStorage->addColumns($a_create);
+			
+			$a_fields1 = $Form->getValueFieldsByName();
+			$a_fields2 = $newForm->getValueFieldsByName();
+			
+			foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
+				$a_fields1[$s_fieldName1]->beforeSchemaUpdate(array_merge($a_info, [
+					'content_updater' => $fn_getContentUpdater($a_fields1[$s_fieldName1]),
+					'new_field' => $a_fields2[$s_fieldName2],
+					'old_columns' => $this->getColumns($a_fields1[$s_fieldName1]),
+					'new_columns' => $this->getColumns($a_fields2[$s_fieldName2]),
+				]));
+			}
+			
+			$SubmissionStorage->updateColumns($a_update);
+			
+			$SubmissionStorage->removeColumns(array_keys($a_delete));
+			
+			$Form->setFields($newForm->generateDefinition()['fields']);
+			
+			$a_fields = $Form->getValueFieldsByName();
+			
+			foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
+				$a_fields[$s_fieldName2]->afterSchemaUpdate(array_merge($a_info, [
+					'content_updater' => $fn_getContentUpdater($a_fields[$s_fieldName2]),
+					'old_columns' => $this->getColumns($a_fields1[$s_fieldName1]),
+					'new_columns' => $this->getColumns($a_fields[$s_fieldName2]),
+				]));
+			}
+			
+			$Form->save();
+			
+			if($Form->getStorageName() != $newForm->getStorageName()) {
+				$Form->setStorageName($newForm->getStorageName());
+			}
+			
+		});
 		
 	}
 	

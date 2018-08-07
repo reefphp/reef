@@ -81,7 +81,7 @@ abstract class UpdateTestCase extends TestCase {
 		static::$Reef->checkDeclaration($a_update['declaration_after']);
 		
 		$a_definition = [
-			'storage_name' => 'test_form',
+			'storage_name' => 'test_form_'.\Reef\unique_id(),
 			'fields' => [
 				$a_update['declaration_before'],
 			],

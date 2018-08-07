@@ -3,7 +3,7 @@
 namespace tests\Storage;
 
 use PHPUnit\Framework\TestCase;
-use \PDOException;
+use \Reef\Exception\StorageException;
 use \Reef\Storage\Storage;
 
 abstract class PDOStorageTestCase extends TestCase {
@@ -79,7 +79,7 @@ abstract class PDOStorageTestCase extends TestCase {
 	 * @depends testCanAddColumns
 	 */
 	public function testRejectsInvalidData(): int {
-		$this->expectException(\Reef\Exception\RuntimeException::class);
+		$this->expectException(StorageException::class);
 		
 		$a_data = [
 			'value' => 'Test value',
@@ -155,7 +155,81 @@ abstract class PDOStorageTestCase extends TestCase {
 	}
 	
 	/**
-	 * @depends testCanRenameColumn
+	 * @depends testCanRemoveColumns
+	 */
+	public function testTransaction(int $i_entryId): int {
+		static::$Storage::startTransaction(static::$PDO);
+		
+		$a_data = [
+			'value2' => 'Test value',
+		];
+		$i_entryId2 = static::$Storage->insert($a_data);
+		
+		$a_data2 = static::$Storage->get($i_entryId2);
+		$this->assertInternalType('array', $a_data2);
+		
+		$this->assertSame($a_data, $a_data2);
+		
+		static::$Storage::rollbackTransaction(static::$PDO);
+		
+		$this->assertNull(static::$Storage->get($i_entryId2));
+		
+		return $i_entryId;
+	}
+	
+	/**
+	 * @depends testTransaction
+	 */
+	public function testSavepoints(int $i_entryId): int {
+		static::$Storage::startTransaction(static::$PDO);
+		
+		// Savepoint a
+		static::$Storage::newSavepoint(static::$PDO, 'a');
+		
+		$a_data1A = [
+			'value2' => 'Test value',
+		];
+		$i_entryId1 = static::$Storage->insert($a_data1A);
+		
+		$a_data1B = static::$Storage->get($i_entryId1);
+		$this->assertInternalType('array', $a_data1B);
+		
+		$this->assertSame($a_data1A, $a_data1B);
+		
+		// Savepoint b
+		static::$Storage::newSavepoint(static::$PDO, 'b');
+		
+		$a_data2A = [
+			'value2' => 'Test value',
+		];
+		$i_entryId2 = static::$Storage->insert($a_data2A);
+		
+		$a_data2B = static::$Storage->get($i_entryId2);
+		$this->assertInternalType('array', $a_data2B);
+		
+		$this->assertSame($a_data2A, $a_data2B);
+		
+		// Back to b
+		static::$Storage::rollbackToSavepoint(static::$PDO, 'b');
+		
+		$this->assertNull(static::$Storage->get($i_entryId2));
+		
+		// Back to a
+		static::$Storage::rollbackToSavepoint(static::$PDO, 'a');
+		
+		$this->assertNull(static::$Storage->get($i_entryId1));
+		
+		// Commit empty transaction & check
+		static::$Storage::commitTransaction(static::$PDO);
+		
+		$this->assertNull(static::$Storage->get($i_entryId1));
+		$this->assertNull(static::$Storage->get($i_entryId2));
+		
+		return $i_entryId;
+	}
+	
+	/**
+	 * @depends testSavepoints
 	 */
 	public function testCanDeleteData(int $i_entryId): void {
 		static::$Storage->delete($i_entryId);
@@ -170,5 +244,36 @@ abstract class PDOStorageTestCase extends TestCase {
 		static::$Storage->deleteStorage();
 		
 		$this->assertFalse(static::$PDO_Factory->hasStorage(static::$s_storageName));
+	}
+	
+	/**
+	 * 
+	 */
+	public function testSuccessfulEnsureTransaction(): void {
+		static::$PDO_Factory->ensureTransaction(function() {
+			$this->assertTrue(static::$PDO_Factory->inTransaction());
+		});
+		
+		$this->assertFalse(static::$PDO_Factory->inTransaction());
+	}
+	
+	/**
+	 * 
+	 */
+	public function testUnsuccessfulEnsureTransaction(): void {
+		
+		try {
+			static::$PDO_Factory->ensureTransaction(function() {
+				$this->assertTrue(static::$PDO_Factory->inTransaction());
+				throw new StorageException();
+			});
+			$b_exception = false;
+		}
+		catch(StorageException $e) {
+			$b_exception = true;
+		}
+		
+		$this->assertTrue($b_exception, "Did not receive expected StorageException");
+		$this->assertFalse(static::$PDO_Factory->inTransaction());
 	}
 }

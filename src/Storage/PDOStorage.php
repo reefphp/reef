@@ -3,21 +3,22 @@
 namespace Reef\Storage;
 
 use \PDO;
-use \Reef\Exception\RuntimeException;
-use \Reef\Exception\ResourceNotFoundException;
+use \Reef\Exception\StorageException;
 
 abstract class PDOStorage implements Storage {
+	protected $StorageFactory;
 	protected $PDO;
 	protected $s_table;
 	protected $es_table;
 	
-	public function __construct(PDO $PDO, string $s_table) {
+	public function __construct(PDOStorageFactory $StorageFactory, PDO $PDO, string $s_table) {
+		$this->StorageFactory = $StorageFactory;
 		$this->PDO = $PDO;
 		$this->s_table = $s_table;
 		$this->es_table = static::sanitizeName($this->s_table);
 		
-		if(!static::table_exists($this->PDO, $this->s_table)) {
-			throw new ResourceNotFoundException("Table ".$this->s_table." does not exist.");
+		if(!static::table_exists($this->StorageFactory, $this->PDO, $this->s_table)) {
+			throw new StorageException("Table ".$this->s_table." does not exist.");
 		}
 	}
 	
@@ -29,7 +30,17 @@ abstract class PDOStorage implements Storage {
 		return $this->s_table;
 	}
 	
-	abstract public static function createStorage(\PDO $PDO, string $s_table) : PDOStorage;
+	abstract public static function startTransaction(\PDO $PDO);
+	
+	abstract public static function newSavepoint(\PDO $PDO, string $s_savepoint);
+	
+	abstract public static function rollbackToSavepoint(\PDO $PDO, string $s_savepoint);
+	
+	abstract public static function commitTransaction(\PDO $PDO);
+	
+	abstract public static function rollbackTransaction(\PDO $PDO);
+	
+	abstract public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage;
 	
 	public function renameStorage(string $s_newTableName) {
 		$sth = $this->PDO->prepare("ALTER TABLE ".$this->es_table." RENAME TO ".static::sanitizeName($s_newTableName)." ");
@@ -37,7 +48,7 @@ abstract class PDOStorage implements Storage {
 		
 		if($sth->errorCode() !== '00000') {
 			// @codeCoverageIgnoreStart
-			throw new RuntimeException("Could not alter table ".$this->s_table.".");
+			throw new StorageException("Could not alter table ".$this->s_table.".");
 			// @codeCoverageIgnoreEnd
 		}
 		
@@ -194,13 +205,13 @@ abstract class PDOStorage implements Storage {
 		$a_keys = array_keys($a_data);
 		
 		if(count($a_columns) != count($a_keys) || !empty(array_diff($a_columns, $a_keys))) {
-			throw new RuntimeException("Invalid data array.");
+			throw new StorageException("Invalid data array.");
 		}
 	}
 	
 	abstract public function getColumns() : array;
 	
-	abstract public static function table_exists(\PDO $PDO, string $s_tableName) : bool;
+	abstract public static function table_exists(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_tableName) : bool;
 	
 	public static function sanitizeName($s_name) {
 		return preg_replace('/[^a-zA-Z0-9_]/', '', $s_name);

@@ -41,7 +41,7 @@ class ReefAssets extends Assets {
 		
 		if($s_assetType == 'component') {
 			$Component = $this->Reef->getSetup()->getComponent($s_subName);
-			$this->writeStaticAsset($s_assetName, $Component->getDir(), $Component->getAssets());
+			$this->writeStaticAsset($s_assetName, $Component::getDir(), $Component->getAssets());
 		}
 		
 	}
@@ -149,7 +149,7 @@ class ReefAssets extends Assets {
 		
 		if($s_assetType == 'component') {
 			$Component = $this->Reef->getSetup()->getComponent($s_subName);
-			$s_newAssetHash = 'component:'.$s_subName.':/'.$s_assetName.'@'.filemtime($Component->getDir().$Component->getAssets()[$s_assetName]);
+			$s_newAssetHash = 'component:'.$s_subName.':/'.$s_assetName.'@'.filemtime($Component::getDir().$Component->getAssets()[$s_assetName]);
 		}
 		
 		return str_replace('[[assets_hash]]', $s_newAssetHash, $this->Reef->getOption('assets_url'));

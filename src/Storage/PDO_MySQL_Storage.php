@@ -3,13 +3,33 @@
 namespace Reef\Storage;
 
 use \PDO;
-use \Reef\Exception\RuntimeException;
+use \Reef\Exception\StorageException;
 
 class PDO_MySQL_Storage extends PDOStorage {
 	
 	private $a_columns;
 	
-	public static function createStorage(\PDO $PDO, string $s_table) : PDOStorage {
+	public static function startTransaction(\PDO $PDO) {
+		$PDO->exec("START TRANSACTION;");
+	}
+	
+	public static function newSavepoint(\PDO $PDO, string $s_savepoint) {
+		$PDO->exec("SAVEPOINT ".static::sanitizeName($s_savepoint)." ;");
+	}
+	
+	public static function rollbackToSavepoint(\PDO $PDO, string $s_savepoint) {
+		$PDO->exec("ROLLBACK TO SAVEPOINT ".static::sanitizeName($s_savepoint).";");
+	}
+	
+	public static function commitTransaction(\PDO $PDO) {
+		$PDO->exec("COMMIT;");
+	}
+	
+	public static function rollbackTransaction(\PDO $PDO) {
+		$PDO->exec("ROLLBACK;");
+	}
+	
+	public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage {
 		$sth = $PDO->prepare("
 			CREATE TABLE ".static::sanitizeName($s_table)." (
 				entry_id INT NOT NULL AUTO_INCREMENT,
@@ -20,11 +40,11 @@ class PDO_MySQL_Storage extends PDOStorage {
 		
 		if($sth->errorCode() !== '00000') {
 			// @codeCoverageIgnoreStart
-			throw new RuntimeException("Could not create table ".$s_table.".");
+			throw new StorageException("Could not create table ".$s_table.".");
 			// @codeCoverageIgnoreEnd
 		}
 		
-		return new static($PDO, $s_table);
+		return new static($StorageFactory, $PDO, $s_table);
 	}
 	
 	private function subfield2type($a_subfield) {
@@ -127,13 +147,14 @@ class PDO_MySQL_Storage extends PDOStorage {
 	}
 	
 	public function addColumns($a_subfields) {
+		$this->a_columns = null;
 		foreach($a_subfields as $s_column => $a_subfield) {
 			$sth = $this->PDO->prepare("ALTER TABLE ".$this->es_table." ADD ".static::sanitizeName($s_column)." ".$this->subfield2type($a_subfield)." ");
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
 				// @codeCoverageIgnoreStart
-				throw new RuntimeException("Could not alter table ".$this->s_table.".");
+				throw new StorageException("Could not alter table ".$this->s_table.".");
 				// @codeCoverageIgnoreEnd
 			}
 		}
@@ -158,10 +179,11 @@ class PDO_MySQL_Storage extends PDOStorage {
 		
 		$sth = $this->PDO->prepare($s_query);
 		$sth->execute();
+		$this->a_columns = null;
 		
 		if($sth->errorCode() !== '00000') {
 			// @codeCoverageIgnoreStart
-			throw new RuntimeException("Could not alter table ".$this->s_table.".");
+			throw new StorageException("Could not alter table ".$this->s_table.".");
 			// @codeCoverageIgnoreEnd
 		}
 		
@@ -183,10 +205,11 @@ class PDO_MySQL_Storage extends PDOStorage {
 		
 		$sth = $this->PDO->prepare($s_query);
 		$sth->execute();
+		$this->a_columns = null;
 		
 		if($sth->errorCode() !== '00000') {
 			// @codeCoverageIgnoreStart
-			throw new RuntimeException("Could not alter table ".$this->s_table.".");
+			throw new StorageException("Could not alter table ".$this->s_table.".");
 			// @codeCoverageIgnoreEnd
 		}
 	}
@@ -224,7 +247,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 		return $this->a_columns;
 	}
 	
-	public static function table_exists(\PDO $PDO, string $s_tableName) : bool {
+	public static function table_exists(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_tableName) : bool {
 		$sth = $PDO->prepare("SHOW TABLES LIKE ?");
 		$sth->execute([$s_tableName]);
 		$a_rows = $sth->fetchAll(PDO::FETCH_NUM);
