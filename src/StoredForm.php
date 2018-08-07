@@ -10,6 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 class StoredForm extends Form {
 	
 	private $SubmissionStorage;
+	private $SubmissionTable;
 	private $i_formId;
 	
 	public function getFormId() {
@@ -21,7 +22,9 @@ class StoredForm extends Form {
 	}
 	
 	public function setStorageName($s_newStorageName) {
-		$this->Reef->getDataStore()->changeSubmissionStorageName($this, $s_newStorageName);
+		if(!empty($this->a_definition['storage_name'])) {
+			$this->Reef->getDataStore()->changeSubmissionStorageName($this, $s_newStorageName);
+		}
 		$this->a_definition['storage_name'] = $s_newStorageName;
 	}
 	
@@ -119,6 +122,14 @@ class StoredForm extends Form {
 		$Submission->load($i_submissionId);
 		
 		return $Submission;
+	}
+	
+	public function getSubmissionTable() {
+		if(empty($this->SubmissionTable)) {
+			$this->SubmissionTable = new SubmissionTable($this);
+		}
+		
+		return $this->SubmissionTable;
 	}
 	
 	public function newSubmission() {

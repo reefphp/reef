@@ -46,6 +46,21 @@ class PDO_SQLite_Storage extends PDOStorage {
 		return new static($StorageFactory, $PDO, $s_table);
 	}
 	
+	/**
+	 * @inherit
+	 */
+	protected function queryAll(int $i_offset, int $i_num) : \PDOStatement {
+		$sth = $this->PDO->prepare("
+			SELECT *
+			FROM ".$this->es_table."
+			ORDER BY entry_id ASC
+			LIMIT ".$i_num."
+			OFFSET ".$i_offset."
+		");
+		$sth->execute();
+		return $sth;
+	}
+	
 	private function subfield2type($a_subfield) {
 		$s_columnType = '';
 		

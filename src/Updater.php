@@ -162,6 +162,10 @@ class Updater {
 		
 		[$a_create, $a_update, $a_delete] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
 		
+		if(empty($Form->getStorageName())) {
+			$Form->setStorageName($newForm->getStorageName());
+		}
+		
 		$SubmissionStorage = $Form->getSubmissionStorage();
 		$PDO = $SubmissionStorage->getPDO();
 		

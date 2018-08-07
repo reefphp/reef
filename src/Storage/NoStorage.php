@@ -19,6 +19,26 @@ class NoStorage implements Storage {
 	/**
 	 * @inherit
 	 */
+	public function count() : int {
+		return 0;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function table(int $i_offset = 0, int $i_num = -1) : array {
+		return [];
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function generator(int $i_offset = 0, int $i_num = -1) : iterable {
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function addColumns($a_subfields) {
 	}
 	

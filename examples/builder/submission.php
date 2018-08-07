@@ -73,7 +73,7 @@ $s_JS = $Form->getFormAssets()->getJSHTML();
 
 	<?php echo($s_JS); ?>
 	
-	<title>Simple form</title>
+	<title>Builder form</title>
 </head>
 <body>
 <div class="m-2 ml-3">

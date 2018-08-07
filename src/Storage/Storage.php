@@ -21,12 +21,29 @@ interface Storage {
 	 */
 	public function deleteStorage();
 	
+	/**
+	 * Return the number of entries
+	 * @return int The number of entries
+	 */
+	public function count() : int;
 	
 	/**
 	 * Return a list of stored entry ids
 	 * @return array<int> The stored ids
 	 */
 	public function list() : array;
+	
+	/**
+	 * Return table of raw data
+	 * @return array<array<string,mixed>> The data
+	 */
+	public function table(int $i_offset = 0, int $i_num = -1) : array;
+	
+	/**
+	 * Return generator of raw data
+	 * @return iterable The data generator
+	 */
+	public function generator(int $i_offset = 0, int $i_num = -1) : iterable;
 	
 	/**
 	 * Insert a new entry

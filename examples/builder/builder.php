@@ -16,6 +16,10 @@ else {
 	]);
 }
 
+if(isset($_GET['mode']) && $_GET['mode'] == 'download') {
+	$Form->getSubmissionTable()->streamCSV();
+}
+
 if(isset($_GET['mode']) && $_GET['mode'] == 'delete') {
 	$Form->delete();
 	header("Location: index.php");

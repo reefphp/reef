@@ -50,6 +50,7 @@ if(empty($a_formIds)) {
 			</td>
 			<td>
 				<a class="btn btn-primary my-3" href="submission.php?form_id=<?php echo($i_id); ?>&amp;submission_id=-1">Fill in form <?php echo($i_id); ?></a>
+				<a class="btn btn-primary my-3" href="builder.php?form_id=<?php echo($i_id); ?>&amp;mode=download">Download CSV</a>
 				<table class="table table-sm">
 				<?php
 				foreach($Reef->getForm($i_id)->getSubmissionIds() as $i_submissionId) {

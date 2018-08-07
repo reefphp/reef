@@ -111,6 +111,36 @@ abstract class PDOStorageTestCase extends TestCase {
 	/**
 	 * @depends testCanUpdateData
 	 */
+	public function testTable(int $i_entryId): int {
+		$a_data = [
+			'value' => 'Another value',
+			'number' => '65',
+		];
+		
+		$a_data['entry_id'] = 1;
+		$this->assertEquals($a_data, static::$Storage->table()[0]);
+		
+		return $i_entryId;
+	}
+	
+	/**
+	 * @depends testTable
+	 */
+	public function testGenerator(int $i_entryId): int {
+		$a_data = [
+			'value' => 'Another value',
+			'number' => '65',
+		];
+		
+		$a_data['entry_id'] = 1;
+		$this->assertEquals($a_data, static::$Storage->generator()->current());
+		
+		return $i_entryId;
+	}
+	
+	/**
+	 * @depends testGenerator
+	 */
 	public function testCanRenameColumn(int $i_entryId): int {
 		$a_data = [
 			'value2' => 'Another value',

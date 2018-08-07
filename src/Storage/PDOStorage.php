@@ -74,6 +74,20 @@ abstract class PDOStorage implements Storage {
 	/**
 	 * @inherit
 	 */
+	public function count() : int {
+		$sth = $this->PDO->prepare("
+			SELECT COUNT(entry_id) AS num
+			FROM ".$this->es_table."
+			GROUP BY 1
+		");
+		$sth->execute();
+		$a_rows = $sth->fetchAll(PDO::FETCH_NUM);
+		return (int)$a_rows[0][0];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function list() : array {
 		$sth = $this->PDO->prepare("
 			SELECT entry_id
@@ -84,6 +98,33 @@ abstract class PDOStorage implements Storage {
 		$a_rows = $sth->fetchAll(PDO::FETCH_NUM);
 		return array_column($a_rows, 0);
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function table(int $i_offset = 0, int $i_num = -1) : array {
+		$sth = $this->queryAll($i_offset, $i_num);
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function generator(int $i_offset = 0, int $i_num = -1) : iterable {
+		$sth = $this->queryAll($i_offset, $i_num);
+		
+		while($a_row = $sth->fetch(PDO::FETCH_ASSOC)) {
+			yield $a_row;
+		}
+	}
+	
+	/**
+	 * Return PDOStatement fetching the requested rows from the table
+	 * @param int $i_offset The offset to use
+	 * @param int $i_num The number of rows to return
+	 * @return PDOStatement
+	 */
+	abstract protected function queryAll(int $i_offset, int $i_num) : \PDOStatement;
 	
 	/**
 	 * @inherit
