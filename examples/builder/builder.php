@@ -82,8 +82,9 @@ $s_JS = $Reef->getReefAssets()->getJSHTML();
 	
 	<title>Form builder</title>
 	<script>
+	var builder;
 	$(function() {
-		var builder = new ReefBuilder('.builderWrapper');
+		builder = new ReefBuilder('.builderWrapper');
 	});
 	</script>
 </head>

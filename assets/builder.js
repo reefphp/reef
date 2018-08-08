@@ -515,6 +515,14 @@ var ReefBuilder = (function() {
 		// Reset
 		this.hideDataLoss();
 		
+		// Build mapping from field names to field index
+		var field_name2idx = {};
+		for(var i=0; i<this.fields.length; i++) {
+			if(this.fields[i].declarationForm.basic.hasField('name')) {
+				field_name2idx[this.fields[i].declarationForm.basic.getField('name').getValue()] = i;
+			}
+		}
+		
 		// Show data loss fields
 		var hasDataloss = false;
 		for(var field_name in dataloss) {
@@ -524,11 +532,26 @@ var ReefBuilder = (function() {
 			
 			hasDataloss = true;
 			
+			// Append field name to data loss list
+			var li;
+			if(typeof(field_name2idx[field_name]) !== 'undefined') {
+				li = $('<li>').append(
+					$('<a href="#">').text(field_name).on('click', function(evt) {
+						evt.preventDefault();
+						self.selectField(self.fields[field_name2idx[field_name]]);
+					})
+				);
+			}
+			else {
+				// Should not happen, but do this as a fallback
+				li = $('<li>').text(field_name);
+			}
+			
 			this.$builderWrapper
 				.find('.'+CSSPRFX+'builder-save-dataloss-'+dataloss[field_name])
 					.show()
 				.find('ul')
-					.append($('<li>').text(field_name));
+					.append(li);
 		}
 		
 		// Only show builder & attach events if there really is dataloss to be mentioned
