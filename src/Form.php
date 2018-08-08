@@ -6,34 +6,89 @@ use \Reef\Trait_Locale;
 use \Reef\Exception\ResourceNotFoundException;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * General Form class
+ * 
+ * Holds general form functionality. A form is defined by a set of fields along with additional
+ * configuration, all defined in the form definition.
+ */
 abstract class Form {
 	
 	use Trait_Locale;
 	
+	/**
+	 * The Reef object this Form belongs to
+	 * 
+	 * @var Reef
+	 */
 	protected $Reef;
+	
+	/**
+	 * The FormAssets object used by this form
+	 * 
+	 * @var FormAssets
+	 */
 	protected $FormAssets;
 	
+	/**
+	 * The id prefix used for this form. The id prefix is appended to the id="" HTML field
+	 * 
+	 * @var string
+	 */
 	protected $s_idPfx;
-	protected $a_locale;
+	
+	/**
+	 * The definition array of this form. This is the parsed YAML form definition, except the
+	 * fields are absent and moved to $a_fields
+	 * 
+	 * @var array
+	 */
 	protected $a_definition = [];
+	
+	/**
+	 * Array of fields in this form
+	 * 
+	 * @var \Reef\Components\Field[]
+	 */
 	protected $a_fields = [];
 	
 	/**
 	 * Constructor
+	 * 
+	 * @param Reef $Reef The Reef object this Form belongs to
 	 */
 	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
 		$this->s_idPfx = unique_id();
 	}
 	
+	/**
+	 * Get the definition of this form. Does not include the fields property
+	 * 
+	 * To obtain a full definition, use generateDefinition()
+	 * 
+	 * @see Form::generateDefinition()
+	 * 
+	 * @return array
+	 */
 	public function getDefinition() {
 		return $this->a_definition;
 	}
 	
+	/**
+	 * Get the fields of this form
+	 * 
+	 * @return \Reef\Components\Field[]
+	 */
 	public function getFields() {
 		return $this->a_fields;
 	}
 	
+	/**
+	 * Get the fields of this form that carry a value (i.e., are not static)
+	 * 
+	 * @return \Reef\Components\Field[]
+	 */
 	public function getValueFields() {
 		$a_fields = $this->a_fields;
 		foreach($a_fields as $i => $Field) {
@@ -44,6 +99,12 @@ abstract class Form {
 		return $a_fields;
 	}
 	
+	/**
+	 * Get the fields of this form that carry a value (i.e., are not static),
+	 * with the field names as key
+	 * 
+	 * @return \Reef\Components\Field[]
+	 */
 	public function getValueFieldsByName() {
 		$a_fields = [];
 		foreach($this->getValueFields() as $Field) {
@@ -52,10 +113,20 @@ abstract class Form {
 		return $a_fields;
 	}
 	
+	/**
+	 * Get the Reef object this Form belongs to
+	 * 
+	 * @return Reef
+	 */
 	public function getReef() {
 		return $this->Reef;
 	}
 	
+	/**
+	 * Get the FormAssets object for this form
+	 * 
+	 * @return FormAssets
+	 */
 	public function getFormAssets() {
 		if($this->FormAssets == null) {
 			$this->FormAssets = new FormAssets($this);
@@ -64,18 +135,38 @@ abstract class Form {
 		return $this->FormAssets;
 	}
 	
+	/**
+	 * Get the id prefix
+	 * 
+	 * @return string
+	 */
 	public function getIdPfx() {
 		return $this->s_idPfx;
 	}
 	
+	/**
+	 * Set the id prefix
+	 * 
+	 * @param string $s_idPfx The id prefix
+	 */
 	public function setIdPfx($s_idPfx) {
 		$this->s_idPfx = $s_idPfx;
 	}
 	
+	/**
+	 * Get a new Creator object for this form
+	 * 
+	 * @return \Reef\Creator\Creator The new creator object
+	 */
 	public function newCreator() {
 		return new \Reef\Creator\Creator($this);
 	}
 	
+	/**
+	 * Import a form definition from the given file
+	 * 
+	 * @param string $s_filename The file name
+	 */
 	public function importDefinitionFile(string $s_filename) {
 		if(!file_exists($s_filename) || !is_readable($s_filename)) {
 			throw new ResourceNotFoundException('Could not find file "'.$s_filename.'".');
@@ -86,17 +177,34 @@ abstract class Form {
 		$this->importDefinition($a_definition);
 	}
 	
+	/**
+	 * Import a form definition from the given YAML string
+	 * 
+	 * @param string $s_definition The YAML string holding the definition
+	 */
 	public function importDefinitionString(string $s_definition) {
 		$a_definition = Yaml::parse($s_definition);
 		
 		$this->importDefinition($a_definition);
 	}
 	
+	/**
+	 * Import a form definition from the given definition array
+	 * 
+	 * @param array $a_definition The definition array
+	 */
 	public function importDefinition(array $a_definition) {
 		$this->Reef->checkDefinition($a_definition);
 		$this->importValidatedDefinition($a_definition);
 	}
 	
+	/**
+	 * Import a form definition from the given definition array, omitting
+	 * any validation. Should only be used when confident that the definition
+	 * is valid.
+	 * 
+	 * @param array $a_definition The definition array
+	 */
 	public function importValidatedDefinition(array $a_definition) {
 		$this->a_definition = $a_definition;
 		unset($this->a_definition['fields']);
@@ -104,10 +212,20 @@ abstract class Form {
 		$this->setFields($a_definition['fields']??[]);
 	}
 	
+	/**
+	 * Merge the form definition with the given partial definition
+	 * 
+	 * @param array $a_partialDefinition The partial definition array to merge into the current definition
+	 */
 	public function mergeDefinition(array $a_partialDefinition) {
 		$this->a_definition = array_merge($this->a_definition, $a_partialDefinition);
 	}
 	
+	/**
+	 * Set the fields from a list of field declarations
+	 * 
+	 * @param Field[] $a_fields The list of field declarations (arrays)
+	 */
 	public function setFields(array $a_fields) {
 		$Setup = $this->Reef->getSetup();
 		
@@ -117,6 +235,11 @@ abstract class Form {
 		}
 	}
 	
+	/**
+	 * Generate a full form definition for this form
+	 * 
+	 * @return array The form definition
+	 */
 	public function generateDefinition() : array {
 		$a_definition = $this->a_definition;
 		
@@ -129,6 +252,15 @@ abstract class Form {
 		return $a_definition;
 	}
 	
+	/**
+	 * Generate the form HTML
+	 * 
+	 * @param Submission|null $Submission The Submission to use as values, or null to create a default submission
+	 * @param array $a_options Array of options, to choose from:
+	 *  - main_var  (string)    The main variable name to use in the form. Defaults to 'reef_data'
+	 * 
+	 * @return string The form HTML
+	 */
 	public function generateFormHtml(Submission $Submission = null, $a_options = []) {
 		$a_fields = [];
 		
@@ -191,6 +323,14 @@ abstract class Form {
 		return $s_html;
 	}
 	
+	/**
+	 * Generate the form submission HTML
+	 * 
+	 * @param Submission $Submission The Submission to use as values
+	 * @param array $a_options Array of options, to choose from:
+	 * 
+	 * @return string The form submission HTML
+	 */
 	public function generateSubmissionHtml(Submission $Submission, $a_options = []) {
 		$a_fields = [];
 		
@@ -246,6 +386,15 @@ abstract class Form {
 		return $s_html;
 	}
 	
+	/**
+	 * Get a list of column titles in an overview
+	 * 
+	 * These values are used as headers in an overview or table. The method
+	 * Submission::toOverviewColumns() generates an equally long list with
+	 * values belonging to these headers, the keys in these arrays should match
+	 * 
+	 * @return string[] The overview column titles
+	 */
 	public function getOverviewColumns() {
 		$a_overviewColumns = [];
 		
@@ -262,6 +411,9 @@ abstract class Form {
 		return $a_overviewColumns;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	protected function fetchBaseLocale($s_locale) {
 		if(!empty($s_locale) && isset($this->a_definition['locales'][$s_locale])) {
 			return $this->a_definition['locales'][$s_locale];
@@ -274,6 +426,9 @@ abstract class Form {
 		}
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function getCombinedLocaleSources($s_locale) {
 		return $this->combineLocaleSources(
 			$this->getOwnLocaleSource($s_locale),
@@ -281,14 +436,36 @@ abstract class Form {
 		);
 	}
 	
+	/**
+	 * @inherit
+	 */
 	protected function getDefaultLocale() {
 		return $this->a_definition['default_locale']??$this->Reef->getOption('default_locale');
 	}
 	
+	/**
+	 * Replace the definition of this form with a new one
+	 * 
+	 * @param array $a_definition The new form definition array
+	 * @param string[] $a_fieldRenames Mapping from field names in the old definition to field names in the new definition
+	 */
 	abstract public function updateDefinition(array $a_definition, array $a_fieldRenames = []);
 	
+	/**
+	 * Check whether there will occur data loss when replacing the current definition with the given one
+	 * 
+	 * @param array $a_definition The new form definition array
+	 * @param string[] $a_fieldRenames Mapping from field names in the old definition to field names in the new definition
+	 * 
+	 * @return string[] Mapping from field names to the Updater::DATALOSS_* constants
+	 */
 	abstract public function checkUpdateDataLoss(array $a_definition, array $a_fieldRenames = []);
 	
+	/**
+	 * Return a new submission for this form
+	 * 
+	 * @return Submission
+	 */
 	abstract public function newSubmission();
 	
 }

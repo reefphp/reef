@@ -5,6 +5,8 @@ namespace Reef;
 /**
  * Return a subset of an array, defined by its keys.
  * E.g. array_subset(['a'=>1, 'b'=>2, 'c'=>3], ['a','c']) = ['a'=>1, 'c'=>3]
+ * @param array $a_haystack Associative source array
+ * @param array $a_needles The keys from $a_haystack to retrieve
  * @return array The subset
  */
 function array_subset(array $a_haystack, array $a_needles) {

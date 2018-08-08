@@ -316,7 +316,7 @@ abstract class Component {
 	
 	/**
 	 * Get names of this component's props
-	 * @return array<string>
+	 * @return string[]
 	 */
 	public function getPropNames() {
 		$a_props = $this->getConfiguration()['props']??[];

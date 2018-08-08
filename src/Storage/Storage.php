@@ -29,13 +29,13 @@ interface Storage {
 	
 	/**
 	 * Return a list of stored entry ids
-	 * @return array<int> The stored ids
+	 * @return int[] The stored ids
 	 */
 	public function list() : array;
 	
 	/**
 	 * Return table of raw data
-	 * @return array<array<string,mixed>> The data
+	 * @return string[][] The data
 	 */
 	public function table(int $i_offset = 0, int $i_num = -1) : array;
 	
