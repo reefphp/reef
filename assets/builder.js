@@ -180,6 +180,8 @@ var ReefBuilder = (function() {
 	};
 	
 	ReefBuilder.prototype.moveField = function(oldIndex, newIndex) {
+		this.interruptSubmit();
+		
 		if(typeof this.fields[oldIndex] == 'undefined') {
 			return;
 		}
@@ -188,6 +190,7 @@ var ReefBuilder = (function() {
 	};
 	
 	ReefBuilder.prototype.removeField = function(field) {
+		this.interruptSubmit();
 		this.deselectField();
 		var index = this.fields.indexOf(field);
 		if(index > -1) {
@@ -247,6 +250,8 @@ var ReefBuilder = (function() {
 	};
 	
 	ReefBuilder.prototype.openSideTab = function(tab) {
+		this.interruptSubmit();
+		
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab').hide().filter('.'+CSSPRFX+'builder-sidetab-'+tab).show();
 		
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-tab').removeClass(CSSPRFX+'builder-tab-active').filter('.'+CSSPRFX+'builder-tab-'+tab).addClass(CSSPRFX+'builder-tab-active');
@@ -262,14 +267,6 @@ var ReefBuilder = (function() {
 			}
 		}
 		else {
-			if(tab === 'form') {
-				if(this.hideDataLoss()) {
-					// The user has navigated away from the form tab without choosing 'yes' or 'no'
-					// Hence the value of submitting is probably still true
-					// Set it to false to be able to submit the form again
-					this.submitting = false;
-				}
-			}
 			this.deselectField();
 		}
 	};
@@ -428,6 +425,15 @@ var ReefBuilder = (function() {
 				}
 			});
 		});
+	};
+	
+	ReefBuilder.prototype.interruptSubmit = function() {
+		if(this.hideDataLoss()) {
+			// The user has navigated away from the form tab or performed an action, without choosing 'yes' or 'no' first
+			// Hence the value of submitting is probably still true
+			// Set it to false to be able to submit the form again
+			this.submitting = false;
+		}
 	};
 	
 	ReefBuilder.prototype.addErrors = function(errors) {
