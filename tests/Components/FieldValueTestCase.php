@@ -118,14 +118,17 @@ abstract class FieldValueTestCase extends TestCase {
 			// Test structured
 			$m_structured = $Value->toStructured();
 			$NewValue = $Field->newValue();
-			$this->assertEquals($m_structured, $NewValue->toStructured($NewValue->fromStructured($m_structured)));
+			$this->assertEquals($m_structured, $NewValue->toStructured($NewValue->fromStructured($m_structured)), "toStructured is not the inverse of fromStructured");
 			
 			// Test flat
 			$a_flat = $Value->toFlat();
 			$NewValue = $Field->newValue();
-			$this->assertEquals($a_flat, $NewValue->toFlat($NewValue->fromFlat($a_flat)));
+			$this->assertEquals($a_flat, $NewValue->toFlat($NewValue->fromFlat($a_flat)), "toFlat is not the inverse of fromFlat");
 			
-			$this->assertEquals(array_keys($a_flat), array_keys($Field->getFlatStructure()));
+			$this->assertEquals(array_keys($a_flat), array_keys($Field->getFlatStructure()), "Flat column keys do not match");
+			
+			// Test overview
+			$this->assertEquals(array_keys($Value->toOverviewColumns()), array_keys($Field->getOverviewColumns()), "Overview column keys do not match");
 			
 			// Test view_form()
 			$this->assertInternalType('array', $Field->view_form($Value));

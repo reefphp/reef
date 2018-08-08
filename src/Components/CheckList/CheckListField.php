@@ -33,7 +33,7 @@ class CheckListField extends Field {
 		
 		$a_columns = [];
 		
-		foreach($a_vars['options']??[] as $i => $a_option) {
+		foreach($this->a_declaration['options']??[] as $i => $a_option) {
 			
 			$s_title = '';
 			foreach($a_langs as $s_lang) {
@@ -43,7 +43,7 @@ class CheckListField extends Field {
 				}
 			}
 			
-			$a_columns[] = $s_title;
+			$a_columns[$a_option['name']] = $s_title;
 		}
 		
 		return $a_columns;
