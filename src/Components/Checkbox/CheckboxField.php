@@ -18,6 +18,17 @@ class CheckboxField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function getOverviewColumns() : array {
+		$s_title = $this->trans('title_left');
+		$s_title = empty($s_title) ? $this->trans('title_right') : $s_title;
+		return [
+			$s_title,
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function isRequired() {
 		return (bool)($this->a_declaration['required']??false);
 	}

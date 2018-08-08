@@ -29,6 +29,15 @@ class TextLineField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function getOverviewColumns() : array {
+		return [
+			$this->trans('title'),
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function isRequired() {
 		return (bool)($this->a_declaration['required']??false);
 	}

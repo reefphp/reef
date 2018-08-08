@@ -17,7 +17,7 @@ else {
 }
 
 if(isset($_GET['mode']) && $_GET['mode'] == 'download') {
-	$Form->getSubmissionTable()->streamCSV();
+	$Form->newSubmissionOverview()->streamCSV();
 }
 
 if(isset($_GET['mode']) && $_GET['mode'] == 'delete') {

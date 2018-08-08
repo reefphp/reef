@@ -87,6 +87,15 @@ class TextareaValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function toOverviewColumns() : array {
+		return [
+			$this->s_value,
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function toTemplateVar() {
 		return $this->s_value;
 	}

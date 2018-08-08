@@ -155,4 +155,23 @@ abstract class Submission {
 		
 		return $a_data;
 	}
+	
+	public function toOverviewColumns() {
+		$a_overviewColumns = [];
+		
+		$a_fields = $this->Form->getValueFields();
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getDeclaration()['name'];
+			$a_columns = $Field->getOverviewColumns();
+			
+			$a_flatField = $this->a_fieldValues[$s_name]->toOverviewColumns();
+			
+			foreach($a_columns as $s_colName => $s_colTitle) {
+				$a_overviewColumns[$s_name.'__'.$s_colName] = $a_flatField[$s_colName] ?? null;
+			}
+			
+		}
+		
+		return $a_overviewColumns;
+	}
 }

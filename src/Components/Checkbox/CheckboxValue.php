@@ -79,6 +79,15 @@ class CheckboxValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function toOverviewColumns() : array {
+		return [
+			(int)$this->b_value,
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function toTemplateVar() {
 		return $this->b_value;
 	}

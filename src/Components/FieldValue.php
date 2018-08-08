@@ -59,6 +59,12 @@ abstract class FieldValue {
 	abstract public function toTemplateVar();
 	
 	/**
+	 * Serialize the current value into a flat array for display purposes in an overview
+	 * @return array The value
+	 */
+	abstract public function toOverviewColumns() : array;
+	
+	/**
 	 * Determine whether the current value is valid
 	 * @return boolean True if the current value is valid, false otherwise
 	 */

@@ -246,6 +246,22 @@ abstract class Form {
 		return $s_html;
 	}
 	
+	public function getOverviewColumns() {
+		$a_overviewColumns = [];
+		
+		$a_fields = $this->getValueFields();
+		foreach($a_fields as $Field) {
+			$s_name = $Field->getDeclaration()['name'];
+			$a_columns = $Field->getOverviewColumns();
+			
+			foreach($a_columns as $s_colName => $s_colTitle) {
+				$a_overviewColumns[$s_name.'__'.$s_colName] = $s_colTitle;
+			}
+		}
+		
+		return $a_overviewColumns;
+	}
+	
 	protected function fetchBaseLocale($s_locale) {
 		if(!empty($s_locale) && isset($this->a_definition['locales'][$s_locale])) {
 			return $this->a_definition['locales'][$s_locale];

@@ -87,6 +87,36 @@ abstract class AbstractSingleChoiceValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function toOverviewColumns() : array {
+		$Reef = $this->Field->getComponent()->getReef();
+		$a_langs = $Reef->getOption('locales');
+		array_unshift($a_langs, $Reef->getOption('default_locale'));
+		$a_langs = array_unique($a_langs);
+		
+		$s_title = null;
+		foreach($this->Field->getDeclaration()['options']??[] as $a_option) {
+			if($a_option['name'] != $this->s_value) {
+				continue;
+			}
+			
+			foreach($a_langs as $s_lang) {
+				if(!empty($a_option['locale'][$s_lang])) {
+					$s_title = $a_option['locale'][$s_lang];
+					break;
+				}
+			}
+			
+			break;
+		}
+		
+		return [
+			$s_title
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function toTemplateVar() {
 		return $this->s_value;
 	}

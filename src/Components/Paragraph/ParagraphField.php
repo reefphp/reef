@@ -13,4 +13,11 @@ class ParagraphField extends Field {
 		return [];
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function getOverviewColumns() : array {
+		return [];
+	}
+	
 }

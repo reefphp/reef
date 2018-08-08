@@ -148,6 +148,12 @@ abstract class Field {
 	}
 	
 	/**
+	 * Define which columns this field will contribute in an overview (CSV) table
+	 * @return array The column names
+	 */
+	abstract public function getOverviewColumns() : array;
+	
+	/**
 	 * Return whether this field is required
 	 * @return bool
 	 */

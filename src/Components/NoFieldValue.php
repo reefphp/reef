@@ -61,6 +61,13 @@ class NoFieldValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function toOverviewColumns() : array {
+		return [];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function toTemplateVar() {
 		return null;
 	}

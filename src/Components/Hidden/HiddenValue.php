@@ -71,6 +71,13 @@ class HiddenValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function toOverviewColumns() : array {
+		return [];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function toTemplateVar() {
 		return $this->s_value;
 	}

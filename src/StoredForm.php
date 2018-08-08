@@ -10,7 +10,6 @@ use Symfony\Component\Yaml\Yaml;
 class StoredForm extends Form {
 	
 	private $SubmissionStorage;
-	private $SubmissionTable;
 	private $i_formId;
 	
 	public function getFormId() {
@@ -124,12 +123,8 @@ class StoredForm extends Form {
 		return $Submission;
 	}
 	
-	public function getSubmissionTable() {
-		if(empty($this->SubmissionTable)) {
-			$this->SubmissionTable = new SubmissionTable($this);
-		}
-		
-		return $this->SubmissionTable;
+	public function newSubmissionOverview() {
+		return new SubmissionOverview($this);
 	}
 	
 	public function newSubmission() {

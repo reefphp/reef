@@ -25,6 +25,15 @@ abstract class AbstractSingleChoiceField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function getOverviewColumns() : array {
+		return [
+			$this->trans('title'),
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function isRequired() {
 		return false;
 	}

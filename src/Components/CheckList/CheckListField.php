@@ -25,6 +25,33 @@ class CheckListField extends Field {
 	/**
 	 * @inherit
 	 */
+	public function getOverviewColumns() : array {
+		$Reef = $this->getComponent()->getReef();
+		$a_langs = $Reef->getOption('locales');
+		array_unshift($a_langs, $Reef->getOption('default_locale'));
+		$a_langs = array_unique($a_langs);
+		
+		$a_columns = [];
+		
+		foreach($a_vars['options']??[] as $i => $a_option) {
+			
+			$s_title = '';
+			foreach($a_langs as $s_lang) {
+				if(!empty($a_option['locale'][$s_lang])) {
+					$s_title = $a_option['locale'][$s_lang];
+					break;
+				}
+			}
+			
+			$a_columns[] = $s_title;
+		}
+		
+		return $a_columns;
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function isRequired() {
 		return false;
 	}

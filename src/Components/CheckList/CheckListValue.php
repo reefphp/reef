@@ -96,6 +96,13 @@ class CheckListValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function toOverviewColumns() : array {
+		return array_map('intval', $this->a_list);
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function toTemplateVar() {
 		return $this->a_list;
 	}

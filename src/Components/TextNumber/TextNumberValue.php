@@ -123,6 +123,15 @@ class TextNumberValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
+	public function toOverviewColumns() : array {
+		return [
+			$this->f_value,
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function toTemplateVar() {
 		return $this->f_value;
 	}
