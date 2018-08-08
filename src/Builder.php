@@ -150,7 +150,19 @@ class Builder {
 			'definitionForm' => $DefinitionForm->generateFormHtml($DefinitionSubmission, ['main_var' => 'definition']),
 			'form_id' => ($Form instanceof StoredForm) ? $Form->getFormId() : -1,
 			'multipleLocales' => (count($a_locales) > 1),
-			'builder_lang' => $this->Reef->transMultiple(['builder_basic', 'builder_advanced', 'builder_save']),
+			'builder_lang' => $this->Reef->transMultiple([
+				'rf_yes',
+				'rf_no',
+				'builder_basic',
+				'builder_advanced',
+				'builder_save',
+				'builder_save_stage_validate',
+				'builder_save_stage_data',
+				'builder_save_stage_save',
+				'builder_save_dataloss_potential_title',
+				'builder_save_dataloss_definite_title',
+				'builder_save_dataloss_confirm',
+			]),
 		]);
 		
 		return $s_html;

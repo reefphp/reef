@@ -107,6 +107,7 @@ var ReefBuilder = (function() {
 		this.options.success = options.success || $.noop;
 		
 		this.selectedField = null;
+		this.submitting = false;
 		
 		this.$builderWrapper = $($builderWrapper);
 		
@@ -261,6 +262,14 @@ var ReefBuilder = (function() {
 			}
 		}
 		else {
+			if(tab === 'form') {
+				if(this.hideDataLoss()) {
+					// The user has navigated away from the form tab without choosing 'yes' or 'no'
+					// Hence the value of submitting is probably still true
+					// Set it to false to be able to submit the form again
+					this.submitting = false;
+				}
+			}
 			this.deselectField();
 		}
 	};
@@ -277,19 +286,30 @@ var ReefBuilder = (function() {
 	ReefBuilder.prototype.submit = function(callback) {
 		var self = this;
 		
+		if(this.submitting) {
+			return;
+		}
+		
 		self.clearGeneralErrors();
 		
 		var i, declaration;
 		
 		this.deselectField();
 		
+		this.saveProgressIcon('validate');
+		this.submitting = true;
+		
 		if(!this.definitionForm.validate()) {
 			this.openSideTab('form');
+			this.saveProgressIcon('validate', 'error');
+			this.submitting = false;
 			return false;
 		}
 		
 		for(i in this.fields) {
 			if(!this.fields[i].validate()) {
+				this.saveProgressIcon('validate', 'error');
+				this.submitting = false;
 				return false;
 			}
 		}
@@ -306,6 +326,8 @@ var ReefBuilder = (function() {
 				name = declaration.declaration.basic.name;
 				if(typeof names[name] !== 'undefined') {
 					self.generalErrors(["Found duplicate name: "+name]);
+					this.saveProgressIcon('validate', 'error');
+					this.submitting = false;
 					return;
 				}
 				names[name] = true;
@@ -313,6 +335,9 @@ var ReefBuilder = (function() {
 			
 			fields.push(declaration);
 		}
+		
+		this.saveProgressIcon('validate', 'tick');
+		this.saveProgressIcon('data');
 		
 		// Gather all data
 		var form_data = {
@@ -335,27 +360,29 @@ var ReefBuilder = (function() {
 					if(typeof response == 'object') {
 						if(typeof response.errors !== 'undefined') {
 							self.addErrors(response.errors);
+							self.saveProgressIcon('data', 'error');
+							self.submitting = false;
 							return;
 						}
 						
-						var definite = [], potential = [];
-						
-						for(var field_name in response.dataloss) {
-							if(response.dataloss[field_name] == 'definite') {
-								definite.push(field_name);
-							}
-							else if(response.dataloss[field_name] == 'potential') {
-								potential.push(field_name);
-							}
-						}
-						
-						if(definite.length == 0 && potential.length == 0) {
+						var hasDataloss = self.displayDataLoss(response.dataloss, function() {
+							// Dataloss option 'yes'
+							self.saveProgressIcon('save');
 							fn_apply();
-							return;
-						}
+						}, function() {
+							// Dataloss option 'no'
+							self.saveProgressIcon('data', 'error');
+							self.submitting = false;
+						});
 						
-						var txt = 'Potential data loss in '+potential.join(', ')+'; definite data loss in '+definite.join(', ')+'. Continue?';
-						if(confirm(txt)) {
+						if(hasDataloss) {
+							// Data loss, so the yes/no question has been asked
+							self.saveProgressIcon('data', 'question');
+						}
+						else {
+							// No data loss, so proceed immediately
+							self.saveProgressIcon('data', 'tick');
+							self.saveProgressIcon('save');
 							fn_apply();
 						}
 					}
@@ -375,8 +402,12 @@ var ReefBuilder = (function() {
 					if(typeof response == 'object') {
 						if(typeof response.errors !== 'undefined') {
 							self.addErrors(response.errors);
+							self.saveProgressIcon('save', 'error');
+							self.submitting = false;
 							return;
 						}
+						
+						self.saveProgressIcon('save', 'tick');
 						
 						if(typeof response.result !== 'undefined') {
 							
@@ -391,6 +422,8 @@ var ReefBuilder = (function() {
 						if(typeof callback !== 'undefined') {
 							callback(response);
 						}
+						
+						self.submitting = false;
 					}
 				}
 			});
@@ -424,6 +457,101 @@ var ReefBuilder = (function() {
 		}
 		
 		this.openSideTab('form');
+	};
+	
+	ReefBuilder.prototype.saveProgressIcon = function(stage, status) {
+		var self = this;
+		
+		var stages = ['validate', 'data', 'save'];
+		var stageIdx = stages.indexOf(stage);
+		if(stageIdx == -1) {
+			return;
+		}
+		
+		var $fn_icon = function(status) {
+			return self.$builderWrapper.find('.'+CSSPRFX+'builder-save-icons .'+CSSPRFX+'builder-'+status).clone();
+		};
+		
+		if(arguments.length < 2) {
+			status = 'spinner';
+		}
+		
+		this.$builderWrapper
+			.find('.'+CSSPRFX+'builder-save-'+stage)
+				.show()
+			.children('.'+CSSPRFX+'builder-save-icon')
+				.html('')
+				.append($fn_icon(status));
+		
+		for(var i=stageIdx+1; i<stages.length; i++) {
+			this.$builderWrapper
+				.find('.'+CSSPRFX+'builder-save-'+stages[i])
+					.hide()
+				.children('.'+CSSPRFX+'builder-save-icon')
+					.html('');
+		}
+		
+	};
+	
+	ReefBuilder.prototype.hideDataLoss = function() {
+		var was_visible = this.$builderWrapper.find('.'+CSSPRFX+'builder-save-dataloss').is(':visible');
+		
+		this.$builderWrapper
+			.find('.'+CSSPRFX+'builder-save-dataloss')
+				.hide()
+			.find('.'+CSSPRFX+'builder-save-dataloss-definite, .'+CSSPRFX+'builder-save-dataloss-potential')
+				.hide()
+			.find('ul.'+CSSPRFX+'builder-save-dataloss-fields')
+				.html('');
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-dataloss-no, .'+CSSPRFX+'builder-dataloss-yes').off('click.dataloss');
+		
+		return was_visible;
+	};
+	
+	ReefBuilder.prototype.displayDataLoss = function(dataloss, callback_yes, callback_no) {
+		var self = this;
+		
+		// Reset
+		this.hideDataLoss();
+		
+		// Show data loss fields
+		var hasDataloss = false;
+		for(var field_name in dataloss) {
+			if(dataloss[field_name] != 'definite' && dataloss[field_name] != 'potential') {
+				continue;
+			}
+			
+			hasDataloss = true;
+			
+			this.$builderWrapper
+				.find('.'+CSSPRFX+'builder-save-dataloss-'+dataloss[field_name])
+					.show()
+				.find('ul')
+					.append($('<li>').text(field_name));
+		}
+		
+		// Only show builder & attach events if there really is dataloss to be mentioned
+		if(!hasDataloss) {
+			return false;
+		}
+		else {
+			this.$builderWrapper
+				.find('.'+CSSPRFX+'builder-save-dataloss')
+					.show();
+		}
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-dataloss-yes').off('click.dataloss').one('click.dataloss', function() {
+			self.hideDataLoss();
+			callback_yes();
+		});
+		
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-dataloss-no').off('click.dataloss').one('click.dataloss', function() {
+			self.hideDataLoss();
+			callback_no();
+		});
+		
+		return true;
 	};
 	
 	return ReefBuilder;

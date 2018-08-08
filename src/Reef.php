@@ -155,7 +155,12 @@ class Reef {
 	}
 	
 	public function getAssets() {
-		return [];
+		return [
+			'builder-tick' => 'assets/img/builder-tick.svg',
+			'builder-error' => 'assets/img/builder-error.svg',
+			'builder-spinner' => 'assets/img/builder-spinner.svg',
+			'builder-question' => 'assets/img/builder-question.svg',
+		];
 	}
 	
 	public function newMustache() : \Mustache_Engine {

@@ -1,3 +1,5 @@
+rf_yes: Yes
+rf_no: No
 rf_error_required_empty_title: Required notification
 rf_error_required_empty: This field is required
 rf_field_title: Field title
@@ -5,6 +7,12 @@ rf_field_placeholder: Placeholder
 builder_basic: Basic
 builder_advanced: Advanced
 builder_save: Save
+builder_save_stage_validate: Checking forms...
+builder_save_stage_data: Checking data...
+builder_save_stage_save: Saving...
+builder_save_dataloss_potential_title: The made modifications may lead to data loss in the following fields:
+builder_save_dataloss_definite_title: With the made modifications, data loss will occur in the following fields:
+builder_save_dataloss_confirm: Do you want to perform the modifications?
 cat_static: Static
 cat_text: Text
 cat_choice: Choice

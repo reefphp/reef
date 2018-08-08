@@ -71,6 +71,51 @@
 			<button type="button" class="{{CSSPRFX}}builder-btn {{CSSPRFX}}builder-submit" data-action="{{settings.submit_action}}">
 				{{builder_lang.builder_save}}
 			</button>
+			
+			<div class="{{CSSPRFX}}builder-save-progress">
+				<div class="{{CSSPRFX}}builder-save-icons {{CSSPRFX}}builder-template">
+					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-tick" title="" alt="" src="{{#asset}}reef:/builder-tick{{/asset}}">
+					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-error" title="" alt="" src="{{#asset}}reef:/builder-error{{/asset}}">
+					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-spinner" title="" alt="" src="{{#asset}}reef:/builder-spinner{{/asset}}">
+					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-question" title="" alt="" src="{{#asset}}reef:/builder-question{{/asset}}">
+				</div>
+				<div class="{{CSSPRFX}}builder-save-stage {{CSSPRFX}}builder-save-validate" style="display: none;">
+					<div class="{{CSSPRFX}}builder-save-icon"></div>
+					<div class="{{CSSPRFX}}builder-save-text">{{builder_lang.builder_save_stage_validate}}</div>
+				</div>
+				<div class="{{CSSPRFX}}builder-save-stage {{CSSPRFX}}builder-save-data" style="display: none;">
+					<div class="{{CSSPRFX}}builder-save-icon"></div>
+					<div class="{{CSSPRFX}}builder-save-text">{{builder_lang.builder_save_stage_data}}</div>
+				</div>
+				<div class="{{CSSPRFX}}builder-save-stage {{CSSPRFX}}builder-save-save" style="display: none;">
+					<div class="{{CSSPRFX}}builder-save-icon"></div>
+					<div class="{{CSSPRFX}}builder-save-text">{{builder_lang.builder_save_stage_save}}</div>
+				</div>
+			</div>
+			
+			<div class="{{CSSPRFX}}builder-save-dataloss" style="display: none;">
+				<div class="{{CSSPRFX}}builder-save-dataloss-potential" style="display: none;">
+					<span class="{{CSSPRFX}}builder-save-dataloss-title">{{builder_lang.builder_save_dataloss_potential_title}}</span>
+					<ul class="{{CSSPRFX}}builder-save-dataloss-fields"></ul>
+				</div>
+				<div class="{{CSSPRFX}}builder-save-dataloss-definite" style="display: none;">
+					<span class="{{CSSPRFX}}builder-save-dataloss-title">{{builder_lang.builder_save_dataloss_definite_title}}</span>
+					<ul class="{{CSSPRFX}}builder-save-dataloss-fields"></ul>
+				</div>
+				<div class="{{CSSPRFX}}builder-save-dataloss-action">
+					<span>{{builder_lang.builder_save_dataloss_confirm}}</span>
+					
+					<div class="{{CSSPRFX}}builder-save-dataloss-buttons">
+						<button type="button" class="{{CSSPRFX}}builder-btn {{CSSPRFX}}builder-dataloss-yes">
+							{{builder_lang.rf_yes}}
+						</button>
+						
+						<button type="button" class="{{CSSPRFX}}builder-btn {{CSSPRFX}}builder-dataloss-no">
+							{{builder_lang.rf_no}}
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="{{CSSPRFX}}builder-workspace my-3">

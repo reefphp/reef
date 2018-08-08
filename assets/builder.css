@@ -126,17 +126,60 @@
 	margin: 1px 3px;
 }
 
+button.CSSPRFXbuilder-btn {
+	border: 0;
+}
+
 .CSSPRFXbuilder-btn:hover {
 	background-color: #969add;
 }
 
 .CSSPRFXbuilder-btn.CSSPRFXbuilder-submit {
-	border: 0;
 	font-size: 12pt;
 }
 
 .CSSPRFXbuilder-template {
 	display: none;
+}
+
+.CSSPRFXbuilder-save-img {
+	height: 2em;
+}
+
+.CSSPRFXbuilder-spinner {
+	animation: builderspinner 2s linear infinite;
+}
+@keyframes builderspinner {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.CSSPRFXbuilder-save-stage {
+	display: flex;
+}
+
+.CSSPRFXbuilder-save-dataloss-title {
+	font-weight: bold;
+}
+
+.CSSPRFXbuilder-save-dataloss-potential, .CSSPRFXbuilder-save-dataloss-definite, .CSSPRFXbuilder-save-dataloss-action {
+	padding: 5px;
+	margin: 10px;
+}
+
+.CSSPRFXbuilder-save-dataloss-potential {
+	border: 1px solid rgba(255, 128, 0);
+	background-color: rgba(255, 128, 0, 0.1);
+}
+
+.CSSPRFXbuilder-save-dataloss-definite {
+	border: 1px solid rgba(255, 0, 0);
+	background-color: rgba(255, 0, 0, 0.1);
+}
+
+.CSSPRFXbuilder-save-dataloss-buttons {
+	display: flex;
+	justify-content: space-around;
 }
 
 .CSSPRFXbuilder-dialog {
