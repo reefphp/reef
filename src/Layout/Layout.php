@@ -17,10 +17,10 @@ interface Layout {
 	public function getConfig() : array;
 	
 	/**
-	 * Get a merged layout configuration
-	 * @return array The merged layout configuration
+	 * Prepare layout configuration for usage in template
+	 * @return array The template vars
 	 */
-	public function getMergedConfig(array $a_config) : array;
+	public function view(array $a_config) : array;
 	
 	/**
 	 * Returns an array of javascript files required by this layout.

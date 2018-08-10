@@ -141,7 +141,7 @@ class Builder {
 				array_subset($Form->getDefinition(), ['locale']),
 				[
 					'layout_name' => $Layout->getName(),
-					'layout' => $Layout->getConfig(),
+					'layout' => $Layout->view(),
 				]
 			))),
 			'formHtml' => $s_formHtml,
@@ -311,8 +311,7 @@ class Builder {
 			'locale' => [],
 			'layout' => [
 				'bootstrap4' => [
-					'col_left' => 'col-12',
-					'col_right' => 'col-12',
+					'break' => [],
 				],
 			],
 			'fields' => [

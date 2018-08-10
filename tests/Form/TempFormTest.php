@@ -58,7 +58,7 @@ final class TempFormTest extends TestCase {
 		// Specify which components we want to use
 		$Setup = new \Reef\ReefSetup(
 			new \Reef\Storage\NoStorageFactory(),
-			new \Reef\Layout\bootstrap4()
+			new \Reef\Layout\bootstrap4\bootstrap4()
 		);
 		
 		$this->assertInstanceOf(\Reef\ReefSetup::class, $Setup);

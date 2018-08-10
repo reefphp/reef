@@ -417,8 +417,7 @@ abstract class Component {
 		$a_formDefinition = [
 			'layout' => [
 				'bootstrap4' => [
-					'col_left' => 'col-12',
-					'col_right' => 'col-12',
+					'break' => [],
 				],
 			],
 			'fields' => $a_fields,
@@ -488,8 +487,7 @@ abstract class Component {
 			'locale' => [],
 			'layout' => [
 				'bootstrap4' => [
-					'col_left' => 'col-12',
-					'col_right' => 'col-12',
+					'break' => [],
 				],
 			],
 			'fields' => $a_fields,

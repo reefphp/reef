@@ -273,7 +273,7 @@ abstract class Form {
 		$a_data['main_var'] = $a_options['main_var'] ?? 'reef_data';
 		$Layout = $this->Reef->getSetup()->getLayout();
 		$a_data['layout_name'] = $Layout->getName();
-		$a_data['layout'] = $Layout->getMergedConfig($this->a_definition['layout'][$Layout->getName()] ?? []);
+		$a_data['layout'] = $Layout->view($this->a_definition['layout'][$Layout->getName()] ?? []);
 		$a_data['assets_url'] = $this->Reef->getOption('assets_url');
 		
 		$Mustache = $this->Reef->newMustache();
@@ -337,7 +337,7 @@ abstract class Form {
 		$a_data = [];
 		$Layout = $this->Reef->getSetup()->getLayout();
 		$a_data['layout_name'] = $Layout->getName();
-		$a_data['layout'] = $Layout->getMergedConfig($this->a_definition['layout'][$Layout->getName()] ?? []);
+		$a_data['layout'] = $Layout->view($this->a_definition['layout'][$Layout->getName()] ?? []);
 		$a_data['assets_url'] = $this->Reef->getOption('assets_url');
 		
 		$Mustache = $this->Reef->newMustache();

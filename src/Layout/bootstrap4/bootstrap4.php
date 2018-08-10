@@ -1,15 +1,14 @@
 <?php
 
-namespace Reef\Layout;
+namespace Reef\Layout\bootstrap4;
 
-class bootstrap4 implements Layout {
+class bootstrap4 implements \Reef\Layout\Layout {
 	
 	private $a_config;
 	
 	public function __construct($a_config = []) {
 		$this->a_config = array_merge([
-			'col_left' => 'col-12 col-md-3',
-			'col_right' => 'col-12 col-md-9',
+			'break' => ['md' => 3],
 		], $a_config);
 	}
 	
@@ -30,8 +29,32 @@ class bootstrap4 implements Layout {
 	/**
 	 * @inherit
 	 */
-	public function getMergedConfig(array $a_config) : array {
-		return array_merge($this->getConfig(), $a_config);
+	public function view(array $a_config = []) : array {
+		$a_config = array_merge($this->a_config, $a_config);
+		
+		$a_break = $a_config['break'];
+		
+		$i_previous = 12;
+		$a_bps_left = ['col-12'];
+		$a_bps_right = ['col-12'];
+		
+		foreach(['xs', 'sm', 'md', 'lg', 'xl'] as $s_bp) {
+			if(!isset($a_break[$s_bp]) || $a_break[$s_bp] == $i_previous) {
+				continue;
+			}
+			
+			$i_left = (int)$a_break[$s_bp];
+			
+			$a_bps_left[] = 'col-'.$s_bp.'-'.$i_left;
+			$a_bps_right[] = 'col-'.$s_bp.'-'.(12-$i_left);
+			
+			$i_previous = $i_left;
+		}
+		
+		return [
+			'col_left' => implode(' ', $a_bps_left),
+			'col_right' => implode(' ', $a_bps_right),
+		];
 	}
 	
 	/**
