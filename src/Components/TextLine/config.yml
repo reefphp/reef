@@ -11,6 +11,7 @@ advancedLocale:
 internalLocale:
     error_regexp:
     error_value_too_long:
+    rf_submission_empty_value:
 basicDefinition:
     fields:
       - component: reef:checkbox

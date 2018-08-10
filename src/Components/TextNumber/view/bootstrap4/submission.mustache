@@ -3,6 +3,11 @@
 		{{field.locale.title}}
 	</label>
 	<div class="{{layout.col_right}}">
-		{{field.value}}
+		{{#field.value}}
+			{{field.value}}
+		{{/field.value}}
+		{{^field.value}}
+			<span class="font-italic text-muted">{{field.locale.rf_submission_empty_value}}</span>
+		{{/field.value}}
 	</div>
 </div>

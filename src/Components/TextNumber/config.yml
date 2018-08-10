@@ -12,6 +12,8 @@ advancedLocale:
     error_number_max: error_number_max_title
     error_number_min_max: error_number_min_max_title
     rf_error_required_empty: rf_error_required_empty_title
+internalLocale:
+    rf_submission_empty_value:
 basicDefinition:
     fields:
       - component: reef:checkbox
