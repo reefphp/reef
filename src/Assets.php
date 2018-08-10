@@ -11,8 +11,8 @@ abstract class Assets {
 	abstract public function getReef() : Reef;
 	abstract protected function getComponents() : array;
 	
-	public function getCSSHTML() {
-		$a_assets = $this->getCSS();
+	public function getCSSHTML($a_options = []) {
+		$a_assets = $this->getCSS($a_options);
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
@@ -30,8 +30,8 @@ abstract class Assets {
 		return $s_html;
 	}
 	
-	public function getJSHTML() {
-		$a_assets = $this->getJS();
+	public function getJSHTML($a_options = []) {
+		$a_assets = $this->getJS($a_options);
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
@@ -49,12 +49,12 @@ abstract class Assets {
 		return $s_html;
 	}
 	
-	public function getCSS() {
-		return $this->getAssets('CSS');
+	public function getCSS($a_options = []) {
+		return $this->getAssets('CSS', $a_options);
 	}
 	
-	public function getJS() {
-		return $this->getAssets('JS');
+	public function getJS($a_options = []) {
+		return $this->getAssets('JS', $a_options);
 	}
 	
 	public function addLocalCSS($s_path) {
@@ -65,13 +65,13 @@ abstract class Assets {
 		$this->customAssets['JS'][] = __DIR__ . '/../'.$s_path;
 	}
 	
-	private function getAssets($s_type) {
+	private function getAssets($s_type, $a_options) {
 		if($s_type != 'JS' && $s_type != 'CSS') {
 			throw new InvalidArgumentException("Invalid asset type '".$s_type."'.");
 		}
 		$s_assetFnc = 'get'.$s_type;
 		
-		$a_remoteAssets = [];
+		$a_remoteAssets = $this->getReef()->getSetup()->getLayout()->$s_assetFnc();
 		
 		foreach($this->getComponents() as $Component) {
 			$a_assets = $Component->$s_assetFnc();
@@ -81,6 +81,31 @@ abstract class Assets {
 					$a_remoteAssets[$a_asset['name']] = $a_asset;
 				}
 			}
+		}
+		
+		if($s_type == 'JS' && !isset($a_remoteAssets['jquery'])) {
+			$a_remoteAssets = array_merge(['jquery' => [
+				'name' => 'jquery',
+				'type' => 'remote',
+				'path' => 'https://code.jquery.com/jquery-3.2.1.min.js',
+				'integrity' => 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=',
+			]], $a_remoteAssets);
+		}
+		
+		if($s_type == 'JS' && !empty($a_options['builder'])) {
+			$a_remoteAssets[] = [
+				'name' => 'sortable',
+				'type' => 'remote',
+				'path' => 'https://cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js',
+				'integrity' => 'sha256-+BvLlLgWJALRwV4lbCh0i4zqHhDqxR8FKUJmIl/u/vQ=',
+			];
+			
+			$a_remoteAssets[] = [
+				'name' => 'mustache',
+				'type' => 'remote',
+				'path' => 'https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js',
+				'integrity' => 'sha256-iaqfO5ue0VbSGcEiQn+OeXxnxAMK2+QgHXIDA5bWtGI=',
+			];
 		}
 		
 		$this->checkLocalAsset($s_type, $s_assetsHash);

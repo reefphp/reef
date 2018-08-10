@@ -34,4 +34,38 @@ class bootstrap4 implements Layout {
 		return array_merge($this->getConfig(), $a_config);
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function getJS() : array {
+		return [
+			[
+				'name' => 'popper',
+				'type' => 'remote',
+				'path' => 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js',
+				'integrity' => 'sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q',
+			],
+			[
+				'name' => 'bootstrap4',
+				'type' => 'remote',
+				'path' => 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js',
+				'integrity' => 'sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl',
+			],
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getCSS() : array {
+		return [
+			[
+				'name' => 'bootstrap4',
+				'type' => 'remote',
+				'path' => 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
+				'integrity' => 'sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm',
+			],
+		];
+	}
+	
 }
