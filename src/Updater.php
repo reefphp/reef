@@ -162,6 +162,12 @@ class Updater {
 		
 		[$a_create, $a_update, $a_delete] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
 		
+		if(empty($Form->getStorageName()) || $newForm->getStorageName() != $Form->getStorageName()) {
+			if($Form->getReef()->getDataStore()->hasSubmissionStorage($newForm->getStorageName())) {
+				throw new ValidationException([-1 => ["Storage name '".$newForm->getStorageName()."' is already in use"]]);
+			}
+		}
+		
 		if(empty($Form->getStorageName())) {
 			$Form->setStorageName($newForm->getStorageName());
 		}
