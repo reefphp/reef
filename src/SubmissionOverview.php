@@ -32,12 +32,12 @@ class SubmissionOverview {
 		return $this;
 	}
 	
-	public function getTable() : array {
-		return $this->Form->getSubmissionStorage()->table();
+	public function getTable(int $i_offset = 0, int $i_num = -1) : array {
+		return $this->Form->getSubmissionStorage()->table($i_offset, $i_num);
 	}
 	
-	public function getGenerator() : iterable {
-		yield from $this->Form->getSubmissionStorage()->generator();
+	public function getGenerator(int $i_offset = 0, int $i_num = -1) : iterable {
+		yield from $this->Form->getSubmissionStorage()->generator($i_offset, $i_num);
 	}
 	
 	public function streamCSV(string $s_filename = null) {
