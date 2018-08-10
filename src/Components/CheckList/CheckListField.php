@@ -125,7 +125,7 @@ class CheckListField extends Field {
 		[$a_create, $a_update, $a_delete] = $this->getOptionUpdatePlan($OldField, $this);
 		
 		if(count($a_delete) > 0) {
-			return Updater::DATALOSS_POTENTIAL;
+			return Updater::DATALOSS_DEFINITE;
 		}
 		
 		return Updater::DATALOSS_NO;

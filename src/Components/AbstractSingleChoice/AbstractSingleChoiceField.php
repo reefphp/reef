@@ -99,7 +99,10 @@ abstract class AbstractSingleChoiceField extends Field {
 	public function updateDataLoss($OldField) {
 		[$a_create, $a_update, $a_delete] = $this->getOptionUpdatePlan($OldField, $this);
 		
-		if(count($a_delete) > 0) {
+		if(count($a_delete) == count($OldField->a_declaration['options'])) {
+			return Updater::DATALOSS_DEFINITE;
+		}
+		else if(count($a_delete) > 0) {
 			return Updater::DATALOSS_POTENTIAL;
 		}
 		

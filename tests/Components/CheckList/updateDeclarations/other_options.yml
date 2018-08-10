@@ -20,7 +20,7 @@ declaration_after:
       - {name: e, locale: e}
 
 dataloss:
-    the_field_name: potential
+    the_field_name: definite
 
 values_after:
   - {d: true,  a: true,  e: false}
