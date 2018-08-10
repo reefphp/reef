@@ -6,3 +6,4 @@ error_min_options: Voer minimaal [[min_num_options]] opties in
 error_max_checked_defaults: Maximum aantal standaard aangevinkte opties [[max_checked_defaults]] overschreden
 error_regexp: Ongeldige optie naam
 error_duplicate: Optie naam twee keer gebruikt
+delete_option_confirm: Verwijderen?

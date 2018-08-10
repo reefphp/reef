@@ -129,13 +129,37 @@ Reef.addComponent((function() {
 		});
 		
 		$option.find('.'+CSSPRFX+'ol-remove-option').on('click', function() {
-			$option.remove();
-			self.$field.trigger(EVTPRFX+'change');
+			self.removeOption($option);
 		});
 		
 		this.auto_inc++;
 		
 		return $option;
+	};
+	
+	Field.prototype.removeOption = function($option) {
+		var self = this;
+		
+		var $lang = this.$field.find('.'+CSSPRFX+'ol-lang');
+		
+		var $deleteConfirm = $('<td class="'+CSSPRFX+'ol-delete-confirm" colspan="5">');
+		var $deleteConfirmDiv = $('<div class="'+CSSPRFX+'ol-delete-confirm-div">').appendTo($deleteConfirm);
+		$deleteConfirmDiv.append($('<div>').text($lang.data('delete_option_confirm')));
+		
+		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'builder-btn">').text($lang.data('yes')).on('click', function() {
+			$deleteConfirm.remove();
+			
+			$option.remove();
+			self.$field.trigger(EVTPRFX+'change');
+		}));
+		
+		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'builder-btn">').text($lang.data('no')).on('click', function() {
+			$deleteConfirm.remove();
+			
+			$option.removeClass(CSSPRFX+'ol-deleting');
+		}));
+		
+		$option.addClass(CSSPRFX+'ol-deleting').append($deleteConfirm);
 	};
 	
 	Field.prototype.openLocale = function(locale) {

@@ -13,6 +13,9 @@ internalLocale:
     error_max_checked_defaults:
     error_regexp:
     error_duplicate:
+    rf_yes:
+    rf_no:
+    delete_option_confirm:
 basicDefinition:
     fields:
       - component: reef:text_number

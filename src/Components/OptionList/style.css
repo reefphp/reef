@@ -38,3 +38,25 @@
 .CSSPRFXol-btn:hover {
 	background-color: #969add;
 }
+
+tr.CSSPRFXol-option.CSSPRFXol-deleting > td {
+	display: none;
+}
+
+tr.CSSPRFXol-option.CSSPRFXol-deleting > td.CSSPRFXol-delete-confirm {
+	display: table-cell;
+}
+
+tr.CSSPRFXol-option.CSSPRFXol-deleting > td.CSSPRFXol-delete-confirm > div.CSSPRFXol-delete-confirm-div {
+	display: flex;
+	justify-content: space-evenly;
+	border: 1px dashed rgba(255, 0, 0);
+	background-color: rgba(255, 0, 0, 0.05);
+	padding: 2px;
+	width: 100%;
+	align-items: center;
+}
+
+div.CSSPRFXol-delete-confirm-div div.CSSPRFXbuilder-btn {
+	font-size: 10pt;
+}
