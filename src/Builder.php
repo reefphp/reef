@@ -134,7 +134,7 @@ class Builder {
 		$Mustache = $this->Reef->newMustache();
 		
 		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
-		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/builder.mustache');
+		$Template = $Mustache->loadTemplate('view/builder.mustache');
 		
 		$s_html = $Template->render([
 			'categories' => $a_categories,
