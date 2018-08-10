@@ -215,8 +215,7 @@ abstract class Field {
 		return $this->combineLocaleSources(
 			$this->getOwnLocaleSource($s_locale),
 			$this->getForm()->getOwnLocaleSource($s_locale),
-			$this->getComponent()->getCombinedLocaleSources($s_locale),
-			\Reef\array_subset($this->getComponent()->getReef()->getOwnLocaleSource($s_locale), $this->getLocaleKeys())
+			$this->getComponent()->getCombinedLocaleSources($s_locale)
 		);
 	}
 	

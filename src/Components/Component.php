@@ -367,7 +367,11 @@ abstract class Component {
 	
 	protected function getLocaleKeys() {
 		$a_configuration = $this->getConfiguration();
-		return array_merge(array_filter(array_keys($a_configuration['locale'])), array_column($a_configuration['locale'], 'title_key'));
+		return array_merge(
+			array_filter(array_keys($a_configuration['locale'])),
+			array_column($a_configuration['locale'], 'title_key'),
+			array_keys($a_configuration['internalLocale'])
+		);
 	}
 	
 	private function combineOwnAndParentLocaleSource($s_locale) {
