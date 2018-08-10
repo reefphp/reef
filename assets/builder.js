@@ -115,6 +115,7 @@ var ReefBuilder = (function() {
 			self.openSideTab($(this).data('tab'));
 		});
 		
+		// Add fields on drag
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-components').each(function() {
 			Sortable.create(this, {
 					sort: false,
@@ -129,7 +130,7 @@ var ReefBuilder = (function() {
 			);
 		});
 		
-		Sortable.create(this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace .'+CSSPRFX+'fields')[0], {
+		Sortable.create(this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace > .'+CSSPRFX+'fields')[0], {
 				sort: true,
 				group: {
 					name: 'component-select',
@@ -140,7 +141,8 @@ var ReefBuilder = (function() {
 				animation: 150,
 				onAdd: function(evt) {
 					var $item = $(evt.item);
-					self.addField($item, evt.newIndex);
+					var field = self.addField($item, evt.newIndex);
+					self.selectField(field);
 				},
 				onUpdate: function(evt) {
 					self.moveField(evt.oldIndex, evt.newIndex);
@@ -148,21 +150,32 @@ var ReefBuilder = (function() {
 			}
 		);
 		
+		// Add fields on click
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-component').on('click', function() {
+			var $item = $(this).clone();
+			self.$builderWrapper.find('.'+CSSPRFX+'builder-workspace > .'+CSSPRFX+'fields').append($item);
+			var field = self.addField($item, self.fields.length);
+			self.selectField(field);
+		});
+		
+		// Submit button
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-submit').on('click', function() {
 			self.submit();
 		});
 		
+		// Often used elements
 		this.fields = [];
 		
 		this.reef = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace'));
 		
 		this.definitionForm = new Reef(this.$builderWrapper.find('.'+CSSPRFX+'builder-definition-form'));
 		
+		// Add existing fields
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-existing-field').each(function(index) {
 			self.addField($(this), index);
 			$(this).remove();
 		});
-		this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace .'+CSSPRFX+'fields').append(this.$builderWrapper.find('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-field'));
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace > .'+CSSPRFX+'fields').append(this.$builderWrapper.find('.'+CSSPRFX+'builder-existing-fields .'+CSSPRFX+'builder-field'));
 		
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-tab').on('click', function() {
 			self.openFieldTab($(this).data('type'));
@@ -177,6 +190,7 @@ var ReefBuilder = (function() {
 		var field = new ReefBuilderField(this);
 		field.initFromItem($item);
 		this.fields.splice(newIndex, 0, field);
+		return field;
 	};
 	
 	ReefBuilder.prototype.moveField = function(oldIndex, newIndex) {
@@ -707,7 +721,7 @@ var ReefBuilderField = (function() {
 		$deleteConfirm.append($('<div class="'+CSSPRFX+'builder-btn">').text($lang.data('yes')).on('click', function() {
 			$deleteConfirm.remove();
 			
-			self.reefBuilder.removeField(this);
+			self.reefBuilder.removeField(self);
 			self.$fieldWrapper.remove();
 		}));
 		
