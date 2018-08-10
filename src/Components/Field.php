@@ -128,13 +128,37 @@ abstract class Field {
 		return $a_columnNames;
 	}
 	
+	/**
+	 * Determine whether a schema update is required for this field.
+	 * The before/after schema update functions will be called whenever:
+	 *   - the flat structure changes, or
+	 *   - the field name changes, or
+	 *   - this function returns true
+	 * May throw a ValidationException to indicate incompatibilities
+	 * @param Field $OldField The old field migrating from
+	 * @return boolean Whether a schema update is required
+	 */
 	public function needsSchemaUpdate(Field $OldField) {
 		return false;
 	}
 	
+	/**
+	 * Perform data updates before the schema is changed
+	 * @param array $a_data The same array as in afterSchemaUpdate(), with in addition:
+	 *   - new_field : The new field we are migrating to
+	 */
 	public function beforeSchemaUpdate($a_data) {
 	}
 	
+	
+	/**
+	 * Perform data updates after the schema is changed
+	 * @param array $a_data Array containing:
+	 *   - PDO_DRIVER : The PDO driver used
+	 *   - content_updater : A function that can be used to perform SQL queries
+	 *   - old_columns : The old column names
+	 *   - new_columns : The new column names
+	 */
 	public function afterSchemaUpdate($a_data) {
 	}
 	
