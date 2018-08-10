@@ -146,14 +146,14 @@ Reef.addComponent((function() {
 		var $deleteConfirmDiv = $('<div class="'+CSSPRFX+'ol-delete-confirm-div">').appendTo($deleteConfirm);
 		$deleteConfirmDiv.append($('<div>').text($lang.data('delete_option_confirm')));
 		
-		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'builder-btn">').text($lang.data('yes')).on('click', function() {
+		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'ol-btn">').text($lang.data('yes')).on('click', function() {
 			$deleteConfirm.remove();
 			
 			$option.remove();
 			self.$field.trigger(EVTPRFX+'change');
 		}));
 		
-		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'builder-btn">').text($lang.data('no')).on('click', function() {
+		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'ol-btn">').text($lang.data('no')).on('click', function() {
 			$deleteConfirm.remove();
 			
 			$option.removeClass(CSSPRFX+'ol-deleting');
