@@ -117,7 +117,7 @@ abstract class PDOStorageTestCase extends TestCase {
 			'number' => '65',
 		];
 		
-		$a_data['entry_id'] = 1;
+		$a_data['_entry_id'] = 1;
 		$this->assertEquals($a_data, static::$Storage->table()[0]);
 		
 		return $i_entryId;
@@ -132,7 +132,7 @@ abstract class PDOStorageTestCase extends TestCase {
 			'number' => '65',
 		];
 		
-		$a_data['entry_id'] = 1;
+		$a_data['_entry_id'] = 1;
 		$this->assertEquals($a_data, static::$Storage->generator()->current());
 		
 		return $i_entryId;

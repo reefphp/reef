@@ -32,8 +32,8 @@ class PDO_MySQL_Storage extends PDOStorage {
 	public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage {
 		$sth = $PDO->prepare("
 			CREATE TABLE ".static::sanitizeName($s_table)." (
-				entry_id INT NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (entry_id)
+				_entry_id INT NOT NULL AUTO_INCREMENT,
+				PRIMARY KEY (_entry_id)
 			);
 		");
 		$sth->execute();
@@ -57,7 +57,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 		$sth = $this->PDO->prepare("
 			SELECT *
 			FROM ".$this->es_table."
-			ORDER BY entry_id ASC
+			ORDER BY _entry_id ASC
 			LIMIT ".$i_num."
 			OFFSET ".$i_offset."
 		");
@@ -255,7 +255,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 		
 		for($i = 0; $i < $i_columns; $i++) {
 			$a_column = $sth->getColumnMeta($i);
-			if($a_column['name'] == 'entry_id') {
+			if($a_column['name'] == '_entry_id') {
 				continue;
 			}
 			

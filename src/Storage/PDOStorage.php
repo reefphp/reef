@@ -76,7 +76,7 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function count() : int {
 		$sth = $this->PDO->prepare("
-			SELECT COUNT(entry_id) AS num
+			SELECT COUNT(_entry_id) AS num
 			FROM ".$this->es_table."
 			GROUP BY 1
 		");
@@ -90,9 +90,9 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function list() : array {
 		$sth = $this->PDO->prepare("
-			SELECT entry_id
+			SELECT _entry_id
 			FROM ".$this->es_table."
-			ORDER BY entry_id ASC
+			ORDER BY _entry_id ASC
 		");
 		$sth->execute();
 		$a_rows = $sth->fetchAll(PDO::FETCH_NUM);
@@ -142,7 +142,7 @@ abstract class PDOStorage implements Storage {
 		$a_keys = $a_values = [];
 		
 		if($i_entryId !== null) {
-			$a_keys[] = 'entry_id';
+			$a_keys[] = '_entry_id';
 			$a_values[] = $i_entryId;
 		}
 		
@@ -183,7 +183,7 @@ abstract class PDOStorage implements Storage {
 		$sth = $this->PDO->prepare("
 			UPDATE ".$this->es_table."
 			SET ".$s_sets."
-			WHERE entry_id = ?
+			WHERE _entry_id = ?
 		");
 		$sth->execute($a_values);
 		return $sth->rowCount();
@@ -195,7 +195,7 @@ abstract class PDOStorage implements Storage {
 	public function delete(int $i_entryId) {
 		$sth = $this->PDO->prepare("
 			DELETE FROM ".$this->es_table."
-			WHERE entry_id = ?
+			WHERE _entry_id = ?
 		");
 		$sth->execute([$i_entryId]);
 		return $sth->rowCount();
@@ -207,7 +207,7 @@ abstract class PDOStorage implements Storage {
 	public function get(int $i_entryId) : ?array {
 		$sth = $this->PDO->prepare("
 			SELECT * FROM ".$this->es_table."
-			WHERE entry_id = ?
+			WHERE _entry_id = ?
 		");
 		$sth->execute([$i_entryId]);
 		$a_result = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -217,7 +217,7 @@ abstract class PDOStorage implements Storage {
 		}
 		
 		$a_result = $a_result[0];
-		unset($a_result['entry_id']);
+		unset($a_result['_entry_id']);
 		
 		return $a_result;
 	}
@@ -227,8 +227,8 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function exists(int $i_entryId) : bool {
 		$sth = $this->PDO->prepare("
-			SELECT entry_id FROM ".$this->es_table."
-			WHERE entry_id = ?
+			SELECT _entry_id FROM ".$this->es_table."
+			WHERE _entry_id = ?
 		");
 		$sth->execute([$i_entryId]);
 		$a_result = $sth->fetchAll(PDO::FETCH_ASSOC);
