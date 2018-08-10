@@ -43,20 +43,23 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 }
 
+$DisplayForm = $Form->tempDuplicate();
+$DisplayForm->newCreator()->addField('reef:submit')->apply();
+
 if($b_load) {
 	// If $b_load is true, we should display an existing submission
 	$i_submissionId = $Submission->getSubmissionId();
 	if($b_view) {
-		$s_form = $Form->generateSubmissionHtml($Submission, []);
+		$s_form = $DisplayForm->generateSubmissionHtml($Submission, []);
 	}
 	else {
-		$s_form = $Form->generateFormHtml($Submission, ['main_var' => 'form_data']);
+		$s_form = $DisplayForm->generateFormHtml($Submission, ['main_var' => 'form_data']);
 	}
 }
 else {
 	// Else, we display the form for adding a new submission
 	$i_submissionId = -1;
-	$s_form = $Form->generateFormHtml(null, ['main_var' => 'form_data']);
+	$s_form = $DisplayForm->generateFormHtml(null, ['main_var' => 'form_data']);
 }
 
 $s_CSS = $Form->getFormAssets()->getCSSHTML();
@@ -104,7 +107,6 @@ if($b_view) {
 	<div class="form-wrapper">
 		<?php echo($s_form); ?>
 	</div>
-	<input type="submit" name="submit" value="submit" class="btn btn-primary" />
 </form>
 <script>
 var reef;

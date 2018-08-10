@@ -24,6 +24,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	die();
 }
 
-$s_form = $Form->generateFormHtml(null, ['main_var' => 'form_data']);
+$DisplayForm = $Form->tempDuplicate();
+$DisplayForm->newCreator()->addField('reef:submit')->apply();
+
+$s_form = $DisplayForm->generateFormHtml(null, ['main_var' => 'form_data']);
 
 echo($s_form);

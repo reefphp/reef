@@ -163,6 +163,17 @@ abstract class Form {
 	}
 	
 	/**
+	 * Duplicate this form into a temporary form
+	 * 
+	 * @return TempForm
+	 */
+	public function tempDuplicate() {
+		$Form = new TempForm($this->Reef);
+		$Form->importValidatedDefinition($this->generateDefinition());
+		return $Form;
+	}
+	
+	/**
 	 * Import a form definition from the given file
 	 * 
 	 * @param string $s_filename The file name

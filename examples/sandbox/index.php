@@ -312,7 +312,6 @@ $(function() {
 			<form action="submission.php" method="post" id="submission_form">
 				<input type="hidden" name="submission_id" value="-1" />
 				<div class="form-wrapper py-3"></div>
-				<input type="submit" name="submit" value="submit" class="btn btn-primary mx-3" />
 			</form>
 		</div>
 	</div>

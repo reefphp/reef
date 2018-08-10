@@ -1,0 +1,7 @@
+vendor: reef
+name: submit
+category: static
+assets:
+    component_image: ../../../assets/img/static-heading.svg
+basicLocale:
+    title: submit_title

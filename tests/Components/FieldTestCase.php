@@ -129,8 +129,10 @@ abstract class FieldTestCase extends TestCase {
 		
 		$this->assertInternalType('bool', $Field->isRequired());
 		
-		// Test column names
-		$this->assertSame($Field->dataFieldNamesToColumnNames(), array_flip($Field->columnNamesToDataFieldNames()));
+		if(static::$Component->getConfiguration()['category'] != 'static') {
+			// Test column names
+			$this->assertSame($Field->dataFieldNamesToColumnNames(), array_flip($Field->columnNamesToDataFieldNames()));
+		}
 	}
 	
 	

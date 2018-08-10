@@ -39,15 +39,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$b_load = true;
 }
 
+$DisplayForm = $Form->tempDuplicate();
+$DisplayForm->newCreator()->addField('reef:submit')->apply();
+
 if($b_load) {
 	// If $b_load is true, we should display an existing submission
 	$i_submissionId = $Submission->getSubmissionId();
-	$s_form = $Form->generateFormHtml($Submission, ['main_var' => 'form_data']);
+	$s_form = $DisplayForm->generateFormHtml($Submission, ['main_var' => 'form_data']);
 }
 else {
 	// Else, we display the form for adding a new submission
 	$i_submissionId = -1;
-	$s_form = $Form->generateFormHtml(null, ['main_var' => 'form_data']);
+	$s_form = $DisplayForm->generateFormHtml(null, ['main_var' => 'form_data']);
 }
 
 $s_CSS = $Form->getFormAssets()->getCSSHTML();
@@ -80,11 +83,16 @@ foreach($Form->getSubmissionIds() as $i_id) {
 	<div class="form-wrapper">
 		<?php echo($s_form); ?>
 	</div>
-	<input type="submit" name="submit" value="submit" class="btn btn-primary" />
 <?php
 if(!$Submission->isNew()) {
 	?>
-	<input type="submit" name="delete" value="delete" class="btn btn-outline-danger" />
+	<div class="container-fluid">
+		<div class="row form-group">
+			<div class="col">
+				<input type="submit" name="delete" value="delete" class="btn btn-outline-danger" />
+			</div>
+		</div>
+	</div>
 	<?php
 }
 ?>
