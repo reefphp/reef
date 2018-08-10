@@ -141,10 +141,8 @@ abstract class PDOStorage implements Storage {
 		
 		$a_keys = $a_values = [];
 		
-		if($i_entryId !== null) {
-			$a_keys[] = '_entry_id';
-			$a_values[] = $i_entryId;
-		}
+		$a_keys[] = '_entry_id';
+		$a_values[] = $i_entryId; // May be null to get auto increment
 		
 		foreach($a_data as $s_key => $s_value) {
 			$a_keys[] = static::sanitizeName($s_key);
@@ -177,6 +175,10 @@ abstract class PDOStorage implements Storage {
 		}
 		
 		$a_values[] = $i_entryId;
+		
+		if(empty($a_sets)) {
+			return 1;
+		}
 		
 		$s_sets = implode(', ', $a_sets);
 		
