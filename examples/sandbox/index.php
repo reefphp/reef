@@ -8,6 +8,11 @@ $Form->importDefinition($_SESSION['sandbox']['definition']);
 $Builder = $Reef->getBuilder();
 $Builder->setSettings([
 	'submit_action' => 'index.php',
+	'definition_form_creator' => function($Creator) {
+		$Creator
+			->getFieldByName('storage_name')
+				->delete();
+	},
 ]);
 
 if(isset($_POST['form_data'])) {

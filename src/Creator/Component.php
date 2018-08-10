@@ -192,6 +192,15 @@ class Component extends Context {
 		return $this;
 	}
 	
+	public function delete() : Creator {
+		$this->requireIndex();
+		
+		array_splice($this->a_fields, $this->i_index, 1);
+		
+		$this->i_index = null;
+		return $this->Creator;
+	}
+	
 	public function setIndex(int $i_index) : Component {
 		$this->requireIndex();
 		

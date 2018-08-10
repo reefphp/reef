@@ -22,6 +22,7 @@ class Builder {
 	private $a_settings = [
 		'submit_action' => null,
 		'components' => null,
+		'definition_form_creator' => null,
 	];
 	
 	/**
@@ -179,7 +180,7 @@ class Builder {
 		$DefinitionForm = $this->generateDefinitionForm($Form);
 		$DefinitionSubmission = $DefinitionForm->newSubmission();
 		
-		$DefinitionSubmission->fromUserInput($a_data['definition']);
+		$DefinitionSubmission->fromUserInput($a_data['definition']??[]);
 		
 		if(!$DefinitionSubmission->validate()) {
 			$a_errors[-1] = $DefinitionSubmission->getErrors();
@@ -282,7 +283,7 @@ class Builder {
 			$a_fields[] = $a_fieldDecl;
 		}
 		
-		$a_newDefinition = array_merge($Form->getDefinition(), $DefinitionSubmission->toStructured(['skip_default' => true]));
+		$a_newDefinition = array_merge($Form->getDefinition(), array_subset($DefinitionSubmission->toStructured(['skip_default' => true]), ['storage_name']));
 		$a_newDefinition['fields'] = $a_fields;
 		
 		return [$a_newDefinition, $a_fieldRenames];
@@ -334,6 +335,12 @@ class Builder {
 		
 		$ConfigForm = $this->Reef->newTempForm();
 		$ConfigForm->importValidatedDefinition($a_definition);
+		
+		if(isset($this->a_settings['definition_form_creator']) && is_callable($this->a_settings['definition_form_creator'])) {
+			$Creator = $ConfigForm->newCreator();
+			$this->a_settings['definition_form_creator']($Creator);
+			$Creator->apply();
+		}
 		
 		return $ConfigForm;
 	}

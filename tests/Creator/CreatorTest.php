@@ -193,7 +193,7 @@ final class CreatorTest extends TestCase {
 		
 		$this->expectException(CreatorException::class);
 		
-		static::$Creator
+		static::$Form->newCreator()
 			->addField('reef:text_number')
 				->setName('input_1');
 	}
@@ -276,6 +276,31 @@ final class CreatorTest extends TestCase {
 		
 		$this->assertSame(array_merge($a_localeSet, $a_localeAdd), $a_localeGet);
 		
+	}
+	
+	/**
+	 * @depends testLocale
+	 */
+	public function testDelete(): void {
+		
+		static::$Creator
+			->addField('reef:text_line')
+				->setName('input_del')
+				->setLocale('en_US', [
+					'title' => 'Input del',
+				])
+			->apply();
+		
+		$this->assertSame(2, count(static::$Form->getFields()));
+		
+		static::$Creator
+			->getFieldByName('input_del')
+				->delete()
+			->apply();
+		
+		$this->assertSame(1, count(static::$Form->getFields()));
+		
+		$this->assertSame('input_3', static::$Creator->getFieldByPosition(1)->return('name'));
 	}
 	
 	/**
