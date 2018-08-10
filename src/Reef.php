@@ -74,7 +74,7 @@ class Reef {
 		$this->ReefSetup = $ReefSetup;
 		$this->ReefSetup->checkSetup($this);
 		
-		$this->DataStore = new DataStore($this->ReefSetup->getStorageFactory());
+		$this->DataStore = new DataStore($this->ReefSetup->getStorageFactory(), ['prefix' => $a_options['db_prefix'] ?? 'reef_']);
 	}
 	
 	public static function getDir() : string {

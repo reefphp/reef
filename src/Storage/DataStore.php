@@ -13,8 +13,9 @@ class DataStore {
 	
 	private $s_prefix;
 	
-	public function __construct(StorageFactory $StorageFactory) {
+	public function __construct(StorageFactory $StorageFactory, $a_options) {
 		$this->StorageFactory = $StorageFactory;
+		$this->s_prefix = $a_options['prefix'];
 	}
 	
 	public function getFormStorage() : Storage {
