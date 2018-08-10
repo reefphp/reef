@@ -116,6 +116,22 @@
 	margin-bottom: 1em;
 }
 
+.CSSPRFXbuilder-field.CSSPRFXbuilder-field-deleting {
+	border: 1px dashed rgba(255, 0, 0);
+	background-color: rgba(255, 0, 0, 0.05);
+}
+
+.CSSPRFXbuilder-field.CSSPRFXbuilder-field-deleting > div {
+	display: none;
+}
+
+.CSSPRFXbuilder-field.CSSPRFXbuilder-field-deleting > div.CSSPRFXbuilder-field-delete-confirm {
+	display: flex;
+	justify-content: space-evenly;
+	width: 100%;
+	align-items: center;
+}
+
 .CSSPRFXbuilder-btn {
 	display: inline-block;
 	background-color: #a6aaed;

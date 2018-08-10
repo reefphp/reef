@@ -163,6 +163,7 @@ class Builder {
 				'builder_save_dataloss_potential_title',
 				'builder_save_dataloss_definite_title',
 				'builder_save_dataloss_confirm',
+				'builder_delete_field_confirm',
 			]),
 		]);
 		

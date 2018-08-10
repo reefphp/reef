@@ -626,7 +626,11 @@ var ReefBuilderField = (function() {
 			$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms').append($template);
 		}
 		
-		$fieldWrapper.on('click', function() {
+		$fieldWrapper.on('click', function(evt) {
+			if($(evt.target).closest('.'+CSSPRFX+'builder-component-delete, .'+CSSPRFX+'builder-field-delete-confirm').length > 0) {
+				return;
+			}
+			
 			self.reefBuilder.selectField(self);
 		});
 		
@@ -693,8 +697,27 @@ var ReefBuilderField = (function() {
 	};
 	
 	ReefBuilderField.prototype.deleteField = function() {
-		this.reefBuilder.removeField(this);
-		this.$fieldWrapper.remove();
+		var self = this;
+		
+		var $lang = this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-lang');
+		
+		var $deleteConfirm = $('<div class="'+CSSPRFX+'builder-field-delete-confirm">');
+		$deleteConfirm.append($('<div>').text($lang.data('builder_delete_field_confirm')));
+		
+		$deleteConfirm.append($('<div class="'+CSSPRFX+'builder-btn">').text($lang.data('yes')).on('click', function() {
+			$deleteConfirm.remove();
+			
+			self.reefBuilder.removeField(this);
+			self.$fieldWrapper.remove();
+		}));
+		
+		$deleteConfirm.append($('<div class="'+CSSPRFX+'builder-btn">').text($lang.data('no')).on('click', function() {
+			$deleteConfirm.remove();
+			
+			self.$fieldWrapper.removeClass(CSSPRFX+'builder-field-deleting');
+		}));
+		
+		this.$fieldWrapper.addClass(CSSPRFX+'builder-field-deleting').append($deleteConfirm);
 	};
 	
 	ReefBuilderField.prototype.updateField = function() {
