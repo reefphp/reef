@@ -144,7 +144,7 @@ abstract class Field {
 	 * @return string One of the Updater::DATALOSS_* constants
 	 */
 	public function updateDataLoss(Field $OldField) {
-		return Reef\Updater::DATALOSS_POTENTIAL;
+		return \Reef\Updater::DATALOSS_POTENTIAL;
 	}
 	
 	/**

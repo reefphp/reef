@@ -542,9 +542,9 @@ var ReefBuilder = (function() {
 			var li;
 			if(typeof(field_name2idx[field_name]) !== 'undefined') {
 				li = $('<li>').append(
-					$('<a href="#">').text(field_name).on('click', function(evt) {
+					$('<a href="#">').text(field_name).data('field_name', field_name).on('click', function(evt) {
 						evt.preventDefault();
-						self.selectField(self.fields[field_name2idx[field_name]]);
+						self.selectField(self.fields[field_name2idx[$(this).data('field_name')]]);
 					})
 				);
 			}
