@@ -7,15 +7,37 @@ use \Reef\Exception\StorageException;
 use \Reef\Exception\RuntimeException;
 use \Reef\Exception\InvalidArgumentException;
 
-class PDOStorageFactory implements StorageFactory {
+abstract class PDOStorageFactory implements StorageFactory {
 	private $PDO;
 	private $a_savepoints = [];
 	private $i_savepointCounter = 0;
 	
+	static public function createFactory(PDO $PDO) : PDOStorageFactory {
+		switch($PDO->getAttribute(PDO::ATTR_DRIVER_NAME)) {
+			case 'sqlite':
+				return new PDO_SQLite_StorageFactory($PDO);
+			case 'mysql':
+				return new PDO_MySQL_StorageFactory($PDO);
+			// @codeCoverageIgnoreStart
+			default:
+				throw new InvalidArgumentException("Unsupported PDO driver ".$PDO->getAttribute(PDO::ATTR_DRIVER_NAME).".");
+			// @codeCoverageIgnoreEnd
+		}
+	}
+	
 	public function __construct(PDO $PDO) {
 		$this->PDO = $PDO;
 		$this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		
+		if($this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME) != $this->getPDODriverName()) {
+			// @codeCoverageIgnoreStart
+			throw new InvalidArgumentException("PDO storage ".$this->getPDODriverName()." does not support PDO driver ".$this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME)." ");
+			// @codeCoverageIgnoreEnd
+		}
 	}
+	
+	abstract protected function getStorageClass();
+	abstract protected function getPDODriverName();
 	
 	public function getStorage(string $s_tableName) {
 		$s_storageClass = $this->getStorageClass();
@@ -31,19 +53,6 @@ class PDOStorageFactory implements StorageFactory {
 		$s_storageClass = $this->getStorageClass();
 		
 		return $s_storageClass::table_exists($this, $this->PDO, $s_tableName);
-	}
-	
-	private function getStorageClass() {
-		switch($this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME)) {
-			case 'sqlite':
-				return '\Reef\Storage\PDO_SQLite_Storage';
-			case 'mysql':
-				return '\Reef\Storage\PDO_MySQL_Storage';
-			// @codeCoverageIgnoreStart
-			default:
-				throw new InvalidArgumentException("Unsupported PDO driver ".$this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME).".");
-			// @codeCoverageIgnoreEnd
-		}
 	}
 	
 	public function inTransaction() {

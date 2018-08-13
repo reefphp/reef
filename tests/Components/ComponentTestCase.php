@@ -26,7 +26,7 @@ abstract class ComponentTestCase extends TestCase {
 		
 		// Specify which components we want to use
 		static::$Setup = new \Reef\ReefSetup(
-			new \Reef\Storage\PDOStorageFactory($PDO),
+			\Reef\Storage\PDOStorageFactory::createFactory($PDO),
 			new \Reef\Layout\bootstrap4\bootstrap4()
 		);
 	}

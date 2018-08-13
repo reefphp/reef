@@ -8,7 +8,7 @@ $PDO = new \PDO("sqlite:storage/reef.db");
 
 // Specify which components we want to use
 $Setup = new \Reef\ReefSetup(
-	new Reef\Storage\PDOStorageFactory($PDO),
+	\Reef\Storage\PDOStorageFactory::createFactory($PDO),
 	new Reef\Layout\bootstrap4\bootstrap4()
 );
 

@@ -19,7 +19,7 @@ final class PDOSQLiteStorageTest extends PDOStorageTestCase {
 	
 	public function testCanBeCreated(): void {
 		static::$PDO = new \PDO("sqlite:".static::STORAGE_DIR."/test.db");
-		static::$PDO_Factory = new \Reef\Storage\PDOStorageFactory(static::$PDO);
+		static::$PDO_Factory = \Reef\Storage\PDOStorageFactory::createFactory(static::$PDO);
 		
 		$this->assertInstanceOf(
 			PDO_SQLite_Storage::class,

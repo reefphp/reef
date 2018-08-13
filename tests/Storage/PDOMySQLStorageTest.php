@@ -34,7 +34,7 @@ final class PDOMySQLStorageTest extends PDOStorageTestCase {
 	}
 	
 	public function testCanBeCreated(): void {
-		static::$PDO_Factory = new \Reef\Storage\PDOStorageFactory(static::$PDO);
+		static::$PDO_Factory = \Reef\Storage\PDOStorageFactory::createFactory(static::$PDO);
 		
 		$this->assertInstanceOf(
 			PDO_MySQL_Storage::class,
