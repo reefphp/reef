@@ -78,7 +78,6 @@ abstract class PDOStorage implements Storage {
 		$sth = $this->PDO->prepare("
 			SELECT COUNT(_entry_id) AS num
 			FROM ".$this->es_table."
-			GROUP BY 1
 		");
 		$sth->execute();
 		$a_rows = $sth->fetchAll(PDO::FETCH_NUM);

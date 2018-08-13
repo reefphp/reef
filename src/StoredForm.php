@@ -70,6 +70,11 @@ class StoredForm extends Form {
 		$Form2 = clone $this;
 		$Form2->importDefinition($a_definition);
 		
+		// If there are no rows, there will be no data loss
+		if($this->getNumSubmissions() === 0) {
+			return [];
+		}
+		
 		$Updater = new Updater();
 		return $Updater->determineUpdateDataLoss($this, $Form2, $a_fieldRenames);
 	}
@@ -112,7 +117,11 @@ class StoredForm extends Form {
 	}
 	
 	public function getSubmissionIds() {
-		return $this->getSubmissionStorage()->list();
+		return ($this->i_formId === null) ? [] : $this->getSubmissionStorage()->list();
+	}
+	
+	public function getNumSubmissions() : int {
+		return ($this->i_formId === null) ? 0 : $this->getSubmissionStorage()->count();
 	}
 	
 	public function getSubmission(int $i_submissionId) : Submission {

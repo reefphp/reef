@@ -1,8 +1,8 @@
 #!/usr/bin/env php
 <?php
 
-if ($argc <= 1) {
-  die("Usage: php runner.php [phpunit config]");
+if ($argc == 0) {
+	die("Usage: php runner.php [phpunit config]");
 }
 
 $s_baseDir = realpath(__DIR__ . '/../').'/';

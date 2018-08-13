@@ -66,6 +66,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		
 		$this->assertSame(['1'], static::$Storage->list());
 		$this->assertSame(2, static::$Storage->next());
+		$this->assertSame(1, static::$Storage->count());
 		
 		$a_data2 = static::$Storage->get($i_entryId);
 		$this->assertInternalType('array', $a_data2);
@@ -265,6 +266,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		static::$Storage->delete($i_entryId);
 		
 		$this->assertFalse(static::$Storage->exists($i_entryId));
+		$this->assertSame(0, static::$Storage->count());
 	}
 	
 	/**
