@@ -108,6 +108,14 @@ abstract class Assets {
 			];
 		}
 		
+		if(isset($a_options['exclude'])) {
+			foreach($a_remoteAssets as $i => $a_remoteAsset) {
+				if(in_array($a_remoteAsset['name'], $a_options['exclude'])) {
+					unset($a_remoteAssets[$i]);
+				}
+			}
+		}
+		
 		$this->checkLocalAsset($s_type, $s_assetsHash);
 		
 		$a_assets = $a_remoteAssets;
