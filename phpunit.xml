@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+         bootstrap="vendor/autoload.php"
+         verbose="true"
+         colors="true">
+    <testsuites>
+        <testsuite name="Reef Unit Tests">
+            <directory>./tests/unit/</directory>
+        </testsuite>
+    </testsuites>
+    <testsuites>
+        <testsuite name="Reef Integration Tests: SQLite">
+            <directory>./tests/integration/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
