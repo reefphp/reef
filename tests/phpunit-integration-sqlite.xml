@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+         bootstrap="bootstrap-integration-sqlite.php"
+         verbose="true"
+         colors="true">
+    <testsuites>
+        <testsuite name="integration-sqlite">
+            <directory>./integration/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

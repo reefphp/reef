@@ -20,31 +20,11 @@ final class SubmissionOverviewTest extends TestCase {
 	private static $i_submissionId;
 	
 	public static function setUpBeforeClass() {
-		
-	}
-	
-	public function testCanCreateReef(): void {
-		$PDO = new \PDO("sqlite::memory:");
-		
-		// Specify which components we want to use
-		$Setup = new \Reef\ReefSetup(
-			\Reef\Storage\PDOStorageFactory::createFactory($PDO),
-			new \Reef\Layout\bootstrap4\bootstrap4()
-		);
-		
-		$this->assertInstanceOf(\Reef\ReefSetup::class, $Setup);
-		
-		static::$Reef = new \Reef\Reef(
-			$Setup,
-			[
-			]
-		);
-		
-		$this->assertInstanceOf(\Reef\Reef::class, static::$Reef);
+		global $_reef_reef;
+		static::$Reef = $_reef_reef;
 	}
 	
 	/**
-	 * @depends testCanCreateReef
 	 */
 	public function testCanCreateForm(): void {
 		static::$Form = static::$Reef->newStoredForm();
@@ -52,7 +32,7 @@ final class SubmissionOverviewTest extends TestCase {
 		$Creator = static::$Form->newCreator();
 		$Creator
 			->getForm()
-				->setStorageName('test')
+				->setStorageName('submission_overview_test')
 			->addField('reef:heading')
 				->set('size', 4)
 				->setLocale(['title' => 'Test form'])
@@ -131,5 +111,9 @@ final class SubmissionOverviewTest extends TestCase {
 		unset($a_table[4]); // Empty line..
 		
 		$this->assertSame([3], array_unique(array_map(function($a_row) { return count($a_row); }, $a_table)));
+	}
+	
+	public static function tearDownAfterClass() {
+		static::$Form->delete();
 	}
 }

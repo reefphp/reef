@@ -3,9 +3,6 @@
 namespace tests\Form;
 
 use PHPUnit\Framework\TestCase;
-use Reef\Storage\PDO_SQLite_Storage;
-use \Reef\Storage\Storage;
-use \Reef\Exception\OutOfBoundsException;
 
 final class TempFormTest extends TestCase {
 	

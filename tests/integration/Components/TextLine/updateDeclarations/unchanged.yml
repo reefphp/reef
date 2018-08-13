@@ -1,7 +1,7 @@
 declaration_before:
     component: reef:text_line
     name: 'the_field_name'
-    max_length: 15
+    max_length: 17
 
 values_before:
   - asdf
@@ -11,7 +11,7 @@ values_before:
 declaration_after:
     component: reef:text_line
     name: 'the_field_name'
-    max_length: 15
+    max_length: 17
 
 dataloss:
     the_field_name: no

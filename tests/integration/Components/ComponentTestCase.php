@@ -11,28 +11,23 @@ abstract class ComponentTestCase extends TestCase {
 	protected static $Component;
 	protected static $s_componentName;
 	
-	const STORAGE_DIR = 'var/tmp/test/component_test_storage';
 	const CACHE_DIR = 'var/tmp/test/component_test_cache';
 	
 	public static function setUpBeforeClass() {
-		if(!is_dir(static::STORAGE_DIR)) {
-			mkdir(static::STORAGE_DIR, 0777);
-		}
+		global $_reef_PDO;
+		
 		if(!is_dir(static::CACHE_DIR)) {
 			mkdir(static::CACHE_DIR, 0777);
 		}
 		
-		$PDO = new \PDO("sqlite:".static::STORAGE_DIR."/test.db");
-		
 		// Specify which components we want to use
 		static::$Setup = new \Reef\ReefSetup(
-			\Reef\Storage\PDOStorageFactory::createFactory($PDO),
+			\Reef\Storage\PDOStorageFactory::createFactory($_reef_PDO),
 			new \Reef\Layout\bootstrap4\bootstrap4()
 		);
 	}
 	
 	public static function tearDownAfterClass() {
-		unlink(static::STORAGE_DIR."/test.db");
 		\Reef\rmTree(static::CACHE_DIR, true);
 	}
 	

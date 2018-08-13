@@ -3,51 +3,25 @@
 namespace tests\Form;
 
 use PHPUnit\Framework\TestCase;
-use Reef\Storage\PDO_SQLite_Storage;
-use \Reef\Storage\Storage;
 use \Reef\Exception\OutOfBoundsException;
 
 final class StoredFormTest extends TestCase {
-	
-	const STORAGE_DIR = 'var/tmp/test/sqlite_storage';
 	
 	private static $Reef;
 	private static $Form;
 	private static $i_submissionId;
 	
 	public static function setUpBeforeClass() {
-		if(!is_dir(static::STORAGE_DIR)) {
-			mkdir(static::STORAGE_DIR, 0777);
-		}
-	}
-	
-	public function testCanCreateReef(): void {
-		$PDO = new \PDO("sqlite:".static::STORAGE_DIR."/test.db");
-		
-		// Specify which components we want to use
-		$Setup = new \Reef\ReefSetup(
-			\Reef\Storage\PDOStorageFactory::createFactory($PDO),
-			new \Reef\Layout\bootstrap4\bootstrap4()
-		);
-		
-		$this->assertInstanceOf(\Reef\ReefSetup::class, $Setup);
-		
-		static::$Reef = new \Reef\Reef(
-			$Setup,
-			[
-			]
-		);
-		
-		$this->assertInstanceOf(\Reef\Reef::class, static::$Reef);
+		global $_reef_reef;
+		static::$Reef = $_reef_reef;
 	}
 	
 	/**
-	 * @depends testCanCreateReef
 	 */
 	public function testCanCreateForm(): void {
 		static::$Form = static::$Reef->newStoredForm();
 		static::$Form->newDefinition([
-			'storage_name' => 'test',
+			'storage_name' => 'stored_form_test',
 			'fields' => [
 				[
 					'component' => 'reef:heading',
@@ -209,9 +183,5 @@ final class StoredFormTest extends TestCase {
 		static::$Form->delete();
 		
 		$this->assertSame(0, count(static::$Reef->getFormIds()));
-	}
-	
-	public static function tearDownAfterClass() {
-		unlink(static::STORAGE_DIR."/test.db");
 	}
 }

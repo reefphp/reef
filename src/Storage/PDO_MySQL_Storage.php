@@ -72,7 +72,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 				$i_limit = max($i_limit, 1);
 				
 				if($i_limit <= 100) {
-					$s_columnType = 'VARCHAR';
+					$s_columnType = 'VARCHAR('.$i_limit.')';
 				}
 				else if($i_limit <= 2000) {
 					$s_columnType = 'TINYTEXT';
