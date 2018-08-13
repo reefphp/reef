@@ -57,7 +57,7 @@ class CheckboxValue extends FieldValue {
 	 */
 	public function toFlat() : array {
 		return [
-			$this->b_value,
+			(int)$this->b_value,
 		];
 	}
 	

@@ -10,9 +10,9 @@ use \Reef\Exception\InvalidArgumentException;
 final class SubmissionOverviewTest extends TestCase {
 	
 	const ROWS = [
-		['_entry_id' => 1, 'input_1' => 'asdf', 'input_2' => true],
-		['_entry_id' => 2, 'input_1' => '', 'input_2' => false],
-		['_entry_id' => 3, 'input_1' => 'test test', 'input_2' => true],
+		['_entry_id' => 1, 'input_1' => 'asdf', 'input_2' => 1],
+		['_entry_id' => 2, 'input_1' => '', 'input_2' => 0],
+		['_entry_id' => 3, 'input_1' => 'test test', 'input_2' => 1],
 	];
 	
 	private static $Reef;
