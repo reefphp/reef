@@ -13,4 +13,14 @@ abstract class AbstractSingleChoiceComponent extends Component {
 		return __DIR__.'/';
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function supportedStorages() : ?array {
+		return [
+			'mysql',
+			'sqlite',
+		];
+	}
+	
 }

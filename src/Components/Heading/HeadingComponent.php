@@ -25,4 +25,11 @@ class HeadingComponent extends Component {
 		];
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function supportedStorages() : ?array {
+		return null;
+	}
+	
 }

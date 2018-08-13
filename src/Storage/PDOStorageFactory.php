@@ -12,7 +12,7 @@ abstract class PDOStorageFactory implements StorageFactory {
 	private $a_savepoints = [];
 	private $i_savepointCounter = 0;
 	
-	static public function createFactory(PDO $PDO) : PDOStorageFactory {
+	public static function createFactory(PDO $PDO) : PDOStorageFactory {
 		switch($PDO->getAttribute(PDO::ATTR_DRIVER_NAME)) {
 			case 'sqlite':
 				return new PDO_SQLite_StorageFactory($PDO);

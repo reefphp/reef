@@ -4,6 +4,13 @@ namespace Reef\Storage;
 
 class NoStorageFactory implements StorageFactory {
 	
+	/**
+	 * @inherit
+	 */
+	public static function getName() : string {
+		return 'nostorage';
+	}
+	
 	public function __construct() {
 	}
 	

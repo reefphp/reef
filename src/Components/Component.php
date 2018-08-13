@@ -105,6 +105,13 @@ abstract class Component {
 	abstract public function supportedLayouts() : array;
 	
 	/**
+	 * Returns an array of supported storages. May return null to indicate that
+	 * no storage is required for this component, which implies there is no storage dependency.
+	 * @return ?array
+	 */
+	abstract public function supportedStorages() : ?array;
+	
+	/**
 	 * Return a list of class names, of this class and all its parents, except this abstract Component class
 	 * @return string The directory
 	 */

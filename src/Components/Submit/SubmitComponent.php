@@ -25,4 +25,11 @@ class SubmitComponent extends Component {
 		];
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function supportedStorages() : ?array {
+		return null;
+	}
+	
 }

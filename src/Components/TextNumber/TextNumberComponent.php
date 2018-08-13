@@ -52,4 +52,14 @@ class TextNumberComponent extends Component {
 			'bootstrap4',
 		];
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function supportedStorages() : ?array {
+		return [
+			'mysql',
+			'sqlite',
+		];
+	}
 }

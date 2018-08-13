@@ -65,4 +65,14 @@ class TextLineComponent extends Component {
 		];
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function supportedStorages() : ?array {
+		return [
+			'mysql',
+			'sqlite',
+		];
+	}
+	
 }

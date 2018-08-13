@@ -4,6 +4,7 @@ namespace Reef;
 
 use Reef\Components\Component;
 use \Reef\Storage\StorageFactory;
+use \Reef\Storage\NoStorageFactory;
 use \Reef\Layout\Layout;
 use \Reef\Exception\LogicException;
 use \Reef\Exception\DomainException;
@@ -51,7 +52,8 @@ class ReefSetup {
 			$Component->setReef($this->Reef);
 		}
 		
-		$s_layout = $this->Layout->getName();
+		$s_layout = $this->Layout::getName();
+		$s_storage = $this->StorageFactory::getName();
 		
 		foreach($this->a_componentMapping as $Component) {
 			foreach($Component->requiredComponents() as $s_requiredComponent) {
@@ -62,6 +64,11 @@ class ReefSetup {
 			
 			if(!in_array($s_layout, $Component->supportedLayouts())) {
 				throw new LogicException("Component ".$Component::COMPONENT_NAME." does not support layout ".$s_layout.".");
+			}
+			
+			$a_supportedStorages = $Component->supportedStorages();
+			if($a_supportedStorages !== null && $s_storage != NoStorageFactory::getName() && !in_array($s_storage, $a_supportedStorages)) {
+				throw new LogicException("Component ".$Component::COMPONENT_NAME." does not support storage ".$s_storage.".");
 			}
 		}
 	}

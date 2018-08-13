@@ -49,4 +49,14 @@ class OptionListComponent extends Component {
 		];
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function supportedStorages() : ?array {
+		return [
+			'mysql',
+			'sqlite',
+		];
+	}
+	
 }
