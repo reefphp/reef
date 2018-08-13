@@ -4,12 +4,12 @@ namespace Reef\Components;
 
 use Reef\Form;
 use Reef\Reef;
-use Reef\Trait_Locale;
+use Reef\Locale\Trait_ComponentLocale;
 use Symfony\Component\Yaml\Yaml;
 
 abstract class Component {
 	
-	use Trait_Locale;
+	use Trait_ComponentLocale;
 	
 	protected $Reef;
 	protected $a_configuration;
@@ -352,47 +352,6 @@ abstract class Component {
 	 */
 	public function getCSS() {
 		return [];
-	}
-	
-	protected function fetchBaseLocale($s_locale) {
-		return $this->Reef->cache('locale.component.base.'.static::COMPONENT_NAME.'.'.$s_locale, function() use($s_locale) {
-			
-			if(file_exists(static::getDir().'locale/'.$s_locale.'.yml')) {
-				return Yaml::parseFile(static::getDir().'locale/'.$s_locale.'.yml')??[];
-			}
-			
-			return [];
-		});
-	}
-	
-	protected function getLocaleKeys() {
-		$a_configuration = $this->getConfiguration();
-		return array_merge(
-			array_filter(array_keys($a_configuration['locale'])),
-			array_column($a_configuration['locale'], 'title_key'),
-			array_keys($a_configuration['internalLocale'])
-		);
-	}
-	
-	private function combineOwnAndParentLocaleSource($s_locale) {
-		
-		$ParentComponent = $this->getParent();
-		if(!empty($ParentComponent)) {
-			return $this->combineLocaleSources($this->getOwnLocaleSource($s_locale), $ParentComponent->combineOwnAndParentLocaleSource($s_locale));
-		}
-		
-		return $this->getOwnLocaleSource($s_locale);
-	}
-	
-	public function getCombinedLocaleSources($s_locale) {
-		return $this->combineLocaleSources(
-			$this->combineOwnAndParentLocaleSource($s_locale),
-			\Reef\array_subset($this->Reef->getOwnLocaleSource($s_locale), $this->getLocaleKeys())
-		);
-	}
-	
-	protected function getDefaultLocale() {
-		return $this->getReef()->getOption('default_locale');
 	}
 	
 	public function generateBasicDeclarationForm() {

@@ -1,21 +1,8 @@
 <?php
 
-namespace Reef;
+namespace Reef\Locale;
 
 trait Trait_Locale {
-	
-	/**
-	 * @note Locale is fetched in the following order:
-	 *  - field custom
-	 *  - field
-	 *  - form custom
-	 *  - form
-	 *  - component custom
-	 *  - component
-	 *  - component parents custom
-	 *  - component parents
-	 *  - general/common
-	 */
 	
 	private $a_locales = [];
 	private $a_localeSources = [];

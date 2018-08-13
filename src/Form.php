@@ -2,7 +2,7 @@
 
 namespace Reef;
 
-use \Reef\Trait_Locale;
+use \Reef\Locale\Trait_FormLocale;
 use \Reef\Exception\ResourceNotFoundException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -14,7 +14,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 abstract class Form {
 	
-	use Trait_Locale;
+	use Trait_FormLocale;
 	
 	/**
 	 * The Reef object this Form belongs to
@@ -420,38 +420,6 @@ abstract class Form {
 		}
 		
 		return $a_overviewColumns;
-	}
-	
-	/**
-	 * @inherit
-	 */
-	protected function fetchBaseLocale($s_locale) {
-		if(!empty($s_locale) && isset($this->a_definition['locales'][$s_locale])) {
-			return $this->a_definition['locales'][$s_locale];
-		}
-		else if(isset($this->a_definition['locale'])) {
-			return $this->a_definition['locale'];
-		}
-		else {
-			return [];
-		}
-	}
-	
-	/**
-	 * @inherit
-	 */
-	public function getCombinedLocaleSources($s_locale) {
-		return $this->combineLocaleSources(
-			$this->getOwnLocaleSource($s_locale),
-			$this->Reef->getOwnLocaleSource($s_locale)
-		);
-	}
-	
-	/**
-	 * @inherit
-	 */
-	protected function getDefaultLocale() {
-		return $this->a_definition['default_locale']??$this->Reef->getOption('default_locale');
 	}
 	
 	/**

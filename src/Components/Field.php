@@ -2,13 +2,13 @@
 
 namespace Reef\Components;
 
-use Reef\Trait_Locale;
+use Reef\Locale\Trait_FieldLocale;
 use Reef\Form;
 use Symfony\Component\Yaml\Yaml;
 
 abstract class Field {
 	
-	use Trait_Locale;
+	use Trait_FieldLocale;
 	
 	protected $a_declaration;
 	protected $Component;
@@ -216,34 +216,5 @@ abstract class Field {
 		unset($a_vars['locales']);
 		
 		return $a_vars;
-	}
-	
-	protected function fetchBaseLocale($s_locale) {
-		if(!empty($s_locale) && isset($this->a_declaration['locales'][$s_locale])) {
-			return $this->a_declaration['locales'][$s_locale];
-		}
-		else if(isset($this->a_declaration['locale'])) {
-			return $this->a_declaration['locale'];
-		}
-		else {
-			return [];
-		}
-	}
-	
-	protected function getLocaleKeys() {
-		$a_configuration = $this->getComponent()->getConfiguration();
-		return array_keys(array_merge($a_configuration['locale'], $a_configuration['internalLocale']));
-	}
-	
-	public function getCombinedLocaleSources($s_locale) {
-		return $this->combineLocaleSources(
-			$this->getOwnLocaleSource($s_locale),
-			$this->getForm()->getOwnLocaleSource($s_locale),
-			$this->getComponent()->getCombinedLocaleSources($s_locale)
-		);
-	}
-	
-	protected function getDefaultLocale() {
-		return $this->getForm()->getDefinition()['default_locale']??$this->getComponent()->getReef()->getOption('default_locale');
 	}
 }

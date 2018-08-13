@@ -2,7 +2,7 @@
 
 namespace Reef;
 
-use \Reef\Trait_Locale;
+use \Reef\Locale\Trait_ReefLocale;
 use \Reef\Storage\DataStore;
 use \Reef\Storage\StorageFactory;
 use \Reef\Storage\Storage;
@@ -15,7 +15,7 @@ require(__DIR__ . '/functions.php');
 
 class Reef {
 	
-	use Trait_Locale;
+	use Trait_ReefLocale;
 	
 	const NAME_REGEXP = '^[a-zA-Z](((?!__)[a-zA-Z0-9_])*[a-zA-Z0-9])?$';
 	
@@ -178,21 +178,6 @@ class Reef {
 		]);
 		
 		return $Mustache;
-	}
-	
-	protected function fetchBaseLocale($s_locale) {
-		return $this->cache('locale.reef.base.'.$s_locale, function() use($s_locale) {
-			
-			if(file_exists(static::getDir().'locale/'.$s_locale.'.yml')) {
-				return Yaml::parseFile(static::getDir().'locale/'.$s_locale.'.yml')??[];
-			}
-			
-			return [];
-		});
-	}
-	
-	protected function getDefaultLocale() {
-		return $this->getOption('default_locale');
 	}
 	
 	public function getReefAssets() {
