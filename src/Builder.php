@@ -290,21 +290,66 @@ class Builder {
 		return [$a_newDefinition, $a_fieldRenames];
 	}
 	
-	
-	public function applyBuilderData(Form $Form, array $a_data) {
-		[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
+	/**
+	 * Process builder data and return the result
+	 * @param Form $Form The form to modify
+	 * @param array $a_data The builder data from the builder
+	 * @return array The return data to be returned (in JSON format) to the builder
+	 */
+	public function processBuilderData_return(Form $Form, array $a_data) : array {
+		try {
+			[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
+			
+			$a_return = null;
+			
+			if(!isset($a_data['allow_dataloss']) || $a_data['allow_dataloss'] !== 'yes') {
+				// Check dataloss
+				$a_dataloss = $Form->checkUpdateDataLoss($a_newDefinition, $a_fieldRenames);
+				
+				if(!empty(array_diff($a_dataloss, [Updater::DATALOSS_NO]))) {
+					$a_return = [
+						'dataloss' => $a_dataloss,
+					];
+				}
+			}
+			
+			if($a_return === null) {
+				// Apply
+				$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
+				
+				$a_return = [
+					'result' => true,
+				];
+			}
+		}
+		catch(\Reef\Exception\ValidationException $e) {
+			$a_return = [
+				'errors' => $e->getErrors(),
+			];
+		}
 		
-		$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
+		$a_return['result'] = !empty($a_return['result']);
 		
-		return [
-			'result' => true,
-		];
+		return $a_return;
 	}
 	
-	public function checkBuilderDataLoss(Form $Form, array $a_data) {
-		[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
+	/**
+	 * Process builder data and write the result to output, exiting afterwards.
+	 * This function does NOT return!
+	 * @param Form $Form The form to modify
+	 * @param array $a_data The builder data from the builder
+	 * @param ?callable $fn_callback Callback to apply just before exiting.
+	 * 			The return array (@see processBuilderData_return()) is passed as first argument
+	 */
+	public function processBuilderData_write(Form $Form, array $a_data, ?callable $fn_callback = null) {
+		$a_return = $this->processBuilderData_return($Form, $a_data);
 		
-		return $Form->checkUpdateDataLoss($a_newDefinition, $a_fieldRenames);
+		if($fn_callback !== null) {
+			$fn_callback($a_return);
+		}
+		
+		echo json_encode($a_return);
+		die();
 	}
 	
 	private function generateDefinitionForm(Form $Form) {

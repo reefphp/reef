@@ -348,30 +348,32 @@ var ReefBuilder = (function() {
 		}
 		
 		this.saveProgressIcon('validate', 'tick');
-		this.saveProgressIcon('data');
+		this.saveProgressIcon('save');
 		
 		// Gather all data
-		var form_data = {
+		var builder_data = {
 			'form_id' : this.$builderWrapper.find('.'+CSSPRFX+'builder').data('form_id'),
 			'definition' : this.definitionForm.getData(),
-			'fields' : fields
+			'fields' : fields,
+			'allow_dataloss' : 'no'
 		};
 		
-		(function(fn_apply) {
-			// Check data loss
+		var fn_submit = function() {
+			// Check for data loss & apply
 			$.ajax({
 				url: self.$builderWrapper.find('.'+CSSPRFX+'builder-submit').data('action'),
 				method: 'POST',
 				data: {
-					form_data : form_data,
-					mode : 'check'
+					builder_data : builder_data
 				},
 				dataType: 'json',
 				success: function(response) {
 					if(typeof response == 'object') {
-						if(typeof response.errors !== 'undefined') {
-							self.addErrors(response.errors);
-							self.saveProgressIcon('data', 'error');
+						if(typeof response.errors !== 'undefined' || typeof response.result === 'undefined') {
+							if(typeof response.errors !== 'undefined') {
+								self.addErrors(response.errors);
+							}
+							self.saveProgressIcon('save', 'error');
 							self.submitting = false;
 							return;
 						}
@@ -379,7 +381,8 @@ var ReefBuilder = (function() {
 						var hasDataloss = self.displayDataLoss(response.dataloss, function() {
 							// Dataloss option 'yes'
 							self.saveProgressIcon('save');
-							fn_apply();
+							builder_data.allow_dataloss = 'yes';
+							fn_submit();
 						}, function() {
 							// Dataloss option 'no'
 							self.saveProgressIcon('data', 'error');
@@ -389,41 +392,19 @@ var ReefBuilder = (function() {
 						if(hasDataloss) {
 							// Data loss, so the yes/no question has been asked
 							self.saveProgressIcon('data', 'question');
+							return;
 						}
-						else {
-							// No data loss, so proceed immediately
-							self.saveProgressIcon('data', 'tick');
-							self.saveProgressIcon('save');
-							fn_apply();
-						}
-					}
-				}
-			});
-		})(function() {
-			// Save form
-			$.ajax({
-				url: self.$builderWrapper.find('.'+CSSPRFX+'builder-submit').data('action'),
-				method: 'POST',
-				data: {
-					form_data : form_data,
-					mode : 'apply'
-				},
-				dataType: 'json',
-				success: function(response) {
-					if(typeof response == 'object') {
-						if(typeof response.errors !== 'undefined') {
-							self.addErrors(response.errors);
+						
+						// 'Some' error?
+						if(!response.result) {
 							self.saveProgressIcon('save', 'error');
 							self.submitting = false;
 							return;
 						}
 						
+						// A positive result and no data loss
 						self.saveProgressIcon('save', 'tick');
 						
-						if(typeof response.result !== 'undefined') {
-							
-							
-						}
 						if(typeof response.redirect !== 'undefined') {
 							window.location = response.redirect;
 						}
@@ -438,7 +419,9 @@ var ReefBuilder = (function() {
 					}
 				}
 			});
-		});
+		};
+		
+		fn_submit();
 	};
 	
 	ReefBuilder.prototype.interruptSubmit = function() {
@@ -534,6 +517,10 @@ var ReefBuilder = (function() {
 		
 		// Reset
 		this.hideDataLoss();
+		
+		if(typeof dataloss === 'undefined') {
+			return false;
+		}
 		
 		// Build mapping from field names to field index
 		var field_name2idx = {};

@@ -15,29 +15,14 @@ $Builder->setSettings([
 	},
 ]);
 
-if(isset($_POST['form_data'])) {
-	try {
-		if($_POST['mode'] == 'apply') {
-			$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
-			
+if(isset($_POST['builder_data'])) {
+	$Builder->processBuilderData_write($Form, $_POST['builder_data'], function(&$a_return) use($Form) {
+		if($a_return['result']) {
 			$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
 			
 			$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
 		}
-		else {
-			$a_return = [
-				'dataloss' => $Builder->checkBuilderDataLoss($Form, $_POST['form_data']),
-			];
-		}
-	}
-	catch(\Reef\Exception\ValidationException $e) {
-		$a_return = [
-			'errors' => $e->getErrors(),
-		];
-	}
-	
-	echo json_encode($a_return);
-	die();
+	});
 }
 
 if(isset($_POST['definition'])) {

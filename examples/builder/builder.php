@@ -3,8 +3,8 @@
 require_once('./common.php');
 
 // Find whether we are given an existing form id
-if(isset($_POST['form_data']['form_id']) && $_POST['form_data']['form_id'] > 0) {
-	$Form = $Reef->getForm($_POST['form_data']['form_id']);
+if(isset($_POST['builder_data']['form_id']) && $_POST['builder_data']['form_id'] > 0) {
+	$Form = $Reef->getForm($_POST['builder_data']['form_id']);
 }
 else if(isset($_GET['form_id']) && $_GET['form_id'] > 0) {
 	$Form = $Reef->getForm($_GET['form_id']);
@@ -31,28 +31,12 @@ $Builder->setSettings([
 	'submit_action' => 'builder.php',
 ]);
 
-if(isset($_POST['form_data'])) {
-	try {
-		if($_POST['mode'] == 'apply') {
-			$a_return = $Builder->applyBuilderData($Form, $_POST['form_data']);
-			$Form->save();
-			
+if(isset($_POST['builder_data'])) {
+	$Builder->processBuilderData_write($Form, $_POST['builder_data'], function(&$a_return) {
+		if($a_return['result']) {
 			$a_return['redirect'] = 'index.php';
 		}
-		else {
-			$a_return = [
-				'dataloss' => $Builder->checkBuilderDataLoss($Form, $_POST['form_data']),
-			];
-		}
-	}
-	catch(\Reef\Exception\ValidationException $e) {
-		$a_return = [
-			'errors' => $e->getErrors(),
-		];
-	}
-	
-	echo json_encode($a_return);
-	die();
+	});
 }
 
 $s_html = $Builder->generateBuilderHtml($Form);
