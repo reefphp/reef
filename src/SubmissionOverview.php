@@ -13,6 +13,8 @@ class SubmissionOverview {
 		'enclosure' => '"',
 		'escape_char' => '\\',
 		'raw' => false,
+		'callback_head' => null,
+		'callback_row' => null,
 	];
 	
 	public function __construct(StoredForm $Form) {
@@ -33,12 +35,64 @@ class SubmissionOverview {
 		return $this;
 	}
 	
+	public function getHead() : array {
+		if($this->a_config['raw']) {
+			$a_head = null;
+			foreach($this->Form->getSubmissionStorage()->generator(0, 1) as $a_row) {
+				$a_head = array_keys($a_row);
+				break;
+			}
+			
+			if($a_head === null) {
+				// Fallback when 0 rows
+				$a_head = $this->Form->getSubmissionStorage()->getColumns();
+				array_unshift($a_head, '_entry_id');
+			}
+		}
+		else {
+			$a_head = $this->Form->getOverviewColumns();
+			array_unshift($a_head, 'Submission id');
+		}
+		
+		if(is_callable($this->a_config['callback_head'])) {
+			$this->a_config['callback_head']($a_head);
+		}
+		
+		return $a_head;
+	}
+	
 	public function getTable(int $i_offset = 0, int $i_num = -1) : array {
-		return $this->Form->getSubmissionStorage()->table($i_offset, $i_num);
+		return iterator_to_array($this->getGenerator($i_offset, $i_num));
 	}
 	
 	public function getGenerator(int $i_offset = 0, int $i_num = -1) : iterable {
-		yield from $this->Form->getSubmissionStorage()->generator($i_offset, $i_num);
+		$b_callback = is_callable($this->a_config['callback_row']);
+		
+		if($this->a_config['raw']) {
+			foreach($this->Form->getSubmissionStorage()->generator($i_offset, $i_num) as $a_row) {
+				if($b_callback) {
+					$this->a_config['callback_row']($a_row);
+				}
+				
+				yield $a_row;
+			}
+		}
+		else {
+			$a_submissionIds = $this->Form->getSubmissionIds();
+			$a_submissionIds = array_slice($a_submissionIds, $i_offset, $i_num >= 0 ? $i_num : null);
+			foreach($a_submissionIds as $i_submissionId) {
+				$Submission = $this->Form->getSubmission($i_submissionId);
+				
+				$a_row = $Submission->toOverviewColumns();
+				array_unshift($a_row, $Submission->getSubmissionId());
+				
+				if($b_callback) {
+					$this->a_config['callback_row']($a_row);
+				}
+				
+				yield $a_row;
+			}
+		}
 	}
 	
 	public function streamCSV(string $s_filename = null) {
@@ -72,44 +126,12 @@ class SubmissionOverview {
 	}
 	
 	public function fCSV($fp) {
-		if($this->a_config['raw']) {
-			$this->fCSV_raw($fp);
-		}
-		else {
-			$this->fCSV_value($fp);
-		}
-	}
-	
-	protected function fCSV_raw($fp) {
 		
-		$b_first = true;
+		$a_head = $this->getHead();
+		fputcsv($fp, array_values($a_head), $this->a_config['delimiter'], $this->a_config['enclosure'], $this->a_config['escape_char']);
 		
-		foreach($this->Form->getSubmissionStorage()->generator() as $a_row) {
-			if($b_first) {
-				fputcsv($fp, array_keys($a_row), $this->a_config['delimiter'], $this->a_config['enclosure'], $this->a_config['escape_char']);
-				$b_first = false;
-			}
-			
+		foreach($this->getGenerator() as $a_row) {
 			fputcsv($fp, array_values($a_row), $this->a_config['delimiter'], $this->a_config['enclosure'], $this->a_config['escape_char']);
-		}
-		
-	}
-	
-	protected function fCSV_value($fp) {
-		
-		$a_head = $this->Form->getOverviewColumns();
-		array_unshift($a_head, 'Submission id');
-		
-		fputcsv($fp, $a_head, $this->a_config['delimiter'], $this->a_config['enclosure'], $this->a_config['escape_char']);
-		
-		foreach($this->Form->getSubmissionIds() as $i_submissionId) {
-			
-			$Submission = $this->Form->getSubmission($i_submissionId);
-			
-			$a_row = $Submission->toOverviewColumns();
-			array_unshift($a_row, $Submission->getSubmissionId());
-			
-			fputcsv($fp, $a_row, $this->a_config['delimiter'], $this->a_config['enclosure'], $this->a_config['escape_char']);
 		}
 		
 	}

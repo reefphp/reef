@@ -47,18 +47,27 @@ final class SubmissionOverviewTest extends TestCase {
 		$a_fields = static::$Form->getFields();
 		$this->assertSame(3, count($a_fields));
 		
+		// Test raw head when having no rows
+		$this->assertSame(array_keys(static::ROWS[0]), static::$Form->newSubmissionOverview()->set('raw', true)->getHead());
+		
 		foreach(static::ROWS as $a_row) {
 			$Submission = static::$Form->newSubmission();
 			$Submission->fromStructured($a_row);
 			$Submission->save();
 		}
+		
+		// Test raw head when having rows
+		$this->assertSame(array_keys(static::ROWS[0]), static::$Form->newSubmissionOverview()->set('raw', true)->getHead());
+		
+		// Test value head when having rows
+		$this->assertSame(count(static::ROWS[0]), count(static::$Form->newSubmissionOverview()->getHead()));
 	}
 	
 	/**
 	 * @depends testCanCreateForm
 	 */
 	public function testTable(): void {
-		$a_table = static::$Form->newSubmissionOverview()->getTable();
+		$a_table = static::$Form->newSubmissionOverview()->set('raw', true)->getTable();
 		
 		$this->assertEquals(static::ROWS, $a_table);
 		
@@ -69,9 +78,49 @@ final class SubmissionOverviewTest extends TestCase {
 	 */
 	public function testGenerator(): void {
 		$i = 0;
-		foreach(static::$Form->newSubmissionOverview()->getGenerator() as $a_row) {
+		foreach(static::$Form->newSubmissionOverview()->set('raw', true)->getGenerator() as $a_row) {
 			$this->assertEquals(static::ROWS[$i++], $a_row);
 		}
+	}
+	
+	/**
+	 * @depends testCanCreateForm
+	 */
+	public function testCallback(): void {
+		// First with raw
+		$Overview = static::$Form->newSubmissionOverview()
+			->set('raw', true)
+			->set('callback_head', function(&$a_head) {
+				array_unshift($a_head, 'column');
+			})
+			->set('callback_row', function(&$a_row) {
+				array_unshift($a_row, $a_row['_entry_id']+1);
+			});
+		$a_head = $Overview->getHead();
+		$a_table = $Overview->getTable();
+		
+		// Validate head
+		$a_refHead = array_keys(static::ROWS[0]);
+		array_unshift($a_refHead, 'column');
+		$this->assertEquals($a_refHead, $a_head);
+		
+		// Validate rows
+		$a_refTable = static::ROWS;
+		foreach($a_refTable as &$a_row) {
+			array_unshift($a_row, $a_row['_entry_id']+1);
+		}
+		$this->assertEquals($a_refTable, $a_table);
+		
+		// Now with values
+		$Overview
+			->set('raw', false)
+			->set('callback_row', function(&$a_row) {
+				array_unshift($a_row, 1);
+			});
+		$a_head = $Overview->getHead();
+		$a_table = $Overview->getTable();
+		$this->assertEquals(count($a_refHead), count($a_head));
+		$this->assertSame([4], array_unique(array_map(function($a_row) { return count($a_row); }, $a_table)));
 	}
 	
 	/**
