@@ -5,17 +5,46 @@ if(typeof Reef === 'undefined') {
 	var Reef = (function() {
 		'use strict';
 		
-		var Reef = function(selector) {
+		var Reef = function(selector, options) {
 			var self = this;
 			
 			this.$wrapper = $(selector);
 			this.fields = {};
 			this.initTime = Date.now();
 			
+			// Validate wrapper
 			if(this.$wrapper.length == 0) {
 				throw "Cannot initialize Reef with an empty selector set";
 			}
 			
+			// Parse options
+			this.options = options || {};
+			
+			if(typeof this.options.submit_url === 'undefined') {
+				this.options.submit_url = false;
+			}
+			else {
+				if(typeof this.options.submit_form === 'undefined') {
+					this.options.submit_form = this.$wrapper;
+				}
+				
+				if(this.options.submit_form) {
+					this.options.submit_form = $(this.options.submit_form);
+					
+					if(!this.options.submit_form.is('form')) {
+						console.log("Submit form must be a <form> element for automatic AJAX submission to work");
+						this.options.submit_form = false;
+					}
+				}
+			}
+			
+			this.options.submit_invalid = this.options.submit_invalid || $.noop;
+			this.options.submit_before = this.options.submit_before || $.noop;
+			this.options.submit_success = this.options.submit_success || $.noop;
+			this.options.submit_error = this.options.submit_error || $.noop;
+			this.options.submit_after = this.options.submit_after || $.noop;
+			
+			// Initialize all fields
 			this.$wrapper.find('.'+CSSPRFX+'field').each(function() {
 				var name = $(this).data(CSSPRFX+'name');
 				var type = $(this).data(CSSPRFX+'type');
@@ -25,7 +54,16 @@ if(typeof Reef === 'undefined') {
 				}
 			});
 			
+			// Set config
 			this.config = JSON.parse(atob(this.$wrapper.find('.'+CSSPRFX+'main-config').data('config')));
+			
+			// Attach to submit, if required
+			if(this.options.submit_form) {
+				this.options.submit_form.on('submit', function(evt) {
+					evt.preventDefault();
+					self.submit();
+				});
+			}
 		};
 		
 		Reef.components = {};
@@ -95,6 +133,55 @@ if(typeof Reef === 'undefined') {
 			return function(text, render) {
 				return self.config.assets_url.replace('[[assets_hash]]', render(text)+'@'+self.initTime);
 			};
+		};
+		
+		Reef.prototype.submit = function(options) {
+			var self = this;
+			
+			options = options || {};
+			options.submit_invalid = options.submit_invalid || $.noop;
+			options.submit_before = options.submit_before || $.noop;
+			options.submit_success = options.submit_success || $.noop;
+			options.submit_error = options.submit_error || $.noop;
+			options.submit_after = options.submit_after || $.noop;
+			
+			// Validate
+			if(!self.validate()) {
+				this.options.submit_invalid();
+				options.submit_invalid();
+				return;
+			}
+			
+			var ajaxParams = {
+				url: this.options.submit_url,
+				method: 'post',
+				data: $(this.options.submit_form).serialize(),
+				dataType : 'json',
+				success: function(response) {
+					if(typeof(response.errors) != 'undefined') {
+						// Errors
+						self.addErrors(response.errors);
+						
+						self.options.submit_error();
+						options.submit_error();
+					}
+					else {
+						// Success
+						self.options.submit_success(response);
+						options.submit_success(response);
+					}
+					
+					self.options.submit_after(response);
+					options.submit_after(response);
+				}
+			};
+			
+			// Callback
+			this.options.submit_before(ajaxParams);
+			options.submit_before(ajaxParams);
+			
+			// Submit
+			$.ajax(ajaxParams);
 		};
 		
 		return Reef;

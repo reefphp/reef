@@ -28,4 +28,10 @@ $DisplayForm->newCreator()->addField('reef:submit')->apply();
 
 $s_form = $DisplayForm->generateFormHtml(null, ['main_var' => 'form_data']);
 
-echo($s_form);
+?>
+
+<form action="submission.php" method="post" id="submission_form">
+	<?php
+	echo($s_form);
+	?>
+</form>

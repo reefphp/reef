@@ -118,7 +118,14 @@ $(function() {
 			},
 			success: function(response) {
 				$('.form-wrapper').html(response);
-				reef = new Reef($('.form-wrapper'));
+				
+				reef = new Reef($('.form-wrapper'), {
+					submit_url : 'submission.php',
+					submit_form : $('#submission_form'),
+					submit_success : function(submit_response) {
+						$('#submission').html(recursive_table(submit_response.data));
+					}
+				});
 			}
 		});
 	};
@@ -133,31 +140,6 @@ $(function() {
 		});
 	};
 	fn_initBuilder();
-	
-	$('#submission_form').on('submit', function(evt) {
-		evt.preventDefault();
-		
-		if(!reef.validate()) {
-			return;
-		}
-		
-		var $form = $(this);
-		
-		$.ajax({
-			url: 'submission.php',
-			method: 'post',
-			data: $form.serialize(),
-			dataType : 'json',
-			success: function(response) {
-				if(typeof(response.errors) != 'undefined') {
-					reef.addErrors(response.errors);
-				}
-				else {
-					$('#submission').html(recursive_table(response.data));
-				}
-			}
-		});
-	});
 	
 	$('#panel_submit_builder').on('click', function() {
 		builder.submit();
@@ -293,10 +275,7 @@ $(function() {
 				
 				<button type="button" class="panel-submit float-right" id="panel_submit_form">Submit &raquo;</button>
 			</div>
-			<form action="submission.php" method="post" id="submission_form">
-				<input type="hidden" name="submission_id" value="-1" />
-				<div class="form-wrapper py-3"></div>
-			</form>
+			<div class="form-wrapper py-3"></div>
 		</div>
 	</div>
 	<div id="sandbox-right" style="height: 100%;">
