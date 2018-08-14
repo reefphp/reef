@@ -3,7 +3,8 @@
 namespace Reef;
 
 use \Symfony\Component\Yaml\Yaml;
-use \Reef\Form\AbstractStoredForm;
+use \Reef\Form\StoredForm;
+use \Reef\Form\TempStoredForm;
 use \Reef\Components\Component;
 use \Reef\Storage\PDOStorage;
 use \Reef\Exception\RuntimeException;
@@ -18,7 +19,7 @@ class Updater {
 	public function __construct() {
 	}
 	
-	private function computeFieldUpdatePlan(AbstractStoredForm $Form1, AbstractStoredForm $Form2, array $a_fieldRenames) {
+	private function computeFieldUpdatePlan(StoredForm $Form1, TempStoredForm $Form2, array $a_fieldRenames) {
 		$a_create = $a_update = $a_delete = [];
 		
 		$a_fields1 = $Form1->getValueFieldsByName();
@@ -61,7 +62,7 @@ class Updater {
 		return [$a_create, $a_update, $a_delete];
 	}
 	
-	private function computeSchemaUpdatePlan(AbstractStoredForm $Form1, AbstractStoredForm $Form2, array $a_fieldRenames) {
+	private function computeSchemaUpdatePlan(StoredForm $Form1, TempStoredForm $Form2, array $a_fieldRenames) {
 		
 		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form1, $Form2, $a_fieldRenames);
 		
@@ -159,7 +160,7 @@ class Updater {
 		return $a_names;
 	}
 	
-	public function update(AbstractStoredForm $Form, AbstractStoredForm $newForm, $a_fieldRenames) {
+	public function update(StoredForm $Form, TempStoredForm $newForm, $a_fieldRenames) {
 		
 		[$a_create, $a_update, $a_delete] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
 		
@@ -263,7 +264,7 @@ class Updater {
 		
 	}
 	
-	public function determineUpdateDataLoss(AbstractStoredForm $Form, AbstractStoredForm $newForm, $a_fieldRenames) {
+	public function determineUpdateDataLoss(StoredForm $Form, TempStoredForm $newForm, $a_fieldRenames) {
 		
 		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form, $newForm, $a_fieldRenames);
 		

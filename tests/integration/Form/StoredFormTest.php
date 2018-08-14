@@ -4,6 +4,7 @@ namespace tests\Form;
 
 use PHPUnit\Framework\TestCase;
 use \Reef\Exception\OutOfBoundsException;
+use \Reef\Exception\ResourceNotFoundException;
 
 final class StoredFormTest extends TestCase {
 	
@@ -54,7 +55,19 @@ final class StoredFormTest extends TestCase {
 		$this->assertSame(3, count($a_fields));
 		
 		static::$Form->save();
-		$this->assertSame(1, count(static::$Reef->getFormIds()));
+		$a_formIds = static::$Reef->getFormIds();
+		$this->assertSame(1, count($a_formIds));
+		
+		$this->assertSame(static::$Form->generateDefinition(), static::$Reef->getForm(reset($a_formIds))->generateDefinition());
+	}
+	
+	/**
+	 * @depends testCanCreateForm
+	 */
+	public function testCannotGetInexistentForm(): void {
+		$this->expectException(ResourceNotFoundException::class);
+		
+		static::$Reef->getForm(999999);
 	}
 	
 	/**
@@ -90,6 +103,7 @@ final class StoredFormTest extends TestCase {
 		$Submission->save();
 		
 		$this->assertSame(1, count(static::$Form->getSubmissionIds()));
+		$this->assertSame(1, static::$Form->getNumSubmissions());
 		
 		static::$i_submissionId = $Submission->getSubmissionId();
 		
@@ -166,14 +180,17 @@ final class StoredFormTest extends TestCase {
 		}
 		
 		$this->assertSame(1, count(static::$Form->getSubmissionIds()));
+		$this->assertSame(1, static::$Form->getNumSubmissions());
 		
 		$Submission->save();
 		
 		$this->assertSame(2, count(static::$Form->getSubmissionIds()));
+		$this->assertSame(2, static::$Form->getNumSubmissions());
 		
 		$Submission->delete();
 		
 		$this->assertSame(1, count(static::$Form->getSubmissionIds()));
+		$this->assertSame(1, static::$Form->getNumSubmissions());
 	}
 	
 	/**

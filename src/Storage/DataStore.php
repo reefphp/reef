@@ -43,7 +43,7 @@ class DataStore {
 		return $this->StorageFactory->hasStorage($this->s_prefix.'form_'.$s_storageName);
 	}
 	
-	public function createSubmissionStorage(StoredForm $Form) : ?Storage {
+	public function createSubmissionStorage(StoredForm $Form) : Storage {
 		$s_storageName = $Form->getStorageName();
 		
 		if($s_storageName === null) {
