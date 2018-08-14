@@ -21,11 +21,11 @@ class DataStore {
 	
 	public function getFormStorage() : Storage {
 		if(empty($this->FormStorage)) {
-			if($this->StorageFactory->hasStorage($this->s_prefix.'forms')) {
-				$this->FormStorage = $this->StorageFactory->getStorage($this->s_prefix.'forms');
+			if($this->StorageFactory->hasStorage($this->s_prefix.'_forms')) {
+				$this->FormStorage = $this->StorageFactory->getStorage($this->s_prefix.'_forms');
 			}
 			else {
-				$this->FormStorage = $this->StorageFactory->newStorage($this->s_prefix.'forms');
+				$this->FormStorage = $this->StorageFactory->newStorage($this->s_prefix.'_forms');
 				
 				$this->FormStorage->addColumns([
 					'definition' => [
@@ -40,7 +40,7 @@ class DataStore {
 	}
 	
 	public function hasSubmissionStorage($s_storageName) : bool {
-		return $this->StorageFactory->hasStorage($this->s_prefix.'form_'.$s_storageName);
+		return $this->StorageFactory->hasStorage($this->s_prefix.$s_storageName);
 	}
 	
 	public function createSubmissionStorage(StoredForm $Form) : Storage {
@@ -50,11 +50,11 @@ class DataStore {
 			throw new StorageException('Storage name is not set');
 		}
 		
-		if(!empty($this->a_submissionStorages[$s_storageName]) || $this->StorageFactory->hasStorage($this->s_prefix.'form_'.$s_storageName)) {
+		if(!empty($this->a_submissionStorages[$s_storageName]) || $this->StorageFactory->hasStorage($this->s_prefix.$s_storageName)) {
 			throw new StorageException('Storage already exists');
 		}
 		
-		$this->StorageFactory->newStorage($this->s_prefix.'form_'.$s_storageName);
+		$this->StorageFactory->newStorage($this->s_prefix.$s_storageName);
 		
 		return $this->getSubmissionStorage($Form);
 	}
@@ -67,7 +67,7 @@ class DataStore {
 		}
 		
 		if(empty($this->a_submissionStorages[$s_storageName])) {
-			$this->a_submissionStorages[$s_storageName] = $this->StorageFactory->getStorage($this->s_prefix.'form_'.$s_storageName);
+			$this->a_submissionStorages[$s_storageName] = $this->StorageFactory->getStorage($this->s_prefix.$s_storageName);
 		}
 		
 		return $this->a_submissionStorages[$s_storageName];
@@ -90,7 +90,7 @@ class DataStore {
 		}
 		
 		$this->getSubmissionStorage($Form)->renameStorage(
-			$this->s_prefix.'form_'.$s_newStorageName
+			$this->s_prefix.$s_newStorageName
 		);
 		
 		unset($this->a_submissionStorages[$Form->getStorageName()]);
