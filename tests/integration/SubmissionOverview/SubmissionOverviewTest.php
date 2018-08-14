@@ -114,6 +114,8 @@ final class SubmissionOverviewTest extends TestCase {
 	}
 	
 	public static function tearDownAfterClass() {
-		static::$Form->delete();
+		if(!empty(static::$Form)) {
+			static::$Form->delete();
+		}
 	}
 }

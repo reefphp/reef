@@ -2,6 +2,7 @@
 
 namespace Reef;
 
+use \Reef\Form\Form;
 use \Reef\Exception\OutOfBoundsException;
 
 abstract class Submission {

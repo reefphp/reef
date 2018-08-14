@@ -42,11 +42,19 @@ abstract class PDOStorageFactory implements StorageFactory {
 	public function getStorage(string $s_tableName) {
 		$s_storageClass = $this->getStorageClass();
 		
-		if(!$this->hasStorage($s_tableName)) {
-			return $s_storageClass::createStorage($this, $this->PDO, $s_tableName);
+		return new $s_storageClass($this, $this->PDO, $s_tableName);
+	}
+	
+	public function newStorage(string $s_tableName) {
+		$s_storageClass = $this->getStorageClass();
+		
+		if($this->hasStorage($s_tableName)) {
+			throw new StorageException("Storage ".$s_tableName." already exists");
 		}
 		
-		return new $s_storageClass($this, $this->PDO, $s_tableName);
+		$s_storageClass::createStorage($this, $this->PDO, $s_tableName);
+		
+		return $this->getStorage($s_tableName);
 	}
 	
 	public function hasStorage(string $s_tableName) {

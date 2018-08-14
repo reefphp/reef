@@ -2,8 +2,7 @@
 
 require_once('./common.php');
 
-$Form = $Reef->newTempForm();
-$Form->importDefinition($_SESSION['sandbox']['definition']);
+$Form = $Reef->newTempForm($_SESSION['sandbox']['definition']);
 
 // Process a POST request
 if($_SERVER['REQUEST_METHOD'] == 'POST') {

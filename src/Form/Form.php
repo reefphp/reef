@@ -1,7 +1,10 @@
 <?php
 
-namespace Reef;
+namespace Reef\Form;
 
+use \Reef\Reef;
+use \Reef\FormAssets;
+use \Reef\Submission;
 use \Reef\Locale\Trait_FormLocale;
 use \Reef\Exception\ResourceNotFoundException;
 use Symfony\Component\Yaml\Yaml;
@@ -56,10 +59,13 @@ abstract class Form {
 	 * Constructor
 	 * 
 	 * @param Reef $Reef The Reef object this Form belongs to
+	 * @param array $a_definition The form definition to start from
 	 */
-	public function __construct(Reef $Reef) {
+	public function __construct(Reef $Reef, array $a_definition) {
 		$this->Reef = $Reef;
-		$this->s_idPfx = unique_id();
+		$this->s_idPfx = \Reef\unique_id();
+		
+		$this->setDefinition($a_definition);
 	}
 	
 	/**
@@ -73,6 +79,17 @@ abstract class Form {
 	 */
 	public function getDefinition() {
 		return $this->a_definition;
+	}
+	
+	/**
+	 * Set the definition of this form
+	 * 
+	 * @param array $a_definition The definition
+	 */
+	protected function setDefinition(array $a_definition) {
+		$this->a_definition = $a_definition;
+		unset($this->a_definition['fields']);
+		$this->setFields($a_definition['fields']??[]);
 	}
 	
 	/**
@@ -168,59 +185,7 @@ abstract class Form {
 	 * @return TempForm
 	 */
 	public function tempDuplicate() {
-		$Form = new TempForm($this->Reef);
-		$Form->importValidatedDefinition($this->generateDefinition());
-		return $Form;
-	}
-	
-	/**
-	 * Import a form definition from the given file
-	 * 
-	 * @param string $s_filename The file name
-	 */
-	public function importDefinitionFile(string $s_filename) {
-		if(!file_exists($s_filename) || !is_readable($s_filename)) {
-			throw new ResourceNotFoundException('Could not find file "'.$s_filename.'".');
-		}
-		
-		$a_definition = Yaml::parseFile($s_filename);
-		
-		$this->importDefinition($a_definition);
-	}
-	
-	/**
-	 * Import a form definition from the given YAML string
-	 * 
-	 * @param string $s_definition The YAML string holding the definition
-	 */
-	public function importDefinitionString(string $s_definition) {
-		$a_definition = Yaml::parse($s_definition);
-		
-		$this->importDefinition($a_definition);
-	}
-	
-	/**
-	 * Import a form definition from the given definition array
-	 * 
-	 * @param array $a_definition The definition array
-	 */
-	public function importDefinition(array $a_definition) {
-		$this->Reef->checkDefinition($a_definition);
-		$this->importValidatedDefinition($a_definition);
-	}
-	
-	/**
-	 * Import a form definition from the given definition array, omitting
-	 * any validation. Should only be used when confident that the definition
-	 * is valid.
-	 * 
-	 * @param array $a_definition The definition array
-	 */
-	public function importValidatedDefinition(array $a_definition) {
-		$this->a_definition = $a_definition;
-		unset($this->a_definition['fields']);
-		
-		$this->setFields($a_definition['fields']??[]);
+		return $this->Reef->newValidTempForm($this->generateDefinition());
 	}
 	
 	/**
@@ -313,7 +278,7 @@ abstract class Form {
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
 			$Template = $Mustache->loadTemplate($s_viewfile);
 			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getDeclaration()['name']);
-			$a_vars = $Field->view_form($Value, array_subset($a_options, ['locale']));
+			$a_vars = $Field->view_form($Value, \Reef\array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([
 				'field' => $a_vars,
@@ -324,7 +289,7 @@ abstract class Form {
 			];
 		}
 		
-		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
+		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__ . '/../'));
 		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/form.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,
@@ -376,7 +341,7 @@ abstract class Form {
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
 			$Template = $Mustache->loadTemplate($s_viewfile);
 			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getDeclaration()['name']);
-			$a_vars = $Field->view_submission($Value, array_subset($a_options, ['locale']));
+			$a_vars = $Field->view_submission($Value, \Reef\array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([
 				'field' => $a_vars,
@@ -387,7 +352,7 @@ abstract class Form {
 			];
 		}
 		
-		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__));
+		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__ . '/../'));
 		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/submission.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,

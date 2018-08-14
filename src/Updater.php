@@ -2,11 +2,12 @@
 
 namespace Reef;
 
-use Symfony\Component\Yaml\Yaml;
-use Reef\Components\Component;
-use Reef\Storage\PDOStorage;
-use Reef\Exception\RuntimeException;
-use Reef\Exception\ValidationException;
+use \Symfony\Component\Yaml\Yaml;
+use \Reef\Form\AbstractStoredForm;
+use \Reef\Components\Component;
+use \Reef\Storage\PDOStorage;
+use \Reef\Exception\RuntimeException;
+use \Reef\Exception\ValidationException;
 
 class Updater {
 	
@@ -17,7 +18,7 @@ class Updater {
 	public function __construct() {
 	}
 	
-	private function computeFieldUpdatePlan(StoredForm $Form1, StoredForm $Form2, array $a_fieldRenames) {
+	private function computeFieldUpdatePlan(AbstractStoredForm $Form1, AbstractStoredForm $Form2, array $a_fieldRenames) {
 		$a_create = $a_update = $a_delete = [];
 		
 		$a_fields1 = $Form1->getValueFieldsByName();
@@ -60,7 +61,7 @@ class Updater {
 		return [$a_create, $a_update, $a_delete];
 	}
 	
-	private function computeSchemaUpdatePlan(StoredForm $Form1, StoredForm $Form2, array $a_fieldRenames) {
+	private function computeSchemaUpdatePlan(AbstractStoredForm $Form1, AbstractStoredForm $Form2, array $a_fieldRenames) {
 		
 		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form1, $Form2, $a_fieldRenames);
 		
@@ -158,7 +159,7 @@ class Updater {
 		return $a_names;
 	}
 	
-	public function update(StoredForm $Form, StoredForm $newForm, $a_fieldRenames) {
+	public function update(AbstractStoredForm $Form, AbstractStoredForm $newForm, $a_fieldRenames) {
 		
 		[$a_create, $a_update, $a_delete] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
 		
@@ -171,6 +172,8 @@ class Updater {
 				throw new ValidationException([-1 => ["Storage name '".$newForm->getStorageName()."' is already in use"]]);
 			}
 		}
+		
+		$Form->createSubmissionStorageIfNotExists();
 		
 		$SubmissionStorage = $Form->getSubmissionStorage();
 		$PDO = $SubmissionStorage->getPDO();
@@ -253,13 +256,14 @@ class Updater {
 			
 			if($Form->getStorageName() != $newForm->getStorageName()) {
 				$Form->setStorageName($newForm->getStorageName());
+				$Form->save();
 			}
 			
 		});
 		
 	}
 	
-	public function determineUpdateDataLoss(StoredForm $Form, StoredForm $newForm, $a_fieldRenames) {
+	public function determineUpdateDataLoss(AbstractStoredForm $Form, AbstractStoredForm $newForm, $a_fieldRenames) {
 		
 		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form, $newForm, $a_fieldRenames);
 		

@@ -18,6 +18,10 @@ class NoStorageFactory implements StorageFactory {
 		return new NoStorage();
 	}
 	
+	public function newStorage(string $s_storageName) {
+		return new NoStorage();
+	}
+	
 	public function hasStorage(string $s_storageName) {
 		return false;
 	}

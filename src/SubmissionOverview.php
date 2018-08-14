@@ -2,6 +2,7 @@
 
 namespace Reef;
 
+use \Reef\Form\StoredForm;
 use \Reef\Exception\InvalidArgumentException;
 
 class SubmissionOverview {

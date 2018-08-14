@@ -2,6 +2,7 @@
 
 namespace Reef\Storage;
 
+use \Reef\Form\StoredForm;
 use \Reef\Exception\StorageException;
 
 class DataStore {
@@ -20,16 +21,19 @@ class DataStore {
 	
 	public function getFormStorage() : Storage {
 		if(empty($this->FormStorage)) {
-			$this->FormStorage = $this->StorageFactory->getStorage($this->s_prefix.'forms');
-		}
-		
-		if(count($this->FormStorage->getColumns()) == 0) {
-			$this->FormStorage->addColumns([
-				'definition' => [
-					'type' => Storage::TYPE_TEXT,
-					'limit' => 4194303,
-				],
-			]);
+			if($this->StorageFactory->hasStorage($this->s_prefix.'forms')) {
+				$this->FormStorage = $this->StorageFactory->getStorage($this->s_prefix.'forms');
+			}
+			else {
+				$this->FormStorage = $this->StorageFactory->newStorage($this->s_prefix.'forms');
+				
+				$this->FormStorage->addColumns([
+					'definition' => [
+						'type' => Storage::TYPE_TEXT,
+						'limit' => 4194303,
+					],
+				]);
+			}
 		}
 		
 		return $this->FormStorage;
@@ -39,7 +43,23 @@ class DataStore {
 		return $this->StorageFactory->hasStorage($this->s_prefix.'form_'.$s_storageName);
 	}
 	
-	public function getSubmissionStorage(\Reef\StoredForm $Form) : ?Storage {
+	public function createSubmissionStorage(StoredForm $Form) : ?Storage {
+		$s_storageName = $Form->getStorageName();
+		
+		if($s_storageName === null) {
+			throw new StorageException('Storage name is not set');
+		}
+		
+		if(!empty($this->a_submissionStorages[$s_storageName]) || $this->StorageFactory->hasStorage($this->s_prefix.'form_'.$s_storageName)) {
+			throw new StorageException('Storage already exists');
+		}
+		
+		$this->StorageFactory->newStorage($this->s_prefix.'form_'.$s_storageName);
+		
+		return $this->getSubmissionStorage($Form);
+	}
+	
+	public function getSubmissionStorage(StoredForm $Form) : ?Storage {
 		$s_storageName = $Form->getStorageName();
 		
 		if($s_storageName === null) {
@@ -53,18 +73,18 @@ class DataStore {
 		return $this->a_submissionStorages[$s_storageName];
 	}
 	
-	public function deleteSubmissionStorage(\Reef\StoredForm $Form) {
+	public function deleteSubmissionStorage(StoredForm $Form) {
 		$this->getSubmissionStorage($Form)->deleteStorage();
 		unset($this->a_submissionStorages[$Form->getStorageName()]);
 	}
 	
-	public function deleteSubmissionStorageIfExists(\Reef\StoredForm $Form) {
+	public function deleteSubmissionStorageIfExists(StoredForm $Form) {
 		if($this->hasSubmissionStorage($Form->getStorageName())) {
 			$this->deleteSubmissionStorage($Form);
 		}
 	}
 	
-	public function changeSubmissionStorageName(\Reef\StoredForm $Form, $s_newStorageName) {
+	public function changeSubmissionStorageName(StoredForm $Form, $s_newStorageName) {
 		if(!$this->hasSubmissionStorage($Form->getStorageName())) {
 			throw new StorageException("Storage not found for renaming");
 		}

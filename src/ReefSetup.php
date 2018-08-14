@@ -2,7 +2,8 @@
 
 namespace Reef;
 
-use Reef\Components\Component;
+use \Reef\Form\Form;
+use \Reef\Components\Component;
 use \Reef\Storage\StorageFactory;
 use \Reef\Storage\NoStorageFactory;
 use \Reef\Layout\Layout;

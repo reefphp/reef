@@ -10,9 +10,8 @@ else if(isset($_GET['form_id']) && $_GET['form_id'] > 0) {
 	$Form = $Reef->getForm($_GET['form_id']);
 }
 else {
-	$Form = $Reef->newStoredForm();
-	$Form->importDefinition([
-		'storage_name' => 'form_'.$Form->getReef()->getFormStorage()->next(),
+	$Form = $Reef->newTempStoredForm([
+		'storage_name' => 'form_'.$Reef->getFormStorage()->next(),
 	]);
 }
 

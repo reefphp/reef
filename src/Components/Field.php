@@ -3,7 +3,7 @@
 namespace Reef\Components;
 
 use Reef\Locale\Trait_FieldLocale;
-use Reef\Form;
+use Reef\Form\Form;
 use Symfony\Component\Yaml\Yaml;
 
 abstract class Field {

@@ -9,7 +9,7 @@ class Creator extends Context {
 	
 	protected $FormObject;
 	
-	public function __construct(\Reef\Form $Form) {
+	public function __construct(\Reef\Form\Form $Form) {
 		$this->FormObject = $Form;
 		
 		$a_definition = $Form->generateDefinition();
@@ -21,7 +21,7 @@ class Creator extends Context {
 		$this->Component = new Component($this, $this->a_definition);
 	}
 	
-	public function getFormObject() : \Reef\Form {
+	public function getFormObject() : \Reef\Form\Form {
 		return $this->FormObject;
 	}
 	

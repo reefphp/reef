@@ -83,7 +83,7 @@ abstract class UpdateTestCase extends TestCase {
 		];
 		
 		$Form = static::$Reef->newStoredForm();
-		$Form->newDefinition($a_definition);
+		$Form->updateDefinition($a_definition);
 		$Form->save();
 		
 		foreach($a_update['values_before'] as $m_value) {

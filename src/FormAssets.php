@@ -2,6 +2,8 @@
 
 namespace Reef;
 
+use \Reef\Form\Form;
+
 class FormAssets extends Assets {
 	
 	private $Form;

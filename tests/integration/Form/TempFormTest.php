@@ -75,10 +75,9 @@ final class TempFormTest extends TestCase {
 	 */
 	public function testCanCreateForm(): void {
 		
-		static::$Form = static::$Reef->newTempForm();
-		static::$Form->importDefinition(static::$a_testDefinition);
+		static::$Form = static::$Reef->newTempForm(static::$a_testDefinition);
 		
-		$this->assertInstanceOf(\Reef\Form::class, static::$Form);
+		$this->assertInstanceOf(\Reef\Form\TempForm::class, static::$Form);
 		
 		// Test definition
 		$a_definitionPart = static::$a_testDefinition;
@@ -168,8 +167,7 @@ final class TempFormTest extends TestCase {
 	 * @depends testCanCreateReef
 	 */
 	public function testCanCreateFormFromFile(): void {
-		$Form = static::$Reef->newTempForm();
-		$Form->importDefinitionFile(__DIR__ . '/TempFormTest_definition.yml');
+		$Form = static::$Reef->getTempFormFactory()->createFromFile(__DIR__ . '/TempFormTest_definition.yml');
 		
 		$this->assertSame(3, count($Form->getFields()));
 	}
@@ -180,16 +178,14 @@ final class TempFormTest extends TestCase {
 	public function testCannotCreateFormFromMissingFile(): void {
 		$this->expectException(\Reef\Exception\ResourceNotFoundException::class);
 		
-		$Form = static::$Reef->newTempForm();
-		$Form->importDefinitionFile(__DIR__ . '/some_missing_file.yml');
+		static::$Reef->getTempFormFactory()->createFromFile(__DIR__ . '/some_missing_file.yml');
 	}
 	
 	/**
 	 * @depends testCanCreateReef
 	 */
 	public function testCanCreateFormFromString(): void {
-		$Form = static::$Reef->newTempForm();
-		$Form->importDefinitionString(file_get_contents(__DIR__ . '/TempFormTest_definition.yml'));
+		$Form = static::$Reef->getTempFormFactory()->createFromString(file_get_contents(__DIR__ . '/TempFormTest_definition.yml'));
 		
 		$this->assertSame(3, count($Form->getFields()));
 	}

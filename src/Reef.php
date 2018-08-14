@@ -6,6 +6,12 @@ use \Reef\Locale\Trait_ReefLocale;
 use \Reef\Storage\DataStore;
 use \Reef\Storage\StorageFactory;
 use \Reef\Storage\Storage;
+use \Reef\Form\StoredFormFactory;
+use \Reef\Form\StoredForm;
+use \Reef\Form\TempStoredFormFactory;
+use \Reef\Form\TempStoredForm;
+use \Reef\Form\TempFormFactory;
+use \Reef\Form\TempForm;
 use \Reef\Exception\BadMethodCallException;
 use \Reef\Exception\ValidationException;
 use Symfony\Component\Cache\Simple\FilesystemCache;
@@ -30,6 +36,24 @@ class Reef {
 	 * @type DataStore
 	 */
 	private $DataStore;
+	
+	/**
+	 * Stored forms factory
+	 * @type StoredFormFactory
+	 */
+	private $StoredFormFactory;
+	
+	/**
+	 * Temporarily stored forms factory
+	 * @type TempStoredFormFactory
+	 */
+	private $TempStoredFormFactory;
+	
+	/**
+	 * Temporary form factory
+	 * @type TempFormFactory
+	 */
+	private $TempFormFactory;
 	
 	/**
 	 * Options
@@ -126,24 +150,53 @@ class Reef {
 		return new Builder($this);
 	}
 	
-	public function getForm(int $i_formId) : Form {
-		$Form = $this->newStoredForm();
-		
-		$Form->load($i_formId);
-		
-		return $Form;
-	}
-	
-	public function newStoredForm() : StoredForm {
+	public function getStoredFormFactory() : StoredFormFactory {
 		if($this->ReefSetup->getStorageFactory() instanceof \Reef\Storage\NoStorageFactory) {
-			throw new BadMethodCallException("Cannot create stored form using NoStorage");
+			throw new BadMethodCallException("Cannot get StoredFormFactory using NoStorage");
 		}
 		
-		return new StoredForm($this);
+		if($this->StoredFormFactory == null) {
+			$this->StoredFormFactory = new \Reef\Form\StoredFormFactory($this);
+		}
+		return $this->StoredFormFactory;
 	}
 	
-	public function newTempForm() : TempForm {
-		return new TempForm($this);
+	public function getTempStoredFormFactory() : TempStoredFormFactory {
+		if($this->ReefSetup->getStorageFactory() instanceof \Reef\Storage\NoStorageFactory) {
+			throw new BadMethodCallException("Cannot get TempStoredFormFactory using NoStorage");
+		}
+		
+		if($this->TempStoredFormFactory == null) {
+			$this->TempStoredFormFactory = new \Reef\Form\TempStoredFormFactory($this);
+		}
+		return $this->TempStoredFormFactory;
+	}
+	
+	public function getTempFormFactory() : TempFormFactory {
+		if($this->TempFormFactory == null) {
+			$this->TempFormFactory = new \Reef\Form\TempFormFactory($this);
+		}
+		return $this->TempFormFactory;
+	}
+	
+	public function getForm(int $i_formId) : StoredForm {
+		return $this->getStoredFormFactory()->load($i_formId);
+	}
+	
+	public function newTempStoredForm(array $a_definition = []) : TempStoredForm {
+		return $this->getTempStoredFormFactory()->createFromArray($a_definition);
+	}
+	
+	public function newStoredForm(array $a_definition = []) : StoredForm {
+		return $this->getStoredFormFactory()->createFromArray($a_definition);
+	}
+	
+	public function newValidTempForm(array $a_definition = []) : TempForm {
+		return $this->getTempFormFactory()->createFromValidatedArray($a_definition);
+	}
+	
+	public function newTempForm(array $a_definition = []) : TempForm {
+		return $this->getTempFormFactory()->createFromArray($a_definition);
 	}
 	
 	public function getSetup() : ReefSetup {

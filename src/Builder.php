@@ -3,8 +3,12 @@
 namespace Reef;
 
 use Symfony\Component\Yaml\Yaml;
-use Reef\Components\Component;
-use Reef\Components\Field;
+use \Reef\Form\Form;
+use \Reef\Form\AbstractStoredForm;
+use \Reef\Form\StoredForm;
+use \Reef\Form\TempStoredForm;
+use \Reef\Components\Component;
+use \Reef\Components\Field;
 use \Reef\Exception\LogicException;
 use \Reef\Exception\RuntimeException;
 use \Reef\Exception\ValidationException;
@@ -124,7 +128,7 @@ class Builder {
 		$DefinitionForm = $this->generateDefinitionForm($Form);
 		$DefinitionSubmission = $DefinitionForm->newSubmission();
 		$DefinitionSubmission->fromStructured([
-			'storage_name' => ($Form instanceof StoredForm) ? $Form->getStorageName() : 'temporary_form',
+			'storage_name' => ($Form instanceof AbstractStoredForm) ? $Form->getStorageName() : 'temporary_form',
 		]);
 		
 		$EmptyForm = clone $Form;
@@ -292,11 +296,12 @@ class Builder {
 	
 	/**
 	 * Process builder data and return the result
-	 * @param Form $Form The form to modify
+	 * @param Form &$Form The form to modify. In case a TempStoredForm is passed, upon applying the changes this variable
+	 *                    will be replaced with a corresponding StoredForm object
 	 * @param array $a_data The builder data from the builder
 	 * @return array The return data to be returned (in JSON format) to the builder
 	 */
-	public function processBuilderData_return(Form $Form, array $a_data) : array {
+	public function processBuilderData_return(Form &$Form, array $a_data) : array {
 		try {
 			[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
 			
@@ -317,6 +322,10 @@ class Builder {
 				// Apply
 				$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
 				
+				if($Form instanceof TempStoredForm) {
+					$Form = $Form->toStoredForm();
+				}
+				
 				$a_return = [
 					'result' => true,
 				];
@@ -336,12 +345,13 @@ class Builder {
 	/**
 	 * Process builder data and write the result to output, exiting afterwards.
 	 * This function does NOT return!
-	 * @param Form $Form The form to modify
+	 * @param Form &$Form The form to modify. In case a TempStoredForm is passed, upon applying the changes this variable
+	 *                    will be replaced with a corresponding StoredForm object
 	 * @param array $a_data The builder data from the builder
 	 * @param ?callable $fn_callback Callback to apply just before exiting.
 	 * 			The return array (@see processBuilderData_return()) is passed as first argument
 	 */
-	public function processBuilderData_write(Form $Form, array $a_data, ?callable $fn_callback = null) {
+	public function processBuilderData_write(Form &$Form, array $a_data, ?callable $fn_callback = null) {
 		$a_return = $this->processBuilderData_return($Form, $a_data);
 		
 		if($fn_callback !== null) {
@@ -379,8 +389,7 @@ class Builder {
 			],
 		];
 		
-		$ConfigForm = $this->Reef->newTempForm();
-		$ConfigForm->importValidatedDefinition($a_definition);
+		$ConfigForm = $this->Reef->newValidTempForm($a_definition);
 		
 		if(isset($this->a_settings['definition_form_creator']) && is_callable($this->a_settings['definition_form_creator'])) {
 			$Creator = $ConfigForm->newCreator();

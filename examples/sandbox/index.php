@@ -2,8 +2,7 @@
 
 require_once('./common.php');
 
-$Form = $Reef->newTempForm();
-$Form->importDefinition($_SESSION['sandbox']['definition']);
+$Form = $Reef->newTempForm($_SESSION['sandbox']['definition']);
 
 $Builder = $Reef->getBuilder();
 $Builder->setSettings([
@@ -27,7 +26,7 @@ if(isset($_POST['builder_data'])) {
 
 if(isset($_POST['definition'])) {
 	try {
-		$Form->importDefinitionString($_POST['definition']);
+		$Form->updateDefinition(\Symfony\Component\Yaml\Yaml::parse($_POST['definition']));
 		
 		$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
 		

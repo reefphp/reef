@@ -2,7 +2,7 @@
 
 namespace Reef\Components;
 
-use Reef\Form;
+use Reef\Form\Form;
 use Reef\Reef;
 use Reef\Locale\Trait_ComponentLocale;
 use Symfony\Component\Yaml\Yaml;
@@ -415,10 +415,7 @@ abstract class Component {
 			]);
 		}
 		
-		$DeclarationForm = $this->Reef->newTempForm();
-		$DeclarationForm->importValidatedDefinition($a_formDefinition);
-		
-		return $DeclarationForm;
+		return $this->Reef->newValidTempForm($a_formDefinition);
 	}
 	
 	public function generateBasicLocaleForm(string $s_locale) {
@@ -463,10 +460,7 @@ abstract class Component {
 			'fields' => $a_fields,
 		];
 		
-		$LocaleForm = $this->Reef->newTempForm();
-		$LocaleForm->importValidatedDefinition($a_localeDefinition);
-		
-		return $LocaleForm;
+		return $this->Reef->newValidTempForm($a_localeDefinition);
 	}
 	
 }

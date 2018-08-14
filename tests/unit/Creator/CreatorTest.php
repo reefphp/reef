@@ -49,35 +49,6 @@ final class CreatorTest extends TestCase {
 			->apply();
 		
 		$this->assertSame(1, count(static::$Form->getFields()));
-		
-		/*
-		static::$Form->newDefinition([
-			'storage_name' => 'test',
-			'fields' => [
-				[
-					'component' => 'reef:heading',
-					'size' => 4,
-					'locale' => [
-						'title' => 'Test form',
-					],
-				],
-				[
-					'component' => 'reef:text_line',
-					'name' => 'input_1',
-					'required' => true,
-					'locale' => [
-						'title' => 'Input 1',
-					],
-				],
-				[
-					'component' => 'reef:checkbox',
-					'name' => 'input_2',
-					'locale' => [
-						'title_left' => 'Input 2',
-					],
-				],
-			],
-		]);*/
 	}
 	
 	/**

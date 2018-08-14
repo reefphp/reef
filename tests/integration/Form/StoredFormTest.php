@@ -20,7 +20,7 @@ final class StoredFormTest extends TestCase {
 	 */
 	public function testCanCreateForm(): void {
 		static::$Form = static::$Reef->newStoredForm();
-		static::$Form->newDefinition([
+		static::$Form->updateDefinition([
 			'storage_name' => 'stored_form_test',
 			'fields' => [
 				[
@@ -48,7 +48,7 @@ final class StoredFormTest extends TestCase {
 			],
 		]);
 		
-		$this->assertInstanceOf(\Reef\Form::class, static::$Form);
+		$this->assertInstanceOf(\Reef\Form\StoredForm::class, static::$Form);
 		
 		$a_fields = static::$Form->getFields();
 		$this->assertSame(3, count($a_fields));
