@@ -268,11 +268,11 @@ class Builder {
 			
 			$a_fieldDecl = array_merge($a_fieldDecl, $a_fieldConfig);
 			
-			if(count($a_locales) == 1 && reset($a_locales) == '-') {
+			if(count($a_locales) == 1 && reset($a_locales) == '_no_locale') {
 				$a_fieldDecl['locale'] = array_merge(
-					$a_fieldDecl['locales']['-']??[],
-					$a_fieldSubmissions['locales']['basic']['-']->toStructured(['skip_default' => true]),
-					$a_fieldSubmissions['locales']['advanced']['-']->toStructured(['skip_default' => true])
+					$a_fieldDecl['locales']['_no_locale']??[],
+					$a_fieldSubmissions['locales']['basic']['_no_locale']->toStructured(['skip_default' => true]),
+					$a_fieldSubmissions['locales']['advanced']['_no_locale']->toStructured(['skip_default' => true])
 				);
 			}
 			else {

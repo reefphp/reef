@@ -101,11 +101,13 @@ trait Trait_Locale {
 			return $this->a_locales[$s_localesKey];
 		}
 		
+		// Fetch first locale, and determine missing keys compared to the english (reference) locale
 		$s_firstLocale = array_shift($a_locales);
 		$a_locale = $this->getCombinedLocaleSources($s_firstLocale);
+		$a_allKeys = ($s_firstLocale == 'en_US') ? array_keys($a_locale) : array_keys($this->getCombinedLocaleSources('en_US'));
 		$a_missing = [];
-		foreach($a_locale as $s_key => $s_val) {
-			if($s_val === null) {
+		foreach($a_allKeys as $s_key) {
+			if(!isset($a_locale[$s_key])) {
 				$a_missing[$s_key] = 1;
 			}
 		}

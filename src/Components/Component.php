@@ -427,9 +427,6 @@ abstract class Component {
 	}
 	
 	private function generateLocaleForm(array $a_keys, string $s_locale) {
-		if(empty($s_locale)) {
-			$s_locale = '-';
-		}
 		$a_configuration = $this->getConfiguration();
 		
 		$a_localeConfig = $a_configuration['locale'];
