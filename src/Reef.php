@@ -92,7 +92,7 @@ class Reef {
 		$this->a_options['css_prefix'] = $a_options['css_prefix'] ?? 'rf-';
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
 		$this->a_options['locales'] = $a_options['locales'] ?? ['-'];
-		$this->a_options['default_locale'] = $a_options['default_locale'] ?? reset($a_options['locales']) ?? 'en_US';
+		$this->a_options['default_locale'] = $a_options['default_locale'] ?? reset($this->a_options['locales']) ?? 'en_US';
 		$this->a_options['assets_url'] = $a_options['assets_url'] ?? './reef.php?hash=[[assets_hash]]';
 		
 		$this->ReefSetup = $ReefSetup;
