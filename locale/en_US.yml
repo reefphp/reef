@@ -19,3 +19,4 @@ cat_text: Text
 cat_choice: Choice
 cat_other: Other
 rf_submission_empty_value: Not filled in
+overview_submission_id: Submission id

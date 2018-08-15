@@ -51,7 +51,7 @@ class SubmissionOverview {
 		}
 		else {
 			$a_head = $this->Form->getOverviewColumns();
-			array_unshift($a_head, 'Submission id');
+			array_unshift($a_head, $this->Form->getReef()->trans('overview_submission_id'));
 		}
 		
 		if(is_callable($this->a_config['callback_head'])) {
