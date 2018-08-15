@@ -203,7 +203,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		
 		static::$Storage::rollbackTransaction(static::$PDO);
 		
-		$this->assertNull(static::$Storage->get($i_entryId2));
+		$this->assertNull(static::$Storage->getOrNull($i_entryId2));
 		
 		return $i_entryId;
 	}
@@ -243,18 +243,18 @@ abstract class PDOStorageTestCase extends TestCase {
 		// Back to b
 		static::$Storage::rollbackToSavepoint(static::$PDO, 'b');
 		
-		$this->assertNull(static::$Storage->get($i_entryId2));
+		$this->assertNull(static::$Storage->getOrNull($i_entryId2));
 		
 		// Back to a
 		static::$Storage::rollbackToSavepoint(static::$PDO, 'a');
 		
-		$this->assertNull(static::$Storage->get($i_entryId1));
+		$this->assertNull(static::$Storage->getOrNull($i_entryId1));
 		
 		// Commit empty transaction & check
 		static::$Storage::commitTransaction(static::$PDO);
 		
-		$this->assertNull(static::$Storage->get($i_entryId1));
-		$this->assertNull(static::$Storage->get($i_entryId2));
+		$this->assertNull(static::$Storage->getOrNull($i_entryId1));
+		$this->assertNull(static::$Storage->getOrNull($i_entryId2));
 		
 		return $i_entryId;
 	}

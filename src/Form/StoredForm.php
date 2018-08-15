@@ -49,7 +49,7 @@ class StoredForm extends AbstractStoredForm {
 	
 	public function getSubmissionStorage() {
 		if(empty($this->a_definition['storage_name']??null)) {
-			return null;
+			throw new BadMethodCallException('Storage name not set');
 		}
 		
 		if(empty($this->SubmissionStorage)) {

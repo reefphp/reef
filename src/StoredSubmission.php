@@ -3,6 +3,8 @@
 namespace Reef;
 
 use \Reef\Exception\BadMethodCallException;
+use \Reef\Exception\StorageException;
+use \Reef\Exception\ResourceNotFoundException;
 
 class StoredSubmission extends Submission {
 	
@@ -37,7 +39,14 @@ class StoredSubmission extends Submission {
 	}
 	
 	public function load(int $i_submissionId) {
-		$this->fromFlat($this->Form->getSubmissionStorage()->get($i_submissionId));
+		try {
+			$a_submission = $this->Form->getSubmissionStorage()->get($i_submissionId);
+		}
+		catch(StorageException $e) {
+			throw new ResourceNotFoundException('Could not find submission with id "'.$i_submissionId.'"', null, $e);
+		}
+		
+		$this->fromFlat($a_submission);
 		$this->i_submissionId = $i_submissionId;
 	}
 	

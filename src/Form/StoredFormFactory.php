@@ -2,6 +2,7 @@
 
 namespace Reef\Form;
 
+use \Reef\Exception\StorageException;
 use \Reef\Exception\ResourceNotFoundException;
 
 /**
@@ -30,9 +31,11 @@ class StoredFormFactory extends FormFactory {
 	 * @throws ResourceNotFoundException If form does not exist
 	 */
 	public function load(int $i_formId) {
-		$a_result = $this->Reef->getFormStorage()->get($i_formId);
-		if($a_result === null) {
-			throw new ResourceNotFoundException('Could not find form with id "'.$i_formId.'"');
+		try {
+			$a_result = $this->Reef->getFormStorage()->get($i_formId);
+		}
+		catch(StorageException $e) {
+			throw new ResourceNotFoundException('Could not find form with id "'.$i_formId.'"', null, $e);
 		}
 		
 		return new StoredForm($this->getReef(), json_decode($a_result['definition'], true), $i_formId);

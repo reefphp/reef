@@ -205,7 +205,7 @@ abstract class PDOStorage implements Storage {
 	/**
 	 * @inherit
 	 */
-	public function get(int $i_entryId) : ?array {
+	public function get(int $i_entryId) : array {
 		$sth = $this->PDO->prepare("
 			SELECT * FROM ".$this->es_table."
 			WHERE _entry_id = ?
@@ -214,13 +214,25 @@ abstract class PDOStorage implements Storage {
 		$a_result = $sth->fetchAll(PDO::FETCH_ASSOC);
 		
 		if(count($a_result) == 0) {
-			return null;
+			throw new StorageException('Could not find entry '.$i_entryId);
 		}
 		
 		$a_result = $a_result[0];
 		unset($a_result['_entry_id']);
 		
 		return $a_result;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getOrNull(int $i_entryId) : ?array {
+		try {
+			return $this->get($i_entryId);
+		}
+		catch(StorageException $e) {
+			return null;
+		}
 	}
 	
 	/**

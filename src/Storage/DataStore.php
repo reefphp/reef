@@ -59,11 +59,11 @@ class DataStore {
 		return $this->getSubmissionStorage($Form);
 	}
 	
-	public function getSubmissionStorage(StoredForm $Form) : ?Storage {
+	public function getSubmissionStorage(StoredForm $Form) : Storage {
 		$s_storageName = $Form->getStorageName();
 		
 		if($s_storageName === null) {
-			return null;
+			throw new StorageException('Storage name is not set');
 		}
 		
 		if(empty($this->a_submissionStorages[$s_storageName])) {
