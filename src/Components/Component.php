@@ -399,14 +399,7 @@ abstract class Component {
 				'name' => 'name',
 				'required' => true,
 				'regexp' => \Reef\Reef::NAME_REGEXP,
-				'locales' => [
-					'en_US' => [
-						'title' => 'Field name',
-					],
-					'nl_NL' => [
-						'title' => 'Veldnaam',
-					],
-				],
+				'locales' => $this->Reef->transMultipleLocales(['title' => 'builder_field_name'], $this->Reef->getOption('locales')),
 			]);
 			
 			array_push($a_formDefinition['fields'], [

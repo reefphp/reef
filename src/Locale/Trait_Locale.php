@@ -157,18 +157,27 @@ trait Trait_Locale {
 	}
 	
 	
-	public function trans($s_key, $a_locales = null) {
-		return $this->getLocale($a_locales)[$s_key]??null;
+	public function trans($s_langKey, $a_locales = null) {
+		return $this->getLocale($a_locales)[$s_langKey]??null;
 	}
 	
-	public function transMultiple($a_keys, $a_locales = null) {
+	public function transMultiple($a_langKeys, $a_locales = null) {
 		$a_locale = $this->getLocale($a_locales);
 		
 		$a_trans = [];
-		foreach($a_keys as $s_key) {
-			$a_trans[$s_key] = $a_locale[$s_key]??null;
+		foreach($a_langKeys as $m_key => $s_langKey) {
+			$m_key = is_string($m_key) ? $m_key : $s_langKey;
+			$a_trans[$m_key] = $a_locale[$s_langKey]??null;
 		}
 		
+		return $a_trans;
+	}
+	
+	public function transMultipleLocales($a_langKeys, $a_locales) {
+		$a_trans = [];
+		foreach($a_locales as $s_locale) {
+			$a_trans[$s_locale] = $this->transMultiple($a_langKeys, $s_locale);
+		}
 		return $a_trans;
 	}
 	

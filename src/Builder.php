@@ -376,14 +376,7 @@ class Builder {
 					'component' => 'reef:text_line',
 					'name' => 'storage_name',
 					'required' => true,
-					'locales' => [
-						'en_US' => [
-							'title' => 'Form storage name',
-						],
-						'nl_NL' => [
-							'title' => 'Formulier opslag naam',
-						],
-					],
+					'locales' => $this->Reef->transMultipleLocales(['title' => 'builder_form_storage_name'], $this->Reef->getOption('locales')),
 					'default' => 'form_'.$Form->getReef()->getFormStorage()->next(),
 				]
 			],

@@ -14,6 +14,8 @@ builder_save_dataloss_potential_title: De opgegeven aanpassingen kunnen mogelijk
 builder_save_dataloss_definite_title: Met de opgegeven aanpassingen zullen in de volgende velden gegevens verloren gaan:
 builder_save_dataloss_confirm: Wil je de aanpassingen uitvoeren?
 builder_delete_field_confirm: Dit veld verwijderen?
+builder_form_storage_name: Formulier opslag naam
+builder_field_name: Veldnaam
 cat_static: Statisch
 cat_text: Tekst
 cat_choice: Keuze
