@@ -82,8 +82,8 @@ final class TempFormTest extends TestCase {
 		// Test definition
 		$a_definitionPart = static::$a_testDefinition;
 		unset($a_definitionPart['fields']);
-		$this->assertSame(static::$Form->getDefinition(), $a_definitionPart);
-		$this->assertSame(static::$Form->generateDefinition(), static::$a_testDefinition);
+		$this->assertSame(static::$Form->getPartialDefinition(), $a_definitionPart);
+		$this->assertSame(static::$Form->getDefinition(), static::$a_testDefinition);
 		
 		// Test getReef
 		$this->assertSame(static::$Reef, static::$Form->getReef());
@@ -151,16 +151,16 @@ final class TempFormTest extends TestCase {
 		$a_tmpDefinition = static::$a_testDefinition;
 		array_shift($a_tmpDefinition['fields']);
 		static::$Form->updateDefinition($a_tmpDefinition);
-		$this->assertSame(static::$Form->generateDefinition(), $a_tmpDefinition);
+		$this->assertSame(static::$Form->getDefinition(), $a_tmpDefinition);
 		
 		// Test merge
 		$a_tmpDefinition['locale']['test_key'] = 'test_val';
 		static::$Form->mergeDefinition(\Reef\array_subset($a_tmpDefinition, ['locale']));
-		$this->assertEquals(static::$Form->generateDefinition(), $a_tmpDefinition);
+		$this->assertEquals(static::$Form->getDefinition(), $a_tmpDefinition);
 		
 		// Set back
 		static::$Form->updateDefinition(static::$a_testDefinition);
-		$this->assertSame(static::$Form->generateDefinition(), static::$a_testDefinition);
+		$this->assertSame(static::$Form->getDefinition(), static::$a_testDefinition);
 	}
 	
 	/**

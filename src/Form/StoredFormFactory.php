@@ -49,7 +49,7 @@ class StoredFormFactory extends FormFactory {
 	 * @return StoredForm The stored form
 	 */
 	public function createFromTempStoredForm(TempStoredForm $TempForm) {
-		$a_declaration = $TempForm->generateDefinition();
+		$a_declaration = $TempForm->getDefinition();
 		unset($a_declaration['fields']);
 		
 		$StoredForm = new StoredForm($this->getReef(), $a_declaration, null);

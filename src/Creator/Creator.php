@@ -12,7 +12,7 @@ class Creator extends Context {
 	public function __construct(\Reef\Form\Form $Form) {
 		$this->FormObject = $Form;
 		
-		$a_definition = $Form->generateDefinition();
+		$a_definition = $Form->getDefinition();
 		$a_definition['fields'] = array_values($a_definition['fields']);
 		
 		parent::__construct($this, $a_definition);

@@ -69,15 +69,15 @@ abstract class Form {
 	}
 	
 	/**
-	 * Get the definition of this form. Does not include the fields property
+	 * Get the partial definition of this form: the entire definition excluding the fields property
 	 * 
-	 * To obtain a full definition, use generateDefinition()
+	 * To obtain the full definition, use getDefinition()
 	 * 
-	 * @see Form::generateDefinition()
+	 * @see Form::getDefinition()
 	 * 
 	 * @return array
 	 */
-	public function getDefinition() {
+	public function getPartialDefinition() {
 		return $this->a_definition;
 	}
 	
@@ -185,7 +185,7 @@ abstract class Form {
 	 * @return TempForm
 	 */
 	public function tempDuplicate() {
-		return $this->Reef->newValidTempForm($this->generateDefinition());
+		return $this->Reef->newValidTempForm($this->getDefinition());
 	}
 	
 	/**
@@ -214,9 +214,13 @@ abstract class Form {
 	/**
 	 * Generate a full form definition for this form
 	 * 
+	 * If you are not interested in the fields property, consider using getPartialDefinition() for performance
+	 * 
+	 * @see getPartialDefinition()
+	 * 
 	 * @return array The form definition
 	 */
-	public function generateDefinition() : array {
+	public function getDefinition() : array {
 		$a_definition = $this->a_definition;
 		
 		$a_definition['fields'] = [];

@@ -17,7 +17,7 @@ $Builder->setSettings([
 if(isset($_POST['builder_data'])) {
 	$Builder->processBuilderData_write($Form, $_POST['builder_data'], function(&$a_return) use($Form) {
 		if($a_return['result']) {
-			$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
+			$_SESSION['sandbox']['definition'] = $Form->getDefinition();
 			
 			$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
 		}
@@ -28,7 +28,7 @@ if(isset($_POST['definition'])) {
 	try {
 		$Form->updateDefinition(\Symfony\Component\Yaml\Yaml::parse($_POST['definition']));
 		
-		$_SESSION['sandbox']['definition'] = $Form->generateDefinition();
+		$_SESSION['sandbox']['definition'] = $Form->getDefinition();
 		
 		$a_return['definition'] = \Symfony\Component\Yaml\Yaml::dump($_SESSION['sandbox']['definition'], 5);
 	}

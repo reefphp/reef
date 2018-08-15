@@ -81,7 +81,7 @@ class StoredForm extends AbstractStoredForm {
 	}
 	
 	public function save() {
-		$a_definition = $this->generateDefinition();
+		$a_definition = $this->getDefinition();
 		
 		if($this->i_formId == null) {
 			$this->i_formId = $this->Reef->getFormStorage()->insert(['definition' => json_encode($a_definition)]);
@@ -96,7 +96,7 @@ class StoredForm extends AbstractStoredForm {
 			throw new BadMethodCallException("Already saved form");
 		}
 		
-		$a_definition = $this->generateDefinition();
+		$a_definition = $this->getDefinition();
 		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, ['definition' => json_encode($a_definition)]);
 	}
 	

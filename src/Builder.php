@@ -143,7 +143,7 @@ class Builder {
 		$s_html = $Template->render([
 			'categories' => $a_categories,
 			'formConfig' => base64_encode(json_encode(array_merge(
-				array_subset($Form->getDefinition(), ['locale']),
+				array_subset($Form->getPartialDefinition(), ['locale']),
 				[
 					'layout_name' => $Layout->getName(),
 					'layout' => $Layout->view(),
@@ -288,7 +288,7 @@ class Builder {
 			$a_fields[] = $a_fieldDecl;
 		}
 		
-		$a_newDefinition = array_merge($Form->getDefinition(), array_subset($DefinitionSubmission->toStructured(['skip_default' => true]), ['storage_name']));
+		$a_newDefinition = array_merge($Form->getPartialDefinition(), array_subset($DefinitionSubmission->toStructured(['skip_default' => true]), ['storage_name']));
 		$a_newDefinition['fields'] = $a_fields;
 		
 		return [$a_newDefinition, $a_fieldRenames];

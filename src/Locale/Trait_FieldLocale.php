@@ -58,7 +58,7 @@ trait Trait_FieldLocale {
 	}
 	
 	protected function getDefaultLocale() {
-		return $this->getForm()->getDefinition()['default_locale']??$this->getComponent()->getReef()->getOption('default_locale');
+		return $this->getForm()->getPartialDefinition()['default_locale']??$this->getComponent()->getReef()->getOption('default_locale');
 	}
 	
 }

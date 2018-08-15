@@ -20,18 +20,19 @@ trait Trait_FormLocale {
 	
 	use Trait_Locale;
 	
-	abstract public function getDefinition();
+	abstract public function getPartialDefinition();
 	abstract public function getReef();
 	
 	/**
 	 * @inherit
 	 */
 	protected function fetchBaseLocale($s_locale) {
-		if(!empty($s_locale) && isset($this->getDefinition()['locales'][$s_locale])) {
-			return $this->getDefinition()['locales'][$s_locale];
+		$a_definitions = $this->getPartialDefinition();
+		if(!empty($s_locale) && isset($a_definitions['locales'][$s_locale])) {
+			return $a_definitions['locales'][$s_locale];
 		}
-		else if(isset($this->getDefinition()['locale'])) {
-			return $this->getDefinition()['locale'];
+		else if(isset($a_definitions['locale'])) {
+			return $a_definitions['locale'];
 		}
 		else {
 			return [];
@@ -52,7 +53,7 @@ trait Trait_FormLocale {
 	 * @inherit
 	 */
 	protected function getDefaultLocale() {
-		return $this->getDefinition()['default_locale']??$this->getReef()->getOption('default_locale');
+		return $this->getPartialDefinition()['default_locale']??$this->getReef()->getOption('default_locale');
 	}
 	
 }

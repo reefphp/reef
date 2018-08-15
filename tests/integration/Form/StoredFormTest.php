@@ -58,7 +58,7 @@ final class StoredFormTest extends TestCase {
 		$a_formIds = static::$Reef->getFormIds();
 		$this->assertSame(1, count($a_formIds));
 		
-		$this->assertSame(static::$Form->generateDefinition(), static::$Reef->getForm(reset($a_formIds))->generateDefinition());
+		$this->assertSame(static::$Form->getDefinition(), static::$Reef->getForm(reset($a_formIds))->getDefinition());
 	}
 	
 	/**
@@ -116,7 +116,7 @@ final class StoredFormTest extends TestCase {
 	 * @depends testCanAddSubmission
 	 */
 	public function testCanAddField(): void {
-		$a_definition = static::$Form->generateDefinition();
+		$a_definition = static::$Form->getDefinition();
 		
 		$a_definition['fields'][] = [
 			'component' => 'reef:text_line',
@@ -141,7 +141,7 @@ final class StoredFormTest extends TestCase {
 	 * @depends testCanAddField
 	 */
 	public function testCanRemoveField(): void {
-		$a_definition = static::$Form->generateDefinition();
+		$a_definition = static::$Form->getDefinition();
 		
 		foreach($a_definition['fields'] as $i => $a_field) {
 			if(isset($a_field['name']) && $a_field['name'] == 'input_1') {
