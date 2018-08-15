@@ -155,7 +155,7 @@ if(typeof Reef === 'undefined') {
 			var ajaxParams = {
 				url: this.options.submit_url,
 				method: 'post',
-				data: $(this.options.submit_form).serialize(),
+				data: $(this.options.submit_form).serializeArray(),
 				dataType : 'json',
 				success: function(response) {
 					if(typeof(response.errors) != 'undefined') {

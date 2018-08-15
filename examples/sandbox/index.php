@@ -132,7 +132,7 @@ $(function() {
 	
 	var fn_initBuilder = function() {
 		builder = new ReefBuilder('.builderWrapper', {
-			success : function(response) {
+			submit_success : function(response) {
 				$('#definition').val(response.definition);
 				
 				fn_loadForm();
@@ -182,8 +182,10 @@ $(function() {
 	});
 	
 	$('#locale_setter_builder').on('change', function() {
-		builder.submit(function(response) {
-			location.href = 'index.php?locale='+$('#locale_setter_builder').val();
+		builder.submit({
+			submit_success : function(response) {
+				location.href = 'index.php?locale='+$('#locale_setter_builder').val();
+			}
 		});
 	});
 	

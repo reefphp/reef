@@ -102,9 +102,9 @@ var ReefBuilder = (function() {
 	var ReefBuilder = function($builderWrapper, options) {
 		var self = this;
 		
-		options = options || {};
-		this.options = {};
-		this.options.success = options.success || $.noop;
+		this.options = options || {};
+		this.options.submit_before = this.options.submit_before || $.noop;
+		this.options.submit_success = this.options.submit_success || $.noop;
 		
 		this.selectedField = null;
 		this.submitting = false;
@@ -294,12 +294,16 @@ var ReefBuilder = (function() {
 			.filter('[data-type="'+tab+'"]').addClass(CSSPRFX+'builder-sidetab-field-tab-active');
 	};
 	
-	ReefBuilder.prototype.submit = function(callback) {
+	ReefBuilder.prototype.submit = function(options) {
 		var self = this;
 		
 		if(this.submitting) {
 			return;
 		}
+		
+		options = options || {};
+		options.submit_before = options.submit_before || $.noop;
+		options.submit_success = options.submit_success || $.noop;
 		
 		self.clearGeneralErrors();
 		
@@ -360,7 +364,8 @@ var ReefBuilder = (function() {
 		
 		var fn_submit = function() {
 			// Check for data loss & apply
-			$.ajax({
+			
+			var ajaxParams = {
 				url: self.$builderWrapper.find('.'+CSSPRFX+'builder-submit').data('action'),
 				method: 'POST',
 				data: {
@@ -409,16 +414,20 @@ var ReefBuilder = (function() {
 							window.location = response.redirect;
 						}
 						
-						self.options.success(response);
-						
-						if(typeof callback !== 'undefined') {
-							callback(response);
-						}
+						// Callback
+						self.options.submit_success(response);
+						options.submit_success(response);
 						
 						self.submitting = false;
 					}
 				}
-			});
+			};
+			
+			// Callback
+			self.options.submit_before(ajaxParams);
+			options.submit_before(ajaxParams);
+			
+			$.ajax(ajaxParams);
 		};
 		
 		fn_submit();
