@@ -18,6 +18,10 @@ abstract class Submission {
 		$this->Form = $Form;
 	}
 	
+	public function getForm() {
+		return $this->Form;
+	}
+	
 	public function emptySubmission() {
 		$a_fields = $this->Form->getValueFields();
 		$this->a_fieldValues = [];
