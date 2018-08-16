@@ -106,4 +106,31 @@ class TextLineValue extends FieldValue {
 	public function toTemplateVar() {
 		return $this->s_value;
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function evaluateCondition(string $s_operator, $m_operand) : bool {
+		switch($s_operator) {
+			case 'equals':
+				return $this->s_value == $m_operand;
+				
+			case 'does not equal':
+				return $this->s_value != $m_operand;
+				
+			case 'contains':
+				if(empty($m_operand)) {
+					throw new \Reef\Exception\ValidationException([-1 => 'Empty operand']);
+				}
+				
+				return strpos($this->s_value, $m_operand) !== false;
+				
+			case 'does not contain':
+				if(empty($m_operand)) {
+					throw new \Reef\Exception\ValidationException([-1 => 'Empty operand']);
+				}
+				
+				return strpos($this->s_value, $m_operand) === false;
+		}
+	}
 }

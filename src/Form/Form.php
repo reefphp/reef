@@ -34,6 +34,13 @@ abstract class Form {
 	protected $FormAssets;
 	
 	/**
+	 * The ConditionEvaluator object used by this form
+	 * 
+	 * @var ConditionEvaluator
+	 */
+	protected $ConditionEvaluator;
+	
+	/**
 	 * The id prefix used for this form. The id prefix is appended to the id="" HTML field
 	 * 
 	 * @var string
@@ -153,6 +160,19 @@ abstract class Form {
 	}
 	
 	/**
+	 * Get the ConditionEvaluator object for this form
+	 * 
+	 * @return \Reef\ConditionEvaluator
+	 */
+	public function getConditionEvaluator() {
+		if($this->ConditionEvaluator == null) {
+			$this->ConditionEvaluator = new \Reef\ConditionEvaluator($this);
+		}
+		
+		return $this->ConditionEvaluator;
+	}
+	
+	/**
 	 * Get the id prefix
 	 * 
 	 * @return string
@@ -209,6 +229,8 @@ abstract class Form {
 		foreach($a_fields as $s_id => $a_declaration) {
 			$this->a_fields[$s_id] = $Setup->getField($a_declaration, $this);
 		}
+		
+		$this->ConditionEvaluator = null;
 	}
 	
 	/**

@@ -74,9 +74,10 @@ abstract class FieldValueTestCase extends TestCase {
      * @dataProvider declarationProvider
 	 */
 	public function testDefaultValue($a_declaration, $a_validValues, $a_invalidValues): void {
-		$Field = static::$Component->newField($a_declaration, static::$Reef->newTempForm());
+		$Form = static::$Reef->newTempForm();
+		$Field = static::$Component->newField($a_declaration, $Form);
 		
-		$Value = $Field->newValue();
+		$Value = $Field->newValue($Form->newSubmission());
 		$Value->fromDefault();
 		
 		$this->assertTrue($Value->isDefault());
@@ -87,10 +88,11 @@ abstract class FieldValueTestCase extends TestCase {
      * @dataProvider declarationProvider
 	 */
 	public function testInvalidValues($a_declaration, $a_validValues, $a_invalidValues): void {
-		$Field = static::$Component->newField($a_declaration, static::$Reef->newTempForm());
+		$Form = static::$Reef->newTempForm();
+		$Field = static::$Component->newField($a_declaration, $Form);
 		
 		foreach($a_invalidValues as $i => $m_invalidValue) {
-			$Value = $Field->newValue();
+			$Value = $Field->newValue($Form->newSubmission());
 			$Value->fromUserInput($m_invalidValue);
 			$this->assertFalse($Value->validate(), "No errors found for invalid value ".$i);
 		}
@@ -103,21 +105,23 @@ abstract class FieldValueTestCase extends TestCase {
      * @dataProvider declarationProvider
 	 */
 	public function testValidValues($a_declaration, $a_validValues, $a_invalidValues): void {
-		$Field = static::$Component->newField($a_declaration, static::$Reef->newTempForm());
+		$Form = static::$Reef->newTempForm();
+		$Submission = $Form->newSubmission();
+		$Field = static::$Component->newField($a_declaration, $Form);
 		
 		foreach($a_validValues as $i => $m_validValue) {
-			$Value = $Field->newValue();
+			$Value = $Field->newValue($Submission);
 			$Value->fromUserInput($m_validValue);
 			$this->assertTrue($Value->validate(), "Errors found for valid value ".$i.": ".implode('; ', $Value->getErrors()??[]));
 			
 			// Test structured
 			$m_structured = $Value->toStructured();
-			$NewValue = $Field->newValue();
+			$NewValue = $Field->newValue($Submission);
 			$this->assertEquals($m_structured, $NewValue->toStructured($NewValue->fromStructured($m_structured)), "toStructured is not the inverse of fromStructured");
 			
 			// Test flat
 			$a_flat = $Value->toFlat();
-			$NewValue = $Field->newValue();
+			$NewValue = $Field->newValue($Submission);
 			$this->assertEquals($a_flat, $NewValue->toFlat($NewValue->fromFlat($a_flat)), "toFlat is not the inverse of fromFlat");
 			
 			$this->assertEquals(array_keys($a_flat), array_keys($Field->getFlatStructure()), "Flat column keys do not match");

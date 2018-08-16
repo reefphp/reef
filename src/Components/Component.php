@@ -14,6 +14,9 @@ abstract class Component {
 	protected $Reef;
 	protected $a_configuration;
 	
+	private $a_conditionOperators = null;
+	private $a_builderOperators = null;
+	
 	/**
 	 * Set the Reef object
 	 * @param Reef $Reef The Reef we are currently working in
@@ -213,6 +216,47 @@ abstract class Component {
 		});
 		
 		return $this->a_configuration;
+	}
+	
+	/**
+	 * Return all possible condition operators of this component
+	 * By default, this returns an empty array to indicate conditions are not supported
+	 * 
+	 * @return string[]
+	 */
+	public function getConditionOperators() : array {
+		if($this->a_conditionOperators !== null) {
+			return $this->a_conditionOperators;
+		}
+		
+		$this->a_conditionOperators = $this->getConfiguration()['builder_operators']??[];
+		
+		return $this->a_conditionOperators;
+	}
+	
+	/**
+	 * Return all possible condition operators of this component that should be provided in the builder
+	 * By default, this returns an empty array to indicate conditions are not supported in the builder
+	 * 
+	 * @return string[]
+	 */
+	public function getBuilderOperators() : array {
+		if($this->a_builderOperators !== null) {
+			return $this->a_builderOperators;
+		}
+		
+		$a_locale = $this->getLocale();
+		
+		$this->a_builderOperators = [];
+		
+		foreach($this->getConditionOperators() as $s_opKey => $s_operator) {
+			$this->a_builderOperators[$s_opKey] = [
+				$s_operator,
+				$a_locale['operator_'.$s_opKey]??'',
+			];
+		}
+		
+		return $this->a_builderOperators;
 	}
 	
 	/**

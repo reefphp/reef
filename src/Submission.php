@@ -22,12 +22,16 @@ abstract class Submission {
 		return $this->Form;
 	}
 	
+	public function evaluateCondition(string $s_condition) : bool {
+		return $this->Form->getConditionEvaluator()->evaluate($this, $s_condition);
+	}
+	
 	public function emptySubmission() {
 		$a_fields = $this->Form->getValueFields();
 		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getDeclaration()['name'];
-			$this->a_fieldValues[$s_name] = $Field->newValue();
+			$this->a_fieldValues[$s_name] = $Field->newValue($this);
 			$this->a_fieldValues[$s_name]->fromDefault();
 		}
 	}
@@ -37,7 +41,7 @@ abstract class Submission {
 		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getDeclaration()['name'];
-			$this->a_fieldValues[$s_name] = $Field->newValue();
+			$this->a_fieldValues[$s_name] = $Field->newValue($this);
 			$this->a_fieldValues[$s_name]->fromUserInput($a_input[$s_name] ?? null);
 		}
 	}
@@ -47,7 +51,7 @@ abstract class Submission {
 		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getDeclaration()['name'];
-			$this->a_fieldValues[$s_name] = $Field->newValue();
+			$this->a_fieldValues[$s_name] = $Field->newValue($this);
 			if(isset($a_structured[$s_name]) || $Field->isRequired()) {
 				$this->a_fieldValues[$s_name]->fromStructured($a_structured[$s_name]??null);
 			}
@@ -141,7 +145,7 @@ abstract class Submission {
 				}
 			}
 			
-			$this->a_fieldValues[$s_name] = $Field->newValue();
+			$this->a_fieldValues[$s_name] = $Field->newValue($this);
 			$this->a_fieldValues[$s_name]->fromFlat($a_flatField);
 		}
 	}

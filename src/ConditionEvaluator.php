@@ -28,38 +28,58 @@ use \Reef\Exception\ConditionException;
  *   - operand is a valid JSON expression
  */
 
-class Condition {
+class ConditionEvaluator {
 	
 	const WHITESPACE = " \t\r\n";
 	
-	private $Submission;
+	private $Form;
 	private $a_fields;
+	private $a_tokenStack;
 	
+	private $Submission;
 	private $s_condition;
 	private $i_cursor;
 	private $i_length;
 	
-	public function __construct(\Reef\Submission $Submission) {
-		$this->Submission = $Submission;
-		$this->a_fields = $this->Submission->getForm()->getValueFieldsByName();
+	public function __construct(\Reef\Form\Form $Form) {
+		$this->Form = $Form;
+		$this->a_fields = $this->Form->getValueFieldsByName();
 	}
 	
 	/**
 	 * Evaluate an entire condition
+	 * 
+	 * @param \Reef\Submission $Submission The submission to evaluate against
 	 * @param string $s_condition The condition
+	 * 
 	 * @return bool
+	 * 
+	 * @throws BadMethodCallException If called with a submission not belonging to the form this evaluator is initialized with
+	 * @throws ConditionException If the input condition is invalid
 	 */
-	public function evaluate(string $s_condition) : bool {
+	public function evaluate(\Reef\Submission $Submission, string $s_condition) : bool {
+		
+		if($Submission->getForm() !== $this->Form) {
+			throw new \Reef\Exception\BadMethodCallException("Caught non-related form and submission");
+		}
 		
 		if(trim($s_condition) == '') {
 			return true;
 		}
 		
+		$this->Submission = $Submission;
 		$this->s_condition = $s_condition;
 		$this->i_length = strlen($this->s_condition);
 		$this->i_cursor = 0;
+		$this->a_tokenStack = [];
 		
-		return $this->condition();
+		$b_result = $this->condition();
+		
+		if($this->getToken() !== '') {
+			throw new ConditionException('Caught invalid condition');
+		}
+		
+		return $b_result;
 	}
 	
 	/**
@@ -76,14 +96,14 @@ class Condition {
 			
 			if($s_token == '(') {
 				$b_clause = $this->condition();
+				
+				if($this->getToken() !== ')') {
+					throw new ConditionException("Caught runaway argument");
+				}
 			}
 			else {
 				$this->giveBackToken($s_token);
-				$b_clause = $this->getClause();
-			}
-			
-			if($b_clause === null) {
-				throw new ConditionException("Unexpected end of line");
+				$b_clause = $this->clause();
 			}
 			
 			$a_ands[] = $b_clause;
@@ -99,29 +119,26 @@ class Condition {
 				$a_ands = [];
 				
 				if($s_token == ')') {
+					$this->giveBackToken($s_token);
 					break;
 				}
 			}
 		}
 		
-		if($b_result === null) {
-			throw new ConditionException("Caught empty (sub)condition");
-		}
+		if($b_result === null) throw new ConditionException("Caught empty result");
 		
 		return $b_result;
 	}
 	
 	/**
 	 * Evaluate the clause at the current cursor position
-	 * @return bool The result of the clause, or null if the clause is empty
+	 * @return bool The result of the clause
 	 */
-	private function getClause() : ?bool {
-		$a_sentence = [];
-		
+	private function clause() : bool {
 		$s_token = $this->getToken();
 		
 		if($s_token == '') {
-			return null;
+			throw new ConditionException("Unexpected end of line");
 		}
 		if(in_array($s_token, ['true', 'yes', '1'])) {
 			return true;
@@ -130,16 +147,35 @@ class Condition {
 			return false;
 		}
 		
-		$s_fieldName = $s_token;
+		$this->giveBackToken($s_token);
+		return $this->fieldOperation();
+	}
+	
+	/**
+	 * Evaluate the field operation at the current cursor position
+	 * @return bool The result of the field operation
+	 */
+	private function fieldOperation() : bool {
+		[$s_fieldName, $s_operator, $m_operand] = $this->getFieldOperation();
+		
+		return (bool)$this->Submission->getFieldValue($s_fieldName)->evaluateCondition($s_operator, $m_operand);
+	}
+	
+	/**
+	 * Get the clause at the current cursor position
+	 * @return array [fieldname, operator, operand]
+	 */
+	private function getFieldOperation() : array {
+		$s_fieldName = $this->getToken();
 		if(!isset($this->a_fields[$s_fieldName])) {
 			throw new ConditionException("Invalid field name '".$s_fieldName."'");
 		}
 		
 		$Field = $this->a_fields[$s_fieldName];
-		$a_operators = $Field->getConditionOperators();
+		$a_operators = $Field->getComponent()->getConditionOperators();
 		
 		if(empty($a_operators)) {
-			throw new ConditionException("Field '".$s_fieldName."' uses does not support conditions");
+			throw new ConditionException("Field '".$s_fieldName."' does not support conditions");
 		}
 		
 		$i_maxWords = 0;
@@ -152,7 +188,6 @@ class Condition {
 			$s_token = $this->getToken();
 			
 			if($s_token == '') {
-				$i_maxWords = $i+1;
 				break;
 			}
 			
@@ -160,7 +195,7 @@ class Condition {
 		}
 		
 		$s_operator = null;
-		for($i=$i_maxWords; $i>0; $i--) {
+		for($i=count($a_tokens); $i>0; $i--) {
 			if(false !== ($j = array_search(implode(' ', $a_tokens), $a_operators))) {
 				$s_operator = $a_operators[$j];
 				break;
@@ -187,10 +222,14 @@ class Condition {
 			$s_operand .= (($s_operand == '') ? '' : ' ') . $s_token;
 		}
 		
-		return (bool)$this->Submission->getFieldValue($s_fieldName)->evaluateCondition($s_operator, json_decode($s_operand, true));
+		$m_operand = json_decode($s_operand, true);
+		
+		if($m_operand === null && strtolower($s_operand) != 'null') {
+			throw new ConditionException('Invalid operand "'.$s_operand.'"');
+		}
+		
+		return [$s_fieldName, $s_operator, $m_operand];
 	}
-	
-	protected $a_tokenStack = [];
 	
 	/**
 	 * Give back a token to be processed later by another method
@@ -227,12 +266,21 @@ class Condition {
 			$this->i_cursor++;
 		}
 		
-		for(; $this->i_cursor < $this->i_length && strpos(self::WHITESPACE.')', $this->s_condition[$this->i_cursor]) === false; $this->i_cursor++) {
+		for(; $this->i_cursor < $this->i_length && ($s_find !== null || strpos(self::WHITESPACE.')', $this->s_condition[$this->i_cursor]) === false); $this->i_cursor++) {
 			$s_token .= $this->s_condition[$this->i_cursor];
 			
-			if($s_find !== null && $this->s_condition[$this->i_cursor] == $s_find && substr($s_token, -2, 1) != '\\') {
-				// TODO: Should the backslash be removed?
-				break;
+			if($s_find !== null && $this->s_condition[$this->i_cursor] == $s_find) {
+				for($i=strlen($s_token)-2; $i>=0; $i--) {
+					if(substr($s_token, $i, 1) != '\\') {
+						break;
+					}
+				}
+				
+				$i_numBackslashes = strlen($s_token)-2 - $i;
+				if($i_numBackslashes % 2 == 0) {
+					$this->i_cursor++;
+					break;
+				}
 			}
 		}
 		return $s_token;

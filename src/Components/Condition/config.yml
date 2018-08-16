@@ -1,0 +1,16 @@
+vendor: reef
+name: condition
+category: other
+assets:
+    component_image: ../../../assets/img/choice-check.svg
+basicLocale:
+    title: rf_field_title
+basicDefinition:
+    fields:
+      - component: reef:condition
+        name: 'default'
+        locales:
+            en_US:
+                title: 'Default'
+            nl_NL:
+                title: 'Standaard'

@@ -46,11 +46,12 @@ abstract class Field {
 	
 	/**
 	 * Return a new value for this field
+	 * @param \Reef\Submission $Submission The submission the value will belong to
 	 * @return FieldValue
 	 */
-	public function newValue() : FieldValue {
+	public function newValue(\Reef\Submission $Submission) : FieldValue {
 		$s_class = substr(static::class, 0, -5).'Value';
-		return new $s_class($this);
+		return new $s_class($Submission, $this);
 	}
 	
 	/**

@@ -1,0 +1,55 @@
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:condition" data-{{CSSPRFX}}name="{{field.name}}">
+	<div class="{{CSSPRFX}}cond-lang"
+		data-yes="{{field.locale.rf_yes}}"
+		data-no="{{field.locale.rf_no}}"
+		data-delete_option_confirm="{{field.locale.delete_option_confirm}}"
+	></div>
+	<label class="{{layout.col_left}} col-form-label" for="{{form_idpfx}}-{{field.name}}">
+		{{field.locale.title}}
+	</label>
+	<div class="{{layout.col_right}}">
+		<table class="{{CSSPRFX}}cond-table" style="width: 100%;">
+			<thead data-condition="{{field.value}}">
+				<tr>
+					<th></th>
+					<th>{{field.locale.option_name_title}}</th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tr class="{{CSSPRFX}}cond-operation {{CSSPRFX}}template">
+					<td class="{{CSSPRFX}}cond-fieldname">
+						<select name="{{main_var}}[{{field.name}}][fieldname][]" class="form-control"></select>
+					</td>
+					<td class="{{CSSPRFX}}cond-operator">
+						<select name="{{main_var}}[{{field.name}}][operator][]" class="form-control"></select>
+					</td>
+					<td class="{{CSSPRFX}}cond-operand">
+						
+					</td>
+					<td class="{{CSSPRFX}}cond-btns">
+						<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-remove-operation">&times;</div>
+					</td>
+				</tr>
+			</thead>
+			<tbody class="{{CSSPRFX}}template">
+				<tr class="{{CSSPRFX}}cond-or">
+					<td colspan="4">OR</td>
+				</tr>
+				<tr class="{{CSSPRFX}}cond-add-and">
+					<td colspan="4"> + AND</td>
+				</tr>
+			</tbody>
+			
+			<tbody>
+				<tr class="{{CSSPRFX}}cond-add-or">
+					<td colspan="4"> + OR</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-add">+ {{field.locale.add_button}}</div>
+		
+		{{#field.errors}}
+			<div class="invalid-feedback">{{.}}</div>
+		{{/field.errors}}
+	</div>
+</div>

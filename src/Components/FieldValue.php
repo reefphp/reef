@@ -4,11 +4,29 @@ namespace Reef\Components;
 
 abstract class FieldValue {
 	
+	protected $Submission;
 	protected $Field;
 	protected $a_errors;
 	
-	public function __construct(Field $Field) {
+	public function __construct(\Reef\Submission $Submission, Field $Field) {
+		$this->Submission = $Submission;
 		$this->Field = $Field;
+	}
+	
+	/**
+	 * Get the field this value belongs to
+	 * @return Field
+	 */
+	public function getField() {
+		return $this->Field;
+	}
+	
+	/**
+	 * Get the submission this value belongs to
+	 * @return \Reef\Submission
+	 */
+	public function getSubmission() {
+		return $this->Submission;
 	}
 	
 	/**
@@ -69,6 +87,16 @@ abstract class FieldValue {
 	 * @return boolean True if the current value is valid, false otherwise
 	 */
 	abstract public function validate() : bool;
+	
+	/**
+	 * Evaluate a condition on this field value
+	 * @param string $s_operator The operator, one of Field::getConditionOperators()
+	 * @param mixed $m_operand The operand
+	 * @return boolean Result of the condition
+	 */
+	public function evaluateCondition(string $s_operator, $m_operand) : bool {
+		throw new \Reef\Exception\BadMethodCallException('This component does not implement conditions');
+	}
 	
 	/**
 	 * Retrieve errors from validation
