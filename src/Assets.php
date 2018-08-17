@@ -139,6 +139,8 @@ abstract class Assets {
 		
 		if($s_type == 'JS') {
 			$s_mainFile = __DIR__ . '/../assets/script.js';
+			
+			$a_localAssets[__DIR__ . '/../assets/ConditionEvaluator.js'] = filemtime(__DIR__ . '/../assets/ConditionEvaluator.js');
 		}
 		else if($s_type == 'CSS') {
 			$s_mainFile = __DIR__ . '/../assets/style.css';

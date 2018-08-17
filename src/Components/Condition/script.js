@@ -6,6 +6,7 @@ Reef.addComponent((function() {
 		this.$field = $field;
 		this.Reef = Reef;
 		this.auto_inc = 1;
+		this.builder = this.Reef.getBuilder();
 	};
 	
 	Field.componentName = 'reef:condition';
@@ -13,45 +14,126 @@ Reef.addComponent((function() {
 	Field.prototype.attach = function() {
 		var self = this;
 		
-		this.$field.find('tr.'+CSSPRFX+'cond-add-or').on('click', function() {
-			self.addOr($(this));
+		this.$field.find('tr.'+CSSPRFX+'cond-add-or div.'+CSSPRFX+'cond-add-or-button').on('click', function() {
+			self.addAnd(self.addOr().find('tr.'+CSSPRFX+'cond-add-and'));
 		});
 		
-		var options = this.$field.find('table tbody').data('options');
-		options = (typeof options !== 'undefined' && options != '') ? JSON.parse(atob(options)) : {};
-		if(options.length > 0) {
-			var option;
-			for(var i in options) {
-				option = options[i];
+		$(function() {
+			self.conditionReef = new Reef(self.$field.find('table.'+CSSPRFX+'cond-table'));
+			
+			var $condition = self.$field.find('.'+CSSPRFX+'cond-condition');
+			var condition = $condition.val().trim();
+			
+			var condType;
+			if(['true', 'yes', '1'].indexOf(condition) > -1) {
+				condType = 'true';
+			}
+			else if(['false', 'no', '0'].indexOf(condition) > -1) {
+				condType = 'false';
+			}
+			else {
+				condType = 'condition';
+			}
+			
+			var $condType = self.$field.find('select.'+CSSPRFX+'cond-type');
+			
+			$condType.on('change', function(evt) {
+				self.changeCondType(evt);
+			});
+			
+			$condType.val(condType).change();
+		});
+	};
+	
+	Field.prototype.changeCondType = function(evt) {
+		var $condition = this.$field.find('.'+CSSPRFX+'cond-condition');
+		var $condType = this.$field.find('select.'+CSSPRFX+'cond-type');
+		
+		// Parse current type
+		if(typeof $condType.data('current_type') !== 'undefined') {
+			if(['true', 'false'].indexOf($condType.val()) > -1 && ['manual', 'condition'].indexOf($condType.data('current_type')) > -1) {
+				if(!confirm('You will lose the condition you set up. Continue?')) {
+					evt.preventDefault();
+					return;
+				}
+			}
+			
+			this.getValue();
+		}
+		
+		var condType = $condType.val();
+		
+		this.$field.find('.'+CSSPRFX+'cond-type-section').hide();
+		this.$field.find('.'+CSSPRFX+'cond-type-'+condType).show();
+		
+		if(condType == 'condition') {
+			
+			this.clearOrs();
+			
+			var condition = $condition.val().trim();
+			var conditionArray = null;
+			
+			if(['', 'true', 'yes', '1', 'false', 'no', '0'].indexOf(condition) > -1) {
+				conditionArray = [];
+			}
+			else {
+				try {
+					conditionArray = ReefConditionEvaluator.conditionToArray(this.builder.reef, condition);
+					condType = 'condition';
+				}
+				catch(e) {
+					evt.preventDefault();
+					$condType.val('manual').change();
+					return;
+				}
+			}
+			
+			if(conditionArray.length == 0) {
+				this.addAnd(this.addOr().find('tr.'+CSSPRFX+'cond-add-and'));
+			}
+			else {
+				var i_or, i_and, operation, $addAndAnchor, $tr;
 				
-				var $option = this.newOption();
-				$option.find('.'+CSSPRFX+'cond-default').prop('checked', option.default);
-				$option.find('.'+CSSPRFX+'cond-name').val(option.name);
-				$option.find('.'+CSSPRFX+'cond-old-name').val(option.name);
-				
-				for(var l in option.locale) {
-					$option.find('div.'+CSSPRFX+'cond-locale[data-locale="'+l+'"] input').val(option.locale[l]);
+				for(i_or in conditionArray) {
+					$addAndAnchor = this.addOr().find('tr.'+CSSPRFX+'cond-add-and');
+					
+					for(i_and in conditionArray[i_or]) {
+						operation = conditionArray[i_or][i_and];
+						$tr = this.addAnd($addAndAnchor);
+						
+						var $fieldName = $tr.find('.'+CSSPRFX+'cond-fieldname select');
+						$fieldName.val(operation[0]).change();
+						
+						var $operator = $tr.find('.'+CSSPRFX+'cond-operator select');
+						$operator.val(operation[1]).change();
+						
+						var $operand = $tr.find('.'+CSSPRFX+'cond-operand');
+						var condField = $operand.data('condField');
+						if(condField !== null) {
+							condField.setValue(operation[2]);
+						}
+					}
 				}
 			}
 		}
-		else {
-			for(var i=0; i<this.$field.attr('data-num_opt_def'); i++) {
-				this.newDefaultOption();
-			}
-		}
 		
-		this.initLocaleNavigation();
+		$condType.data('current_type', condType);
+		
 	};
 	
-	Field.prototype.addOr = function($anchorTr) {
+	Field.prototype.clearOrs = function() {
+		 this.$field.find('table tbody.'+CSSPRFX+'cond-or-section').remove();
+	};
+	
+	Field.prototype.addOr = function() {
 		var self = this;
 		
-		var $tbody = this.$field.find('table tbody.'+CSSPRFX+'template').clone().removeClass(CSSPRFX+'template');
+		var $tbody = this.$field.find('table tbody.'+CSSPRFX+'template').clone().removeClass(CSSPRFX+'template').addClass(CSSPRFX+'cond-or-section');
 		
-		$anchorTr.parent().prepend($tbody);
+		this.$field.find('tr.'+CSSPRFX+'cond-add-or').parent().before($tbody);
 		
-		$tbody.find('tr.'+CSSPRFX+'cond-add-and').on('click', function() {
-			self.addAnd($(this));
+		$tbody.find('tr.'+CSSPRFX+'cond-add-and div.'+CSSPRFX+'cond-add-and-button').on('click', function() {
+			self.addAnd($(this).closest('tr.'+CSSPRFX+'cond-add-and'));
 		});
 		
 		return $tbody;
@@ -60,11 +142,11 @@ Reef.addComponent((function() {
 	Field.prototype.addAnd = function($anchorTr) {
 		var self = this;
 		
-		var $tr = this.$field.find('table thead tr.'+CSSPRFX+'template').clone().removeClass(CSSPRFX+'template').addClass(CSSPRFX+'cond-and-section');
+		var $tr = this.$field.find('table thead tr.'+CSSPRFX+'template').clone().removeClass(CSSPRFX+'template');
 		
-		$anchorTr.prepend($tr);
+		$anchorTr.before($tr);
 		
-		$tr.find('.'+CSSPRFX+'cond-fieldname select, .'+CSSPRFX+'cond-operator select, .'+CSSPRFX+'cond-operand :input').on('change', function() {
+		$tr.find('.'+CSSPRFX+'cond-fieldname select, .'+CSSPRFX+'cond-operator select').on('change', function() {
 			self.$field.trigger(EVTPRFX+'change');
 		});
 		
@@ -72,7 +154,75 @@ Reef.addComponent((function() {
 			self.removeOperation($tr);
 		});
 		
-		return $tbody;
+		var $fieldName = $tr.find('.'+CSSPRFX+'cond-fieldname select').html('<option value="">Choose...</option>');
+		
+		var name, rbfield;
+		var fields = this.builder.getConditionFieldsByName();
+		for(name in fields) {
+			rbfield = fields[name];
+			$fieldName.append($('<option>').val(name).text(name));
+		}
+		
+		var $operator = $tr.find('.'+CSSPRFX+'cond-operator select').html('');
+		
+		$fieldName.on('change', function() {
+			$operator.html('');
+			$operand.html('').removeData(['fieldDecl', 'condField']);
+			
+			if($fieldName.val() == '') {
+				return;
+			}
+			
+			rbfield = fields[$fieldName.val()];
+			
+			if(typeof rbfield === 'undefined') {
+				return;
+			}
+			
+			var operators = rbfield.field.constructor.getConditionOperators();
+			
+			for(var i in operators) {
+				$operator.append($('<option>').val(operators[i]).text(operators[i]));
+			}
+			
+			$operator.trigger('change');
+		});
+		
+		var $operand = $tr.find('.'+CSSPRFX+'cond-operand');
+		
+		$operator.on('change', function() {
+			rbfield = fields[$fieldName.val()];
+			var operators = rbfield.field.constructor.getConditionOperators();
+			var operator = operators[$operator.val()];
+			
+			var fieldDecl = rbfield.field.constructor.getConditionFieldDeclaration(operator);
+			
+			if(typeof $operand.data('fieldDecl') != 'undefined' && JSON.stringify($operand.data('fieldDecl')) == JSON.stringify(fieldDecl)) {
+				return;
+			}
+			
+			var condField;
+			if(fieldDecl == null) {
+				condField = null;
+			}
+			else {
+				condField = self.builder.createField(
+					self.conditionReef,
+					$operand,
+					fieldDecl,
+					{
+						beforeRender: function(vars) { // TODO
+							vars.layout.no_title = true;
+						}
+					}
+				);
+			}
+			
+			$operand.data('fieldDecl', fieldDecl);
+			$operand.data('condField', condField);
+		});
+		
+		return $tr;
 	};
 	
 	Field.prototype.removeOperation = function($tr) {
@@ -80,17 +230,17 @@ Reef.addComponent((function() {
 		
 		var $lang = this.$field.find('.'+CSSPRFX+'cond-lang');
 		
-		var $deleteConfirm = $('<td class="'+CSSPRFX+'cond-delete-confirm" colspan="5">');
+		var $deleteConfirm = $('<td class="'+CSSPRFX+'cond-delete-confirm" colspan="4">');
 		var $deleteConfirmDiv = $('<div class="'+CSSPRFX+'cond-delete-confirm-div">').appendTo($deleteConfirm);
 		$deleteConfirmDiv.append($('<div>').text($lang.data('delete_option_confirm')));
 		
 		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'cond-btn">').text($lang.data('yes')).on('click', function() {
 			$deleteConfirm.remove();
 			
-			$tbody = $tr.parent();
+			var $tbody = $tr.parent();
 			$tr.remove();
 			
-			if($tbody.children('.'+CSSPRFX+'cond-fieldname').length == 0) {
+			if($tbody.children('.'+CSSPRFX+'cond-operation').length == 0) {
 				$tbody.remove();
 			}
 			
@@ -107,7 +257,24 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.getValue = function() {
-		var condition = '';
+		var $condition = this.$field.find('.'+CSSPRFX+'cond-condition');
+		var condType = this.$field.find('select.'+CSSPRFX+'cond-type').data('current_type');
+		
+		if(condType == 'condition') {
+			$condition.val(this.getUIValue());
+		}
+		else if(condType == 'true') {
+			$condition.val('true');
+		}
+		else if(condType == 'false') {
+			$condition.val('false');
+		}
+		
+		return $condition.val();
+	};
+	
+	Field.prototype.getUIValue = function() {
+		var condition = '', subcondition;
 		var $table = this.$field.find('table');
 		
 		var first_or, first_and;
@@ -116,6 +283,35 @@ Reef.addComponent((function() {
 		$table.find('tbody.'+CSSPRFX+'cond-or-section').each(function() {
 			var $tbody = $(this);
 			
+			first_and = true;
+			subcondition = '';
+			$tbody.children('tr.'+CSSPRFX+'cond-operation').each(function() {
+				var $tr = $(this);
+				
+				if($tr.find('td.'+CSSPRFX+'cond-fieldname select').val() == '') {
+					return;
+				}
+				
+				if(!first_and) {
+					subcondition += ' and ';
+				}
+				else {
+					first_and = false;
+				}
+				
+				var condField = $tr.find('td.'+CSSPRFX+'cond-operand').data('condField');
+				
+				subcondition += ' ' + $tr.find('td.'+CSSPRFX+'cond-fieldname select option:selected').text();
+				subcondition += ' ' + $tr.find('td.'+CSSPRFX+'cond-operator select option:selected').text();
+				if(typeof condField !== 'undefined' && condField != null) {
+					subcondition += ' ' + JSON.stringify(condField.getValue());
+				}
+			});
+			
+			if(subcondition == '') {
+				return;
+			}
+			
 			if(!first_or) {
 				condition += ' or ';
 			}
@@ -123,22 +319,7 @@ Reef.addComponent((function() {
 				first_or = false;
 			}
 			
-			first_and = true;
-			$tbody.children('tr.'+CSSPRFX+'cond-operation').each(function() {
-				var $tr = $(this);
-				
-				if(!first_and) {
-					condition += ' and ';
-				}
-				else {
-					first_and = false;
-				}
-				
-				condition += ' ' + $tr.find('td.'+CSSPRFX+'cond-fieldname select').val();
-				condition += ' ' + $tr.find('td.'+CSSPRFX+'cond-operator select').val();
-				condition += ' ' + $tr.find('td.'+CSSPRFX+'cond-operand :input').val();
-			});
-			
+			condition += subcondition;
 		});
 		
 		return condition;
@@ -147,39 +328,10 @@ Reef.addComponent((function() {
 	Field.prototype.validate = function() {
 		var self = this;
 		
-		this.removeErrors();
-		
-		var $trs = this.$field.find('table tbody tr');
-		
-		if(this.$field.attr('data-num_opt_min') > 0 && $trs.length < this.$field.attr('data-num_opt_min')) {
-			this.setError('error-min-options');
-			return false;
+		try {
+			ReefConditionEvaluator.evaluate(this.builder.reef, this.getValue());
 		}
-		
-		if(this.$field.attr('data-max_checked_def') > 0 && $trs.find('.'+CSSPRFX+'cond-default').filter(':checked').length > this.$field.attr('data-max_checked_def')) {
-			this.setError('error-max-checked-def');
-			return false;
-		}
-		
-		var valid = true;
-		var uniqueCheck = {};
-		$trs.find('.'+CSSPRFX+'cond-name').each(function() {
-			var $input = $(this);
-			var name = $input.val();
-			
-			if(name == '' || !name.match(new RegExp($input.attr('pattern')))) {
-				self.setError('error-regexp');
-				valid = false;
-			}
-			
-			if(typeof(uniqueCheck[name]) !== 'undefined') {
-				self.setError('error-duplicate');
-				valid = false;
-			}
-			
-			uniqueCheck[name] = true;
-		});
-		if(!valid) {
+		catch(e) {
 			return false;
 		}
 		

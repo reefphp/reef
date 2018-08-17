@@ -186,6 +186,23 @@ var ReefBuilder = (function() {
 		return this.reef;
 	};
 	
+	ReefBuilder.prototype.getFields = function() {
+		return this.fields;
+	};
+	
+	ReefBuilder.prototype.getConditionFieldsByName = function() {
+		
+		var fields = {};
+		
+		for(var i=0; i<this.fields.length; i++) {
+			if(this.fields[i].declarationForm.basic.hasField('name')) {
+				fields[this.fields[i].declarationForm.basic.getField('name').getValue()] = this.fields[i];
+			}
+		}
+		
+		return fields;
+	};
+	
 	ReefBuilder.prototype.addField = function($item, newIndex) {
 		var field = new ReefBuilderField(this);
 		field.initFromItem($item);
@@ -593,6 +610,71 @@ var ReefBuilder = (function() {
 		return true;
 	};
 	
+	ReefBuilder.prototype.createField = function(reef, $container, fieldConfig, options) {
+		options = options || {};
+		
+		var componentName = fieldConfig.component;
+		
+		var template = atob(this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-components .'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"]').data('html'));
+		
+		var component;
+		if(Reef.hasComponent(componentName)) {
+			component = Reef.getComponent(componentName);
+		}
+		else {
+			component = function(){};
+		}
+		
+		if(component.viewVars) {
+			fieldConfig = component.viewVars(fieldConfig);
+		}
+		
+		if(component.getLanguageReplacements) {
+			var replacements = component.getLanguageReplacements(fieldConfig);
+			for(var i in fieldConfig.locale) {
+				fieldConfig.locale[i] = fieldConfig.locale[i].replace(/\[\[([^\[\]]+)\]\]/g, function(match, key) {
+					var parts = key.split('.');
+					var repl = replacements;
+					for(var j in parts) {
+						if(typeof repl !== 'object' || typeof repl[parts[j]] === 'undefined') {
+							return '';
+						}
+						repl = repl[parts[j]];
+					}
+					
+					// Most likely, `repl` has now become a string...
+					return (typeof repl !== 'object') ? repl : '';
+				});
+			}
+		}
+		
+		var vars = JSON.parse(atob(this.$builderWrapper.find('.'+CSSPRFX+'builder').attr('data-form_config')));
+		vars.form_idpfx = unique_id();
+		vars.CSSPRFX = CSSPRFX+'';
+		vars.main_var = 'preview';
+		vars.field = fieldConfig;
+		vars.asset = function() {
+			return reef.assetHelper();
+		};
+		
+		if(typeof options.beforeRender !== 'undefined') {
+			options.beforeRender(vars);
+		}
+		
+		var html = Mustache.render(template, vars);
+		
+		$container.html(html);
+		var field = null;
+		var $field = $container.find('.'+CSSPRFX+'field');
+		
+		if(Reef.hasComponent(componentName)) {
+			field = reef.newField($field.data(CSSPRFX+'type'), $field);
+			field.attach();
+		}
+		
+		return field;
+	};
+	
 	return ReefBuilder;
 })();
 
@@ -607,6 +689,7 @@ var ReefBuilderField = (function() {
 		this.field = null;
 		this.$field = null;
 		this.$declarationForms = null;
+		this.current_name = null;
 	};
 	
 	ReefBuilderField.prototype.initFromItem = function($item) {
@@ -644,14 +727,32 @@ var ReefBuilderField = (function() {
 			self.reefBuilder.selectField(self);
 		});
 		
-		this.declarationForm.basic = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-basic-declaration-form'));
-		this.declarationForm.advanced = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-advanced-declaration-form'));
+		this.declarationForm.basic = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-basic-declaration-form'), {'builder': this.reefBuilder});
+		this.declarationForm.advanced = new Reef($fieldWrapper.find('.'+CSSPRFX+'builder-advanced-declaration-form'), {'builder': this.reefBuilder});
 		
 		this.initLocaleWidget($fieldWrapper, 'basic');
 		this.initLocaleWidget($fieldWrapper, 'advanced');
 		
-		if(this.declarationForm.basic.hasField('name') && !existingField) {
-			this.declarationForm.basic.getField('name').setValue('field_'+unique_id().substr(0, 16));
+		if(this.declarationForm.basic.hasField('name')) {
+			var nameField = this.declarationForm.basic.getField('name');
+			
+			if(!existingField) {
+				nameField.setValue('field_'+unique_id().substr(0, 16));
+			}
+			
+			this.current_name = nameField.getValue();
+			
+			nameField.$field.find('input').on('change', function() {
+				var name = $(this).val();
+				if(name == this.current_name || !self.reefBuilder.getReef().hasField(name)) {
+					return;
+				}
+				
+				var i = 1;
+				while(self.reefBuilder.getReef().hasField(name + '_' + (++i)));
+				
+				$(this).val(name + '_' + i);
+			});
 		}
 		
 		$fieldWrapper.find('.'+CSSPRFX+'builder-component-delete').on('click', function() {
@@ -733,11 +834,14 @@ var ReefBuilderField = (function() {
 	ReefBuilderField.prototype.updateField = function() {
 		var self = this;
 		
-		var componentName = this.$fieldWrapper.data('component-name');
-		
-		var template = atob(this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-components .'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"]').data('html'));
-		
-		var fieldConfig = Object.assign({}, this.declarationForm.basic.getData(), this.declarationForm.advanced.getData(), {'locale' : {}});
+		var fieldConfig = Object.assign({},
+			this.declarationForm.basic.getData(),
+			this.declarationForm.advanced.getData(),
+			{
+				'component' : this.$fieldWrapper.data('component-name'),
+				'locale' : {}
+			}
+		);
 		
 		// Determine used locale
 		var $localeForms = this.$declarationForms.find('.'+CSSPRFX+'builder-locale-form');
@@ -755,55 +859,22 @@ var ReefBuilderField = (function() {
 			Object.assign(fieldConfig.locale, this.localeForms.advanced[locale].getData());
 		}
 		
-		var component;
-		if(Reef.hasComponent(componentName)) {
-			component = Reef.getComponent(componentName);
-		}
-		else {
-			component = function(){};
+		if(typeof fieldConfig.name !== 'undefined') {
+			this.reefBuilder.getReef().removeField(this.current_name, this.field);
 		}
 		
-		if(component.viewVars) {
-			fieldConfig = component.viewVars(fieldConfig);
+		this.field = this.reefBuilder.createField(
+			this.reefBuilder.getReef(),
+			this.$fieldWrapper.find('.'+CSSPRFX+'builder-field-preview'),
+			fieldConfig
+		);
+		
+		if(typeof fieldConfig.name !== 'undefined') {
+			this.current_name = fieldConfig.name;
+			this.reefBuilder.getReef().addField(this.current_name, this.field);
 		}
 		
-		if(component.getLanguageReplacements) {
-			var replacements = component.getLanguageReplacements(fieldConfig);
-			for(var i in fieldConfig.locale) {
-				fieldConfig.locale[i] = fieldConfig.locale[i].replace(/\[\[([^\[\]]+)\]\]/g, function(match, key) {
-					var parts = key.split('.');
-					var repl = replacements;
-					for(var j in parts) {
-						if(typeof repl !== 'object' || typeof repl[parts[j]] === 'undefined') {
-							return '';
-						}
-						repl = repl[parts[j]];
-					}
-					
-					// Most likely, `repl` has now become a string...
-					return (typeof repl !== 'object') ? repl : '';
-				});
-			}
-		}
-		
-		var vars = JSON.parse(atob(this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder').attr('data-form_config')));
-		vars.form_idpfx = unique_id();
-		vars.CSSPRFX = CSSPRFX+'';
-		vars.main_var = 'preview';
-		vars.field = fieldConfig;
-		vars.asset = function() {
-			return self.reefBuilder.getReef().assetHelper();
-		};
-		
-		var html = Mustache.render(template, vars);
-		
-		this.$fieldWrapper.find('.'+CSSPRFX+'builder-field-preview').html(html);
 		this.$field = this.$fieldWrapper.find('.'+CSSPRFX+'builder-field-preview .'+CSSPRFX+'field');
-		
-		if(Reef.hasComponent(componentName)) {
-			this.field = this.reefBuilder.getReef().newField(this.$field.data(CSSPRFX+'type'), this.$field);
-			this.field.attach();
-		}
 	};
 	
 	ReefBuilderField.prototype.validate = function() {

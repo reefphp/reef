@@ -39,7 +39,7 @@ final class ConditionEvaluatorTest extends TestCase {
 			$this->assertSame($b_ref, $b_act, "Incorrect result of condition '".$s_condition."'");
 		};
 		
-		$this->assertSame(true, $Submission->evaluateCondition(''));
+		$this->assertSame(null, $Submission->evaluateCondition(''));
 		
 		// Check basic conditions
 		foreach(['true', 'false'] as $s1) {

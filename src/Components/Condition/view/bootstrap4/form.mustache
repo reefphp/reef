@@ -8,45 +8,62 @@
 		{{field.locale.title}}
 	</label>
 	<div class="{{layout.col_right}}">
-		<table class="{{CSSPRFX}}cond-table" style="width: 100%;">
-			<thead data-condition="{{field.value}}">
-				<tr>
-					<th></th>
-					<th>{{field.locale.option_name_title}}</th>
-					<th></th>
-					<th></th>
-				</tr>
-				<tr class="{{CSSPRFX}}cond-operation {{CSSPRFX}}template">
-					<td class="{{CSSPRFX}}cond-fieldname">
-						<select name="{{main_var}}[{{field.name}}][fieldname][]" class="form-control"></select>
-					</td>
-					<td class="{{CSSPRFX}}cond-operator">
-						<select name="{{main_var}}[{{field.name}}][operator][]" class="form-control"></select>
-					</td>
-					<td class="{{CSSPRFX}}cond-operand">
-						
-					</td>
-					<td class="{{CSSPRFX}}cond-btns">
-						<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-remove-operation">&times;</div>
-					</td>
-				</tr>
-			</thead>
-			<tbody class="{{CSSPRFX}}template">
-				<tr class="{{CSSPRFX}}cond-or">
-					<td colspan="4">OR</td>
-				</tr>
-				<tr class="{{CSSPRFX}}cond-add-and">
-					<td colspan="4"> + AND</td>
-				</tr>
-			</tbody>
-			
-			<tbody>
-				<tr class="{{CSSPRFX}}cond-add-or">
-					<td colspan="4"> + OR</td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-add">+ {{field.locale.add_button}}</div>
+		
+		<select class="form-control {{CSSPRFX}}cond-type">
+			<option value="true">{{field.locale.rf_yes}}</option>
+			<option value="false">{{field.locale.rf_no}}</option>
+			<option value="condition">Condition</option>
+			<option value="manual">Manual condition</option>
+		</select>
+		
+		<div class="{{CSSPRFX}}cond-type-section {{CSSPRFX}}cond-type-condition">
+			<table class="{{CSSPRFX}}cond-table" style="width: 100%;">
+				<thead>
+					<tr>
+						<th></th>
+						<th>{{field.locale.option_name_title}}</th>
+						<th></th>
+						<th></th>
+					</tr>
+					<tr class="{{CSSPRFX}}cond-operation {{CSSPRFX}}template">
+						<td class="{{CSSPRFX}}cond-fieldname">
+							<select class="form-control"></select>
+						</td>
+						<td class="{{CSSPRFX}}cond-operator">
+							<select class="form-control"></select>
+						</td>
+						<td class="{{CSSPRFX}}cond-operand">
+							
+						</td>
+						<td class="{{CSSPRFX}}cond-btns">
+							<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-remove-operation">&times;</div>
+						</td>
+					</tr>
+				</thead>
+				<tbody class="{{CSSPRFX}}template">
+					<tr class="{{CSSPRFX}}cond-or">
+						<td colspan="4">OR</td>
+					</tr>
+					<tr class="{{CSSPRFX}}cond-add-and">
+						<td colspan="4">
+							<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-add-and-button">+ AND</div>
+						</td>
+					</tr>
+				</tbody>
+				
+				<tbody>
+					<tr class="{{CSSPRFX}}cond-add-or">
+						<td colspan="4">
+							<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-add-or-button">+ OR</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="{{CSSPRFX}}cond-type-section {{CSSPRFX}}cond-type-manual">
+			<textarea name="{{main_var}}[{{field.name}}]" class="form-control {{CSSPRFX}}cond-condition">{{field.value}}</textarea>
+		</div>
 		
 		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>

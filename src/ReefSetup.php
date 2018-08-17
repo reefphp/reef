@@ -35,6 +35,7 @@ class ReefSetup {
 		$this->addComponent(new \Reef\Components\Hidden\HiddenComponent);
 		$this->addComponent(new \Reef\Components\OptionList\OptionListComponent);
 		$this->addComponent(new \Reef\Components\Select\SelectComponent);
+		$this->addComponent(new \Reef\Components\Condition\ConditionComponent);
 		$this->addComponent(new \Reef\Components\Submit\SubmitComponent);
 	}
 	

@@ -22,7 +22,7 @@ abstract class Submission {
 		return $this->Form;
 	}
 	
-	public function evaluateCondition(string $s_condition) : bool {
+	public function evaluateCondition(string $s_condition) : ?bool {
 		return $this->Form->getConditionEvaluator()->evaluate($this, $s_condition);
 	}
 	

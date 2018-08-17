@@ -85,5 +85,30 @@ Reef.addComponent((function() {
 		}
 	};
 	
+	Field.getConditionOperators = function() {
+		return [
+			'equals',
+			'does not equal'
+		];
+	};
+	
+	Field.getConditionFieldDeclaration = function(operator) {
+		return {
+			'component' : 'reef:text_line'
+		};
+	};
+	
+	
+	Field.prototype.evaluateCondition = function(operator, operand) {
+		var value = this.getValue();
+		
+		switch(operator) {
+			case 'equals':
+				return value == operand;
+			case 'does not equal':
+				return value != operand;
+		};
+	};
+	
 	return Field;
 })());

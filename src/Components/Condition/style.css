@@ -1,3 +1,56 @@
-table.CSSPRFXcond-table tbody:first-child tr.CSSPRFXcond-or {
+
+.CSSPRFXcond-btn {
+	display: inline-block;
+	background-color: #a6aaed;
+	padding: 2px 4px;
+	cursor: pointer;
+	border-radius: 3px;
+	margin: 1px 1px;
+}
+
+.CSSPRFXcond-btn-icon {
+	font-size: 12px;
+}
+
+.CSSPRFXcond-btn:hover {
+	background-color: #969add;
+}
+
+tr.CSSPRFXcond-operation.CSSPRFXcond-deleting > td {
 	display: none;
+}
+
+tr.CSSPRFXcond-operation.CSSPRFXcond-deleting > td.CSSPRFXcond-delete-confirm {
+	display: table-cell;
+}
+
+tr.CSSPRFXcond-operation.CSSPRFXcond-deleting > td.CSSPRFXcond-delete-confirm > div.CSSPRFXcond-delete-confirm-div {
+	display: flex;
+	justify-content: space-evenly;
+	border: 1px dashed rgba(255, 0, 0);
+	background-color: rgba(255, 0, 0, 0.05);
+	padding: 2px;
+	width: 100%;
+	align-items: center;
+}
+
+
+table.CSSPRFXcond-table tbody:nth-child(3) tr.CSSPRFXcond-or {
+	display: none;
+}
+
+td.CSSPRFXcond-operand .form-group {
+	margin-bottom: 0;
+}
+
+tr.CSSPRFXcond-operation, tr.CSSPRFXcond-add-and {
+	background-color: #E6EAFF;
+}
+
+tr.CSSPRFXcond-add-and {
+	text-align: right;
+}
+
+div.CSSPRFXcond-add-and-button, div.CSSPRFXcond-add-or-button {
+	cursor: pointer;
 }

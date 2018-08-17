@@ -20,6 +20,8 @@ if(typeof Reef === 'undefined') {
 			// Parse options
 			this.options = options || {};
 			
+			this.builder = this.options.builder || null; // Only used when this is the preview reef instance in the builder
+			
 			if(typeof this.options.submit_url === 'undefined') {
 				this.options.submit_url = false;
 			}
@@ -55,7 +57,8 @@ if(typeof Reef === 'undefined') {
 			});
 			
 			// Set config
-			this.config = JSON.parse(atob(this.$wrapper.find('.'+CSSPRFX+'main-config').data('config')));
+			var config = this.$wrapper.find('.'+CSSPRFX+'main-config').data('config');
+			this.config = (typeof config !== 'undefined') ? JSON.parse(atob(config)) : {};
 			
 			// Attach to submit, if required
 			if(this.options.submit_form) {
@@ -94,6 +97,18 @@ if(typeof Reef === 'undefined') {
 		
 		Reef.prototype.getField = function(name) {
 			return this.fields[name];
+		};
+		
+		Reef.prototype.addField = function(name, field) {
+			if(!this.hasField(name)) {
+				this.fields[name] = field;
+			}
+		};
+		
+		Reef.prototype.removeField = function(name, field) {
+			if(!this.hasField(name) && this.getField(name) === field) {
+				delete this.fields[name];
+			}
 		};
 		
 		Reef.prototype.getData = function() {
@@ -182,6 +197,13 @@ if(typeof Reef === 'undefined') {
 			
 			// Submit
 			$.ajax(ajaxParams);
+		};
+		
+		/**
+		 * Get builder. Only to be used by builder-only components
+		 */
+		Reef.prototype.getBuilder = function() {
+			return this.builder;
 		};
 		
 		return Reef;

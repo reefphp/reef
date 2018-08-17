@@ -250,10 +250,7 @@ abstract class Component {
 		$this->a_builderOperators = [];
 		
 		foreach($this->getConditionOperators() as $s_opKey => $s_operator) {
-			$this->a_builderOperators[$s_opKey] = [
-				$s_operator,
-				$a_locale['operator_'.$s_opKey]??'',
-			];
+			$this->a_builderOperators[$s_operator] = $a_locale['operator_'.$s_opKey]??'';
 		}
 		
 		return $this->a_builderOperators;

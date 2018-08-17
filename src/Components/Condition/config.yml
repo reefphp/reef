@@ -5,6 +5,9 @@ assets:
     component_image: ../../../assets/img/choice-check.svg
 basicLocale:
     title: rf_field_title
+internalLocale:
+    rf_yes:
+    rf_no:
 basicDefinition:
     fields:
       - component: reef:condition

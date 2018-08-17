@@ -14,13 +14,13 @@ internalLocale:
     rf_submission_empty_value:
 basicDefinition:
     fields:
-      - component: reef:checkbox
+      - component: reef:condition
         name: 'required'
         locales:
             en_US:
-                title_right: 'Required'
+                title: 'Required'
             nl_NL:
-                title_right: 'Verplicht'
+                title: 'Verplicht'
       - component: reef:text_line
         name: 'default'
         locales:
