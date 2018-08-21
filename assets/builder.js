@@ -900,7 +900,7 @@ var ReefBuilderField = (function() {
 	};
 	
 	ReefBuilderField.prototype.checkValid = function() {
-		this.$fieldWrapper.toggleClass(CSSPRFX+'builder-field-error', this.$fieldWrapper.find('.'+CSSPRFX+'invalid').length > 0);
+		this.$fieldWrapper.toggleClass(CSSPRFX+'builder-field-error', this.$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms .'+CSSPRFX+'invalid').length > 0);
 	};
 	
 	ReefBuilderField.prototype.getDeclaration = function() {
