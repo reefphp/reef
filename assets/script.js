@@ -106,7 +106,7 @@ if(typeof Reef === 'undefined') {
 		};
 		
 		Reef.prototype.removeField = function(name, field) {
-			if(!this.hasField(name) && this.getField(name) === field) {
+			if(this.hasField(name) && this.getField(name) === field) {
 				delete this.fields[name];
 			}
 		};

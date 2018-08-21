@@ -92,10 +92,12 @@ Reef.addComponent((function() {
 		];
 	};
 	
-	Field.getConditionFieldDeclaration = function(operator) {
-		return {
-			'component' : 'reef:text_line'
-		};
+	Field.getConditionOperandInput = function(operator, layout) {
+		var classes = '';
+		if(layout == 'bootstrap4') {
+			classes += ' form-control';
+		}
+		return $('<input type="text" class="'+classes+'" />');
 	};
 	
 	

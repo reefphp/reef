@@ -34,6 +34,13 @@ tr.CSSPRFXcond-operation.CSSPRFXcond-deleting > td.CSSPRFXcond-delete-confirm > 
 	align-items: center;
 }
 
+tr.CSSPRFXcond-operation input.form-control, tr.CSSPRFXcond-operation select.form-control {
+	padding: 2px;
+}
+
+tr.CSSPRFXcond-operation select.form-control {
+	height: auto !important;
+}
 
 table.CSSPRFXcond-table tbody:nth-child(3) tr.CSSPRFXcond-or {
 	display: none;

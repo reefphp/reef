@@ -712,10 +712,6 @@ var ReefBuilderField = (function() {
 			$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.'+CSSPRFX+'main-config').data('form-idpfx')), 'g'), unique_id()));
 			$template = $($template);
 			
-			$template.find(':input').on('change', function() {
-				self.updateField();
-			});
-			
 			$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms').append($template);
 		}
 		
@@ -744,16 +740,20 @@ var ReefBuilderField = (function() {
 			
 			nameField.$field.find('input').on('change', function() {
 				var name = $(this).val();
-				if(name == this.current_name || !self.reefBuilder.getReef().hasField(name)) {
-					return;
+				if(name != self.current_name && self.reefBuilder.getReef().hasField(name)) {
+					var i = 1;
+					while(self.reefBuilder.getReef().hasField(name + '_' + (++i)));
+					
+					$(this).val(name + '_' + i);
 				}
 				
-				var i = 1;
-				while(self.reefBuilder.getReef().hasField(name + '_' + (++i)));
-				
-				$(this).val(name + '_' + i);
+				$fieldWrapper.trigger(EVTPRFX+'name_change', [self.current_name, $(this).val()]);
 			});
 		}
+		
+		$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms :input').on('change', function() {
+			self.updateField();
+		});
 		
 		$fieldWrapper.find('.'+CSSPRFX+'builder-component-delete').on('click', function() {
 			self.deleteField();

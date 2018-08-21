@@ -360,5 +360,122 @@ var ReefConditionEvaluator = (function() {
 		return this.getFieldOperation();
 	}
 	
+	/**
+	 * Rename a field in a condition
+	 * 
+	 * @param Reef reef The reef object
+	 * @param string s_condition The condition
+	 * @param string old_name The old name
+	 * @param string new_name The new name
+	 * 
+	 * @return string The new condition
+	 * 
+	 * @throws Exception If the input condition is invalid
+	 */
+	ConditionEvaluator.prototype.conditionRename = function(reef, s_condition, old_name, new_name) {
+		
+		var new_condition;
+		
+		if(s_condition.trim() == '') {
+			return null;
+		}
+		
+		this.reef = reef;
+		this.s_condition = s_condition;
+		this.i_length = this.s_condition.length;
+		this.i_cursor = 0;
+		this.a_tokenStack = [];
+		
+		new_condition = this.conditionRename_condition(old_name, new_name);
+		
+		if(this.getToken() !== '') {
+			throw ('Caught invalid condition');
+		}
+		
+		return new_condition;
+	}
+	
+	/**
+	 * Evaluate the (sub)condition at the current cursor position
+	 * @param string old_name The old name
+	 * @param string new_name The new name
+	 * @return bool The result of the (sub)condition
+	 */
+	ConditionEvaluator.prototype.conditionRename_condition = function(old_name, new_name) {
+		
+		var new_condition, s_token;
+		
+		new_condition = '';
+		
+		while(this.i_cursor < this.i_length) {
+			
+			s_token = this.getToken();
+			
+			if(s_token == '(') {
+				new_condition += this.conditionRename_condition(old_name, new_name);
+				
+				if(this.getToken() !== ')') {
+					throw ("Caught runaway argument");
+				}
+			}
+			else {
+				this.giveBackToken(s_token);
+				new_condition += this.conditionRename_clause(old_name, new_name);
+			}
+			
+			s_token = this.getToken();
+			
+			if(s_token != ')' && s_token != 'and' && s_token != 'or' && s_token != '') {
+				throw ("Unexpected token '" + s_token + "'");
+			}
+			
+			if(s_token == ')') {
+				this.giveBackToken(s_token);
+				break;
+			}
+			
+			if(s_token == 'and' || s_token == 'or') {
+				new_condition += ' ' + s_token + ' ';
+			}
+		}
+		
+		if(new_condition === '') throw ("Caught empty result");
+		
+		return new_condition;
+	}
+	
+	/**
+	 * Evaluate the clause at the current cursor position
+	 * @param string old_name The old name
+	 * @param string new_name The new name
+	 * @return bool The result of the clause
+	 */
+	ConditionEvaluator.prototype.conditionRename_clause = function(old_name, new_name) {
+		
+		var s_token;
+		
+		s_token = this.getToken();
+		
+		if(s_token == '') {
+			throw ("Unexpected end of line");
+		}
+		if(['true', 'yes', '1'].indexOf(s_token) > -1) {
+			return s_token;
+		}
+		else if(['false', 'no', '0'].indexOf(s_token) > -1) {
+			return s_token;
+		}
+		
+		this.giveBackToken(s_token);
+		
+		var operation = this.getFieldOperation();
+		
+		if(operation[0] == old_name) {
+			operation[0] = new_name;
+		}
+		
+		return operation[0] + ' ' + operation[1] + ' ' + JSON.stringify(operation[2]);
+	}
+	
 	return new ConditionEvaluator();
 })();

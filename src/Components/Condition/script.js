@@ -42,6 +42,38 @@ Reef.addComponent((function() {
 			});
 			
 			$condType.val(condType).change();
+			
+			self.builder.$builderWrapper.on(EVTPRFX+'name_change', function(evt, old_name, new_name) {
+				if(!$.contains(document.documentElement, self.$field[0])) {
+					self.builder.$builderWrapper.off(EVTPRFX+'name_change', this);
+					return;
+				}
+				
+				var condition = self.getValue();
+				var new_condition = ReefConditionEvaluator.conditionRename(self.builder.reef, condition, old_name, new_name);
+				if(condition != new_condition) {
+					setTimeout(function() {
+						var prevCondType = $condType.val();
+						if(prevCondType == 'condition') {
+							$condType.val('manual').change();
+						}
+						$condition.val(new_condition);
+						$condition.change();
+						if(prevCondType == 'condition') {
+							$condType.val('condition').change();
+						}
+					}, 0);
+				}
+			});
+			
+			$condition.on('change', function() {
+				try {
+					self.manualToUI();
+				}
+				catch(e) {
+					// Probably invalid manual input
+				}
+			});
 		});
 	};
 	
@@ -67,53 +99,11 @@ Reef.addComponent((function() {
 		this.$field.find('.'+CSSPRFX+'cond-type-'+condType).show();
 		
 		if(condType == 'condition') {
-			
-			this.clearOrs();
-			
-			var condition = $condition.val().trim();
-			var conditionArray = null;
-			
-			if(['', 'true', 'yes', '1', 'false', 'no', '0'].indexOf(condition) > -1) {
-				conditionArray = [];
+			try {
+				this.manualToUI();
 			}
-			else {
-				try {
-					conditionArray = ReefConditionEvaluator.conditionToArray(this.builder.reef, condition);
-					condType = 'condition';
-				}
-				catch(e) {
-					evt.preventDefault();
-					$condType.val('manual').change();
-					return;
-				}
-			}
-			
-			if(conditionArray.length == 0) {
-				this.addAnd(this.addOr().find('tr.'+CSSPRFX+'cond-add-and'));
-			}
-			else {
-				var i_or, i_and, operation, $addAndAnchor, $tr;
-				
-				for(i_or in conditionArray) {
-					$addAndAnchor = this.addOr().find('tr.'+CSSPRFX+'cond-add-and');
-					
-					for(i_and in conditionArray[i_or]) {
-						operation = conditionArray[i_or][i_and];
-						$tr = this.addAnd($addAndAnchor);
-						
-						var $fieldName = $tr.find('.'+CSSPRFX+'cond-fieldname select');
-						$fieldName.val(operation[0]).change();
-						
-						var $operator = $tr.find('.'+CSSPRFX+'cond-operator select');
-						$operator.val(operation[1]).change();
-						
-						var $operand = $tr.find('.'+CSSPRFX+'cond-operand');
-						var condField = $operand.data('condField');
-						if(condField !== null) {
-							condField.setValue(operation[2]);
-						}
-					}
-				}
+			catch(e) {
+				evt.preventDefault();
 			}
 		}
 		
@@ -123,6 +113,57 @@ Reef.addComponent((function() {
 	
 	Field.prototype.clearOrs = function() {
 		 this.$field.find('table tbody.'+CSSPRFX+'cond-or-section').remove();
+	};
+	
+	Field.prototype.manualToUI = function() {
+		this.clearOrs();
+		
+		var $condition = this.$field.find('.'+CSSPRFX+'cond-condition');
+		var $condType = this.$field.find('select.'+CSSPRFX+'cond-type');
+		
+		var condition = $condition.val().trim();
+		var conditionArray = null;
+		
+		if(['', 'true', 'yes', '1', 'false', 'no', '0'].indexOf(condition) > -1) {
+			conditionArray = [];
+		}
+		else {
+			try {
+				conditionArray = ReefConditionEvaluator.conditionToArray(this.builder.reef, condition);
+			}
+			catch(e) {
+				$condType.val('manual').change();
+				throw e;
+			}
+		}
+		
+		if(conditionArray.length == 0) {
+			this.addAnd(this.addOr().find('tr.'+CSSPRFX+'cond-add-and'));
+		}
+		else {
+			var i_or, i_and, operation, $addAndAnchor, $tr;
+			
+			for(i_or in conditionArray) {
+				$addAndAnchor = this.addOr().find('tr.'+CSSPRFX+'cond-add-and');
+				
+				for(i_and in conditionArray[i_or]) {
+					operation = conditionArray[i_or][i_and];
+					$tr = this.addAnd($addAndAnchor);
+					
+					var $fieldName = $tr.find('.'+CSSPRFX+'cond-fieldname select');
+					$fieldName.val(operation[0]).change();
+					
+					var $operator = $tr.find('.'+CSSPRFX+'cond-operator select');
+					$operator.val(operation[1]).change();
+					
+					var $operand = $tr.find('.'+CSSPRFX+'cond-operand');
+					var $operandInput = $operand.data('operandInput');
+					if(typeof $operandInput !== 'undefined') {
+						$operandInput.val(operation[2]).change();
+					}
+				}
+			}
+		}
 	};
 	
 	Field.prototype.addOr = function() {
@@ -167,7 +208,7 @@ Reef.addComponent((function() {
 		
 		$fieldName.on('change', function() {
 			$operator.html('');
-			$operand.html('').removeData(['fieldDecl', 'condField']);
+			$operand.html('').removeData(['operandInput']);
 			
 			if($fieldName.val() == '') {
 				return;
@@ -195,31 +236,19 @@ Reef.addComponent((function() {
 			var operators = rbfield.field.constructor.getConditionOperators();
 			var operator = operators[$operator.val()];
 			
-			var fieldDecl = rbfield.field.constructor.getConditionFieldDeclaration(operator);
+			var $operandInput = rbfield.field.constructor.getConditionOperandInput(operator, self.Reef.config.layout_name);
 			
-			if(typeof $operand.data('fieldDecl') != 'undefined' && JSON.stringify($operand.data('fieldDecl')) == JSON.stringify(fieldDecl)) {
+			if($operandInput == null) {
 				return;
 			}
 			
-			var condField;
-			if(fieldDecl == null) {
-				condField = null;
-			}
-			else {
-				condField = self.builder.createField(
-					self.conditionReef,
-					$operand,
-					fieldDecl,
-					{
-						beforeRender: function(vars) { // TODO
-							vars.layout.no_title = true;
-						}
-					}
-				);
+			if(typeof $operand.data('operandInput') != 'undefined' && $operand.data('operandInput').html() == $operandInput.prop('outerHTML')) {
+				return;
 			}
 			
-			$operand.data('fieldDecl', fieldDecl);
-			$operand.data('condField', condField);
+			$operand.html($operandInput);
+			
+			$operand.data('operandInput', $operandInput);
 		});
 		
 		return $tr;
@@ -299,12 +328,12 @@ Reef.addComponent((function() {
 					first_and = false;
 				}
 				
-				var condField = $tr.find('td.'+CSSPRFX+'cond-operand').data('condField');
+				var $operandInput = $tr.find('td.'+CSSPRFX+'cond-operand').data('operandInput');
 				
 				subcondition += ' ' + $tr.find('td.'+CSSPRFX+'cond-fieldname select option:selected').text();
 				subcondition += ' ' + $tr.find('td.'+CSSPRFX+'cond-operator select option:selected').text();
-				if(typeof condField !== 'undefined' && condField != null) {
-					subcondition += ' ' + JSON.stringify(condField.getValue());
+				if(typeof $operandInput !== 'undefined' && $operandInput != null) {
+					subcondition += ' ' + JSON.stringify($operandInput.val());
 				}
 			});
 			
