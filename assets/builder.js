@@ -220,13 +220,14 @@ var ReefBuilder = (function() {
 		this.fields.splice(newIndex, 0, this.fields.splice(oldIndex, 1)[0]);
 	};
 	
-	ReefBuilder.prototype.removeField = function(field) {
+	ReefBuilder.prototype.removeField = function(rbfield) {
 		this.interruptSubmit();
 		this.deselectField();
-		var index = this.fields.indexOf(field);
+		var index = this.fields.indexOf(rbfield);
 		if(index > -1) {
 			this.fields.splice(index, 1);
 		}
+		this.getReef().removeField(rbfield.current_name, rbfield.field);
 	};
 	
 	ReefBuilder.prototype.selectField = function(field) {
@@ -756,6 +757,15 @@ var ReefBuilderField = (function() {
 		});
 		
 		$fieldWrapper.find('.'+CSSPRFX+'builder-component-delete').on('click', function() {
+			var state = {
+				prevent : false
+			};
+			$fieldWrapper.trigger(EVTPRFX+'delete_field_before', [self, state]);
+			
+			if(state.prevent) {
+				return;
+			}
+			
 			self.deleteField();
 		});
 		

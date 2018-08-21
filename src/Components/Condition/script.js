@@ -66,6 +66,37 @@ Reef.addComponent((function() {
 				}
 			});
 			
+			self.builder.$builderWrapper.on(EVTPRFX+'delete_field_before', function(evt, rbfield, state) {
+				
+				if(state.prevent || state.conditionLossAsked) {
+					return;
+				}
+				
+				var conditionArray = ReefConditionEvaluator.conditionToArray(self.builder.reef, self.getValue());
+				var found = false;
+				var i_or, i_and, operation;
+				
+				for(i_or in conditionArray) {
+					for(i_and in conditionArray[i_or]) {
+						operation = conditionArray[i_or][i_and];
+						if(operation[0] == rbfield.current_name) {
+							found = true;
+							break;
+						}
+					}
+					if(found) {
+						break;
+					}
+				}
+				
+				if(found && !confirm("Er zijn condities aan dit veld verbonden. Met het verwijderen van dit veld zullen deze condities ongeldig worden. Doorgaan?")) {
+					state.prevent = true;
+				}
+				else {
+					state.conditionLossAsked = true;
+				}
+			});
+			
 			$condition.on('change', function() {
 				try {
 					self.manualToUI();
@@ -361,18 +392,20 @@ Reef.addComponent((function() {
 			ReefConditionEvaluator.evaluate(this.builder.reef, this.getValue());
 		}
 		catch(e) {
+			this.setError(e);
 			return false;
 		}
 		
 		return true;
 	};
 	
-	Field.prototype.setError = function(message_key) {
+	Field.prototype.setError = function(message) {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
+		this.removeErrors();
+		
 		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('.invalid-feedback').hide().filter('.'+CSSPRFX+message_key).show();
+			this.$field.find('.'+CSSPRFX+'cond-feedback').text(message).show();
 		}
 	};
 	
@@ -380,7 +413,6 @@ Reef.addComponent((function() {
 		this.$field.removeClass(CSSPRFX+'invalid');
 		
 		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').removeClass('is-invalid');
 			this.$field.find('.invalid-feedback').hide();
 		}
 	};
@@ -389,7 +421,6 @@ Reef.addComponent((function() {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
 		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
 			this.$field.find('input').parent().append($('<div class="invalid-feedback"></div>').text(message));
 		}
 	};
