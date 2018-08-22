@@ -167,6 +167,16 @@ abstract class Component {
 		$this->a_configuration = $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME, function() {
 			$a_configuration = Yaml::parseFile(static::getDir().'config.yml');
 			
+			// Merge generalized options
+			if($this instanceof \Reef\Components\Traits\Required\RequiredComponentInterface) {
+				$a_requiredFields = $this->getDeclarationFields_required();
+				if(!empty($a_requiredFields)) {
+					array_push($a_configuration['basicDefinition']['fields'], ...$a_requiredFields);
+				}
+				
+				$a_configuration['advancedLocale'] = array_merge($a_configuration['advancedLocale']??[], $this->getLocale_required());
+			}
+			
 			// Parse locale declaration lists
 			foreach(['basicLocale', 'advancedLocale'] as $s_localeType) {
 				if(!isset($a_configuration[$s_localeType])) {

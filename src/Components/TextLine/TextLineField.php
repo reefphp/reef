@@ -4,8 +4,12 @@ namespace Reef\Components\TextLine;
 
 use Reef\Components\Field;
 use Reef\Updater;
+use \Reef\Components\Traits\Required\RequiredFieldInterface;
+use \Reef\Components\Traits\Required\RequiredFieldTrait;
 
-class TextLineField extends Field {
+class TextLineField extends Field implements RequiredFieldInterface {
+	
+	use RequiredFieldTrait;
 	
 	/**
 	 * @inherit
@@ -13,9 +17,7 @@ class TextLineField extends Field {
 	public function validateDeclaration(array &$a_errors = null) : bool {
 		$b_valid = true;
 		
-		if(isset($this->a_declaration['required']) && !$this->getForm()->getConditionEvaluator()->validate($this->a_declaration['required'], $a_errors)) {
-			$b_valid = false;
-		}
+		$b_valid = $this->validateDeclaration_required($a_errors) && $b_valid;
 		
 		return $b_valid;
 	}

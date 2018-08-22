@@ -196,6 +196,11 @@ abstract class Field {
 	public function view_form(?FieldValue $Value, $a_options = []) : array {
 		$a_vars = $this->a_declaration;
 		
+		// Merge generalized options
+		if($this instanceof \Reef\Components\Traits\Required\RequiredFieldInterface) {
+			$a_vars = array_merge($a_vars, $this->view_form_required($Value));
+		}
+		
 		$a_vars['errors'] = !empty($Value) ? $Value->getErrors() : [];
 		$a_vars['hasErrors'] = !empty($a_vars['errors']);
 		

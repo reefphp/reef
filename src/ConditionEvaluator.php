@@ -50,12 +50,12 @@ class ConditionEvaluator {
 	/**
 	 * Validate a condition
 	 * 
-	 * @param string $s_condition The condition
+	 * @param string|bool $s_condition The condition
 	 * @param array &$a_errors (Out) Optional, the errors
 	 * 
 	 * @return bool True if the condition is valid, false otherwise
 	 */
-	public function validate(string $s_condition, array &$a_errors = null) : bool {
+	public function validate($s_condition, array &$a_errors = null) : bool {
 		if($this->EmptySubmission == null) {
 			$this->EmptySubmission = $this->Form->newSubmission();
 			$this->EmptySubmission->emptySubmission();
@@ -75,14 +75,18 @@ class ConditionEvaluator {
 	 * Evaluate an entire condition
 	 * 
 	 * @param \Reef\Submission $Submission The submission to evaluate against
-	 * @param string $s_condition The condition
+	 * @param string|bool $s_condition The condition
 	 * 
 	 * @return ?bool The boolean result, or null if the input condition was empty
 	 * 
 	 * @throws BadMethodCallException If called with a submission not belonging to the form this evaluator is initialized with
 	 * @throws ConditionException If the input condition is invalid
 	 */
-	public function evaluate(\Reef\Submission $Submission, string $s_condition) : ?bool {
+	public function evaluate(\Reef\Submission $Submission, $s_condition) : ?bool {
+		if(is_bool($s_condition)) {
+			return (bool)$s_condition;
+		}
+		$s_condition = (string)$s_condition;
 		
 		if($Submission->getForm() !== $this->Form) {
 			throw new \Reef\Exception\BadMethodCallException("Caught non-related form and submission");

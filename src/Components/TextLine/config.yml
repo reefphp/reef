@@ -6,21 +6,12 @@ assets:
 basicLocale:
     title: rf_field_title
     placeholder: rf_field_placeholder
-advancedLocale:
-    rf_error_required_empty: rf_error_required_empty_title
 internalLocale:
     error_regexp:
     error_value_too_long:
     rf_submission_empty_value:
 basicDefinition:
     fields:
-      - component: reef:condition
-        name: 'required'
-        locales:
-            en_US:
-                title: 'Required'
-            nl_NL:
-                title: 'Verplicht'
       - component: reef:text_line
         name: 'default'
         locales:
