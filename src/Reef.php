@@ -272,6 +272,17 @@ class Reef {
 				]);
 			}
 		}
+		
+		$Form = $this->newValidTempForm($a_definition);
+		foreach($Form->getFields() as $i_index => $Field) {
+			if(!$Field->validateDeclaration($a_errors)) {
+				throw new ValidationException([
+					$i_index => [
+						-1 => $a_errors,
+					],
+				]);
+			}
+		}
 	}
 	
 	public function checkDeclaration(array $a_declaration) {

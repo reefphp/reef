@@ -7,6 +7,19 @@ use Reef\Updater;
 
 class TextLineField extends Field {
 	
+	/**
+	 * @inherit
+	 */
+	public function validateDeclaration(array &$a_errors = null) : bool {
+		$b_valid = true;
+		
+		if(isset($this->a_declaration['required']) && !$this->getForm()->getConditionEvaluator()->validate($this->a_declaration['required'], $a_errors)) {
+			$b_valid = false;
+		}
+		
+		return $b_valid;
+	}
+	
 	public function getMaxLength() {
 		if(!empty($this->a_declaration['max_length'])) {
 			return (int)$this->a_declaration['max_length'];

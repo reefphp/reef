@@ -45,6 +45,15 @@ abstract class Field {
 	}
 	
 	/**
+	 * Perform validation on a declaration, additional to the default form validation
+	 * @param array &$a_errors Array of errors
+	 * @return bool True if valid
+	 */
+	public function validateDeclaration(array &$a_errors = null) : bool {
+		return true;
+	}
+	
+	/**
 	 * Return a new value for this field
 	 * @param \Reef\Submission $Submission The submission the value will belong to
 	 * @return FieldValue

@@ -6,18 +6,15 @@ use Reef\Components\FieldValue;
 
 class ConditionValue extends FieldValue {
 	
-	private $b_value;
+	private $s_value;
 	
 	/**
 	 * @inherit
 	 */
 	public function validate() : bool {
-		$this->a_errors = [];
+		// We cannot perform any validation at this stage, because we need a Form instance for that
 		
-		if(($this->Field->getDeclaration()['required']??false) && !$this->b_value) {
-			$this->a_errors[] = $this->Field->getForm()->trans('rf_error_required_empty');
-			return false;
-		}
+		$this->a_errors = [];
 		
 		return true;
 	}
@@ -26,7 +23,7 @@ class ConditionValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromDefault() {
-		$this->b_value = (bool)($this->Field->getDeclaration()['default']??false);
+		$this->s_value = $this->Field->getDeclaration()['default']??'false';
 		$this->a_errors = null;
 	}
 	
@@ -34,7 +31,7 @@ class ConditionValue extends FieldValue {
 	 * @inherit
 	 */
 	public function isDefault() : bool {
-		return ($this->b_value === (bool)($this->Field->getDeclaration()['default']??false));
+		return ($this->s_value === ($this->Field->getDeclaration()['default']??'false'));
 	}
 	
 	/**
@@ -48,7 +45,10 @@ class ConditionValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromStructured($m_input) {
-		$this->b_value = \Reef\interpretBool($m_input);
+		if(is_bool($m_input)) {
+			$m_input = $m_input ? 'true' : 'false';
+		}
+		$this->s_value = (string)$m_input;
 		$this->a_errors = null;
 	}
 	
@@ -57,7 +57,7 @@ class ConditionValue extends FieldValue {
 	 */
 	public function toFlat() : array {
 		return [
-			(int)$this->b_value,
+			(int)$this->s_value,
 		];
 	}
 	
@@ -65,7 +65,7 @@ class ConditionValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->b_value = (bool)($a_flat[0]??$this->Field->getDeclaration()['default']??false);
+		$this->s_value = ($a_flat[0]??$this->Field->getDeclaration()['default']??'false');
 		$this->a_errors = null;
 	}
 	
@@ -73,22 +73,20 @@ class ConditionValue extends FieldValue {
 	 * @inherit
 	 */
 	public function toStructured() {
-		return $this->b_value;
+		return $this->s_value;
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function toOverviewColumns() : array {
-		return [
-			(int)$this->b_value,
-		];
+		return [];
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public function toTemplateVar() {
-		return $this->b_value;
+		return $this->s_value;
 	}
 }

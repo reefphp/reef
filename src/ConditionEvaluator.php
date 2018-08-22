@@ -35,6 +35,7 @@ class ConditionEvaluator {
 	private $Form;
 	private $a_fields;
 	private $a_tokenStack;
+	private $EmptySubmission;
 	
 	private $Submission;
 	private $s_condition;
@@ -44,6 +45,30 @@ class ConditionEvaluator {
 	public function __construct(\Reef\Form\Form $Form) {
 		$this->Form = $Form;
 		$this->a_fields = $this->Form->getValueFieldsByName();
+	}
+	
+	/**
+	 * Validate a condition
+	 * 
+	 * @param string $s_condition The condition
+	 * @param array &$a_errors (Out) Optional, the errors
+	 * 
+	 * @return bool True if the condition is valid, false otherwise
+	 */
+	public function validate(string $s_condition, array &$a_errors = null) : bool {
+		if($this->EmptySubmission == null) {
+			$this->EmptySubmission = $this->Form->newSubmission();
+			$this->EmptySubmission->emptySubmission();
+		}
+		
+		try {
+			$this->evaluate($this->EmptySubmission, $s_condition);
+			return true;
+		}
+		catch(ConditionException $e) {
+			$a_errors[] = $e->getMessage();
+			return false;
+		}
 	}
 	
 	/**

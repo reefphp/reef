@@ -26,7 +26,11 @@ if(isset($_POST['builder_data'])) {
 
 if(isset($_POST['definition'])) {
 	try {
-		$Form->updateDefinition(\Symfony\Component\Yaml\Yaml::parse($_POST['definition']));
+		$a_definition = \Symfony\Component\Yaml\Yaml::parse($_POST['definition']);
+		
+		$Reef->checkDefinition($a_definition);
+		
+		$Form->updateDefinition($a_definition);
 		
 		$_SESSION['sandbox']['definition'] = $Form->getDefinition();
 		
