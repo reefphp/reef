@@ -19,8 +19,6 @@ Reef.addComponent((function() {
 		});
 		
 		$(function() {
-			self.conditionReef = new Reef(self.$field.find('table.'+CSSPRFX+'cond-table'));
-			
 			var $condition = self.$field.find('.'+CSSPRFX+'cond-condition');
 			var condition = $condition.val().trim();
 			
@@ -103,6 +101,18 @@ Reef.addComponent((function() {
 				}
 				catch(e) {
 					// Probably invalid manual input
+				}
+			});
+			
+			self.Reef.$wrapper.on(EVTPRFX+'builder-open', function() {
+				if($condType.data('current_type') == 'condition') {
+					try {
+						self.getValue();
+						self.manualToUI();
+					}
+					catch(e) {
+						// Probably invalid manual input
+					}
 				}
 			});
 		});

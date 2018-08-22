@@ -306,7 +306,7 @@ var ReefBuilder = (function() {
 	ReefBuilder.prototype.openFieldTab = function(tab) {
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-content .'+CSSPRFX+'builder-declaration-forms')
 			.children().hide()
-			.filter('.'+CSSPRFX+'builder-'+tab+'-declaration-form, .'+CSSPRFX+'builder-'+tab+'-locale-forms').show();
+			.filter('.'+CSSPRFX+'builder-'+tab+'-declaration-form, .'+CSSPRFX+'builder-'+tab+'-locale-forms').show().trigger(EVTPRFX+'builder-open');
 		
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-tab').removeClass(CSSPRFX+'builder-sidetab-field-tab-active')
 			.filter('[data-type="'+tab+'"]').addClass(CSSPRFX+'builder-sidetab-field-tab-active');
