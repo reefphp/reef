@@ -371,7 +371,7 @@ Reef.addComponent((function() {
 				
 				var $operandInput = $tr.find('td.'+CSSPRFX+'cond-operand').data('operandInput');
 				
-				subcondition += ' ' + $tr.find('td.'+CSSPRFX+'cond-fieldname select option:selected').text();
+				subcondition += $tr.find('td.'+CSSPRFX+'cond-fieldname select option:selected').text();
 				subcondition += ' ' + $tr.find('td.'+CSSPRFX+'cond-operator select option:selected').text();
 				if(typeof $operandInput !== 'undefined' && $operandInput != null) {
 					subcondition += ' ' + JSON.stringify($operandInput.val());

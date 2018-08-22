@@ -361,7 +361,29 @@ var ReefConditionEvaluator = (function() {
 	}
 	
 	/**
-	 * Rename a field in a condition
+	 * Find all fields in a condition
+	 * 
+	 * @param Reef reef The reef object
+	 * @param string s_condition The condition
+	 * 
+	 * @return array The field names
+	 * 
+	 * @throws Exception If the input condition is invalid
+	 */
+	ConditionEvaluator.prototype.fetchFieldNames = function(reef, s_condition) {
+		this.conditionRename(reef, s_condition, null, null);
+		
+		var a_fieldNames = [];
+		
+		for(var s_fieldName in this.o_usedFieldNames) {
+			a_fieldNames.push(s_fieldName);
+		}
+		
+		return a_fieldNames;
+	}
+	
+	/**
+	 * Rename a field in a condition (or find all fields in a condition, as used by fetchFieldNames())
 	 * 
 	 * @param Reef reef The reef object
 	 * @param string s_condition The condition
@@ -385,6 +407,7 @@ var ReefConditionEvaluator = (function() {
 		this.i_length = this.s_condition.length;
 		this.i_cursor = 0;
 		this.a_tokenStack = [];
+		this.o_usedFieldNames = {};
 		
 		new_condition = this.conditionRename_condition(old_name, new_name);
 		
@@ -472,6 +495,9 @@ var ReefConditionEvaluator = (function() {
 		
 		if(operation[0] == old_name) {
 			operation[0] = new_name;
+		}
+		if(old_name == null && new_name == null) {
+			this.o_usedFieldNames[operation[0]] = 1;
 		}
 		
 		return operation[0] + ' ' + operation[1] + ' ' + JSON.stringify(operation[2]);

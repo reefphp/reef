@@ -206,6 +206,30 @@ if(typeof Reef === 'undefined') {
 			return this.builder;
 		};
 		
+		Reef.prototype.onConditionChange = function(condition, callback) {
+			var self = this;
+			
+			var fieldNames = ReefConditionEvaluator.fetchFieldNames(this, condition);
+			
+			for(var i in fieldNames) {
+				var fieldName = fieldNames[i];
+				this.fields[fieldName].$field.on('change '+EVTPRFX+'change', function() {
+					callback(ReefConditionEvaluator.evaluate(self, condition));
+				});
+			}
+		};
+		
+		Reef.prototype.listenRequired = function(field, $input) {
+			if($input.attr('data-required-if')) {
+				this.onConditionChange($input.attr('data-required-if'), function(result) {
+					if(result != $input.prop('required')) {
+						$input.prop('required', result);
+						field.validate();
+					}
+				});
+			}
+		}
+		
 		return Reef;
 	})();
 }
