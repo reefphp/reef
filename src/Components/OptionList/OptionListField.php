@@ -27,13 +27,6 @@ class OptionListField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function isRequired() {
-		return ($this->a_declaration['min_num_options'] > 0);
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function view_form($Value, $a_options = []) : array {
 		$a_vars = parent::view_form($Value, $a_options);
 		$a_vars['value'] = (array)$Value->toTemplateVar();

@@ -9,13 +9,6 @@ class SelectField extends AbstractSingleChoiceField {
 	/**
 	 * @inherit
 	 */
-	public function isRequired() {
-		return false;
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function view_submission($Value, $a_options = []) : array {
 		$a_vars = parent::view_submission($Value, $a_options);
 		$a_vars['value'] = (string)$Value->toTemplateVar();

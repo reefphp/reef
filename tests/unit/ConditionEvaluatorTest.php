@@ -161,11 +161,9 @@ final class ConditionEvaluatorTest extends TestCase {
 	 * @dataProvider invalidStaticInputProvider
 	 */
 	public function testCatchesInvalidStaticInput($s_condition): void {
-		$Submission = static::$Reef->newTempForm()->newSubmission();
+		$ConditionEvaluator = static::$Reef->newTempForm()->getConditionEvaluator();
 		
-		$this->expectException(\Reef\Exception\ConditionException::class);
-		
-		$Submission->evaluateCondition($s_condition);
+		$this->assertFalse($ConditionEvaluator->validate($s_condition));
 	}
 	
 	/**

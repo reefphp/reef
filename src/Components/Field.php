@@ -188,14 +188,6 @@ abstract class Field {
 	abstract public function getOverviewColumns() : array;
 	
 	/**
-	 * Return whether this field is required
-	 * @return bool
-	 */
-	public function isRequired() {
-		return false;
-	}
-	
-	/**
 	 * Build template variables for the form
 	 * @param ?FieldValue $Value The value object, may be null for static components
 	 * @param array $a_options Options

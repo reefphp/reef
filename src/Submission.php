@@ -52,8 +52,8 @@ abstract class Submission {
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getDeclaration()['name'];
 			$this->a_fieldValues[$s_name] = $Field->newValue($this);
-			if(isset($a_structured[$s_name]) || $Field->isRequired()) {
-				$this->a_fieldValues[$s_name]->fromStructured($a_structured[$s_name]??null);
+			if(array_key_exists($s_name, $a_structured)) {
+				$this->a_fieldValues[$s_name]->fromStructured($a_structured[$s_name]);
 			}
 			else {
 				$this->a_fieldValues[$s_name]->fromDefault();
@@ -156,7 +156,7 @@ abstract class Submission {
 		$a_fields = $this->Form->getValueFields();
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getDeclaration()['name'];
-			if(!empty($a_options['skip_default']) && !$Field->isRequired() && $this->a_fieldValues[$s_name]->isDefault()) {
+			if(!empty($a_options['skip_default']) && $this->a_fieldValues[$s_name]->isDefault()) {
 				continue;
 			}
 			$a_data[$s_name] = $this->a_fieldValues[$s_name]->toStructured();

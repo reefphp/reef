@@ -29,13 +29,6 @@ class CheckboxField extends Field {
 	/**
 	 * @inherit
 	 */
-	public function isRequired() {
-		return (bool)($this->a_declaration['required']??false);
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function updateDataLoss($OldField) {
 		return \Reef\Updater::DATALOSS_NO;
 	}
