@@ -185,10 +185,10 @@ final class ConditionEvaluatorTest extends TestCase {
 		$this->assertFalse($Submission->evaluateCondition('field1 equals "asdf"'));
 		$this->assertTrue($Submission->evaluateCondition('field1 does not equal "asdf"'));
 		
-		$this->assertTrue($Submission->evaluateCondition('field1 contains " input "'));
-		$this->assertFalse($Submission->evaluateCondition('field1 does not contain " input "'));
-		$this->assertFalse($Submission->evaluateCondition('field1 contains " asdf "'));
-		$this->assertTrue($Submission->evaluateCondition('field1 does not contain " asdf "'));
+		$this->assertTrue($Submission->evaluateCondition('field1 matches "* input *"'));
+		$this->assertFalse($Submission->evaluateCondition('field1 does not match "* input *"'));
+		$this->assertFalse($Submission->evaluateCondition('field1 matches "* asdf *"'));
+		$this->assertTrue($Submission->evaluateCondition('field1 does not match "* asdf *"'));
 	}
 	
 	/**
@@ -232,9 +232,9 @@ final class ConditionEvaluatorTest extends TestCase {
 		]);
 		
 		$this->assertTrue($Submission->evaluateCondition('field1 equals "Some input text" and field2 equals "Another text"'));
-		$this->assertTrue($Submission->evaluateCondition('field1 contains "text" and field2 contains "text"'));
-		$this->assertTrue($Submission->evaluateCondition('field1 contains "input" or field2 contains "input"'));
-		$this->assertFalse($Submission->evaluateCondition('field1 contains "asdf" or field2 contains "asdf" or field3 contains "asdf"'));
+		$this->assertTrue($Submission->evaluateCondition('field1 matches "*text*" and field2 matches "*text*"'));
+		$this->assertTrue($Submission->evaluateCondition('field1 matches "*input*" or field2 matches "*input*"'));
+		$this->assertFalse($Submission->evaluateCondition('field1 matches "*asdf*" or field2 matches "*asdf*" or field3 matches "*asdf*"'));
 		$this->assertTrue($Submission->evaluateCondition('field3 equals ""'));
 	}
 	
@@ -252,16 +252,16 @@ final class ConditionEvaluatorTest extends TestCase {
 	
 	public function validComplexInputProvider() {
 		return [
-			[true,  'field contains "&"'],
-			[true,  'field contains "\\""'],
-			[true,  'field contains "\\\\\\""'],
-			[true,  'field contains "\\\\\\\\\\""'],
-			[false, 'field contains "\\\\\\\\\\\\\\""'],
-			[true,  'field contains "\'"'],
-			[true,  'field contains "\\\\\'"'],
-			[true,  'field contains "\\\\\\\\\'"'],
-			[false, 'field contains "\\\\\\\\\\\\\'"'],
-			[true,  'field contains "[ ie] { } > < ( ( ) )) )"'],
+			[true,  'field matches "*&*"'],
+			[true,  'field matches "*\\"*"'],
+			[true,  'field matches "*\\\\\\"*"'],
+			[true,  'field matches "*\\\\\\\\\\"*"'],
+			[false, 'field matches "*\\\\\\\\\\\\\\"*"'],
+			[true,  'field matches "*\'*"'],
+			[true,  'field matches "*\\\\\'*"'],
+			[true,  'field matches "*\\\\\\\\\'*"'],
+			[false, 'field matches "*\\\\\\\\\\\\\'*"'],
+			[true,  'field matches "*[ ie] { } > < ( ( ) )) )*"'],
 		];
 	}
 	
@@ -285,10 +285,10 @@ final class ConditionEvaluatorTest extends TestCase {
 	
 	public function invalidComplexInputProvider() {
 		return [
-			['field contains "\\\'"'],
-			['field contains "\\"'],
-			['field contains """'],
-			['field contains "'],
+			['field matches "\\\'"'],
+			['field matches "\\"'],
+			['field matches """'],
+			['field matches "'],
 		];
 	}
 	
