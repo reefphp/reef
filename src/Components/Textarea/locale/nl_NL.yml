@@ -1,2 +1,6 @@
 component_title: Tekstblok
 error_value_too_long: Waarde is te lang
+operator_empty: is leeg
+operator_nempty: is niet leeg
+operator_longer: is langer dan
+operator_shorter: is korter dan

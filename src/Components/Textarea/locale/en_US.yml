@@ -1,2 +1,6 @@
 component_title: Text block
 error_value_too_long: Value is too long
+operator_empty: is empty
+operator_nempty: is not empty
+operator_longer: is longer than
+operator_shorter: is shorter than

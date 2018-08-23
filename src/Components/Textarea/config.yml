@@ -30,3 +30,8 @@ advancedDefinition:
                 title: 'Max. input length'
             nl_NL:
                 title: 'Max. aantal tekens'
+builder_operators:
+    empty: is empty
+    nempty: is not empty
+    longer: is longer than
+    shorter: is shorter than

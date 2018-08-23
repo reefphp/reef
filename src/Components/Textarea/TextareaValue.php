@@ -100,4 +100,23 @@ class TextareaValue extends FieldValue implements RequiredFieldValueInterface {
 	public function toTemplateVar() {
 		return $this->s_value;
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
+		switch($s_operator) {
+			case 'is empty':
+				return trim($this->s_value) == '';
+				
+			case 'is not empty':
+				return trim($this->s_value) != '';
+				
+			case 'is longer than':
+				return strlen($this->s_value) > $m_operand;
+				
+			case 'is shorter than':
+				return strlen($this->s_value) < $m_operand;
+		}
+	}
 }

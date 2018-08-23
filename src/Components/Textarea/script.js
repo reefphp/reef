@@ -80,5 +80,42 @@ Reef.addComponent((function() {
 		}
 	};
 	
+	Field.getConditionOperators = function() {
+		return [
+			'is empty',
+			'is not empty',
+			'is longer than',
+			'is shorter than'
+		];
+	};
+	
+	Field.getConditionOperandInput = function(operator, layout) {
+		var classes = '';
+		if(layout == 'bootstrap4') {
+			classes += ' form-control';
+		}
+		
+		if(['is longer than', 'is shorter than'].indexOf(operator) > -1) {
+			return $('<input type="number" class="'+classes+'" min="0" step="1" />');
+		}
+		
+		return null;
+	};
+	
+	Field.prototype.evaluateConditionOperation = function(operator, operand) {
+		var value = this.getValue();
+		
+		switch(operator) {
+			case 'is empty':
+				return $.trim(value) == '';
+			case 'is not empty':
+				return $.trim(value) != '';
+			case 'is longer than':
+				return value.length > operand;
+			case 'is shorter than':
+				return value.length < operand;
+		};
+	};
+	
 	return Field;
 })());
