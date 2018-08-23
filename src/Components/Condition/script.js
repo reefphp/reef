@@ -243,6 +243,9 @@ Reef.addComponent((function() {
 		var fields = this.builder.getConditionFieldsByName();
 		for(name in fields) {
 			rbfield = fields[name];
+			if(typeof rbfield.field.constructor.getConditionOperators == 'undefined' || rbfield.field.constructor.getConditionOperators().length == 0) {
+				continue;
+			}
 			$fieldName.append($('<option>').val(name).text(name));
 		}
 		
