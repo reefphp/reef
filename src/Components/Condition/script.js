@@ -88,10 +88,10 @@ Reef.addComponent((function() {
 					}
 				}
 				
-				if(found && !confirm(self.$lang.data('field_delete_condition_confirm'))) {
-					state.prevent = true;
-				}
-				else {
+				if(found) {
+					if(!confirm(self.$lang.data('field_delete_condition_confirm'))) {
+						state.prevent = true;
+					}
 					state.conditionLossAsked = true;
 				}
 			});
