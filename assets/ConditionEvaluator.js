@@ -205,11 +205,16 @@ var ReefConditionEvaluator = (function() {
 			s_operand += ((s_operand == '') ? '' : ' ') + s_token;
 		}
 		
-		try {
-			m_operand = JSON.parse(s_operand);
+		if(s_operand == '') {
+			m_operand = s_operand;
 		}
-		catch(e) {
-			throw ('Invalid operand "'+s_operand+'"');
+		else {
+			try {
+				m_operand = JSON.parse(s_operand);
+			}
+			catch(e) {
+				throw ('Invalid operand "'+s_operand+'"');
+			}
 		}
 		
 		return [s_fieldName, s_operator, m_operand];

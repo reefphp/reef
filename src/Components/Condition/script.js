@@ -279,11 +279,10 @@ Reef.addComponent((function() {
 			
 			var $operandInput = rbfield.field.constructor.getConditionOperandInput(operator, self.Reef.config.layout_name);
 			
-			if($operandInput == null) {
-				return;
-			}
-			
-			if(typeof $operand.data('operandInput') != 'undefined' && $operand.data('operandInput').html() == $operandInput.prop('outerHTML')) {
+			if(typeof $operand.data('operandInput') != 'undefined'
+				&& $operand.data('operandInput') != null
+				&& $operandInput != null
+				&& $operand.data('operandInput').prop('outerHTML') == $operandInput.prop('outerHTML')) {
 				return;
 			}
 			
@@ -371,8 +370,8 @@ Reef.addComponent((function() {
 				
 				var $operandInput = $tr.find('td.'+CSSPRFX+'cond-operand').data('operandInput');
 				
-				subcondition += $tr.find('td.'+CSSPRFX+'cond-fieldname select option:selected').text();
-				subcondition += ' ' + $tr.find('td.'+CSSPRFX+'cond-operator select option:selected').text();
+				subcondition += $tr.find('td.'+CSSPRFX+'cond-fieldname select option:selected').val();
+				subcondition += ' ' + $tr.find('td.'+CSSPRFX+'cond-operator select option:selected').val();
 				if(typeof $operandInput !== 'undefined' && $operandInput != null) {
 					subcondition += ' ' + JSON.stringify($operandInput.val());
 				}
@@ -396,7 +395,7 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.validate = function() {
-		var self = this;
+		this.removeErrors();
 		
 		try {
 			ReefConditionEvaluator.evaluate(this.builder.reef, this.getValue());

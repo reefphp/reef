@@ -251,10 +251,15 @@ class ConditionEvaluator {
 			$s_operand .= (($s_operand == '') ? '' : ' ') . $s_token;
 		}
 		
-		$m_operand = json_decode($s_operand, true);
-		
-		if($m_operand === null && strtolower($s_operand) != 'null') {
-			throw new ConditionException('Invalid operand "'.$s_operand.'"');
+		if($s_operand == '') {
+			$m_operand = $s_operand;
+		}
+		else {
+			$m_operand = json_decode($s_operand, true);
+			
+			if($m_operand === null && strtolower($s_operand) != 'null') {
+				throw new ConditionException('Invalid operand "'.$s_operand.'"');
+			}
 		}
 		
 		return [$s_fieldName, $s_operator, $m_operand];
