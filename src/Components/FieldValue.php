@@ -89,12 +89,12 @@ abstract class FieldValue {
 	abstract public function validate() : bool;
 	
 	/**
-	 * Evaluate a condition on this field value
+	 * Evaluate a condition operation on this field value
 	 * @param string $s_operator The operator, one of Field::getConditionOperators()
 	 * @param mixed $m_operand The operand
 	 * @return boolean Result of the condition
 	 */
-	public function evaluateCondition(string $s_operator, $m_operand) : bool {
+	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
 		throw new \Reef\Exception\BadMethodCallException('This component does not implement conditions');
 	}
 	

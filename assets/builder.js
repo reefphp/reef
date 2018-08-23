@@ -8,11 +8,6 @@ function unique_id() {
 	return s4() + s4() + s4() + s4()+ s4() + s4() + s4() + s4();
 }
 
-// https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
-function escapeRegExp(str) {
-	return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-}
-
 // NOTE: Currently not used
 var ReefDialog = (function() {
 	'use strict';
@@ -710,7 +705,7 @@ var ReefBuilderField = (function() {
 		var $template;
 		for(var i in templates) {
 			$template = $item.find('.'+CSSPRFX+'builder-template.'+templates[i]).clone().removeClass(CSSPRFX+'builder-template');
-			$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(escapeRegExp($template.find('.'+CSSPRFX+'main-config').data('form-idpfx')), 'g'), unique_id()));
+			$template = $.parseHTML($template[0].outerHTML.replace(new RegExp(ReefUtil.escapeRegExp($template.find('.'+CSSPRFX+'main-config').data('form-idpfx')), 'g'), unique_id()));
 			$template = $($template);
 			
 			$fieldWrapper.find('.'+CSSPRFX+'builder-declaration-forms').append($template);

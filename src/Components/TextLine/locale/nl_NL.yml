@@ -3,12 +3,8 @@ error_regexp: Bevat ongeldige karakters
 error_value_too_long: Waarde is te lang
 operator_eq: is gelijk aan
 operator_neq: is niet gelijk aan
-operator_in: bevat
-operator_nin: bevat geen
-operator_start: begint met
-operator_nstart: begint niet met
-operator_end: eindigt met
-operator_nend: eindigt niet met
+operator_match: komt overeen met
+operator_nmatch: komt niet overeen met
 operator_empty: is leeg
 operator_nempty: is niet leeg
 operator_longer: is langer dan

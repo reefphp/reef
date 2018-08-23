@@ -90,7 +90,13 @@ Reef.addComponent((function() {
 	Field.getConditionOperators = function() {
 		return [
 			'equals',
-			'does not equal'
+			'does not equal',
+			'matches',
+			'does not match',
+			'is empty',
+			'is not empty',
+			'is longer than',
+			'is shorter than'
 		];
 	};
 	
@@ -99,11 +105,18 @@ Reef.addComponent((function() {
 		if(layout == 'bootstrap4') {
 			classes += ' form-control';
 		}
-		return $('<input type="text" class="'+classes+'" />');
+		
+		if(operator.indexOf('equal') > -1 || operator.indexOf('match') > -1) {
+			return $('<input type="text" class="'+classes+'" />');
+		}
+		else if(['is longer than', 'is shorter than'].indexOf(operator) > -1) {
+			return $('<input type="number" class="'+classes+'" min="0" step="1" />');
+		}
+		
+		return null;
 	};
 	
-	
-	Field.prototype.evaluateCondition = function(operator, operand) {
+	Field.prototype.evaluateConditionOperation = function(operator, operand) {
 		var value = this.getValue();
 		
 		switch(operator) {
@@ -111,6 +124,18 @@ Reef.addComponent((function() {
 				return value == operand;
 			case 'does not equal':
 				return value != operand;
+			case 'matches':
+				return ReefUtil.matcherToRegExp(operand).test(value);
+			case 'does not match':
+				return !ReefUtil.matcherToRegExp(operand).test(value);
+			case 'is empty':
+				return $.trim(value) == '';
+			case 'is not empty':
+				return $.trim(value) != '';
+			case 'is longer than':
+				return value.length > operand;
+			case 'is shorter than':
+				return value.length < operand;
 		};
 	};
 	

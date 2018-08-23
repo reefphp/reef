@@ -3,12 +3,8 @@ error_regexp: Invalid characters found
 error_value_too_long: Value is too long
 operator_eq: equals
 operator_neq: does not equal
-operator_in: contains
-operator_nin: does not contain
-operator_start: starts with
-operator_nstart: does not start with
-operator_end: ends with
-operator_nend: does not end with
+operator_match: matches
+operator_nmatch: does not match
 operator_empty: is empty
 operator_nempty: is not empty
 operator_longer: is longer than

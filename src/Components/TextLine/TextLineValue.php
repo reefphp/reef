@@ -113,7 +113,7 @@ class TextLineValue extends FieldValue implements RequiredFieldValueInterface {
 	/**
 	 * @inherit
 	 */
-	public function evaluateCondition(string $s_operator, $m_operand) : bool {
+	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
 		switch($s_operator) {
 			case 'equals':
 				return $this->s_value == $m_operand;
@@ -121,19 +121,31 @@ class TextLineValue extends FieldValue implements RequiredFieldValueInterface {
 			case 'does not equal':
 				return $this->s_value != $m_operand;
 				
-			case 'contains':
+			case 'matches':
 				if(empty($m_operand)) {
 					throw new \Reef\Exception\ValidationException([-1 => 'Empty operand']);
 				}
 				
-				return strpos($this->s_value, $m_operand) !== false;
+				return (bool)preg_match(\Reef\matcherToRegExp($m_operand), $this->s_value);
 				
-			case 'does not contain':
+			case 'does not match':
 				if(empty($m_operand)) {
 					throw new \Reef\Exception\ValidationException([-1 => 'Empty operand']);
 				}
 				
-				return strpos($this->s_value, $m_operand) === false;
+				return !preg_match(\Reef\matcherToRegExp($m_operand), $this->s_value);
+				
+			case 'is empty':
+				return trim($this->s_value) == '';
+				
+			case 'is not empty':
+				return trim($this->s_value) != '';
+				
+			case 'is longer than':
+				return strlen($this->s_value) > $m_operand;
+				
+			case 'is shorter than':
+				return strlen($this->s_value) < $m_operand;
 		}
 	}
 }

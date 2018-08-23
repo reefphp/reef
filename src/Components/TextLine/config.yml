@@ -37,38 +37,9 @@ props:
 builder_operators:
     eq: equals
     neq: does not equal
-    in: contains
-    nin: does not contain
-    start: starts with
-    nstart: does not start with
-    end: ends with
-    nend: does not end with
+    match: matches
+    nmatch: does not match
     empty: is empty
     nempty: is not empty
     longer: is longer than
     shorter: is shorter than
-builder_dependencies:
-  - reef:text_line
-  - reef:text_number
-_builder_operators:
-  - operators:
-        eq: equals
-        neq: does not equal
-        in: contains
-        nin: does not contain
-        start: starts with
-        nstart: does not start with
-        end: ends with
-        nend: does not end with
-    operand:
-        component: reef:text_line
-  - operators:
-        empty: is empty
-        nempty: is not empty
-    operand: null
-  - operators:
-        longer: is longer than
-        shorter: is shorter than
-    operand:
-        component: reef:text_number
-        min: 0

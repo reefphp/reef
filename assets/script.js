@@ -1,6 +1,34 @@
 if(typeof Reef === 'undefined') {
 	var CSSPRFX = 'JS_INSERT_CSS_PREFIX';
 	var EVTPRFX = 'JS_INSERT_EVENT_PREFIX';
+	
+	var ReefUtil = {
+		// https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+		escapeRegExp : function(str) {
+			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+		},
+		
+		/**
+		 * Convert a matcher to a regular expression.
+		 * `*` and `?` are mapped to `.*` and `.`, respectively
+		 * This function has an equivalent in php
+		 * @param string matcher The matcher string
+		 * @return RegExp The regular expression
+		 */
+		matcherToRegExp : function(matcher) {
+			var regexp = ReefUtil.escapeRegExp(matcher);
+			
+			regexp = regexp.replace(new RegExp('(^|[^\\\\])((?:\\\\)*)\\\\\\*', 'g'), function(match, before, slashes) {
+				return before + slashes.substr(0, slashes.length/2) + ((slashes.length % 4 == 0) ? '.*' : '*');
+			});
+			
+			regexp = regexp.replace(new RegExp('(^|[^\\\\])((?:\\\\)*)\\\\\\?', 'g'), function(match, before, slashes) {
+				return before + slashes.substr(0, slashes.length/2) + ((slashes.length % 4 == 0) ? '.' : '?');
+			});
+			
+			return new RegExp('^'+regexp+'$');
+		}
+	};
 
 	var Reef = (function() {
 		'use strict';

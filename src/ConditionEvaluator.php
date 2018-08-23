@@ -187,7 +187,7 @@ class ConditionEvaluator {
 	private function fieldOperation() : bool {
 		[$s_fieldName, $s_operator, $m_operand] = $this->getFieldOperation();
 		
-		return (bool)$this->Submission->getFieldValue($s_fieldName)->evaluateCondition($s_operator, $m_operand);
+		return (bool)$this->Submission->getFieldValue($s_fieldName)->evaluateConditionOperation($s_operator, $m_operand);
 	}
 	
 	/**

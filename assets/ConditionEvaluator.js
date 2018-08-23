@@ -135,7 +135,7 @@ var ReefConditionEvaluator = (function() {
 	ConditionEvaluator.prototype.fieldOperation = function() {
 		var operation = this.getFieldOperation();
 		
-		return this.reef.getField(operation[0]).evaluateCondition(operation[1], operation[2]);
+		return this.reef.getField(operation[0]).evaluateConditionOperation(operation[1], operation[2]);
 	}
 	
 	/**
@@ -152,7 +152,7 @@ var ReefConditionEvaluator = (function() {
 		}
 		
 		Field = this.reef.getField(s_fieldName);
-		if(typeof Field.constructor.getConditionOperators === 'undefined' || typeof Field.evaluateCondition === 'undefined') {
+		if(typeof Field.constructor.getConditionOperators === 'undefined' || typeof Field.evaluateConditionOperation === 'undefined') {
 			throw ("Field '"+s_fieldName+"' does not support conditions");
 		}
 		
