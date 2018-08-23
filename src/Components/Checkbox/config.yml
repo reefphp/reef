@@ -15,3 +15,6 @@ basicDefinition:
                 title_right: 'Checked by default'
             nl_NL:
                 title_right: 'Standaard aangevinkt'
+builder_operators:
+    checked: is checked
+    nchecked: is not checked

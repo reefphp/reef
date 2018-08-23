@@ -1,3 +1,5 @@
 component_title: Checkbox
 title_left_title: Left title
 title_right_title: Right title
+operator_checked: is checked
+operator_nchecked: is not checked

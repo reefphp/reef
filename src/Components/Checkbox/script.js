@@ -62,5 +62,27 @@ Reef.addComponent((function() {
 		}
 	};
 	
+	Field.getConditionOperators = function() {
+		return [
+			'is checked',
+			'is not checked'
+		];
+	};
+	
+	Field.getConditionOperandInput = function(operator, layout) {
+		return null;
+	};
+	
+	Field.prototype.evaluateConditionOperation = function(operator, operand) {
+		var value = this.getValue();
+		
+		switch(operator) {
+			case 'is checked':
+				return value;
+			case 'is not checked':
+				return !value;
+		};
+	};
+	
 	return Field;
 })());

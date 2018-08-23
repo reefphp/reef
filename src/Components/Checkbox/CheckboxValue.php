@@ -94,4 +94,17 @@ class CheckboxValue extends FieldValue implements RequiredFieldValueInterface {
 	public function toTemplateVar() {
 		return $this->b_value;
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
+		switch($s_operator) {
+			case 'is checked':
+				return $this->b_value;
+				
+			case 'is not checked':
+				return !$this->b_value;
+		}
+	}
 }
