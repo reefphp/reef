@@ -8,6 +8,17 @@ basicLocale:
 internalLocale:
     rf_yes:
     rf_no:
+    field_delete_condition_confirm:
+    boolean_lose_condition_confirm:
+    choose_field:
+    condition_delete_confirm:
+    condition_UI:
+    condition_manual:
+    operation_field:
+    operation_operator:
+    operation_operand:
+    condition_and:
+    condition_or:
 basicDefinition:
     fields:
       - component: reef:condition

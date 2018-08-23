@@ -60,4 +60,5 @@ tr.CSSPRFXcond-add-and {
 
 div.CSSPRFXcond-add-and-button, div.CSSPRFXcond-add-or-button {
 	cursor: pointer;
+	text-transform: uppercase;
 }

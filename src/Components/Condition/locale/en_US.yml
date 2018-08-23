@@ -1,1 +1,12 @@
 component_title: Condition
+field_delete_condition_confirm: There are conditions dependent on this field. By deleting this field, these conditions will become invalid. Continue?
+boolean_lose_condition_confirm: You will lose the condition you set up. Continue?
+choose_field: Choose...
+condition_delete_confirm: Delete?
+condition_UI: Condition
+condition_manual: Manual condition
+operation_field: Field
+operation_operator: Operator
+operation_operand: Operand
+condition_and: and
+condition_or: or

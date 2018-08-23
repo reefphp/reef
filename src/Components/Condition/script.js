@@ -7,6 +7,7 @@ Reef.addComponent((function() {
 		this.Reef = Reef;
 		this.auto_inc = 1;
 		this.builder = this.Reef.getBuilder();
+		this.$lang = this.$field.find('.'+CSSPRFX+'cond-lang');
 	};
 	
 	Field.componentName = 'reef:condition';
@@ -87,7 +88,7 @@ Reef.addComponent((function() {
 					}
 				}
 				
-				if(found && !confirm("Er zijn condities aan dit veld verbonden. Met het verwijderen van dit veld zullen deze condities ongeldig worden. Doorgaan?")) {
+				if(found && !confirm(self.$lang.data('field_delete_condition_confirm'))) {
 					state.prevent = true;
 				}
 				else {
@@ -125,7 +126,7 @@ Reef.addComponent((function() {
 		// Parse current type
 		if(typeof $condType.data('current_type') !== 'undefined') {
 			if(['true', 'false'].indexOf($condType.val()) > -1 && ['manual', 'condition'].indexOf($condType.data('current_type')) > -1) {
-				if(!confirm('You will lose the condition you set up. Continue?')) {
+				if(!confirm(this.$lang.data('boolean_lose_condition_confirm'))) {
 					evt.preventDefault();
 					return;
 				}
@@ -236,7 +237,7 @@ Reef.addComponent((function() {
 			self.removeOperation($tr);
 		});
 		
-		var $fieldName = $tr.find('.'+CSSPRFX+'cond-fieldname select').html('<option value="">Choose...</option>');
+		var $fieldName = $tr.find('.'+CSSPRFX+'cond-fieldname select').html($('<option value=""></option>').text(this.$lang.data('choose_field')));
 		
 		var name, rbfield;
 		var fields = this.builder.getConditionFieldsByName();
@@ -263,8 +264,12 @@ Reef.addComponent((function() {
 			
 			var operators = rbfield.field.constructor.getConditionOperators();
 			
+			var operatorLangs = self.builder.$builderWrapper.find('.'+CSSPRFX+'builder-component[data-component-name="'+rbfield.field.constructor.componentName+'"]').attr('data-operators');
+			operatorLangs = (typeof operatorLangs != 'undefined' && operatorLangs != '') ? JSON.parse(atob(operatorLangs)) : {};
+			
 			for(var i in operators) {
-				$operator.append($('<option>').val(operators[i]).text(operators[i]));
+				var operatorLang = (typeof operatorLangs[operators[i]] != 'undefined') ? operatorLangs[operators[i]] : operators[i];
+				$operator.append($('<option>').val(operators[i]).text(operatorLang));
 			}
 			
 			$operator.trigger('change');
@@ -297,13 +302,11 @@ Reef.addComponent((function() {
 	Field.prototype.removeOperation = function($tr) {
 		var self = this;
 		
-		var $lang = this.$field.find('.'+CSSPRFX+'cond-lang');
-		
 		var $deleteConfirm = $('<td class="'+CSSPRFX+'cond-delete-confirm" colspan="4">');
 		var $deleteConfirmDiv = $('<div class="'+CSSPRFX+'cond-delete-confirm-div">').appendTo($deleteConfirm);
-		$deleteConfirmDiv.append($('<div>').text($lang.data('delete_option_confirm')));
+		$deleteConfirmDiv.append($('<div>').text(this.$lang.data('condition_delete_confirm')));
 		
-		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'cond-btn">').text($lang.data('yes')).on('click', function() {
+		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'cond-btn">').text(this.$lang.data('yes')).on('click', function() {
 			$deleteConfirm.remove();
 			
 			var $tbody = $tr.parent();
@@ -316,7 +319,7 @@ Reef.addComponent((function() {
 			self.$field.trigger(EVTPRFX+'change');
 		}));
 		
-		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'cond-btn">').text($lang.data('no')).on('click', function() {
+		$deleteConfirmDiv.append($('<div class="'+CSSPRFX+'cond-btn">').text(this.$lang.data('no')).on('click', function() {
 			$deleteConfirm.remove();
 			
 			$tr.removeClass(CSSPRFX+'cond-deleting');

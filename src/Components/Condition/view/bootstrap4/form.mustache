@@ -2,7 +2,10 @@
 	<div class="{{CSSPRFX}}cond-lang"
 		data-yes="{{field.locale.rf_yes}}"
 		data-no="{{field.locale.rf_no}}"
-		data-delete_option_confirm="{{field.locale.delete_option_confirm}}"
+		data-field_delete_condition_confirm="{{field.locale.field_delete_condition_confirm}}"
+		data-boolean_lose_condition_confirm="{{field.locale.boolean_lose_condition_confirm}}"
+		data-choose_field="{{field.locale.choose_field}}"
+		data-condition_delete_confirm="{{field.locale.condition_delete_confirm}}"
 	></div>
 	<label class="{{layout.col_left}} col-form-label" for="{{form_idpfx}}-{{field.name}}">
 		{{field.locale.title}}
@@ -12,17 +15,17 @@
 		<select class="form-control {{CSSPRFX}}cond-type">
 			<option value="true">{{field.locale.rf_yes}}</option>
 			<option value="false">{{field.locale.rf_no}}</option>
-			<option value="condition">Condition</option>
-			<option value="manual">Manual condition</option>
+			<option value="condition">{{field.locale.condition_UI}}</option>
+			<option value="manual">{{field.locale.condition_manual}}</option>
 		</select>
 		
 		<div class="{{CSSPRFX}}cond-type-section {{CSSPRFX}}cond-type-condition">
 			<table class="{{CSSPRFX}}cond-table" style="width: 100%;">
 				<thead>
 					<tr>
-						<th></th>
-						<th>{{field.locale.option_name_title}}</th>
-						<th></th>
+						<th>{{field.locale.operation_field}}</th>
+						<th>{{field.locale.operation_operator}}</th>
+						<th>{{field.locale.operation_operand}}</th>
 						<th></th>
 					</tr>
 					<tr class="{{CSSPRFX}}cond-operation {{CSSPRFX}}template">
@@ -42,11 +45,11 @@
 				</thead>
 				<tbody class="{{CSSPRFX}}template">
 					<tr class="{{CSSPRFX}}cond-or">
-						<td colspan="4">OR</td>
+						<td colspan="4">{{field.locale.condition_or}}</td>
 					</tr>
 					<tr class="{{CSSPRFX}}cond-add-and">
 						<td colspan="4">
-							<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-add-and-button">+ AND</div>
+							<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-add-and-button">+ {{field.locale.condition_and}}</div>
 						</td>
 					</tr>
 				</tbody>
@@ -54,7 +57,7 @@
 				<tbody>
 					<tr class="{{CSSPRFX}}cond-add-or">
 						<td colspan="4">
-							<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-add-or-button">+ OR</div>
+							<div class="{{CSSPRFX}}cond-btn {{CSSPRFX}}cond-btn-icon {{CSSPRFX}}cond-add-or-button">+ {{field.locale.condition_or}}</div>
 						</td>
 					</tr>
 				</tbody>

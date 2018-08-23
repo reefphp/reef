@@ -1,1 +1,12 @@
 component_title: Voorwaarde
+field_delete_condition_confirm: Er zijn condities aan dit veld verbonden. Met het verwijderen van dit veld zullen deze condities ongeldig worden. Doorgaan?
+boolean_lose_condition_confirm: Je zult de opgestelde conditie verliezen. Doorgaan?
+choose_field: Kies...
+condition_delete_confirm: Verwijderen?
+condition_UI: Conditie
+condition_manual: Handmatige conditie
+operation_field: Veld
+operation_operator: Operator
+operation_operand: Operand
+condition_and: en
+condition_or: of
