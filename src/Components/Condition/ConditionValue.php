@@ -57,7 +57,7 @@ class ConditionValue extends FieldValue {
 	 */
 	public function toFlat() : array {
 		return [
-			(int)$this->s_value,
+			$this->s_value,
 		];
 	}
 	
