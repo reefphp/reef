@@ -8,7 +8,7 @@
 			id="{{form_idpfx}}-{{field.name}}"
 			name="{{main_var}}[{{field.name}}]"
 			placeholder="{{field.locale.placeholder}}"
-			{{#field.required}}required{{/field.required}}
+			{{{field.required}}}
 			{{#field.max_length}}maxlength="{{field.max_length}}"{{/field.max_length}}
 		>{{field.value}}</textarea>
 		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>

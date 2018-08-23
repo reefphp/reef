@@ -4,8 +4,19 @@ namespace Reef\Components\TextNumber;
 
 use Reef\Components\Field;
 use Reef\Updater;
+use \Reef\Components\Traits\Required\RequiredFieldInterface;
+use \Reef\Components\Traits\Required\RequiredFieldTrait;
 
-class TextNumberField extends Field {
+class TextNumberField extends Field implements RequiredFieldInterface {
+	
+	use RequiredFieldTrait;
+	
+	/**
+	 * @inherit
+	 */
+	public function validateDeclaration(array &$a_errors = null) : bool {
+		return $this->validateDeclaration_required($a_errors);
+	}
 	
 	private function is_integer_var(string $s_var) {
 		if($s_var === '') {

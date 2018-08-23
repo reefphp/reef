@@ -17,11 +17,6 @@ abstract class AbstractSingleChoiceValue extends FieldValue {
 		
 		$a_declaration = $this->Field->getDeclaration();
 		
-		if(($a_declaration['required']??false) && $s_value == '') {
-			$this->a_errors[] = $this->Field->trans('rf_error_required_empty');
-			return false;
-		}
-		
 		if($s_value != '' && !in_array($s_value, array_column($a_declaration['options'], 'name'))) {
 			$this->a_errors[] = 'Invalid value';
 			return false;

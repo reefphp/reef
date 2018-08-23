@@ -11,18 +11,10 @@ advancedLocale:
     error_number_min: error_number_min_title
     error_number_max: error_number_max_title
     error_number_min_max: error_number_min_max_title
-    rf_error_required_empty: rf_error_required_empty_title
 internalLocale:
     rf_submission_empty_value:
 basicDefinition:
     fields:
-      - component: reef:checkbox
-        name: 'required'
-        locales:
-            en_US:
-                title_right: 'Required'
-            nl_NL:
-                title_right: 'Verplicht'
       - component: reef:text_number
         name: 'default'
         locales:

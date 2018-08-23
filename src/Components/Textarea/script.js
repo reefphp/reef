@@ -21,6 +21,8 @@ Reef.addComponent((function() {
 			
 			self.validate();
 		});
+		
+		this.Reef.listenRequired(this, this.$field.find('textarea'));
 	};
 	
 	Field.prototype.getValue = function() {

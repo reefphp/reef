@@ -3,8 +3,12 @@
 namespace Reef\Components\TextNumber;
 
 use Reef\Components\Component;
+use \Reef\Components\Traits\Required\RequiredComponentInterface;
+use \Reef\Components\Traits\Required\RequiredComponentTrait;
 
-class TextNumberComponent extends Component {
+class TextNumberComponent extends Component implements RequiredComponentInterface {
+	
+	use RequiredComponentTrait;
 	
 	const COMPONENT_NAME = 'reef:text_number';
 	const PARENT_NAME = null;

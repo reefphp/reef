@@ -15,6 +15,8 @@ Reef.addComponent((function() {
 		this.$field.find('input').on('change blur keyup', function(evt) {
 			self.validate();
 		});
+		
+		this.Reef.listenRequired(this, this.$field.find('input'));
 	};
 	
 	Field.prototype.getValue = function() {

@@ -13,7 +13,7 @@
 			{{#field.hasMin}}min="{{field.min}}"{{/field.hasMin}}
 			{{#field.hasMax}}max="{{field.max}}"{{/field.hasMax}}
 			{{#field.step}}step="{{field.step}}"{{/field.step}}
-			{{#field.required}}required{{/field.required}}
+			{{{field.required}}}
 		>
 		<div class="invalid-feedback {{CSSPRFX}}error-not-a-number" style="display: none;">{{field.locale.error_not_a_number}}</div>
 		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>

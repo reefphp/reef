@@ -6,20 +6,11 @@ assets:
 basicLocale:
     title: rf_field_title
     placeholder: rf_field_placeholder
-advancedLocale:
-    rf_error_required_empty: rf_error_required_empty_title
 internalLocale:
     error_value_too_long:
     rf_submission_empty_value:
 basicDefinition:
     fields:
-      - component: reef:checkbox
-        name: 'required'
-        locales:
-            en_US:
-                title_right: 'Required'
-            nl_NL:
-                title_right: 'Verplicht'
       - component: reef:textarea
         name: 'default'
         locales:

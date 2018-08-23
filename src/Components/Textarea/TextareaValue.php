@@ -3,8 +3,12 @@
 namespace Reef\Components\Textarea;
 
 use Reef\Components\FieldValue;
+use \Reef\Components\Traits\Required\RequiredFieldValueInterface;
+use \Reef\Components\Traits\Required\RequiredFieldValueTrait;
 
-class TextareaValue extends FieldValue {
+class TextareaValue extends FieldValue implements RequiredFieldValueInterface {
+	
+	use RequiredFieldValueTrait;
 	
 	protected $s_value;
 	
@@ -15,10 +19,7 @@ class TextareaValue extends FieldValue {
 		$this->a_errors = [];
 		$s_value = trim($this->s_value);
 		
-		$a_declaration = $this->Field->getDeclaration();
-		
-		if(($a_declaration['required']??false) && $s_value == '') {
-			$this->a_errors[] = $this->Field->trans('rf_error_required_empty');
+		if(!$this->validate_required($s_value == '', $this->a_errors)) {
 			return false;
 		}
 		

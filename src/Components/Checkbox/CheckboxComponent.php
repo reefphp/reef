@@ -3,8 +3,12 @@
 namespace Reef\Components\Checkbox;
 
 use Reef\Components\Component;
+use \Reef\Components\Traits\Required\RequiredComponentInterface;
+use \Reef\Components\Traits\Required\RequiredComponentTrait;
 
-class CheckboxComponent extends Component {
+class CheckboxComponent extends Component implements RequiredComponentInterface {
+	
+	use RequiredComponentTrait;
 	
 	const COMPONENT_NAME = 'reef:checkbox';
 	const PARENT_NAME = null;

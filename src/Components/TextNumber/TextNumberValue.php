@@ -3,8 +3,12 @@
 namespace Reef\Components\TextNumber;
 
 use Reef\Components\FieldValue;
+use \Reef\Components\Traits\Required\RequiredFieldValueInterface;
+use \Reef\Components\Traits\Required\RequiredFieldValueTrait;
 
-class TextNumberValue extends FieldValue {
+class TextNumberValue extends FieldValue implements RequiredFieldValueInterface {
+	
+	use RequiredFieldValueTrait;
 	
 	protected $m_rawValue;
 	protected $f_value;
@@ -17,8 +21,7 @@ class TextNumberValue extends FieldValue {
 		$this->a_errors = [];
 		$a_declaration = $this->Field->getDeclaration();
 		
-		if(($a_declaration['required']??false) && trim($this->m_rawValue) == '') {
-			$this->a_errors[] = $this->Field->trans('rf_error_required_empty');
+		if(!$this->validate_required(trim($this->m_rawValue) == '', $this->a_errors)) {
 			$b_valid = false;
 		}
 		

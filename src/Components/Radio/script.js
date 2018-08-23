@@ -23,7 +23,7 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.attach = function() {
-		
+		this.Reef.listenRequired(this, this.$field.find('input'));
 	};
 	
 	Field.prototype.getValue = function() {

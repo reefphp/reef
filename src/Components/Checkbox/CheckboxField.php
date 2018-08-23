@@ -3,8 +3,19 @@
 namespace Reef\Components\Checkbox;
 
 use Reef\Components\Field;
+use \Reef\Components\Traits\Required\RequiredFieldInterface;
+use \Reef\Components\Traits\Required\RequiredFieldTrait;
 
-class CheckboxField extends Field {
+class CheckboxField extends Field implements RequiredFieldInterface {
+	
+	use RequiredFieldTrait;
+	
+	/**
+	 * @inherit
+	 */
+	public function validateDeclaration(array &$a_errors = null) : bool {
+		return $this->validateDeclaration_required($a_errors);
+	}
 	
 	/**
 	 * @inherit

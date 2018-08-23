@@ -3,8 +3,12 @@
 namespace Reef\Components\Checkbox;
 
 use Reef\Components\FieldValue;
+use \Reef\Components\Traits\Required\RequiredFieldValueInterface;
+use \Reef\Components\Traits\Required\RequiredFieldValueTrait;
 
-class CheckboxValue extends FieldValue {
+class CheckboxValue extends FieldValue implements RequiredFieldValueInterface {
+	
+	use RequiredFieldValueTrait;
 	
 	private $b_value;
 	
@@ -14,8 +18,7 @@ class CheckboxValue extends FieldValue {
 	public function validate() : bool {
 		$this->a_errors = [];
 		
-		if(($this->Field->getDeclaration()['required']??false) && !$this->b_value) {
-			$this->a_errors[] = $this->Field->getForm()->trans('rf_error_required_empty');
+		if(!$this->validate_required(!$this->b_value, $this->a_errors)) {
 			return false;
 		}
 		

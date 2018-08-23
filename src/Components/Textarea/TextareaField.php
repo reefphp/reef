@@ -4,8 +4,19 @@ namespace Reef\Components\Textarea;
 
 use Reef\Components\Field;
 use Reef\Updater;
+use \Reef\Components\Traits\Required\RequiredFieldInterface;
+use \Reef\Components\Traits\Required\RequiredFieldTrait;
 
-class TextareaField extends Field {
+class TextareaField extends Field implements RequiredFieldInterface {
+	
+	use RequiredFieldTrait;
+	
+	/**
+	 * @inherit
+	 */
+	public function validateDeclaration(array &$a_errors = null) : bool {
+		return $this->validateDeclaration_required($a_errors);
+	}
 	
 	public function getMaxLength() {
 		if(!empty($this->a_declaration['max_length'])) {

@@ -38,6 +38,8 @@ Reef.addComponent((function() {
 			
 			self.validate();
 		});
+		
+		this.Reef.listenRequired(this, this.$field.find('input'));
 	};
 	
 	Field.prototype.getValue = function() {
