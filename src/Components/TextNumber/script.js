@@ -125,7 +125,7 @@ Reef.addComponent((function() {
 		];
 	};
 	
-	Field.getConditionOperandInput = function(operator, layout) {
+	Field.prototype.getConditionOperandInput = function(operator, layout) {
 		var classes = '';
 		if(layout == 'bootstrap4') {
 			classes += ' form-control';

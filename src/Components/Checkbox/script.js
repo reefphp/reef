@@ -69,7 +69,7 @@ Reef.addComponent((function() {
 		];
 	};
 	
-	Field.getConditionOperandInput = function(operator, layout) {
+	Field.prototype.getConditionOperandInput = function(operator, layout) {
 		return null;
 	};
 	

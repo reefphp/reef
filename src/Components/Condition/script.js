@@ -287,7 +287,7 @@ Reef.addComponent((function() {
 			var operators = rbfield.field.constructor.getConditionOperators();
 			var operator = $operator.val();
 			
-			var $operandInput = rbfield.field.constructor.getConditionOperandInput(operator, self.Reef.config.layout_name);
+			var $operandInput = rbfield.field.getConditionOperandInput(operator, self.Reef.config.layout_name);
 			
 			if(typeof $operand.data('operandInput') != 'undefined'
 				&& $operand.data('operandInput') != null

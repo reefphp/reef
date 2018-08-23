@@ -26,4 +26,36 @@ class RadioValue extends AbstractSingleChoiceValue implements RequiredFieldValue
 		return true;
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
+		if(in_array($s_operator, ['equals', 'does not equal'])) {
+			$b_found = false;
+			foreach($this->getField()->getDeclaration()['options'] as $a_option) {
+				if($a_option['name'] === $m_operand) {
+					$b_found = true;
+					break;
+				}
+			}
+			if(!$b_found) {
+				throw new \Reef\Exception\ConditionException('Invalid operand "'.$m_operand.'"');
+			}
+		}
+		
+		switch($s_operator) {
+			case 'equals':
+				return $this->s_value == $m_operand;
+				
+			case 'does not equal':
+				return $this->s_value != $m_operand;
+				
+			case 'is empty':
+				return $this->s_value == '';
+				
+			case 'is not empty':
+				return $this->s_value != '';
+		}
+	}
+	
 }
