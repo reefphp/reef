@@ -71,7 +71,7 @@ Reef.addComponent((function() {
 					return;
 				}
 				
-				if(state.prevent || state.conditionLossAsked) {
+				if(state.prevent) {
 					return;
 				}
 				
@@ -93,10 +93,8 @@ Reef.addComponent((function() {
 				}
 				
 				if(found) {
-					if(!confirm(self.$lang.data('field_delete_condition_confirm'))) {
-						state.prevent = true;
-					}
-					state.conditionLossAsked = true;
+					alert(self.$lang.data('field_delete_in_condition'));
+					state.prevent = true;
 				}
 			});
 			

@@ -8,7 +8,7 @@ basicLocale:
 internalLocale:
     rf_yes:
     rf_no:
-    field_delete_condition_confirm:
+    field_delete_in_condition:
     boolean_lose_condition_confirm:
     choose_field:
     condition_delete_confirm:

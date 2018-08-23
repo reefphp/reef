@@ -1,5 +1,5 @@
 component_title: Condition
-field_delete_condition_confirm: There are conditions dependent on this field. By deleting this field, these conditions will become invalid. Continue?
+field_delete_in_condition: There are conditions dependent on this field, remove these conditions before removing the field
 boolean_lose_condition_confirm: You will lose the condition you set up. Continue?
 choose_field: Choose...
 condition_delete_confirm: Delete?
