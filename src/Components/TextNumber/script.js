@@ -116,5 +116,38 @@ Reef.addComponent((function() {
 		}
 	};
 	
+	Field.getConditionOperators = function() {
+		return [
+			'equals',
+			'does not equal',
+			'is at least',
+			'is at most'
+		];
+	};
+	
+	Field.getConditionOperandInput = function(operator, layout) {
+		var classes = '';
+		if(layout == 'bootstrap4') {
+			classes += ' form-control';
+		}
+		
+		return $('<input type="number" class="'+classes+'" step="0.001" />');
+	};
+	
+	Field.prototype.evaluateConditionOperation = function(operator, operand) {
+		var value = this.getValue();
+		
+		switch(operator) {
+			case 'equals':
+				return value == operand;
+			case 'does not equal':
+				return value != operand;
+			case 'is at least':
+				return value >= operand;
+			case 'is at most':
+				return value <= operand;
+		};
+	};
+	
 	return Field;
 })());

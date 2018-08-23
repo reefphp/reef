@@ -7,3 +7,7 @@ error_number_min_title: Minimum fout
 error_number_min: Kies een getal niet lager dan [[min]]
 error_number_max_title: Maximum fout
 error_number_max: Kies een getal niet hoger dan [[max]]
+operator_eq: is gelijk aan
+operator_neq: is niet gelijk aan
+operator_gte: is minstens
+operator_lte: is hoogstens

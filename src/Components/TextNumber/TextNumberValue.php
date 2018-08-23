@@ -138,4 +138,23 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 	public function toTemplateVar() {
 		return $this->f_value;
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
+		switch($s_operator) {
+			case 'equals':
+				return $this->f_value == $m_operand;
+				
+			case 'does not equal':
+				return $this->f_value != $m_operand;
+				
+			case 'is at least':
+				return $this->f_value >= $m_operand;
+				
+			case 'is at most':
+				return $this->f_value <= $m_operand;
+		}
+	}
 }

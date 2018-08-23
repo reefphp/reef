@@ -7,3 +7,7 @@ error_number_min_title: Minimum error
 error_number_min: The number should be at least [[min]]
 error_number_max_title: Maximum error
 error_number_max: The number should be at most [[max]]
+operator_eq: equals
+operator_neq: does not equal
+operator_gte: is at least
+operator_lte: is at most

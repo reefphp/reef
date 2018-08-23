@@ -45,3 +45,8 @@ advancedDefinition:
                 title: 'Step'
             nl_NL:
                 title: 'Stap'
+builder_operators:
+    eq: equals
+    neq: does not equal
+    gte: is at least
+    lte: is at most
