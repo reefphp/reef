@@ -66,6 +66,10 @@ Reef.addComponent((function() {
 			});
 			
 			self.builder.$builderWrapper.on(EVTPRFX+'delete_field_before', function(evt, rbfield, state) {
+				if(!$.contains(document.documentElement, self.$field[0])) {
+					self.builder.$builderWrapper.off(EVTPRFX+'delete_field_before', this);
+					return;
+				}
 				
 				if(state.prevent || state.conditionLossAsked) {
 					return;
