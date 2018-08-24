@@ -52,7 +52,7 @@ Reef.addComponent((function() {
 			'equals',
 			'does not equal',
 			'is empty',
-			'is not empty',
+			'is not empty'
 		];
 	};
 	
