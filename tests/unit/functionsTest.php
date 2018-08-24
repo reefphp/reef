@@ -91,6 +91,11 @@ final class functionsTest extends TestCase {
 		$this->assertSame('/^aa\\\\.bb\\\\.cc$/', \Reef\matcherToRegExp('aa\\\\?bb\\\\?cc'));
 		$this->assertSame('/^aa\\\\\\?bb\\\\\\?cc$/', \Reef\matcherToRegExp('aa\\\\\\?bb\\\\\\?cc'));
 		$this->assertSame('/^aa\\\\\\\\bb\\\\\\\\cc$/', \Reef\matcherToRegExp('aa\\\\bb\\\\cc'));
+		
+		$this->assertSame('/^\\\\\\\\\\\\\\\\.*$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\*'));
+		$this->assertSame('/^\\\\\\\\\\\\\\\\\\*$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\\\*'));
+		$this->assertSame('/^\\\\\\\\\\\\\\\\.$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\?'));
+		$this->assertSame('/^\\\\\\\\\\\\\\\\\\?$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\\\?'));
 	}
 	
 	public function test_rmTree(): void {
