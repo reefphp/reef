@@ -3,6 +3,7 @@
 namespace Reef\Components\Traits\Required;
 
 use \Reef\Components\FieldValue;
+use \Reef\Submission;
 
 interface RequiredFieldInterface {
 	
@@ -19,5 +20,12 @@ interface RequiredFieldInterface {
 	 * @return array The template variables
 	 */
 	public function view_form_required(?FieldValue $Value) : array;
+	
+	/**
+	 * Determine whether this field is required within a submission
+	 * @param Submission $Submission The submission
+	 * @return bool True if the field is required, false otherwise
+	 */
+	public function is_required(Submission $Submission) : bool;
 	
 }

@@ -81,6 +81,7 @@ if(typeof Reef === 'undefined') {
 				if(Reef.components[type]) {
 					self.fields[name] = self.newField(type, $(this));
 					self.fields[name].attach();
+					self.listenVisible(self.fields[name]);
 				}
 			});
 			
@@ -248,11 +249,43 @@ if(typeof Reef === 'undefined') {
 		};
 		
 		Reef.prototype.listenRequired = function(field, $input) {
-			if($input.attr('data-required-if')) {
-				this.onConditionChange($input.attr('data-required-if'), function(result) {
-					if(result != $input.prop('required')) {
-						$input.prop('required', result);
-						field.validate();
+			var conditions = [];
+			
+			if($input.attr('data-required-if') && $input.attr('data-required-if').length > 0) {
+				conditions.push(' ('+$input.attr('data-required-if')+') ');
+			}
+			else {
+				conditions.push(' ('+($input.prop('required') ? 'true' : 'false')+') ');
+			}
+			if(field.$field.attr('data-visible-if') && field.$field.attr('data-visible-if').length > 0) {
+				conditions.push(' ('+field.$field.attr('data-visible-if')+') ');
+			}
+			
+			if(conditions.length == 0) {
+				return;
+			}
+			
+			var condition = conditions.join(' and ');
+			
+			this.onConditionChange(condition, function(should_be_required) {
+				if(should_be_required != $input.prop('required')) {
+					$input.prop('required', should_be_required);
+					field.validate();
+				}
+			});
+		}
+		
+		Reef.prototype.listenVisible = function(field) {
+			if(field.$field.attr('data-visible-if')) {
+				this.onConditionChange(field.$field.attr('data-visible-if'), function(should_be_visible) {
+					var should_be_hidden = !should_be_visible;
+					if(should_be_hidden != field.$field.attr('data-'+CSSPRFX+'hidable-hidden')) {
+						if(should_be_hidden) {
+							field.$field.attr('data-'+CSSPRFX+'hidable-hidden', '1');
+						}
+						else {
+							field.$field.removeAttr('data-'+CSSPRFX+'hidable-hidden');
+						}
 					}
 				});
 			}

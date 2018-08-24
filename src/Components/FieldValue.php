@@ -1,8 +1,12 @@
 <?php
 
 namespace Reef\Components;
+use \Reef\Components\Traits\Hidable\HidableFieldValueInterface;
+use \Reef\Components\Traits\Hidable\HidableFieldValueTrait;
 
-abstract class FieldValue {
+abstract class FieldValue implements HidableFieldValueInterface {
+	
+	use HidableFieldValueTrait;
 	
 	protected $Submission;
 	protected $Field;

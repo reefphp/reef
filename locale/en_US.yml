@@ -17,6 +17,7 @@ builder_delete_field_confirm: Delete this field?
 builder_form_storage_name: Form storage name
 builder_field_name: Field name
 builder_required: Required
+builder_visible: Visible
 cat_static: Static
 cat_text: Text
 cat_choice: Choice

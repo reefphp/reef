@@ -15,7 +15,7 @@ class TextNumberField extends Field implements RequiredFieldInterface {
 	 * @inherit
 	 */
 	public function validateDeclaration(array &$a_errors = null) : bool {
-		return $this->validateDeclaration_required($a_errors);
+		return parent::validateDeclaration($a_errors) && $this->validateDeclaration_required($a_errors);
 	}
 	
 	private function is_integer_var(string $s_var) {

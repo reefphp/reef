@@ -2,6 +2,9 @@
 
 namespace Reef\Locale;
 
+use \Reef\Form\Form;
+use \Reef\Components\Component;
+
 /**
  * Trait providing locale functionality for fields
  * 

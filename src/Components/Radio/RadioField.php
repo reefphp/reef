@@ -14,7 +14,7 @@ class RadioField extends AbstractSingleChoiceField implements RequiredFieldInter
 	 * @inherit
 	 */
 	public function validateDeclaration(array &$a_errors = null) : bool {
-		return $this->validateDeclaration_required($a_errors);
+		return parent::validateDeclaration($a_errors) && $this->validateDeclaration_required($a_errors);
 	}
 	
 	/**

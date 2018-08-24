@@ -17,6 +17,7 @@ builder_delete_field_confirm: Dit veld verwijderen?
 builder_form_storage_name: Formulier opslag naam
 builder_field_name: Veldnaam
 builder_required: Verplicht
+builder_visible: Zichtbaar
 cat_static: Statisch
 cat_text: Tekst
 cat_choice: Keuze

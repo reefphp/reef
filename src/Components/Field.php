@@ -5,10 +5,13 @@ namespace Reef\Components;
 use Reef\Locale\Trait_FieldLocale;
 use Reef\Form\Form;
 use Symfony\Component\Yaml\Yaml;
+use \Reef\Components\Traits\Hidable\HidableFieldInterface;
+use \Reef\Components\Traits\Hidable\HidableFieldTrait;
 
-abstract class Field {
+abstract class Field implements HidableFieldInterface {
 	
 	use Trait_FieldLocale;
+	use HidableFieldTrait;
 	
 	protected $a_declaration;
 	protected $Component;
@@ -50,7 +53,7 @@ abstract class Field {
 	 * @return bool True if valid
 	 */
 	public function validateDeclaration(array &$a_errors = null) : bool {
-		return true;
+		return $this->validateDeclaration_hidable($a_errors);
 	}
 	
 	/**
@@ -197,6 +200,8 @@ abstract class Field {
 		$a_vars = $this->a_declaration;
 		
 		// Merge generalized options
+		$a_vars = array_merge($a_vars, $this->view_form_hidable($Value));
+		
 		if($this instanceof \Reef\Components\Traits\Required\RequiredFieldInterface) {
 			$a_vars = array_merge($a_vars, $this->view_form_required($Value));
 		}

@@ -6,10 +6,13 @@ use Reef\Form\Form;
 use Reef\Reef;
 use Reef\Locale\Trait_ComponentLocale;
 use Symfony\Component\Yaml\Yaml;
+use \Reef\Components\Traits\Hidable\HidableComponentInterface;
+use \Reef\Components\Traits\Hidable\HidableComponentTrait;
 
-abstract class Component {
+abstract class Component implements HidableComponentInterface {
 	
 	use Trait_ComponentLocale;
+	use HidableComponentTrait;
 	
 	protected $Reef;
 	protected $a_configuration;
@@ -168,9 +171,16 @@ abstract class Component {
 			$a_configuration = Yaml::parseFile(static::getDir().'config.yml');
 			
 			// Merge generalized options
+			$a_hidableFields = $this->getDeclarationFields_hidable();
+			if(!empty($a_hidableFields)) {
+				$a_configuration['basicDefinition']['fields'] = $a_configuration['basicDefinition']['fields']??[];
+				array_push($a_configuration['basicDefinition']['fields'], ...$a_hidableFields);
+			}
+			
 			if($this instanceof \Reef\Components\Traits\Required\RequiredComponentInterface) {
 				$a_requiredFields = $this->getDeclarationFields_required();
 				if(!empty($a_requiredFields)) {
+					$a_configuration['basicDefinition']['fields'] = $a_configuration['basicDefinition']['fields']??[];
 					array_push($a_configuration['basicDefinition']['fields'], ...$a_requiredFields);
 				}
 				

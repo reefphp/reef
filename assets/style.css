@@ -2,3 +2,7 @@
 .CSSPRFXtemplate {
 	display: none;
 }
+
+.CSSPRFXfield[data-CSSPRFXhidable-hidden] {
+	display: none;
+}

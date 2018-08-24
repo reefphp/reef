@@ -21,7 +21,7 @@ trait RequiredFieldValueTrait {
 			return true;
 		}
 		
-		if($this->getSubmission()->evaluateCondition($a_declaration['required'])) {
+		if($this->getField()->is_required($this->getSubmission())) {
 			$a_errors[] = $this->getField()->trans('rf_error_required_empty');
 			return false;
 		}

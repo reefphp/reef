@@ -15,7 +15,7 @@ class TextLineField extends Field implements RequiredFieldInterface {
 	 * @inherit
 	 */
 	public function validateDeclaration(array &$a_errors = null) : bool {
-		$b_valid = true;
+		$b_valid = parent::validateDeclaration($a_errors);
 		
 		$b_valid = $this->validateDeclaration_required($a_errors) && $b_valid;
 		
