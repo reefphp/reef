@@ -1,1 +1,7 @@
 component_title: Checklijst
+operator_has: heeft aangevinkt
+operator_nhas: heeft niet aangevinkt
+operator_gte: '# aangevinkt minstens'
+operator_lte: '# aangevinkt hoogstens'
+operator_gten: '# niet aangevinkt minstens'
+operator_lten: '# niet aangevinkt hoogstens'

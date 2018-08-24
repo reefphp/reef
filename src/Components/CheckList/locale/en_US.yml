@@ -1,1 +1,7 @@
 component_title: Checklist
+operator_has: has checked
+operator_nhas: has not checked
+operator_gte: '# checked at least'
+operator_lte: '# checked at most'
+operator_gten: '# unchecked at least'
+operator_lten: '# unchecked at most'

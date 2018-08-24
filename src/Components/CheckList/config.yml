@@ -16,3 +16,10 @@ basicDefinition:
                 title: 'Options'
             nl_NL:
                 title: 'Opties'
+builder_operators:
+    has: has checked
+    nhas: has not checked
+    gte: at least checked
+    lte: at most checked
+    gten: at least unchecked
+    lten: at most unchecked

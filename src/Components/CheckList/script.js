@@ -76,5 +76,94 @@ Reef.addComponent((function() {
 		}
 	};
 	
+	Field.getConditionOperators = function() {
+		return [
+			'has checked',
+			'has not checked',
+			'at least checked',
+			'at most checked',
+			'at least unchecked',
+			'at most unchecked'
+		];
+	};
+	
+	Field.prototype.getConditionOperandInput = function(operator, layout) {
+		var self = this;
+		
+		var classes = '';
+		if(layout == 'bootstrap4') {
+			classes += ' form-control';
+		}
+		
+		if(['has checked', 'has not checked'].indexOf(operator) > -1) {
+			var $select = $('<select class="'+classes+'">');
+			
+			this.$field.find('input').each(function() {
+				$select.append($('<option>').val($(this).attr('data-name')).text(self.$field.find('[for="'+$(this).attr('id')+'"]').text()));
+			});
+			
+			return $select;
+		}
+		
+		if(['at least checked', 'at most checked', 'at least unchecked', 'at most unchecked'].indexOf(operator) > -1) {
+			return $('<input type="number" class="'+classes+'" min="0" step="1" />');
+		}
+		
+		return null;
+	};
+	
+	Field.prototype.validateConditionOperation = function(operator, operand) {
+		
+		if(['has checked', 'has not checked'].indexOf(operator) > -1) {
+			var found = false;
+			this.$field.find('input').each(function() {
+				if($(this).attr('data-name') === operand) {
+					found = true;
+					return false;
+				}
+			});
+			if(!found) {
+				throw ('Invalid operand "'+operand+'"');
+			}
+		}
+		
+		if(['at least checked', 'at most checked', 'at least unchecked', 'at most unchecked'].indexOf(operator) > -1) {
+			if(!$.isNumeric(operand)) {
+				throw 'Check counting requires a numeric operand';
+			}
+		}
+	};
+	
+	Field.prototype.evaluateConditionOperation = function(operator, operand) {
+		var values = this.getValue();
+		var valueArray = [];
+		
+		if(['at least checked', 'at most checked', 'at least unchecked', 'at most unchecked'].indexOf(operator) > -1) {
+			for(var i in values) {
+				valueArray.push(values[i]);
+			}
+		}
+		
+		switch(operator) {
+			case 'has checked':
+				return values[operand];
+				
+			case 'has not checked':
+				return !values[operand];
+				
+			case 'at least checked':
+				return valueArray.filter(function(b) { return b; }).length >= operand;
+				
+			case 'at most checked':
+				return valueArray.filter(function(b) { return b; }).length <= operand;
+				
+			case 'at least unchecked':
+				return valueArray.filter(function(b) { return !b; }).length >= operand;
+				
+			case 'at most unchecked':
+				return valueArray.filter(function(b) { return !b; }).length <= operand;
+		};
+	};
+	
 	return Field;
 })());

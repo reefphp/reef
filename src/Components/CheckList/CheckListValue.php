@@ -106,4 +106,54 @@ class CheckListValue extends FieldValue {
 	public function toTemplateVar() {
 		return $this->a_list;
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function validateConditionOperation(string $s_operator, $m_operand) {
+		
+		if(in_array($s_operator, ['has checked', 'has not checked'])) {
+			$b_found = false;
+			foreach($this->getField()->getDeclaration()['options'] as $a_option) {
+				if($a_option['name'] === $m_operand) {
+					$b_found = true;
+					break;
+				}
+			}
+			if(!$b_found) {
+				throw new \Reef\Exception\ConditionException('Invalid operand "'.$m_operand.'"');
+			}
+		}
+		
+		if(in_array($s_operator, ['at least checked', 'at most checked', 'at least unchecked', 'at most unchecked'])) {
+			if(!is_numeric($m_operand)) {
+				throw new \Reef\Exception\ConditionException('Check counting requires a numeric operand');
+			}
+		}
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
+		switch($s_operator) {
+			case 'has checked':
+				return $this->a_list[$m_operand];
+				
+			case 'has not checked':
+				return !$this->a_list[$m_operand];
+				
+			case 'at least checked':
+				return count(array_filter($this->a_list)) >= $m_operand;
+				
+			case 'at most checked':
+				return count(array_filter($this->a_list)) <= $m_operand;
+				
+			case 'at least unchecked':
+				return count(array_filter($this->a_list, function($b) { return !$b; })) >= $m_operand;
+				
+			case 'at most unchecked':
+				return count(array_filter($this->a_list, function($b) { return !$b; })) <= $m_operand;
+		}
+	}
 }
