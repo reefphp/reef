@@ -1,0 +1,68 @@
+declaration:
+    component: reef:checklist
+    name: 'name'
+    options:
+      - name: a
+        locale: Option a
+      - name: b
+        locale: Option b
+      - name: c
+        locale: Option c
+
+noop:
+  -  &x   {'a' : false, 'b': false, 'c': false}
+  -  &a   {'a' : true , 'b': false, 'c': false}
+  -  &c   {'a' : false, 'b': false, 'c': true }
+  -  &ac  {'a' : true , 'b': false, 'c': true }
+  -  &bc  {'a' : false, 'b': true , 'c': true }
+  -  &abc {'a' : true , 'b': true , 'c': true }
+
+valid_conditions:
+  - condition: 'name has checked "a"'
+    true_for:
+      - *a
+    false_for:
+      - *bc
+    
+  - condition: 'name has not checked "a"'
+    true_for:
+      - *x
+    false_for:
+      - *abc
+    
+  - condition: 'name at least checked 2'
+    true_for:
+      - *ac
+      - *abc
+    false_for:
+      - *c
+      - *x
+    
+  - condition: 'name at most checked 2'
+    true_for:
+      - *c
+      - *ac
+      - *x
+    false_for:
+      - *abc
+    
+  - condition: 'name at least unchecked 2'
+    true_for:
+      - *c
+      - *x
+    false_for:
+      - *ac
+      - *abc
+    
+  - condition: 'name at most unchecked 2'
+    true_for:
+      - *c
+      - *ac
+      - *abc
+    false_for:
+      - *x
+
+invalid_conditions:
+  - 'name has checked ""'
+  - 'name has checked "d"'
+  - 'name at least checked "asdf"'

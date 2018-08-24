@@ -1,0 +1,29 @@
+declaration:
+    component: reef:radio
+    name: 'name'
+    options:
+      - name: a
+        locale: Option a
+      - name: b
+        locale: Option b
+
+valid_conditions:
+  - condition: 'name equals "a"'
+    true_for: ['a']
+    false_for: ['b', '']
+    
+  - condition: 'name does not equal "a"'
+    true_for: ['b', '']
+    false_for: ['a']
+    
+  - condition: 'name is empty'
+    true_for: ['']
+    false_for: ['a', 'b']
+    
+  - condition: 'name is not empty'
+    true_for: ['a', 'b']
+    false_for: ['']
+
+invalid_conditions:
+  - 'name is empty "asdf"'
+  - 'name equals "c"'

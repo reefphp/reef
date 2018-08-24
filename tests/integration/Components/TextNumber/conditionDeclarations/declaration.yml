@@ -1,0 +1,28 @@
+declaration:
+    component: reef:text_number
+    name: 'name'
+
+valid_conditions:
+  - condition: 'name equals 3'
+    true_for: [3]
+    false_for: [2, 4, '']
+    
+  - condition: 'name equals ""'
+    true_for: ['']
+    false_for: [0]
+    
+  - condition: 'name does not equal 0'
+    true_for: [3, -1, '']
+    false_for: [0]
+    
+  - condition: 'name is at least 3'
+    true_for: [3, 4]
+    false_for: [1, 2]
+    
+  - condition: 'name is at most 3'
+    true_for: [2, 3]
+    false_for: [4, 5]
+
+invalid_conditions:
+  - 'name is at least ""'
+  - 'name equals "asdf"'

@@ -1,0 +1,24 @@
+declaration:
+    component: reef:textarea
+    name: 'name'
+
+valid_conditions:
+  - condition: 'name is empty'
+    true_for: ['', ' ']
+    false_for: ['asdf']
+    
+  - condition: 'name is not empty'
+    true_for: ['asdf']
+    false_for: ['', ' ']
+    
+  - condition: 'name is longer than 3'
+    true_for: ['xxxx', '    ']
+    false_for: ['xxx', '']
+    
+  - condition: 'name is shorter than 3'
+    true_for: ['', 'xx']
+    false_for: ['xxx', '   ']
+
+invalid_conditions:
+  - 'name is empty "asdf"'
+  - 'name is longer than "asdf"'

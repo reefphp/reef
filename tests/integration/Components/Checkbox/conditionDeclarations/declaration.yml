@@ -1,0 +1,15 @@
+declaration:
+    component: reef:checkbox
+    name: 'name'
+
+valid_conditions:
+  - condition: 'name is checked'
+    true_for: [true]
+    false_for: [false]
+    
+  - condition: 'name is not checked'
+    true_for: [false]
+    false_for: [true]
+
+invalid_conditions:
+  - 'name is checked "asdf"'

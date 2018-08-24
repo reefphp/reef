@@ -121,9 +121,9 @@ Reef.addComponent((function() {
 		
 		switch(operator) {
 			case 'is empty':
-				return $.trim(value) == '';
+				return $.trim(value) === '';
 			case 'is not empty':
-				return $.trim(value) != '';
+				return $.trim(value) !== '';
 			case 'is longer than':
 				return value.length > operand;
 			case 'is shorter than':

@@ -151,9 +151,15 @@ Reef.addComponent((function() {
 		
 		switch(operator) {
 			case 'equals':
-				return value == operand;
+				if(value === '' || operand === '') {
+					return (value === '' && operand === '');
+				}
+				return value === operand;
 			case 'does not equal':
-				return value != operand;
+				if(value === '' || operand === '') {
+					return (value !== '' || operand !== '');
+				}
+				return value !== operand;
 			case 'is at least':
 				return value >= operand;
 			case 'is at most':

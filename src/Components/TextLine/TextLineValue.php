@@ -133,10 +133,10 @@ class TextLineValue extends FieldValue implements RequiredFieldValueInterface {
 	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
 		switch($s_operator) {
 			case 'equals':
-				return $this->s_value == $m_operand;
+				return (string)$this->s_value === (string)$m_operand;
 				
 			case 'does not equal':
-				return $this->s_value != $m_operand;
+				return (string)$this->s_value !== (string)$m_operand;
 				
 			case 'matches':
 				return (bool)preg_match(\Reef\matcherToRegExp($m_operand), $this->s_value);
@@ -145,10 +145,10 @@ class TextLineValue extends FieldValue implements RequiredFieldValueInterface {
 				return !preg_match(\Reef\matcherToRegExp($m_operand), $this->s_value);
 				
 			case 'is empty':
-				return trim($this->s_value) == '';
+				return trim($this->s_value) === '';
 				
 			case 'is not empty':
-				return trim($this->s_value) != '';
+				return trim($this->s_value) !== '';
 				
 			case 'is longer than':
 				return strlen($this->s_value) > $m_operand;

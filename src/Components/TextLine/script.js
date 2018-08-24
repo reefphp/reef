@@ -135,17 +135,17 @@ Reef.addComponent((function() {
 		
 		switch(operator) {
 			case 'equals':
-				return value == operand;
+				return value === operand;
 			case 'does not equal':
-				return value != operand;
+				return value !== operand;
 			case 'matches':
 				return ReefUtil.matcherToRegExp(operand).test(value);
 			case 'does not match':
 				return !ReefUtil.matcherToRegExp(operand).test(value);
 			case 'is empty':
-				return $.trim(value) == '';
+				return $.trim(value) === '';
 			case 'is not empty':
-				return $.trim(value) != '';
+				return $.trim(value) !== '';
 			case 'is longer than':
 				return value.length > operand;
 			case 'is shorter than':

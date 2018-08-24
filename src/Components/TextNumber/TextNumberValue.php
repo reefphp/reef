@@ -160,10 +160,16 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
 		switch($s_operator) {
 			case 'equals':
-				return $this->f_value == $m_operand;
+				if($this->f_value === '' || $m_operand === '') {
+					return ($this->f_value === '' && $m_operand === '');
+				}
+				return (float)$this->f_value === (float)$m_operand;
 				
 			case 'does not equal':
-				return $this->f_value != $m_operand;
+				if($this->f_value === '' || $m_operand === '') {
+					return ($this->f_value !== '' || $m_operand !== '');
+				}
+				return (float)$this->f_value !== (float)$m_operand;
 				
 			case 'is at least':
 				return $this->f_value >= $m_operand;
