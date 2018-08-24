@@ -81,8 +81,8 @@ if(typeof Reef === 'undefined') {
 				if(Reef.components[type]) {
 					self.fields[name] = self.newField(type, $(this));
 					self.fields[name].attach();
-					self.listenVisible(self.fields[name]);
 				}
+				self.listenVisible($(this));
 			});
 			
 			// Set config
@@ -275,16 +275,16 @@ if(typeof Reef === 'undefined') {
 			});
 		}
 		
-		Reef.prototype.listenVisible = function(field) {
-			if(field.$field.attr('data-visible-if')) {
-				this.onConditionChange(field.$field.attr('data-visible-if'), function(should_be_visible) {
+		Reef.prototype.listenVisible = function($field) {
+			if($field.attr('data-visible-if')) {
+				this.onConditionChange($field.attr('data-visible-if'), function(should_be_visible) {
 					var should_be_hidden = !should_be_visible;
-					if(should_be_hidden != field.$field.attr('data-'+CSSPRFX+'hidable-hidden')) {
+					if(should_be_hidden != $field.attr('data-'+CSSPRFX+'hidable-hidden')) {
 						if(should_be_hidden) {
-							field.$field.attr('data-'+CSSPRFX+'hidable-hidden', '1');
+							$field.attr('data-'+CSSPRFX+'hidable-hidden', '1');
 						}
 						else {
-							field.$field.removeAttr('data-'+CSSPRFX+'hidable-hidden');
+							$field.removeAttr('data-'+CSSPRFX+'hidable-hidden');
 						}
 					}
 				});
