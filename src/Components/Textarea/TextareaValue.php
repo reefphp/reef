@@ -104,6 +104,23 @@ class TextareaValue extends FieldValue implements RequiredFieldValueInterface {
 	/**
 	 * @inherit
 	 */
+	public function validateConditionOperation(string $s_operator, $m_operand) {
+		if(in_array($s_operator, ['is empty', 'is not empty'])) {
+			if(!empty($m_operand)) {
+				throw new \Reef\Exception\ConditionException('Empty does not take an operand');
+			}
+		}
+		
+		if(in_array($s_operator, ['is longer than', 'is shorter than'])) {
+			if(!is_numeric($m_operand)) {
+				throw new \Reef\Exception\ConditionException('Operand to longer/shorter should be numeric');
+			}
+		}
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
 		switch($s_operator) {
 			case 'is empty':

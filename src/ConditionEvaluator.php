@@ -62,7 +62,7 @@ class ConditionEvaluator {
 		}
 		
 		try {
-			$this->evaluate($this->EmptySubmission, $s_condition);
+			$this->evaluate($this->EmptySubmission, $s_condition, true);
 			return true;
 		}
 		catch(ConditionException $e) {
@@ -76,13 +76,14 @@ class ConditionEvaluator {
 	 * 
 	 * @param \Reef\Submission $Submission The submission to evaluate against
 	 * @param string|bool $s_condition The condition
+	 * @param bool $b_validate Whether to perform operand validation, defaults to false
 	 * 
 	 * @return ?bool The boolean result, or null if the input condition was empty
 	 * 
 	 * @throws BadMethodCallException If called with a submission not belonging to the form this evaluator is initialized with
 	 * @throws ConditionException If the input condition is invalid
 	 */
-	public function evaluate(\Reef\Submission $Submission, $s_condition) : ?bool {
+	public function evaluate(\Reef\Submission $Submission, $s_condition, bool $b_validate = false) : ?bool {
 		if(is_bool($s_condition)) {
 			return (bool)$s_condition;
 		}
@@ -101,6 +102,7 @@ class ConditionEvaluator {
 		$this->i_length = strlen($this->s_condition);
 		$this->i_cursor = 0;
 		$this->a_tokenStack = [];
+		$this->b_validate = $b_validate;
 		
 		$b_result = $this->condition();
 		
@@ -186,6 +188,10 @@ class ConditionEvaluator {
 	 */
 	private function fieldOperation() : bool {
 		[$s_fieldName, $s_operator, $m_operand] = $this->getFieldOperation();
+		
+		if($this->b_validate) {
+			$this->Submission->getFieldValue($s_fieldName)->validateConditionOperation($s_operator, $m_operand);
+		}
 		
 		return (bool)$this->Submission->getFieldValue($s_fieldName)->evaluateConditionOperation($s_operator, $m_operand);
 	}

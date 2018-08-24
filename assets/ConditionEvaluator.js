@@ -25,12 +25,13 @@ var ReefConditionEvaluator = (function() {
 	 * 
 	 * @param Reef reef The reef object
 	 * @param string s_condition The condition
+	 * @param bool b_validate Whether to perform operand validation, defaults to false
 	 * 
 	 * @return ?bool The boolean result, or null if the input condition was empty
 	 * 
 	 * @throws Exception If the input condition is invalid
 	 */
-	ConditionEvaluator.prototype.evaluate = function(reef, s_condition) {
+	ConditionEvaluator.prototype.evaluate = function(reef, s_condition, b_validate) {
 		
 		var b_result;
 		
@@ -43,6 +44,7 @@ var ReefConditionEvaluator = (function() {
 		this.i_length = this.s_condition.length;
 		this.i_cursor = 0;
 		this.a_tokenStack = [];
+		this.b_validate = !!b_validate;
 		
 		b_result = this.condition();
 		
@@ -134,6 +136,10 @@ var ReefConditionEvaluator = (function() {
 	 */
 	ConditionEvaluator.prototype.fieldOperation = function() {
 		var operation = this.getFieldOperation();
+		
+		if(this.b_validate) {
+			this.reef.getField(operation[0]).validateConditionOperation(operation[1], operation[2]);
+		}
 		
 		return this.reef.getField(operation[0]).evaluateConditionOperation(operation[1], operation[2]);
 	}

@@ -134,6 +134,18 @@ Reef.addComponent((function() {
 		return $('<input type="number" class="'+classes+'" step="0.001" />');
 	};
 	
+	Field.prototype.validateConditionOperation = function(operator, operand) {
+		if(operand != '' && !$.isNumeric(operand)) {
+			throw 'Operand should be numeric';
+		}
+		
+		if(['is at least', 'is at most'].indexOf(operator) > -1) {
+			if(operand == '') {
+				throw 'Operand should not be empty';
+			}
+		}
+	};
+	
 	Field.prototype.evaluateConditionOperation = function(operator, operand) {
 		var value = this.getValue();
 		

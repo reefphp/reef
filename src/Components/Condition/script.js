@@ -406,7 +406,7 @@ Reef.addComponent((function() {
 		this.removeErrors();
 		
 		try {
-			ReefConditionEvaluator.evaluate(this.builder.reef, this.getValue());
+			ReefConditionEvaluator.evaluate(this.builder.reef, this.getValue(), true);
 		}
 		catch(e) {
 			this.setError(e);

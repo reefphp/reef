@@ -73,6 +73,12 @@ Reef.addComponent((function() {
 		return null;
 	};
 	
+	Field.prototype.validateConditionOperation = function(operator, operand) {
+		if(operand != '') {
+			throw 'Checked does not take an operand';
+		}
+	};
+	
 	Field.prototype.evaluateConditionOperation = function(operator, operand) {
 		var value = this.getValue();
 		

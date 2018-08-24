@@ -89,6 +89,18 @@ abstract class FieldValue {
 	abstract public function validate() : bool;
 	
 	/**
+	 * Validate a condition operation on this field value
+	 * @param string $s_operator The operator, one of Field::getConditionOperators()
+	 * @param mixed $m_operand The operand
+	 * 
+	 * @throws BadMethodCallException If condition operations are not supported
+	 * @throws ConditionException If the operation is invalid
+	 */
+	public function validateConditionOperation(string $s_operator, $m_operand) {
+		throw new \Reef\Exception\BadMethodCallException('This component does not implement conditions');
+	}
+	
+	/**
 	 * Evaluate a condition operation on this field value
 	 * @param string $s_operator The operator, one of Field::getConditionOperators()
 	 * @param mixed $m_operand The operand

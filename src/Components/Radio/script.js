@@ -102,8 +102,12 @@ Reef.addComponent((function() {
 		return null;
 	};
 	
-	Field.prototype.evaluateConditionOperation = function(operator, operand) {
-		var value = this.getValue();
+	Field.prototype.validateConditionOperation = function(operator, operand) {
+		if(['is empty', 'is not empty'].indexOf(operator) > -1) {
+			if(operand != '') {
+				throw 'Empty does not take an operand';
+			}
+		}
 		
 		if(['equals', 'does not equal'].indexOf(operator) > -1) {
 			var found = false;
@@ -117,6 +121,10 @@ Reef.addComponent((function() {
 				throw ('Invalid operand "'+operand+'"');
 			}
 		}
+	};
+	
+	Field.prototype.evaluateConditionOperation = function(operator, operand) {
+		var value = this.getValue();
 		
 		switch(operator) {
 			case 'equals':

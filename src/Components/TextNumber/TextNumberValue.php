@@ -142,6 +142,21 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 	/**
 	 * @inherit
 	 */
+	public function validateConditionOperation(string $s_operator, $m_operand) {
+		if($m_operand != '' && !is_numeric($m_operand)) {
+			throw new \Reef\Exception\ConditionException('Operand should be numeric');
+		}
+		
+		if(in_array($s_operator, ['is at least', 'is at most'])) {
+			if($m_operand == '') {
+				throw new \Reef\Exception\ConditionException('Operand should not be empty');
+			}
+		}
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
 		switch($s_operator) {
 			case 'equals':

@@ -98,6 +98,15 @@ class CheckboxValue extends FieldValue implements RequiredFieldValueInterface {
 	/**
 	 * @inherit
 	 */
+	public function validateConditionOperation(string $s_operator, $m_operand) {
+		if(!empty($m_operand)) {
+			throw new \Reef\Exception\ConditionException('Checked does not take an operand');
+		}
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function evaluateConditionOperation(string $s_operator, $m_operand) : bool {
 		switch($s_operator) {
 			case 'is checked':

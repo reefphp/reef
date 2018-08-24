@@ -116,6 +116,20 @@ Reef.addComponent((function() {
 		return null;
 	};
 	
+	Field.prototype.validateConditionOperation = function(operator, operand) {
+		if(['is empty', 'is not empty'].indexOf(operator) > -1) {
+			if(operand != '') {
+				throw 'Empty does not take an operand';
+			}
+		}
+		
+		if(['is longer than', 'is shorter than'].indexOf(operator) > -1) {
+			if(!$.isNumeric(operand)) {
+				throw 'Operand to longer/shorter should be numeric';
+			}
+		}
+	};
+	
 	Field.prototype.evaluateConditionOperation = function(operator, operand) {
 		var value = this.getValue();
 		
