@@ -61,6 +61,38 @@ final class functionsTest extends TestCase {
 		$this->assertFalse(\Reef\interpretBool(false));
 	}
 	
+	public function test_matcherToRegExp(): void {
+		$this->assertSame('/^.*$/', \Reef\matcherToRegExp('*'));
+		$this->assertSame('/^\\*$/', \Reef\matcherToRegExp('\\*'));
+		$this->assertSame('/^.$/', \Reef\matcherToRegExp('?'));
+		$this->assertSame('/^\\?$/', \Reef\matcherToRegExp('\\?'));
+		$this->assertSame('/^\\\\$/', \Reef\matcherToRegExp('\\'));
+		
+		$this->assertSame('/^aa.*bb$/', \Reef\matcherToRegExp('aa*bb'));
+		$this->assertSame('/^aa\\*bb$/', \Reef\matcherToRegExp('aa\\*bb'));
+		$this->assertSame('/^aa.bb$/', \Reef\matcherToRegExp('aa?bb'));
+		$this->assertSame('/^aa\\?bb$/', \Reef\matcherToRegExp('aa\\?bb'));
+		$this->assertSame('/^aa\\\\bb$/', \Reef\matcherToRegExp('aa\\bb'));
+		
+		$this->assertSame('/^.*.*$/', \Reef\matcherToRegExp('**'));
+		$this->assertSame('/^\\*\\*$/', \Reef\matcherToRegExp('\\*\\*'));
+		$this->assertSame('/^..$/', \Reef\matcherToRegExp('??'));
+		$this->assertSame('/^\\?\\?$/', \Reef\matcherToRegExp('\\?\\?'));
+		$this->assertSame('/^\\\\\\\\$/', \Reef\matcherToRegExp('\\\\'));
+		
+		$this->assertSame('/^\\\\.*\\\\.*$/', \Reef\matcherToRegExp('\\\\*\\\\*'));
+		$this->assertSame('/^\\\\\\*\\\\\\*$/', \Reef\matcherToRegExp('\\\\\\*\\\\\\*'));
+		$this->assertSame('/^\\\\.\\\\.$/', \Reef\matcherToRegExp('\\\\?\\\\?'));
+		$this->assertSame('/^\\\\\\?\\\\\\?$/', \Reef\matcherToRegExp('\\\\\\?\\\\\\?'));
+		$this->assertSame('/^\\\\\\\\\\\\\\\\$/', \Reef\matcherToRegExp('\\\\\\\\'));
+		
+		$this->assertSame('/^aa\\\\.*bb\\\\.*cc$/', \Reef\matcherToRegExp('aa\\\\*bb\\\\*cc'));
+		$this->assertSame('/^aa\\\\\\*bb\\\\\\*cc$/', \Reef\matcherToRegExp('aa\\\\\\*bb\\\\\\*cc'));
+		$this->assertSame('/^aa\\\\.bb\\\\.cc$/', \Reef\matcherToRegExp('aa\\\\?bb\\\\?cc'));
+		$this->assertSame('/^aa\\\\\\?bb\\\\\\?cc$/', \Reef\matcherToRegExp('aa\\\\\\?bb\\\\\\?cc'));
+		$this->assertSame('/^aa\\\\\\\\bb\\\\\\\\cc$/', \Reef\matcherToRegExp('aa\\\\bb\\\\cc'));
+	}
+	
 	public function test_rmTree(): void {
 		$s_dir = static::STORAGE_DIR . '/rmTree';
 		

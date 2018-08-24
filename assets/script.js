@@ -18,12 +18,12 @@ if(typeof Reef === 'undefined') {
 		matcherToRegExp : function(matcher) {
 			var regexp = ReefUtil.escapeRegExp(matcher);
 			
-			regexp = regexp.replace(new RegExp('(^|[^\\\\])((?:\\\\)*)\\\\\\*', 'g'), function(match, before, slashes) {
-				return before + slashes.substr(0, slashes.length/2) + ((slashes.length % 4 == 0) ? '.*' : '*');
+			regexp = regexp.replace(new RegExp('((?:\\\\)*)\\\\\\*', 'g'), function(match, slashes) {
+				return slashes.substr(0, slashes.length/2) + ((slashes.length % 4 == 0) ? '.*' : '*');
 			});
 			
-			regexp = regexp.replace(new RegExp('(^|[^\\\\])((?:\\\\)*)\\\\\\?', 'g'), function(match, before, slashes) {
-				return before + slashes.substr(0, slashes.length/2) + ((slashes.length % 4 == 0) ? '.' : '?');
+			regexp = regexp.replace(new RegExp('((?:\\\\)*)\\\\\\?', 'g'), function(match, slashes) {
+				return slashes.substr(0, slashes.length/2) + ((slashes.length % 4 == 0) ? '.' : '?');
 			});
 			
 			return new RegExp('^'+regexp+'$');

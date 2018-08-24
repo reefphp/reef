@@ -93,14 +93,14 @@ function matcherToRegExp(string $s_matcher) : string {
 	
 	$s_regexp = preg_quote($s_matcher, '/');
 	
-	$s_regexp = preg_replace_callback('/(^|[^\\\\])((?:\\\\)*)\\\\\\*/', function($a_matches) {
-		$i_slashes = strlen($a_matches[2]);
-		return $a_matches[1] . substr($a_matches[2], 0, $i_slashes/2) . (($i_slashes % 4 == 0) ? '.*' : '*');
+	$s_regexp = preg_replace_callback('/((?:\\\\)*)\\\\\\*/', function($a_matches) {
+		$i_slashes = strlen($a_matches[1]);
+		return substr($a_matches[1], 0, $i_slashes/2) . (($i_slashes % 4 == 0) ? '.*' : '*');
 	}, $s_regexp);
 	
-	$s_regexp = preg_replace_callback('/(^|[^\\\\])((?:\\\\)*)\\\\\\?/', function($a_matches) {
-		$i_slashes = strlen($a_matches[2]);
-		return $a_matches[1] . substr($a_matches[2], 0, $i_slashes/2) . (($i_slashes % 4 == 0) ? '.' : '?');
+	$s_regexp = preg_replace_callback('/((?:\\\\)*)\\\\\\?/', function($a_matches) {
+		$i_slashes = strlen($a_matches[1]);
+		return substr($a_matches[1], 0, $i_slashes/2) . (($i_slashes % 4 == 0) ? '.' : '?');
 	}, $s_regexp);
 	
 	return '/^'.$s_regexp.'$/';
