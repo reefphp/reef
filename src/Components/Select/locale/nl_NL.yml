@@ -1,1 +1,5 @@
 component_title: Dropdown
+operator_eq: is gelijk aan
+operator_neq: is niet gelijk aan
+operator_empty: is leeg
+operator_nempty: is niet leeg

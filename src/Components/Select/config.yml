@@ -17,3 +17,8 @@ basicDefinition:
                 title: 'Options'
             nl_NL:
                 title: 'Opties'
+builder_operators:
+    eq: equals
+    neq: does not equal
+    empty: is empty
+    nempty: is not empty

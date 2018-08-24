@@ -1,1 +1,5 @@
 component_title: Dropdown
+operator_eq: equals
+operator_neq: does not equal
+operator_empty: is empty
+operator_nempty: is not empty
