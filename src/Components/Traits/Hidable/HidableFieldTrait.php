@@ -26,7 +26,7 @@ trait HidableFieldTrait {
 	/**
 	 * @inherit
 	 */
-	public function view_form_hidable(?FieldValue $Value) : array {
+	public function view_form_hidable(FieldValue $Value) : array {
 		if(!isset($this->a_declaration['visible'])) {
 			return [];
 		}

@@ -192,11 +192,11 @@ abstract class Field implements HidableFieldInterface {
 	
 	/**
 	 * Build template variables for the form
-	 * @param ?FieldValue $Value The value object, may be null for static components
+	 * @param FieldValue $Value The value object
 	 * @param array $a_options Options
 	 * @return array The template variables
 	 */
-	public function view_form(?FieldValue $Value, $a_options = []) : array {
+	public function view_form(FieldValue $Value, $a_options = []) : array {
 		$a_vars = $this->a_declaration;
 		
 		// Merge generalized options
@@ -206,7 +206,7 @@ abstract class Field implements HidableFieldInterface {
 			$a_vars = array_merge($a_vars, $this->view_form_required($Value));
 		}
 		
-		$a_vars['errors'] = !empty($Value) ? $Value->getErrors() : [];
+		$a_vars['errors'] = $Value->getErrors();
 		$a_vars['hasErrors'] = !empty($a_vars['errors']);
 		
 		$a_vars['locale'] = $this->getLocale($a_options['locale']??null);
@@ -217,11 +217,11 @@ abstract class Field implements HidableFieldInterface {
 	
 	/**
 	 * Build template variables for the submission
-	 * @param ?FieldValue $Value The value object, may be null for static components
+	 * @param FieldValue $Value The value object
 	 * @param array $a_options Options
 	 * @return array The template variables
 	 */
-	public function view_submission(?FieldValue $Value, $a_options = []) : array {
+	public function view_submission(FieldValue $Value, $a_options = []) : array {
 		$a_vars = $this->a_declaration;
 		
 		$a_vars['locale'] = $this->getLocale($a_options['locale']??null);

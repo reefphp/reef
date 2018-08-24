@@ -16,10 +16,10 @@ interface RequiredFieldInterface {
 	
 	/**
 	 * Build template variables for the required attribute
-	 * @param ?FieldValue $Value The value object, may be null for static components
+	 * @param FieldValue $Value The value object, may be null for static components
 	 * @return array The template variables
 	 */
-	public function view_form_required(?FieldValue $Value) : array;
+	public function view_form_required(FieldValue $Value) : array;
 	
 	/**
 	 * Determine whether this field is required within a submission

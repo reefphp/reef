@@ -25,7 +25,7 @@ trait RequiredFieldTrait {
 	/**
 	 * @inherit
 	 */
-	public function view_form_required(?FieldValue $Value) : array {
+	public function view_form_required(FieldValue $Value) : array {
 		if(!isset($this->a_declaration['required'])) {
 			return [];
 		}

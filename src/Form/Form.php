@@ -303,7 +303,7 @@ abstract class Form {
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
 			$Template = $Mustache->loadTemplate($s_viewfile);
-			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getDeclaration()['name']);
+			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? $Field->newValue($Submission) : $Submission->getFieldValue($Field->getDeclaration()['name']);
 			$a_vars = $Field->view_form($Value, \Reef\array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([
@@ -366,7 +366,7 @@ abstract class Form {
 			
 			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
 			$Template = $Mustache->loadTemplate($s_viewfile);
-			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? null : $Submission->getFieldValue($Field->getDeclaration()['name']);
+			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? $Field->newValue($Submission) : $Submission->getFieldValue($Field->getDeclaration()['name']);
 			$a_vars = $Field->view_submission($Value, \Reef\array_subset($a_options, ['locale']));
 			
 			$s_html = $Template->render([

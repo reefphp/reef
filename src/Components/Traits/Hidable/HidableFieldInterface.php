@@ -16,10 +16,10 @@ interface HidableFieldInterface {
 	
 	/**
 	 * Build template variables for the hidable/visible attribute
-	 * @param ?FieldValue $Value The value object, may be null for static components
+	 * @param FieldValue $Value The value object, may be null for static components
 	 * @return array The template variables
 	 */
-	public function view_form_hidable(?FieldValue $Value) : array;
+	public function view_form_hidable(FieldValue $Value) : array;
 	
 	/**
 	 * Determine whether this field is visible within a submission
