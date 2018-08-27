@@ -31,7 +31,11 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.setValue = function(value) {
-		this.$field.find('input').filter('[value="'+value+'"]').prop('checked', true);
+		this.$field.find('input').prop('checked', false).filter('[value="'+value+'"]').prop('checked', true).change();
+	};
+	
+	Field.prototype.toDefault = function() {
+		this.setValue(this.$field.attr('data-default'));
 	};
 	
 	Field.prototype.validate = function() {

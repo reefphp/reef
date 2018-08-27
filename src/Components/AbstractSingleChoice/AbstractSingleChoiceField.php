@@ -40,6 +40,7 @@ abstract class AbstractSingleChoiceField extends Field {
 		
 		$s_selectedName = (string)$Value->toStructured();
 		$a_opts = [];
+		$s_default = null;
 		
 		$Reef = $this->getComponent()->getReef();
 		$a_langs = $Reef->getOption('locales');
@@ -56,14 +57,21 @@ abstract class AbstractSingleChoiceField extends Field {
 				}
 			}
 			
+			$b_default = (!empty($s_selectedName)) ? $a_option['name'] == $s_selectedName : ($a_option['default']??false);
+			
 			$a_opts[$i] = [
 				'name' => $a_option['name'],
-				'default' => (!empty($s_selectedName)) ? $a_option['name'] == $s_selectedName : ($a_option['default']??false),
+				'default' => $b_default,
 				'title' => $s_title,
 			];
+			
+			if($b_default) {
+				$s_default = $a_option['name'];
+			}
 		}
 		
 		$a_vars['options'] = $a_opts;
+		$a_vars['default'] = $s_default;
 		
 		return $a_vars;
 	}

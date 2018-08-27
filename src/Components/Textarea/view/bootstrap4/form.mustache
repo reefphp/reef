@@ -8,6 +8,7 @@
 			id="{{form_idpfx}}-{{field.name}}"
 			name="{{main_var}}[{{field.name}}]"
 			placeholder="{{field.locale.placeholder}}"
+			data-default="{{field.default}}"
 			{{{field.required}}}
 			{{#field.max_length}}maxlength="{{field.max_length}}"{{/field.max_length}}
 		>{{field.value}}</textarea>

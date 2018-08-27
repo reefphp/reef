@@ -47,7 +47,11 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.setValue = function(value) {
-		this.$field.find('input').val(value);
+		this.$field.find('input').val(value).change();
+	};
+	
+	Field.prototype.toDefault = function() {
+		this.setValue(this.$field.find('input').attr('data-default'));
 	};
 	
 	Field.prototype.validate = function() {

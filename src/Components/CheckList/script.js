@@ -39,8 +39,17 @@ Reef.addComponent((function() {
 		this.$field.find('input').each(function() {
 			var $input = $(this);
 			var name = $input.attr('data-name');
-			$input.prop('checked', (typeof values[name] !== 'undefined' && values[name]) ? true : false);
-		});
+			if(values == 'default') {
+				$input.prop('checked', !!$input.attr('data-default'));
+			}
+			else {
+				$input.prop('checked', (typeof values[name] !== 'undefined' && values[name]) ? true : false);
+			}
+		}).change();
+	};
+	
+	Field.prototype.toDefault = function() {
+		this.setValue('default');
 	};
 	
 	Field.prototype.validate = function() {
