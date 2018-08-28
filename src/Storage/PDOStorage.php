@@ -136,6 +136,9 @@ abstract class PDOStorage implements Storage {
 	 * @inherit
 	 */
 	public function insertAs(?int $i_entryId, array $a_data) : int {
+		unset($a_data['_entry_id']);
+		$a_data['_uuid'] = $a_data['_uuid'] ?? \Reef\unique_id();
+		
 		$this->checkIntegrity($a_data);
 		
 		$a_keys = $a_values = [];
@@ -164,6 +167,9 @@ abstract class PDOStorage implements Storage {
 	 * @inherit
 	 */
 	public function update(int $i_entryId, array $a_data) {
+		unset($a_data['_entry_id']);
+		unset($a_data['_uuid']);
+		
 		$this->checkIntegrity($a_data);
 		
 		$a_sets = $a_values = [];
@@ -218,7 +224,6 @@ abstract class PDOStorage implements Storage {
 		}
 		
 		$a_result = $a_result[0];
-		unset($a_result['_entry_id']);
 		
 		return $a_result;
 	}
@@ -254,6 +259,8 @@ abstract class PDOStorage implements Storage {
 	abstract public function next() : int;
 	
 	protected function checkIntegrity(array $a_data) {
+		$a_data['_entry_id'] = $a_data['_uuid'] = null;
+		
 		$a_columns = $this->getColumns();
 		
 		$a_keys = array_keys($a_data);

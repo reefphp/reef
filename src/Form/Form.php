@@ -27,6 +27,13 @@ abstract class Form {
 	protected $Reef;
 	
 	/**
+	 * Unique id
+	 * 
+	 * @var string
+	 */
+	protected $s_uuid;
+	
+	/**
 	 * The FormAssets object used by this form
 	 * 
 	 * @var FormAssets
@@ -70,9 +77,19 @@ abstract class Form {
 	 */
 	public function __construct(Reef $Reef, array $a_definition) {
 		$this->Reef = $Reef;
+		$this->s_uuid = $this->s_uuid ?? \Reef\unique_id();
 		$this->s_idPfx = \Reef\unique_id();
 		
 		$this->setDefinition($a_definition);
+	}
+	
+	/**
+	 * Get the uuid of this form
+	 * 
+	 * @return string
+	 */
+	public function getUUID() {
+		return $this->s_uuid;
 	}
 	
 	/**

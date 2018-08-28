@@ -32,7 +32,8 @@ class PDO_SQLite_Storage extends PDOStorage {
 	public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage {
 		$sth = $PDO->prepare("
 			CREATE TABLE ".static::sanitizeName($s_table)." (
-				_entry_id INTEGER PRIMARY KEY AUTOINCREMENT
+				_entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
+				_uuid BLOB UNIQUE
 			);
 		");
 		$sth->execute();
@@ -157,13 +158,14 @@ class PDO_SQLite_Storage extends PDOStorage {
 				// @codeCoverageIgnoreEnd
 			}
 			
-			$a_columnsOld = $a_columnsNew = ['_entry_id'];
+			$a_columnsOld = $a_columnsNew = ['_entry_id', '_uuid'];
 			
 			$s_sql = "CREATE TABLE __tmp__migration (
-				_entry_id INTEGER PRIMARY KEY AUTOINCREMENT
+				_entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
+				_uuid BLOB UNIQUE
 			";
 			foreach($a_columnData as $a_column) {
-				if($a_column['name'] == '_entry_id' || in_array($a_column['name'], $a_deleteColumns)) {
+				if($a_column['name'] == '_entry_id' || $a_column['name'] == '_uuid' || in_array($a_column['name'], $a_deleteColumns)) {
 					continue;
 				}
 				
@@ -262,10 +264,6 @@ class PDO_SQLite_Storage extends PDOStorage {
 		$a_columns = [];
 		
 		foreach($a_columnData as $a_column) {
-			if($a_column['name'] == '_entry_id') {
-				continue;
-			}
-			
 			$a_columns[] = $a_column['name'];
 		}
 		

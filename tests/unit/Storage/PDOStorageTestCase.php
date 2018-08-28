@@ -45,7 +45,7 @@ abstract class PDOStorageTestCase extends TestCase {
 			],
 		]);
 		
-		$this->assertSame(static::$Storage->getColumns(), ['value', 'number']);
+		$this->assertSame(static::$Storage->getColumns(), ['_entry_id', '_uuid', 'value', 'number']);
 	}
 	
 	/**
@@ -71,7 +71,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		$a_data2 = static::$Storage->get($i_entryId);
 		$this->assertInternalType('array', $a_data2);
 		
-		$this->assertSame($a_data, $a_data2);
+		$this->assertSame($a_data, \Reef\array_subset($a_data2, ['value', 'number']));
 		
 		return $i_entryId;
 	}
@@ -104,7 +104,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		$a_data2 = static::$Storage->get($i_entryId);
 		$this->assertInternalType('array', $a_data2);
 		
-		$this->assertSame($a_data, $a_data2);
+		$this->assertSame($a_data, \Reef\array_subset($a_data2, ['value', 'number']));
 		
 		return $i_entryId;
 	}
@@ -119,7 +119,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		];
 		
 		$a_data['_entry_id'] = 1;
-		$this->assertEquals($a_data, static::$Storage->table()[0]);
+		$this->assertEquals($a_data, \Reef\array_subset(static::$Storage->table()[0], ['_entry_id', 'value', 'number']));
 		
 		return $i_entryId;
 	}
@@ -134,7 +134,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		];
 		
 		$a_data['_entry_id'] = 1;
-		$this->assertEquals($a_data, static::$Storage->generator()->current());
+		$this->assertEquals($a_data, \Reef\array_subset(static::$Storage->generator()->current(), ['_entry_id', 'value', 'number']));
 		
 		return $i_entryId;
 	}
@@ -162,7 +162,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		$a_data2 = static::$Storage->get($i_entryId);
 		$this->assertInternalType('array', $a_data2);
 		
-		$this->assertSame($a_data, $a_data2);
+		$this->assertSame($a_data, \Reef\array_subset($a_data2, ['value2', 'number']));
 		
 		return $i_entryId;
 	}
@@ -180,7 +180,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		$a_data2 = static::$Storage->get($i_entryId);
 		$this->assertInternalType('array', $a_data2);
 		
-		$this->assertSame($a_data, $a_data2);
+		$this->assertSame($a_data, \Reef\array_subset($a_data2, ['value2']));
 		
 		return $i_entryId;
 	}
@@ -199,7 +199,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		$a_data2 = static::$Storage->get($i_entryId2);
 		$this->assertInternalType('array', $a_data2);
 		
-		$this->assertSame($a_data, $a_data2);
+		$this->assertSame($a_data, \Reef\array_subset($a_data2, ['value2']));
 		
 		static::$Storage::rollbackTransaction(static::$PDO);
 		
@@ -225,7 +225,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		$a_data1B = static::$Storage->get($i_entryId1);
 		$this->assertInternalType('array', $a_data1B);
 		
-		$this->assertSame($a_data1A, $a_data1B);
+		$this->assertSame($a_data1A, \Reef\array_subset($a_data1B, ['value2']));
 		
 		// Savepoint b
 		static::$Storage::newSavepoint(static::$PDO, 'b');
@@ -238,7 +238,7 @@ abstract class PDOStorageTestCase extends TestCase {
 		$a_data2B = static::$Storage->get($i_entryId2);
 		$this->assertInternalType('array', $a_data2B);
 		
-		$this->assertSame($a_data2A, $a_data2B);
+		$this->assertSame($a_data2A, \Reef\array_subset($a_data2B, ['value2']));
 		
 		// Back to b
 		static::$Storage::rollbackToSavepoint(static::$PDO, 'b');

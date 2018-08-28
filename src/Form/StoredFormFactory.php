@@ -38,7 +38,7 @@ class StoredFormFactory extends FormFactory {
 			throw new ResourceNotFoundException('Could not find form with id "'.$i_formId.'"', null, $e);
 		}
 		
-		return new StoredForm($this->getReef(), json_decode($a_result['definition'], true), $i_formId);
+		return new StoredForm($this->getReef(), json_decode($a_result['definition'], true), $i_formId, $a_result['_uuid']);
 	}
 	
 	/**
@@ -52,7 +52,7 @@ class StoredFormFactory extends FormFactory {
 		$a_declaration = $TempForm->getDefinition();
 		unset($a_declaration['fields']);
 		
-		$StoredForm = new StoredForm($this->getReef(), $a_declaration, null);
+		$StoredForm = new StoredForm($this->getReef(), $a_declaration, null, null);
 		
 		$Updater = new \Reef\Updater();
 		$Updater->update($StoredForm, $TempForm, []);

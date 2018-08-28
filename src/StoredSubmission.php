@@ -16,6 +16,7 @@ class StoredSubmission extends Submission {
 	
 	public function save() {
 		$a_submission = $this->toFlat();
+		$a_submission['_uuid'] = $this->getUUID();
 		
 		if($this->i_submissionId == null) {
 			$this->i_submissionId = $this->Form->getSubmissionStorage()->insert($a_submission);
@@ -31,6 +32,7 @@ class StoredSubmission extends Submission {
 		}
 		
 		$a_submission = $this->toFlat();
+		$a_submission['_uuid'] = $this->getUUID();
 		$this->i_submissionId = $this->Form->getSubmissionStorage()->insertAs($i_submissionId, $a_submission);
 	}
 	
@@ -48,6 +50,7 @@ class StoredSubmission extends Submission {
 		
 		$this->fromFlat($a_submission);
 		$this->i_submissionId = $i_submissionId;
+		$this->s_uuid = $a_submission['_uuid'];
 	}
 	
 	public function delete() {

@@ -33,7 +33,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		$sth = $PDO->prepare("
 			CREATE TABLE ".static::sanitizeName($s_table)." (
 				_entry_id INT NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (_entry_id)
+				_uuid BINARY(32),
+				PRIMARY KEY (_entry_id),
+				UNIQUE INDEX _uuid (_uuid)
 			);
 		");
 		$sth->execute();
@@ -255,9 +257,6 @@ class PDO_MySQL_Storage extends PDOStorage {
 		
 		for($i = 0; $i < $i_columns; $i++) {
 			$a_column = $sth->getColumnMeta($i);
-			if($a_column['name'] == '_entry_id') {
-				continue;
-			}
 			
 			$this->a_columns[] = $a_column['name'];
 		}

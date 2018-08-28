@@ -46,7 +46,6 @@ class SubmissionOverview {
 			if($a_head === null) {
 				// Fallback when 0 rows
 				$a_head = $this->Form->getSubmissionStorage()->getColumns();
-				array_unshift($a_head, '_entry_id');
 			}
 		}
 		else {

@@ -19,11 +19,14 @@ class StoredForm extends AbstractStoredForm {
 	 * @param Reef $Reef The Reef object this Form belongs to
 	 * @param array $a_definition The form definition
 	 * @param ?int $i_formId The form id, or null for a new form
+	 * @param ?string $s_uuid The uuid, may be null to generate one
 	 */
-	public function __construct(Reef $Reef, array $a_definition, ?int $i_formId) {
+	public function __construct(Reef $Reef, array $a_definition, ?int $i_formId, ?string $s_uuid) {
 		if(!empty($a_definition['fields']) && $i_formId === null) {
 			throw new BadMethodCallException('Cannot initiate a new stored form with fields defined. Please use updateDefinition() or start from TempStortoredForm.');
 		}
+		
+		$this->s_uuid = $s_uuid;
 		
 		parent::__construct($Reef, $a_definition);
 		
@@ -84,7 +87,7 @@ class StoredForm extends AbstractStoredForm {
 		$a_definition = $this->getDefinition();
 		
 		if($this->i_formId == null) {
-			$this->i_formId = $this->Reef->getFormStorage()->insert(['definition' => json_encode($a_definition)]);
+			$this->i_formId = $this->Reef->getFormStorage()->insert(['definition' => json_encode($a_definition), '_uuid' => $this->getUUID()]);
 		}
 		else {
 			$this->Reef->getFormStorage()->update($this->i_formId, ['definition' => json_encode($a_definition)]);
@@ -97,7 +100,7 @@ class StoredForm extends AbstractStoredForm {
 		}
 		
 		$a_definition = $this->getDefinition();
-		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, ['definition' => json_encode($a_definition)]);
+		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, ['definition' => json_encode($a_definition), '_uuid' => $this->getUUID()]);
 	}
 	
 	public function delete() {

@@ -48,7 +48,7 @@ final class SubmissionOverviewTest extends TestCase {
 		$this->assertSame(3, count($a_fields));
 		
 		// Test raw head when having no rows
-		$this->assertSame(array_keys(static::ROWS[0]), static::$Form->newSubmissionOverview()->set('raw', true)->getHead());
+		$this->assertSame(array_keys(static::ROWS[0]), array_values(array_diff(static::$Form->newSubmissionOverview()->set('raw', true)->getHead(), ['_uuid'])));
 		
 		foreach(static::ROWS as $a_row) {
 			$Submission = static::$Form->newSubmission();
@@ -57,7 +57,7 @@ final class SubmissionOverviewTest extends TestCase {
 		}
 		
 		// Test raw head when having rows
-		$this->assertSame(array_keys(static::ROWS[0]), static::$Form->newSubmissionOverview()->set('raw', true)->getHead());
+		$this->assertSame(array_keys(static::ROWS[0]), array_values(array_diff(static::$Form->newSubmissionOverview()->set('raw', true)->getHead(), ['_uuid'])));
 		
 		// Test value head when having rows
 		$this->assertSame(count(static::ROWS[0]), count(static::$Form->newSubmissionOverview()->getHead()));
@@ -69,6 +69,10 @@ final class SubmissionOverviewTest extends TestCase {
 	public function testTable(): void {
 		$a_table = static::$Form->newSubmissionOverview()->set('raw', true)->getTable();
 		
+		foreach($a_table as &$a_row) {
+			unset($a_row['_uuid']);
+		}
+		
 		$this->assertEquals(static::ROWS, $a_table);
 		
 	}
@@ -79,6 +83,7 @@ final class SubmissionOverviewTest extends TestCase {
 	public function testGenerator(): void {
 		$i = 0;
 		foreach(static::$Form->newSubmissionOverview()->set('raw', true)->getGenerator() as $a_row) {
+			unset($a_row['_uuid']);
 			$this->assertEquals(static::ROWS[$i++], $a_row);
 		}
 	}
@@ -102,12 +107,15 @@ final class SubmissionOverviewTest extends TestCase {
 		// Validate head
 		$a_refHead = array_keys(static::ROWS[0]);
 		array_unshift($a_refHead, 'column');
-		$this->assertEquals($a_refHead, $a_head);
+		$this->assertEquals($a_refHead, array_values(array_diff($a_head, ['_uuid'])));
 		
 		// Validate rows
 		$a_refTable = static::ROWS;
 		foreach($a_refTable as &$a_row) {
 			array_unshift($a_row, $a_row['_entry_id']+1);
+		}
+		foreach($a_table as &$a_row) {
+			unset($a_row['_uuid']);
 		}
 		$this->assertEquals($a_refTable, $a_table);
 		
@@ -145,6 +153,10 @@ final class SubmissionOverviewTest extends TestCase {
 		});
 		array_shift($a_table);
 		$a_table = array_filter($a_table);
+		
+		foreach($a_table as &$a_row) {
+			unset($a_row['_uuid']);
+		}
 		
 		$this->assertEquals(static::ROWS, $a_table);
 	}

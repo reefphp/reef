@@ -9,6 +9,13 @@ abstract class Submission {
 	
 	protected $Form;
 	
+	/**
+	 * Unique id
+	 * 
+	 * @var string
+	 */
+	protected $s_uuid;
+	
 	protected $a_fieldValues = [];
 	
 	/**
@@ -16,6 +23,16 @@ abstract class Submission {
 	 */
 	public function __construct(Form $Form) {
 		$this->Form = $Form;
+		$this->s_uuid = \Reef\unique_id();
+	}
+	
+	/**
+	 * Get the uuid of this submission
+	 * 
+	 * @return string
+	 */
+	public function getUUID() {
+		return $this->s_uuid;
 	}
 	
 	public function getForm() {
