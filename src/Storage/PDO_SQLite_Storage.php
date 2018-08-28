@@ -157,7 +157,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 				// @codeCoverageIgnoreEnd
 			}
 			
-			$a_columnsOld = $a_columnsNew = [];
+			$a_columnsOld = $a_columnsNew = ['_entry_id'];
 			
 			$s_sql = "CREATE TABLE __tmp__migration (
 				_entry_id INTEGER PRIMARY KEY AUTOINCREMENT
@@ -201,15 +201,13 @@ class PDO_SQLite_Storage extends PDOStorage {
 				// @codeCoverageIgnoreEnd
 			}
 			
-			if(count($a_columnsOld) > 0) {
-				$sth = $this->PDO->prepare("INSERT INTO __tmp__migration (".implode(', ', $a_columnsNew).") SELECT ".implode(', ', $a_columnsOld)." FROM ".$this->es_table." ");
-				$sth->execute();
-				
-				if($sth->errorCode() !== '00000') {
-					// @codeCoverageIgnoreStart
-					throw new StorageException("Could not fill table __tmp__migration.");
-					// @codeCoverageIgnoreEnd
-				}
+			$sth = $this->PDO->prepare("INSERT INTO __tmp__migration (".implode(', ', $a_columnsNew).") SELECT ".implode(', ', $a_columnsOld)." FROM ".$this->es_table." ");
+			$sth->execute();
+			
+			if($sth->errorCode() !== '00000') {
+				// @codeCoverageIgnoreStart
+				throw new StorageException("Could not fill table __tmp__migration.");
+				// @codeCoverageIgnoreEnd
 			}
 			
 			$sth = $this->PDO->prepare("DROP TABLE ".$this->es_table." ");
