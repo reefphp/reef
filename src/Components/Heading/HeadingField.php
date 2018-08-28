@@ -29,4 +29,13 @@ class HeadingField extends Field {
 		return $a_vars;
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public function view_submission($Value, $a_options = []) : array {
+		$a_vars = parent::view_submission($Value, $a_options);
+		$a_vars['size'] = $a_vars['size'] ?? 4;
+		return $a_vars;
+	}
+	
 }
