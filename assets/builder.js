@@ -230,25 +230,40 @@ var ReefBuilder = (function() {
 			return;
 		}
 		
+		// Deselect field before selecting new one
 		if(this.selectedField !== null) {
 			this.deselectField();
 		}
 		
+		// Check that sidetab not still contains content
 		var $sidetab = this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-content');
 		if($sidetab.children().length > 0) {
 			alert("Corrupt state (#1)!");
 			throw "Corrupt state (#1)!";
 		}
 		
+		// Move forms to side tab and show it
 		field.$declarationForms.appendTo($sidetab).show();
 		field.$fieldWrapper.addClass(CSSPRFX+'active');
 		
+		// Display component name
 		var componentName = field.$fieldWrapper.attr('data-component-name');
 		var componentTitle = this.$builderWrapper.find('.'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"] span.'+CSSPRFX+'builder-component-title').text();
 		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name').text(componentTitle);
 		
+		// Register selected field
 		this.selectedField = field;
 		
+		// Show/hide basic/advanced tabs depending on content
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-tabs').toggle(
+			this.$builderWrapper
+				.find('.'+CSSPRFX+'builder-sidetab-field-content .'+CSSPRFX+'builder-declaration-forms')
+				.find('.'+CSSPRFX+'builder-advanced-declaration-form, .'+CSSPRFX+'builder-advanced-locale-forms')
+				.find('.'+CSSPRFX+'field')
+				.length > 0
+		);
+		
+		// Make sure we open the field side tab
 		this.openSideTab('field');
 	};
 	
@@ -257,6 +272,7 @@ var ReefBuilder = (function() {
 			return;
 		}
 		
+		// Check that the field forms container is empty
 		var fieldTemplates = this.selectedField.$fieldWrapper.find('.'+CSSPRFX+'builder-field-templates');
 		
 		if(fieldTemplates.children().length > 0) {
@@ -264,13 +280,19 @@ var ReefBuilder = (function() {
 			throw "Corrupt state (#2)!";
 		}
 		
+		// Move forms back to the forms container
 		this.selectedField.$declarationForms.hide().appendTo(fieldTemplates);
 		
 		this.selectedField.$fieldWrapper.removeClass(CSSPRFX+'active');
 		this.selectedField.checkValid();
 		
+		// Remove component name
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name').text('');
+		
+		// Register (no) selected field
 		this.selectedField = null;
 		
+		// Make sure we switch to another side tab
 		if($('.'+CSSPRFX+'builder-tab-active').data('tab') == 'field') {
 			this.openSideTab('form');
 		}
