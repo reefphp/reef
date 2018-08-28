@@ -10,7 +10,7 @@ if(typeof Reef === 'undefined') {
 		
 		/**
 		 * Convert a matcher to a regular expression.
-		 * `*` and `?` are mapped to `.*` and `.`, respectively
+		 * `*`, `?` and `_` are mapped to `.*`, `.?` and `.`, respectively
 		 * This function has an equivalent in php
 		 * @param string matcher The matcher string
 		 * @return RegExp The regular expression
@@ -23,7 +23,11 @@ if(typeof Reef === 'undefined') {
 			});
 			
 			regexp = regexp.replace(new RegExp('((?:\\\\)*)\\\\\\?', 'g'), function(match, slashes) {
-				return slashes.substr(0, slashes.length/2) + ((slashes.length % 4 == 0) ? '.' : '?');
+				return slashes.substr(0, slashes.length/2) + ((slashes.length % 4 == 0) ? '.?' : '?');
+			});
+			
+			regexp = regexp.replace(new RegExp('((?:\\\\)*)_', 'g'), function(match, slashes) {
+				return slashes.substr(0, Math.floor(slashes.length/4)*2) + ((slashes.length % 4 == 0) ? '.' : '_');
 			});
 			
 			return new RegExp('^'+regexp+'$');

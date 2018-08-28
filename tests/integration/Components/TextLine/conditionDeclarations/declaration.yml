@@ -11,13 +11,13 @@ valid_conditions:
     true_for: ['', ' asdf ']
     false_for: ['asdf']
     
-  - condition: 'name matches "aa*bb?cc"'
-    true_for: ['aabbycc', 'aaxbbycc', 'aaxxbbycc']
-    false_for: ['aabbcc', ' aabbycc ', 'aabcc', 'aabbc', 'asdf']
+  - condition: 'name matches "aa*bb?cc_dd"'
+    true_for: ['aabbcczdd', 'aaxbbycczdd', 'aaxxbbycczdd']
+    false_for: ['aabbccdd', ' aabbcczdd ', 'aabccdd', 'aabbcdd', 'asdf']
     
-  - condition: 'name does not match "aa*bb?cc"'
+  - condition: 'name does not match "aa*bb?cc_dd"'
     true_for: ['asdf']
-    false_for: ['aaxbbycc']
+    false_for: ['aaxbbycczdd']
     
   - condition: 'name is empty'
     true_for: ['', ' ']

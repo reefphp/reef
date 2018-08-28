@@ -64,38 +64,50 @@ final class functionsTest extends TestCase {
 	public function test_matcherToRegExp(): void {
 		$this->assertSame('/^.*$/', \Reef\matcherToRegExp('*'));
 		$this->assertSame('/^\\*$/', \Reef\matcherToRegExp('\\*'));
-		$this->assertSame('/^.$/', \Reef\matcherToRegExp('?'));
+		$this->assertSame('/^.?$/', \Reef\matcherToRegExp('?'));
 		$this->assertSame('/^\\?$/', \Reef\matcherToRegExp('\\?'));
+		$this->assertSame('/^.$/', \Reef\matcherToRegExp('_'));
+		$this->assertSame('/^_$/', \Reef\matcherToRegExp('\\_'));
 		$this->assertSame('/^\\\\$/', \Reef\matcherToRegExp('\\'));
 		
 		$this->assertSame('/^aa.*bb$/', \Reef\matcherToRegExp('aa*bb'));
 		$this->assertSame('/^aa\\*bb$/', \Reef\matcherToRegExp('aa\\*bb'));
-		$this->assertSame('/^aa.bb$/', \Reef\matcherToRegExp('aa?bb'));
+		$this->assertSame('/^aa.?bb$/', \Reef\matcherToRegExp('aa?bb'));
 		$this->assertSame('/^aa\\?bb$/', \Reef\matcherToRegExp('aa\\?bb'));
+		$this->assertSame('/^aa.bb$/', \Reef\matcherToRegExp('aa_bb'));
+		$this->assertSame('/^aa_bb$/', \Reef\matcherToRegExp('aa\\_bb'));
 		$this->assertSame('/^aa\\\\bb$/', \Reef\matcherToRegExp('aa\\bb'));
 		
 		$this->assertSame('/^.*.*$/', \Reef\matcherToRegExp('**'));
 		$this->assertSame('/^\\*\\*$/', \Reef\matcherToRegExp('\\*\\*'));
-		$this->assertSame('/^..$/', \Reef\matcherToRegExp('??'));
+		$this->assertSame('/^.?.?$/', \Reef\matcherToRegExp('??'));
 		$this->assertSame('/^\\?\\?$/', \Reef\matcherToRegExp('\\?\\?'));
+		$this->assertSame('/^..$/', \Reef\matcherToRegExp('__'));
+		$this->assertSame('/^__$/', \Reef\matcherToRegExp('\\_\\_'));
 		$this->assertSame('/^\\\\\\\\$/', \Reef\matcherToRegExp('\\\\'));
 		
 		$this->assertSame('/^\\\\.*\\\\.*$/', \Reef\matcherToRegExp('\\\\*\\\\*'));
 		$this->assertSame('/^\\\\\\*\\\\\\*$/', \Reef\matcherToRegExp('\\\\\\*\\\\\\*'));
-		$this->assertSame('/^\\\\.\\\\.$/', \Reef\matcherToRegExp('\\\\?\\\\?'));
+		$this->assertSame('/^\\\\.?\\\\.?$/', \Reef\matcherToRegExp('\\\\?\\\\?'));
 		$this->assertSame('/^\\\\\\?\\\\\\?$/', \Reef\matcherToRegExp('\\\\\\?\\\\\\?'));
+		$this->assertSame('/^\\\\.\\\\.$/', \Reef\matcherToRegExp('\\\\_\\\\_'));
+		$this->assertSame('/^\\\\_\\\\_$/', \Reef\matcherToRegExp('\\\\\\_\\\\\\_'));
 		$this->assertSame('/^\\\\\\\\\\\\\\\\$/', \Reef\matcherToRegExp('\\\\\\\\'));
 		
 		$this->assertSame('/^aa\\\\.*bb\\\\.*cc$/', \Reef\matcherToRegExp('aa\\\\*bb\\\\*cc'));
 		$this->assertSame('/^aa\\\\\\*bb\\\\\\*cc$/', \Reef\matcherToRegExp('aa\\\\\\*bb\\\\\\*cc'));
-		$this->assertSame('/^aa\\\\.bb\\\\.cc$/', \Reef\matcherToRegExp('aa\\\\?bb\\\\?cc'));
+		$this->assertSame('/^aa\\\\.?bb\\\\.?cc$/', \Reef\matcherToRegExp('aa\\\\?bb\\\\?cc'));
 		$this->assertSame('/^aa\\\\\\?bb\\\\\\?cc$/', \Reef\matcherToRegExp('aa\\\\\\?bb\\\\\\?cc'));
+		$this->assertSame('/^aa\\\\.bb\\\\.cc$/', \Reef\matcherToRegExp('aa\\\\_bb\\\\_cc'));
+		$this->assertSame('/^aa\\\\_bb\\\\_cc$/', \Reef\matcherToRegExp('aa\\\\\\_bb\\\\\\_cc'));
 		$this->assertSame('/^aa\\\\\\\\bb\\\\\\\\cc$/', \Reef\matcherToRegExp('aa\\\\bb\\\\cc'));
 		
 		$this->assertSame('/^\\\\\\\\\\\\\\\\.*$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\*'));
 		$this->assertSame('/^\\\\\\\\\\\\\\\\\\*$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\\\*'));
-		$this->assertSame('/^\\\\\\\\\\\\\\\\.$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\?'));
+		$this->assertSame('/^\\\\\\\\\\\\\\\\.?$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\?'));
 		$this->assertSame('/^\\\\\\\\\\\\\\\\\\?$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\\\?'));
+		$this->assertSame('/^\\\\\\\\\\\\\\\\.$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\_'));
+		$this->assertSame('/^\\\\\\\\\\\\\\\\_$/', \Reef\matcherToRegExp('\\\\\\\\\\\\\\\\\\_'));
 	}
 	
 	public function test_rmTree(): void {

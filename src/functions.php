@@ -84,7 +84,7 @@ function interpretBool($m_input) {
 
 /**
  * Convert a matcher to a regular expression.
- * `*` and `?` are mapped to `.*` and `.`, respectively
+ * `*`, `?` and `_` are mapped to `.*`, `.?` and `.`, respectively
  * This function has an equivalent in javascript that should be kept identical to this implementation
  * @param string $s_matcher The matcher string
  * @return string The regular expression
@@ -100,7 +100,12 @@ function matcherToRegExp(string $s_matcher) : string {
 	
 	$s_regexp = preg_replace_callback('/((?:\\\\)*)\\\\\\?/', function($a_matches) {
 		$i_slashes = strlen($a_matches[1]);
-		return substr($a_matches[1], 0, $i_slashes/2) . (($i_slashes % 4 == 0) ? '.' : '?');
+		return substr($a_matches[1], 0, $i_slashes/2) . (($i_slashes % 4 == 0) ? '.?' : '?');
+	}, $s_regexp);
+	
+	$s_regexp = preg_replace_callback('/((?:\\\\)*)_/', function($a_matches) {
+		$i_slashes = strlen($a_matches[1]);
+		return substr($a_matches[1], 0, floor($i_slashes/4)*2) . (($i_slashes % 4 == 0) ? '.' : '_');
 	}, $s_regexp);
 	
 	return '/^'.$s_regexp.'$/';
