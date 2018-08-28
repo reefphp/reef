@@ -23,7 +23,7 @@ class Reef {
 	
 	use Trait_ReefLocale;
 	
-	const NAME_REGEXP = '^[a-zA-Z](((?!__)[a-zA-Z0-9_])*[a-zA-Z0-9])?$';
+	const NAME_REGEXP = '^[a-z](((?!__)[a-z0-9_])*[a-z0-9])?$';
 	
 	/**
 	 * All setup that cannot change after Reef is initialized

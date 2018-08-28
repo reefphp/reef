@@ -377,6 +377,7 @@ class Builder {
 					'component' => 'reef:text_line',
 					'name' => 'storage_name',
 					'required' => true,
+					'regexp' => \Reef\Reef::NAME_REGEXP,
 					'locales' => $this->Reef->transMultipleLocales(['title' => 'builder_form_storage_name'], $this->Reef->getOption('locales')),
 					'default' => 'form_'.$Form->getReef()->getFormStorage()->next(),
 				]
