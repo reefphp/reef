@@ -110,3 +110,69 @@ function matcherToRegExp(string $s_matcher) : string {
 	
 	return '/^'.$s_regexp.'$/';
 }
+
+/**
+ * Parse a filesize into bytes. Possible input:
+ *  - numeric input, will be interpreted as bytes
+ *  - e.g. number KiB, will be interpreted as base-1024 bytes
+ *  - e.g. number MB, will be interpreted as base-$i_base bytes
+ * @param string $s_size The input size
+ * @param ?int $i_base The base, either 1000, 1024 or null to autodetermine
+ * @return int Number of bytes
+ */
+function parseBytes(string $s_size, ?int $i_base) : int {
+	if(is_numeric($s_size)) {
+		return max((int)$s_size, 0);
+	}
+	
+	// Drop the 'b'
+	$s_size = strtolower($s_size);
+	if(substr($s_size, -1) == 'b') {
+		$s_size = substr($s_size, 0, -1);
+	}
+	
+	if(is_numeric($s_size)) {
+		return (int)$s_size;
+	}
+	
+	// Get size and unit
+	$s_unit = substr($s_size, -1);
+	if($s_unit == 'i') {
+		$i_base = 1024;
+		$s_unit = substr($s_size, -1);
+	}
+	$i_size = (int)substr($s_size, 0, -1);
+	
+	return $i_size * pow($i_base??1000, strpos('bkmgtpezy', $s_unit));
+}
+
+/**
+ * Format the given number of bytes into human-readable format
+ * @param int $i_bytes The number of bytes to format
+ * @param ?int $i_base The base, either 1000, 1024 or null for 1024
+ * @return string The human-readable representation
+ */
+function bytes_format(int $i_bytes, ?int $i_base) : string {
+	$i_base = $i_base ?? 1024;
+	if($i_base !== 1000 && $i_base !== 1024) {
+		$i_base = 1024;
+	}
+	
+	if($i_bytes < $i_base) {
+		return $i_bytes . ' B';
+	}
+	
+	$s_symbols = '-KMGTPEZY';
+	if($i_base == 1000) {
+		// In base 1000, the kilo is lower case
+		$s_symbols[1] = 'k';
+	}
+	
+	$i_exp = (int)floor(log($i_bytes, $i_base));
+	
+	$s_bytes = round($i_bytes / $i_base**$i_exp, 1) . ' ';
+	$s_bytes .= $s_symbols[$i_exp] . (($i_base == 1024) ? 'i' : '');
+	$s_bytes .= 'B';
+	
+	return $s_bytes;
+}

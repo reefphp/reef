@@ -1,0 +1,10 @@
+<div class="form-group row {{CSSPRFX}}field" data-{{CSSPRFX}}type="reef:upload" data-{{CSSPRFX}}name="{{field.name}}">
+	<label class="{{layout.col_left}} col-form-label">
+		{{field.locale.title}}
+	</label>
+	<div class="{{layout.col_right}}">
+		{{#field.files_data}}
+		<a href="{{#internalRequest}}{{request_hash}}{{/internalRequest}}">{{name}}</a>{{size}}
+		{{/field.files_data}}
+	</div>
+</div>

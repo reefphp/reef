@@ -91,14 +91,21 @@ class Reef {
 		
 		$this->a_options['css_prefix'] = $a_options['css_prefix'] ?? 'rf-';
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
+		$this->a_options['db_prefix'] = $a_options['db_prefix'] ?? 'reef_';
 		$this->a_options['locales'] = $a_options['locales'] ?? ['_no_locale'];
 		$this->a_options['default_locale'] = $a_options['default_locale'] ?? reset($this->a_options['locales']) ?? 'en_US';
 		$this->a_options['internal_request_url'] = $a_options['internal_request_url'] ?? './reef.php?hash=[[request_hash]]';
+		$this->a_options['max_upload_size'] = $a_options['max_upload_size'] ?? 0;
+		$this->a_options['files_dir'] = $a_options['files_dir'] ?? null;
+		$this->a_options['byte_base'] = $a_options['byte_base'] ?? 1024;
+		if(!in_array($this->a_options['byte_base'], [1000, 1024]) && $this->a_options['byte_base'] !== null) {
+			$this->a_options['byte_base'] = 1024;
+		}
 		
 		$this->ReefSetup = $ReefSetup;
 		$this->ReefSetup->checkSetup($this);
 		
-		$this->DataStore = new DataStore($this->ReefSetup->getStorageFactory(), ['prefix' => $a_options['db_prefix'] ?? 'reef_']);
+		$this->DataStore = new DataStore($this);
 	}
 	
 	public static function getDir() : string {

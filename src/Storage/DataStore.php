@@ -7,16 +7,19 @@ use \Reef\Exception\StorageException;
 
 class DataStore {
 	
+	private $Reef;
 	private $StorageFactory;
+	private $Filesystem;
 	
 	private $FormStorage;
 	private $a_submissionStorages = [];
 	
 	private $s_prefix;
 	
-	public function __construct(StorageFactory $StorageFactory, $a_options) {
-		$this->StorageFactory = $StorageFactory;
-		$this->s_prefix = $a_options['prefix'];
+	public function __construct(\Reef\Reef $Reef) {
+		$this->Reef = $Reef;
+		$this->StorageFactory = $this->Reef->getSetup()->getStorageFactory();
+		$this->s_prefix = $this->Reef->getOption('db_prefix');
 	}
 	
 	public function getFormStorage() : Storage {
@@ -98,6 +101,14 @@ class DataStore {
 	
 	public function ensureTransaction($fn_callback) {
 		return $this->StorageFactory->ensureTransaction($fn_callback);
+	}
+	
+	public function getFilesystem() {
+		if(empty($this->Filesystem)) {
+			$this->Filesystem = new \Reef\Filesystem\Filesystem($this->Reef);
+		}
+		
+		return $this->Filesystem;
 	}
 	
 }

@@ -222,7 +222,9 @@ abstract class Form {
 	 * @return TempForm
 	 */
 	public function tempDuplicate() {
-		return $this->Reef->newValidTempForm($this->getDefinition());
+		$Form = $this->Reef->newValidTempForm($this->getDefinition());
+		$Form->s_uuid = $this->s_uuid;
+		return $Form;
 	}
 	
 	/**
@@ -294,6 +296,7 @@ abstract class Form {
 		$a_data['layout_name'] = $Layout->getName();
 		$a_data['layout'] = $Layout->view($this->a_definition['layout'][$Layout->getName()] ?? []);
 		$a_data['internal_request_url'] = $this->Reef->getOption('internal_request_url');
+		$a_data['form_uuid'] = $this->getUUID();
 		
 		$Mustache = $this->Reef->newMustache();
 		$Mustache->addHelper('form_idpfx', $this->s_idPfx);

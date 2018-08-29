@@ -178,6 +178,14 @@ if(typeof Reef === 'undefined') {
 			}
 		};
 		
+		Reef.prototype.getFormUUID = function() {
+			return this.config.form_uuid;
+		};
+		
+		Reef.prototype.internalRequestURL = function(request_hash) {
+			return this.config.internal_request_url.replace('[[request_hash]]', request_hash);
+		};
+		
 		Reef.prototype.internalRequestHelper = function() {
 			var self = this;
 			

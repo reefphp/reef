@@ -1,0 +1,30 @@
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:upload" data-{{CSSPRFX}}name="{{field.name}}" {{{field.visible}}}>
+	<label class="{{layout.col_left}} col-form-label" for="{{form_idpfx}}-{{field.name}}">
+		{{field.locale.title}}
+	</label>
+	<div class="{{layout.col_right}}">
+		<input
+			type="file"
+			class="form-control-file {{#field.hasErrors}}is-invalid{{/field.hasErrors}}"
+			id="{{form_idpfx}}-{{field.name}}"
+			{{{field.required}}}
+			{{#field.multiple}}multiple{{/field.multiple}}
+		>
+		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>
+		{{#field.errors}}
+			<div class="invalid-feedback">{{.}}</div>
+		{{/field.errors}}
+		<div class="{{CSSPRFX}}template {{CSSPRFX}}upload-file">
+			<div class="{{CSSPRFX}}upload-file-name"></div>
+			<div class="{{CSSPRFX}}upload-file-size"></div>
+			<div class="{{CSSPRFX}}upload-file-progress">
+				<div class="{{CSSPRFX}}upload-file-progress-bar"></div>
+			</div>
+			<input
+				type="hidden"
+				name="{{main_var}}[{{field.name}}][]"
+			>
+		</div>
+		<div class="{{CSSPRFX}}upload-files" data-files="{{field.files_data}}"></div>
+	</div>
+</div>

@@ -1,0 +1,115 @@
+<?php
+
+namespace Reef\Components\Upload;
+
+use Reef\Components\Component;
+use \Reef\Components\Traits\Required\RequiredComponentInterface;
+use \Reef\Components\Traits\Required\RequiredComponentTrait;
+
+class UploadComponent extends Component implements RequiredComponentInterface {
+	
+	use RequiredComponentTrait;
+	
+	const COMPONENT_NAME = 'reef:upload';
+	const PARENT_NAME = null;
+	
+	/**
+	 * @inherit
+	 */
+	public static function getDir() : string {
+		return __DIR__.'/';
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function validateDeclaration(array $a_declaration, array &$a_errors = null) : bool {
+		$b_valid = true;
+		
+		return $b_valid;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getConfiguration() : array {
+		$a_configuration = parent::getConfiguration();
+		$a_configuration['basicDefinition']['fields'][1]['max'] = ini_get('max_file_uploads');
+		return $a_configuration;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getJS() : array {
+		return [
+			[
+				'type' => 'local',
+				'path' => self::getDir().'script.js',
+			]
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getCSS() : array {
+		return [
+			[
+				'type' => 'local',
+				'path' => self::getDir().'style.css',
+			]
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function supportedLayouts() : array {
+		return [
+			'bootstrap4',
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function supportedStorages() : ?array {
+		return [
+			'mysql',
+			'sqlite',
+		];
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function internalRequest(string $s_requestHash, array $a_options = []) {
+		if($s_requestHash != 'upload') {
+			throw new \Reef\Exception\InvalidArgumentException('Invalid request command');
+		}
+		
+		$a_return = [];
+		
+		try {
+			$Filesystem = $this->getReef()->getDataStore()->getFilesystem();
+			$a_files = $Filesystem->uploadFiles('files');
+			
+			$a_fileUUIDs = [];
+			foreach($a_files as $File) {
+				$a_fileUUIDs[] = $File->getUUID();
+			}
+			
+			$a_return['success'] = true;
+			$a_return['files'] = $a_fileUUIDs;
+		}
+		catch(Exception $e) {
+			$a_return['success'] = false;
+			$a_return['error'] = $e->getMessage();
+		}
+		
+		echo(json_encode($a_return));
+		die();
+	}
+	
+}

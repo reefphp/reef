@@ -24,6 +24,7 @@ $Reef = new Reef\Reef(
 		'cache_dir' => './cache/',
 		'locales' => $a_locales,
 		'internal_request_url' => './reefrequest.php?hash=[[request_hash]]',
+		'files_dir' => './storage/files',
 	]
 );
 

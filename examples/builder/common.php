@@ -18,5 +18,6 @@ $Reef = new Reef\Reef(
 		'cache_dir' => './cache/',
 		'locales' => ['en_US', 'nl_NL'],
 		'internal_request_url' => './reefrequest.php?hash=[[request_hash]]',
+		'files_dir' => './storage/files',
 	]
 );

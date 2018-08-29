@@ -54,11 +54,13 @@ abstract class Submission {
 	}
 	
 	public function fromUserInput($a_input) {
+		if(empty($this->a_fieldValues)) {
+			$this->emptySubmission();
+		}
+		
 		$a_fields = $this->Form->getValueFields();
-		$this->a_fieldValues = [];
 		foreach($a_fields as $Field) {
 			$s_name = $Field->getDeclaration()['name'];
-			$this->a_fieldValues[$s_name] = $Field->newValue($this);
 			$this->a_fieldValues[$s_name]->fromUserInput($a_input[$s_name] ?? null);
 		}
 	}

@@ -37,6 +37,7 @@ class ReefSetup {
 		$this->addComponent(new \Reef\Components\Select\SelectComponent);
 		$this->addComponent(new \Reef\Components\Condition\ConditionComponent);
 		$this->addComponent(new \Reef\Components\Submit\SubmitComponent);
+		$this->addComponent(new \Reef\Components\Upload\UploadComponent);
 	}
 	
 	public function getStorageFactory() : StorageFactory {
@@ -90,6 +91,7 @@ class ReefSetup {
 			'reef:checklist',
 			'reef:radio',
 			'reef:select',
+			'reef:upload',
 		];
 		
 		return array_intersect($a_components, array_keys($this->a_componentMapping));
