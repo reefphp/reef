@@ -293,7 +293,7 @@ abstract class Form {
 		$Layout = $this->Reef->getSetup()->getLayout();
 		$a_data['layout_name'] = $Layout->getName();
 		$a_data['layout'] = $Layout->view($this->a_definition['layout'][$Layout->getName()] ?? []);
-		$a_data['assets_url'] = $this->Reef->getOption('assets_url');
+		$a_data['internal_request_url'] = $this->Reef->getOption('internal_request_url');
 		
 		$Mustache = $this->Reef->newMustache();
 		$Mustache->addHelper('form_idpfx', $this->s_idPfx);
@@ -357,7 +357,7 @@ abstract class Form {
 		$Layout = $this->Reef->getSetup()->getLayout();
 		$a_data['layout_name'] = $Layout->getName();
 		$a_data['layout'] = $Layout->view($this->a_definition['layout'][$Layout->getName()] ?? []);
-		$a_data['assets_url'] = $this->Reef->getOption('assets_url');
+		$a_data['internal_request_url'] = $this->Reef->getOption('internal_request_url');
 		
 		$Mustache = $this->Reef->newMustache();
 		$Mustache->addHelper('form_idpfx', $this->s_idPfx);
@@ -428,6 +428,52 @@ abstract class Form {
 		}
 		
 		return $a_overviewColumns;
+	}
+	
+	/**
+	 * Perform an internal request
+	 * @param string $s_requestHash The hash containing the action to perform
+	 * @param array $a_options Array with options
+	 */
+	public function internalRequest(string $s_requestHash, array $a_options = []) {
+		$a_requestHash = explode(':', $s_requestHash);
+		if(count($a_requestHash) == 1) {
+			throw new \Reef\Exception\InvalidArgumentException("Illegal request hash");
+		}
+		
+		if($a_requestHash[0] == 'submission') {
+			if($a_requestHash[1] != 'temp' && $this instanceof StoredForm) {
+				$Submission = $this->getSubmissionByUUID($a_requestHash[1]);
+			}
+			else {
+				$Submission = $a_options['submission'] ?? $this->newSubmission();
+			}
+			if(isset($a_options['submission_check'])) {
+				$a_options['submission_check']($Submission);
+			}
+			
+			array_shift($a_requestHash);
+			array_shift($a_requestHash);
+			
+			return $Submission->internalRequest(implode(':', $a_requestHash));
+		}
+		
+		if($a_requestHash[0] == 'field') {
+			$a_fields = $this->getValueFieldsByName();
+			
+			if(!isset($a_fields[$a_requestHash[1]])) {
+				throw new \Reef\Exception\InvalidArgumentException("Could not find field '".$a_requestHash[1]."'");
+			}
+			
+			$Field = $a_fields[$a_requestHash[1]];
+			
+			array_shift($a_requestHash);
+			array_shift($a_requestHash);
+			
+			return $Field->internalRequest(implode(':', $a_requestHash));
+		}
+		
+		throw new \Reef\Exception\InvalidArgumentException('Invalid request hash');
 	}
 	
 	/**

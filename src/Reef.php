@@ -93,7 +93,7 @@ class Reef {
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
 		$this->a_options['locales'] = $a_options['locales'] ?? ['_no_locale'];
 		$this->a_options['default_locale'] = $a_options['default_locale'] ?? reset($this->a_options['locales']) ?? 'en_US';
-		$this->a_options['assets_url'] = $a_options['assets_url'] ?? './reef.php?hash=[[assets_hash]]';
+		$this->a_options['internal_request_url'] = $a_options['internal_request_url'] ?? './reef.php?hash=[[request_hash]]';
 		
 		$this->ReefSetup = $ReefSetup;
 		$this->ReefSetup->checkSetup($this);
@@ -183,6 +183,10 @@ class Reef {
 		return $this->getStoredFormFactory()->load($i_formId);
 	}
 	
+	public function getFormByUUID(string $s_formUUID) : StoredForm {
+		return $this->getStoredFormFactory()->loadByUUID($s_formUUID);
+	}
+	
 	public function newTempStoredForm(array $a_definition = []) : TempStoredForm {
 		return $this->getTempStoredFormFactory()->createFromArray($a_definition);
 	}
@@ -203,8 +207,46 @@ class Reef {
 		return $this->ReefSetup;
 	}
 	
-	public function writeAsset($s_assetsHash) {
-		$this->getReefAssets()->writeAssetByHash($s_assetsHash);
+	public function internalRequest(string $s_requestHash, array $a_options = []) {
+		$a_requestHash = explode(':', $s_requestHash);
+		if(count($a_requestHash) == 1) {
+			throw new \Reef\Exception\InvalidArgumentException("Illegal request hash");
+		}
+		
+		if($a_requestHash[0] == 'asset') {
+			array_shift($a_requestHash);
+			
+			return $this->getReefAssets()->writeAssetByHash(implode(':', $a_requestHash));
+		}
+		
+		if($a_requestHash[0] == 'form') {
+			if($a_requestHash[1] == 'temp') {
+				$Form = $a_options['form'] ?? $this->newTempForm();
+			}
+			else {
+				$Form = $this->getFormByUUID($a_requestHash[1]);
+				if(isset($a_options['form_check'])) {
+					$a_options['form_check']($Form);
+				}
+			}
+			
+			array_shift($a_requestHash);
+			array_shift($a_requestHash);
+			
+			return $Form->internalRequest(implode(':', $a_requestHash));
+		}
+		
+		if($a_requestHash[0] == 'component') {
+			$Component = $this->ReefSetup->getComponent($a_requestHash[1] . ':' . $a_requestHash[2]);
+			
+			array_shift($a_requestHash);
+			array_shift($a_requestHash);
+			array_shift($a_requestHash);
+			
+			return $Component->internalRequest(implode(':', $a_requestHash));
+		}
+		
+		throw new \Reef\Exception\InvalidArgumentException('Invalid request hash');
 	}
 	
 	public function getAssets() {
@@ -221,8 +263,8 @@ class Reef {
 		
 		$a_helpers['CSSPRFX'] = $this->getOption('css_prefix');
 		
-		$a_helpers['asset'] = function($s_assetHash, $Mustache) {
-			return $this->getReefAssets()->assetHelper($Mustache->render($s_assetHash));
+		$a_helpers['internalRequest'] = function($s_requestHash, $Mustache) {
+			return $this->internalRequestHelper($Mustache->render($s_requestHash));
 		};
 		
 		$Mustache = new \Mustache_Engine([
@@ -239,6 +281,14 @@ class Reef {
 		}
 		
 		return $this->ReefAssets;
+	}
+	
+	public function internalRequestHelper($s_requestHash) {
+		if(substr($s_requestHash, 0, 6) == 'asset:') {
+			$s_requestHash = $this->getReefAssets()->appendFiletime($s_requestHash);
+		}
+		
+		return str_replace('[[request_hash]]', $s_requestHash, $this->getOption('internal_request_url'));
 	}
 	
 	public function checkDefinition(array $a_definition) {

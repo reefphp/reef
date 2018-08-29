@@ -80,9 +80,31 @@ class NoStorage implements Storage {
 	/**
 	 * @inherit
 	 */
-	public function get(int $i_entryId) : ?array {
+	public function get(int $i_entryId) : array {
 		throw new BadMethodCallException("No storage attached.");
 	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getOrNull(int $i_entryId) : ?array {
+		return null;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getByUUID(string $s_uuid) : array {
+		throw new BadMethodCallException("No storage attached.");
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getByUUIDOrNull(string $s_uuid) : ?array{
+		return null;
+	}
+	
 	
 	/**
 	 * @inherit

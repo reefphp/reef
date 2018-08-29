@@ -70,7 +70,28 @@ interface Storage {
 	 * @param int $i_entryId The entry id to retrieve
 	 * @return array The entry data
 	 */
-	public function get(int $i_entryId) : ?array;
+	public function get(int $i_entryId) : array;
+	
+	/**
+	 * Get an existing entry, or null if it does not exist
+	 * @param int $i_entryId The entry id to retrieve
+	 * @return array The entry data, or null if it does not exist
+	 */
+	public function getOrNull(int $i_entryId) : ?array;
+	
+	/**
+	 * Get an existing entry by UUID
+	 * @param string $s_uuid The entry uuid to retrieve
+	 * @return array The entry data
+	 */
+	public function getByUUID(string $s_uuid) : array;
+	
+	/**
+	 * Get an existing entry by UUID, or null if it does not exist
+	 * @param string $s_uuid The entry uuid to retrieve
+	 * @return array The entry data, or null if it does not exist
+	 */
+	public function getByUUIDOrNull(string $s_uuid) : ?array;
 	
 	/**
 	 * Determine whether an entry exists

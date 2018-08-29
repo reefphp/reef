@@ -127,6 +127,14 @@ class StoredForm extends AbstractStoredForm {
 		return $Submission;
 	}
 	
+	public function getSubmissionByUUID(string $s_submissionUUID) : Submission {
+		$Submission = $this->newSubmission();
+		
+		$Submission->loadByUUID($s_submissionUUID);
+		
+		return $Submission;
+	}
+	
 	public function newSubmissionOverview() {
 		return new SubmissionOverview($this);
 	}

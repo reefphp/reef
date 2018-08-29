@@ -178,11 +178,11 @@ if(typeof Reef === 'undefined') {
 			}
 		};
 		
-		Reef.prototype.assetHelper = function() {
+		Reef.prototype.internalRequestHelper = function() {
 			var self = this;
 			
 			return function(text, render) {
-				return self.config.assets_url.replace('[[assets_hash]]', render(text)+'@'+self.initTime);
+				return self.config.internal_request_url.replace('[[request_hash]]', render(text)+'@'+self.initTime);
 			};
 		};
 		

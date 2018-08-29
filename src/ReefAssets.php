@@ -50,9 +50,9 @@ class ReefAssets extends Assets {
 		$s_type = (substr($s_assetsHash, 0, 3) == 'js:') ? 'js' : 'css';
 		$s_assetsHash = substr($s_assetsHash, ($s_type == 'js') ? 3 : 4);
 		
-		$i_slashPos = strpos($s_assetsHash, '/');
-		if($i_slashPos !== false) {
-			$s_assetsHash = substr($s_assetsHash, 0, $i_slashPos);
+		if(false !== ($i_colPos = strpos($s_assetsHash, ':'))) {
+			// Remove the timestamp part
+			$s_assetsHash = substr($s_assetsHash, 0, $i_colPos);
 		}
 		
 		$s_cacheKey = 'asset.'.$s_assetsHash.'.'.strtolower($s_type);
@@ -91,68 +91,53 @@ class ReefAssets extends Assets {
 	}
 	
 	private function parseAssetHash($s_assetHash) {
+		$a_assetHash = explode(':', $s_assetHash);
 		
-		$i_colPos = strpos($s_assetHash, ':');
-		if($i_colPos === false) {
+		if($a_assetHash[0] == 'asset') {
+			array_shift($a_assetHash);
+		}
+		
+		if(count($a_assetHash) == 1) {
 			throw new InvalidArgumentException("Illegal asset name");
 		}
 		
-		$s_assetType = substr($s_assetHash, 0, $i_colPos);
-		$s_assetHash = substr($s_assetHash, $i_colPos+1);
+		$s_assetType = $a_assetHash[0];
 		
 		if(!in_array($s_assetType, ['reef', 'component'])) {
 			throw new InvalidArgumentException("Illegal asset type");
 		}
 		
-		// reef:/asset_name@12345
+		// reef:asset_name:12345
 		if($s_assetType == 'reef') {
-			if(substr($s_assetHash, 0, 1) != '/') {
-				throw new InvalidArgumentException("Illegal asset hash");
-			}
-			$s_assetHash = substr($s_assetHash, 1);
-			
 			$s_subName = null;
+			$s_assetName = $a_assetHash[1];
 		}
 		
-		// component:vendor:name:/asset_name@12345
+		// component:vendor:name:asset_name:12345
 		if($s_assetType == 'component') {
-			
-			$i_csPos = strpos($s_assetHash, ':/');
-			if($i_csPos === false) {
-				throw new InvalidArgumentException("Invalid asset name");
-			}
-			
-			$s_subName = substr($s_assetHash, 0, $i_csPos);
-			$s_assetHash = substr($s_assetHash, $i_csPos+2);
-		}
-		
-		$i_atPos = strrpos($s_assetHash, '@');
-		if($i_atPos !== false) {
-			$s_assetName = substr($s_assetHash, 0, $i_atPos);
-		}
-		else {
-			$s_assetName = $s_assetHash;
+			$s_subName = $a_assetHash[1] . ':' . $a_assetHash[2];
+			$s_assetName = $a_assetHash[3];
 		}
 		
 		return [$s_assetType, $s_subName, $s_assetName];
 	}
 	
-	public function assetHelper($s_assetHash) {
+	public function appendFiletime($s_assetHash) {
 		
 		[$s_assetType, $s_subName, $s_assetName] = $this->parseAssetHash($s_assetHash);
 		
 		$s_newAssetHash = '';
 		
 		if($s_assetType == 'reef') {
-			$s_newAssetHash = 'reef:/'.$s_assetName.'@'.filemtime(__DIR__.'/../'.$this->Reef->getAssets()[$s_assetName]);
+			$s_newAssetHash = 'reef:'.$s_assetName.':'.filemtime(__DIR__.'/../'.$this->Reef->getAssets()[$s_assetName]);
 		}
 		
 		if($s_assetType == 'component') {
 			$Component = $this->Reef->getSetup()->getComponent($s_subName);
-			$s_newAssetHash = 'component:'.$s_subName.':/'.$s_assetName.'@'.filemtime($Component::getDir().$Component->getAssets()[$s_assetName]);
+			$s_newAssetHash = 'component:'.$s_subName.':'.$s_assetName.':'.filemtime($Component::getDir().$Component->getAssets()[$s_assetName]);
 		}
 		
-		return str_replace('[[assets_hash]]', $s_newAssetHash, $this->Reef->getOption('assets_url'));
+		return 'asset:'.$s_newAssetHash;
 	}
 	
 }

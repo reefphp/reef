@@ -24,7 +24,7 @@ abstract class Assets {
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_html .= '<link href="'.str_replace('[[assets_hash]]', $a_asset['hash'], $this->getReef()->getOption('assets_url')).'" rel="stylesheet">'.PHP_EOL;
+				$s_html .= '<link href="'.str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')).'" rel="stylesheet">'.PHP_EOL;
 			}
 		}
 		return $s_html;
@@ -43,7 +43,7 @@ abstract class Assets {
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_html .= '<script src="'.str_replace('[[assets_hash]]', $a_asset['hash'], $this->getReef()->getOption('assets_url')).'"></script>'.PHP_EOL;
+				$s_html .= '<script src="'.str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')).'"></script>'.PHP_EOL;
 			}
 		}
 		return $s_html;
@@ -203,6 +203,6 @@ abstract class Assets {
 			$Cache->set($s_cacheKey, $a_cache);
 		}
 		
-		$s_assetsHash = strtolower($s_type).':'.$s_assetsHash . '/' . $a_cache['created'];
+		$s_assetsHash = 'asset:'.strtolower($s_type).':'.$s_assetsHash . ':' . $a_cache['created'];
 	}
 }

@@ -53,6 +53,19 @@ class StoredSubmission extends Submission {
 		$this->s_uuid = $a_submission['_uuid'];
 	}
 	
+	public function loadByUUID(string $s_submissionUUID) {
+		try {
+			$a_submission = $this->Form->getSubmissionStorage()->getByUUID($s_submissionUUID);
+		}
+		catch(StorageException $e) {
+			throw new ResourceNotFoundException('Could not find submission with UUID "'.$s_submissionUUID.'"', null, $e);
+		}
+		
+		$this->fromFlat($a_submission);
+		$this->i_submissionId = $a_submission['_entry_id'];
+		$this->s_uuid = $a_submission['_uuid'];
+	}
+	
 	public function delete() {
 		if($this->i_submissionId == null) {
 			throw new BadMethodCallException("Unsaved submission.");

@@ -85,7 +85,7 @@ class Builder {
 				'configuration' => base64_encode(json_encode($a_configuration)),
 				'operators' => base64_encode(json_encode($Component->getBuilderOperators())),
 				'html' => base64_encode($Component->getTemplate($Layout->getName())),
-				'component_image_hash' => 'component:'.$Component::COMPONENT_NAME.':/component_image',
+				'component_image_hash' => 'asset:component:'.$Component::COMPONENT_NAME.':component_image',
 				'title' => $Component->trans('component_title'),
 				'type' => $a_configuration['vendor'].':'.$a_configuration['name'],
 				'declarationForms' => [

@@ -671,8 +671,8 @@ var ReefBuilder = (function() {
 		vars.CSSPRFX = CSSPRFX+'';
 		vars.main_var = 'preview';
 		vars.field = fieldConfig;
-		vars.asset = function() {
-			return reef.assetHelper();
+		vars.internalRequest = function() {
+			return reef.internalRequestHelper();
 		};
 		
 		if(typeof options.beforeRender !== 'undefined') {

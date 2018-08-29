@@ -200,4 +200,32 @@ abstract class Submission {
 		
 		return $a_overviewColumns;
 	}
+	
+	/**
+	 * Perform an internal request
+	 * @param string $s_requestHash The hash containing the action to perform
+	 * @param array $a_options Array with options
+	 */
+	public function internalRequest(string $s_requestHash, array $a_options = []) {
+		$a_requestHash = explode(':', $s_requestHash);
+		if(count($a_requestHash) == 1) {
+			throw new \Reef\Exception\InvalidArgumentException("Illegal request hash");
+		}
+		
+		if($a_requestHash[0] == 'field') {
+			
+			if(!$this->hasField($a_requestHash[1])) {
+				throw new \Reef\Exception\InvalidArgumentException("Could not find field '".$a_requestHash[1]."'");
+			}
+			
+			$Value = $this->getFieldValue($a_requestHash[1]);
+			
+			array_shift($a_requestHash);
+			array_shift($a_requestHash);
+			
+			return $Value->internalRequest(implode(':', $a_requestHash));
+		}
+		
+		throw new \Reef\Exception\InvalidArgumentException('Invalid request hash');
+	}
 }

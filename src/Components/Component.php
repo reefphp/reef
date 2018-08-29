@@ -514,4 +514,13 @@ abstract class Component implements HidableComponentInterface {
 		return $this->Reef->newValidTempForm($a_localeDefinition);
 	}
 	
+	/**
+	 * Perform an internal request
+	 * @param string $s_requestHash The hash containing the action to perform
+	 * @param array $a_options Array with options
+	 */
+	public function internalRequest(string $s_requestHash, array $a_options = []) {
+		throw new \Reef\Exception\InvalidArgumentException('Field does not implement internal requests');
+	}
+	
 }

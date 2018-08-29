@@ -24,7 +24,7 @@
 					{{#components}}
 					<div class="{{CSSPRFX}}builder-component" data-component-name="{{type}}" data-configuration="{{configuration}}" data-operators="{{operators}}" data-html="{{html}}">
 						<div class="{{CSSPRFX}}builder-tile">
-							<img title="" alt="" src="{{#asset}}{{component_image_hash}}{{/asset}}" />
+							<img title="" alt="" src="{{#internalRequest}}{{component_image_hash}}{{/internalRequest}}" />
 							<span class="{{CSSPRFX}}builder-component-title">{{title}}</span>
 						</div>
 						{{#declarationForms}}
@@ -79,10 +79,10 @@
 			
 			<div class="{{CSSPRFX}}builder-save-progress">
 				<div class="{{CSSPRFX}}builder-save-icons {{CSSPRFX}}builder-template">
-					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-tick" title="" alt="" src="{{#asset}}reef:/builder-tick{{/asset}}">
-					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-error" title="" alt="" src="{{#asset}}reef:/builder-error{{/asset}}">
-					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-spinner" title="" alt="" src="{{#asset}}reef:/builder-spinner{{/asset}}">
-					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-question" title="" alt="" src="{{#asset}}reef:/builder-question{{/asset}}">
+					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-tick" title="" alt="" src="{{#internalRequest}}asset:reef:builder-tick{{/internalRequest}}">
+					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-error" title="" alt="" src="{{#internalRequest}}asset:reef:builder-error{{/internalRequest}}">
+					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-spinner" title="" alt="" src="{{#internalRequest}}asset:reef:builder-spinner{{/internalRequest}}">
+					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-question" title="" alt="" src="{{#internalRequest}}asset:reef:builder-question{{/internalRequest}}">
 				</div>
 				<div class="{{CSSPRFX}}builder-save-stage {{CSSPRFX}}builder-save-validate" style="display: none;">
 					<div class="{{CSSPRFX}}builder-save-icon"></div>

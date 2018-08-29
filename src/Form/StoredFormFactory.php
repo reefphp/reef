@@ -42,6 +42,26 @@ class StoredFormFactory extends FormFactory {
 	}
 	
 	/**
+	 * Load an existing stored form
+	 * 
+	 * @param string $s_uuid The form uuid to load
+	 * 
+	 * @return StoredForm The stored form
+	 * 
+	 * @throws ResourceNotFoundException If form does not exist
+	 */
+	public function loadByUUID(string $s_uuid) {
+		try {
+			$a_result = $this->Reef->getFormStorage()->getByUUID($s_uuid);
+		}
+		catch(StorageException $e) {
+			throw new ResourceNotFoundException('Could not find form with uuid "'.$s_uuid.'"', null, $e);
+		}
+		
+		return new StoredForm($this->getReef(), json_decode($a_result['definition'], true), $a_result['_entry_id'], $a_result['_uuid']);
+	}
+	
+	/**
 	 * Create a StoredForm form a TempStoredForm
 	 * 
 	 * @param TempStoredForm $TempForm The source form

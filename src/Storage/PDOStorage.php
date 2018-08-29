@@ -243,6 +243,38 @@ abstract class PDOStorage implements Storage {
 	/**
 	 * @inherit
 	 */
+	public function getByUUID(string $s_uuid) : array {
+		$sth = $this->PDO->prepare("
+			SELECT * FROM ".$this->es_table."
+			WHERE _uuid = ?
+		");
+		$sth->execute([$s_uuid]);
+		$a_result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		
+		if(count($a_result) == 0) {
+			throw new StorageException('Could not find entry with uuid '.$s_uuid);
+		}
+		
+		$a_result = $a_result[0];
+		
+		return $a_result;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	public function getByUUIDOrNull(string $s_uuid) : ?array {
+		try {
+			return $this->get($s_uuid);
+		}
+		catch(StorageException $e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function exists(int $i_entryId) : bool {
 		$sth = $this->PDO->prepare("
 			SELECT _entry_id FROM ".$this->es_table."
