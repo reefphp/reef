@@ -143,4 +143,66 @@ final class functionsTest extends TestCase {
 		$this->assertTrue(\Reef\rmTree($s_dir, true));
 		$this->assertFalse(is_dir($s_dir));
 	}
+	
+	public function test_parseBytes(): void {
+		$this->assertSame(0, \Reef\parseBytes('0', 1024));
+		$this->assertSame(1500, \Reef\parseBytes('1500', 1024));
+		$this->assertSame(2500, \Reef\parseBytes(2500, 1024));
+		
+		$this->assertSame(0, \Reef\parseBytes('0 B', 1024));
+		$this->assertSame(1024, \Reef\parseBytes('1 K', 1024));
+		$this->assertSame(1048576, \Reef\parseBytes('1 M', 1024));
+		
+		$this->assertSame(0, \Reef\parseBytes('0 B', 1000));
+		$this->assertSame(1000, \Reef\parseBytes('1 K', 1000));
+		$this->assertSame(1000000, \Reef\parseBytes('1 M', 1000));
+		
+		$this->assertSame(0, \Reef\parseBytes('0 B', null));
+		$this->assertSame(1024, \Reef\parseBytes('1 Ki', null));
+		$this->assertSame(1048576, \Reef\parseBytes('1 Mi', null));
+		
+		$this->assertSame(0, \Reef\parseBytes('0 B', null));
+		$this->assertSame(1000, \Reef\parseBytes('1 K', null));
+		$this->assertSame(1000000, \Reef\parseBytes('1 M', null));
+		
+		
+		$this->assertSame(0, \Reef\parseBytes('0 B', 1024));
+		$this->assertSame(1024, \Reef\parseBytes('1 kB', 1024));
+		$this->assertSame(1048576, \Reef\parseBytes('1 MB', 1024));
+		
+		$this->assertSame(0, \Reef\parseBytes('0 B', 1000));
+		$this->assertSame(1000, \Reef\parseBytes('1 kB', 1000));
+		$this->assertSame(1000000, \Reef\parseBytes('1 MB', 1000));
+		
+		$this->assertSame(0, \Reef\parseBytes('0 B', null));
+		$this->assertSame(1024, \Reef\parseBytes('1 KiB', null));
+		$this->assertSame(1048576, \Reef\parseBytes('1 MiB', null));
+		
+		$this->assertSame(0, \Reef\parseBytes('0 B', null));
+		$this->assertSame(1000, \Reef\parseBytes('1 kB', null));
+		$this->assertSame(1000000, \Reef\parseBytes('1 MB', null));
+	}
+	
+	public function test_bytes_format(): void {
+		$this->assertSame('0 B', \Reef\bytes_format(0, 1000));
+		$this->assertSame('0 B', \Reef\bytes_format(0, 1024));
+		
+		$this->assertSame('1 B', \Reef\bytes_format(1, 1000));
+		$this->assertSame('1 B', \Reef\bytes_format(1, 1024));
+		
+		$this->assertSame('1 kB', \Reef\bytes_format(1000, 1000));
+		$this->assertSame('1000 B', \Reef\bytes_format(1000, 1024));
+		
+		$this->assertSame('1 kB', \Reef\bytes_format(1024, 1000));
+		$this->assertSame('1 KiB', \Reef\bytes_format(1024, 1024));
+		
+		$this->assertSame('2.5 kB', \Reef\bytes_format(2500, 1000));
+		$this->assertSame('2.4 KiB', \Reef\bytes_format(2500, 1024));
+	}
+	
+	public function test_bytes_format_invalidBase(): void {
+		$this->expectException('\Reef\Exception\InvalidArgumentException');
+		
+		\Reef\bytes_format(1, 123456);
+	}
 }

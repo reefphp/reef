@@ -1,3 +1,7 @@
 component_title: Upload
 operator_empty: is empty
 operator_nempty: is not empty
+error_too_many_files: You can upload at most [[max_files]] files
+error_max_size: The file size may not exceed [[max_size]]
+error_file_type: "You may only upload the following types: [[accepted_types]]"
+error_still_uploading: Please wait until all files have been uploaded

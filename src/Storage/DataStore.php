@@ -100,7 +100,26 @@ class DataStore {
 	}
 	
 	public function ensureTransaction($fn_callback) {
-		return $this->StorageFactory->ensureTransaction($fn_callback);
+		$Filesystem = $this->getFilesystem();
+		$b_transaction = !$Filesystem->inTransaction();
+		
+		if($b_transaction) {
+			$Filesystem->startTransaction();
+		}
+		
+		try {
+			$m_return = $this->StorageFactory->ensureTransaction($fn_callback);
+			
+			if($b_transaction) {
+				$Filesystem->commitTransaction();
+			}
+		}
+		catch(\Exception $e) {
+			$Filesystem->rollbackTransaction();
+			throw $e;
+		}
+		
+		return $m_return;
 	}
 	
 	public function getFilesystem() {

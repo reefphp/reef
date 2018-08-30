@@ -7,6 +7,10 @@ basicLocale:
     title: rf_field_title
 internalLocale:
     rf_submission_empty_value:
+    error_too_many_files:
+    error_max_size:
+    error_file_type:
+    error_still_uploading:
 basicDefinition:
     fields:
       - component: reef:checkbox
@@ -18,7 +22,7 @@ basicDefinition:
                 title_right: 'Meerdere bestanden'
       - component: reef:text_number
         name: 'max_files'
-        min: 0
+        min: 1
         max: 20
         step: 1
         visible: 'multiple is checked'
@@ -27,6 +31,16 @@ basicDefinition:
                 title: 'Max. files'
             nl_NL:
                 title: 'Max. aantal bestanden'
+advancedDefinition:
+    fields:
+      - component: reef:checklist
+        name: 'types'
+        options: []
+        locales:
+            en_US:
+                title: 'Accepted types'
+            nl_NL:
+                title: 'Geaccepteerde types'
 builder_operators:
     empty: is empty
     nempty: is not empty

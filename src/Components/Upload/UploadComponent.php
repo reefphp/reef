@@ -13,6 +13,12 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 	const COMPONENT_NAME = 'reef:upload';
 	const PARENT_NAME = null;
 	
+	private $a_defaultTypes = ['doc', 'docx', 'odt', 'pdf', 'jpg', 'jpeg', 'png'];
+	
+	public function getDefaultTypes() {
+		return $this->a_defaultTypes;
+	}
+	
 	/**
 	 * @inherit
 	 */
@@ -33,9 +39,24 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 	 * @inherit
 	 */
 	public function getConfiguration() : array {
-		$a_configuration = parent::getConfiguration();
-		$a_configuration['basicDefinition']['fields'][1]['max'] = ini_get('max_file_uploads');
-		return $a_configuration;
+		if($this->a_configuration !== null) {
+			return $this->a_configuration;
+		}
+		
+		$this->a_configuration = parent::getConfiguration();
+		$this->a_configuration['basicDefinition']['fields'][1]['max'] = ini_get('max_file_uploads');
+		
+		$a_types = $this->getReef()->getDataStore()->getFilesystem()->getAllowedExtensions();
+		sort($a_types);
+		$this->a_configuration['advancedDefinition']['fields'][0]['options'] = array_map(function($s_type) {
+			return [
+				'name' => $s_type,
+				'locale' => ['en_US' => '.'.$s_type],
+				'default' => in_array($s_type, $this->a_defaultTypes),
+			];
+		}, $a_types);
+		
+		return $this->a_configuration;
 	}
 	
 	/**
@@ -103,7 +124,7 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 			$a_return['success'] = true;
 			$a_return['files'] = $a_fileUUIDs;
 		}
-		catch(Exception $e) {
+		catch(\Exception $e) {
 			$a_return['success'] = false;
 			$a_return['error'] = $e->getMessage();
 		}

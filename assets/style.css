@@ -1,6 +1,6 @@
 
 .CSSPRFXtemplate {
-	display: none;
+	display: none !important;
 }
 
 .CSSPRFXfield[data-CSSPRFXhidable-hidden] {

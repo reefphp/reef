@@ -103,9 +103,8 @@ class Reef {
 		}
 		
 		$this->ReefSetup = $ReefSetup;
-		$this->ReefSetup->checkSetup($this);
-		
 		$this->DataStore = new DataStore($this);
+		$this->ReefSetup->checkSetup($this);
 	}
 	
 	public static function getDir() : string {

@@ -72,4 +72,38 @@ class StoredSubmission extends Submission {
 		}
 		$this->Form->getSubmissionStorage()->delete($this->i_submissionId);
 	}
+	
+	public function processUserInput(?array $a_userInput, array $a_options = []) : bool {
+		$Exception = new class extends \Exception {};
+		
+		try {
+			$this->getForm()->getReef()->getDataStore()->ensureTransaction(function() use ($a_userInput, $Exception) {
+				
+				$this->fromUserInput($a_userInput);
+				
+				if(isset($a_options['validate_before'])) {
+					$a_options['validate_before']();
+				}
+				
+				if(!$this->validate()) {
+					throw new $Exception();
+				}
+				
+				if(isset($a_options['validate_after'])) {
+					$a_options['validate_after']();
+				}
+				
+				$this->save();
+			});
+			
+			return true;
+		}
+		catch(\Exception $e) {
+			if($e instanceof $Exception) {
+				return false;
+			}
+			
+			throw $e;
+		}
+	}
 }

@@ -81,7 +81,7 @@ abstract class PDOStorageFactory implements StorageFactory {
 		try {
 			$m_return = $fn_callback();
 		}
-		catch(StorageException $e) {
+		catch(\Exception $e) {
 			if(end($this->a_savepoints) != $s_savepoint) {
 				// @codeCoverageIgnoreStart
 				$s_storageClass::rollbackTransaction($this->PDO);

@@ -24,7 +24,7 @@ else if(isset($_GET['submission_id']) && $_GET['submission_id'] > 0) {
 }
 else {
 	$Submission = $Form->newSubmission();
-	$b_load = false;
+	$b_load = ($_SERVER['REQUEST_METHOD'] == 'POST');
 }
 
 if(isset($_GET['mode']) && $_GET['mode'] == 'delete') {
@@ -36,9 +36,7 @@ $b_view = (isset($_GET['mode']) && $_GET['mode'] == 'view');
 
 // Process a POST request
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-	$Submission->fromUserInput($_POST['form_data']??[]);
-	if($Submission->validate()) {
-		$Submission->save();
+	if($Submission->processUserInput($_POST['form_data']??[])) {
 		header("Location: submission.php?form_id=".$Form->getFormId()."&submission_id=".$Submission->getSubmissionId());
 	}
 }

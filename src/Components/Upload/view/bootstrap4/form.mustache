@@ -9,15 +9,26 @@
 			id="{{form_idpfx}}-{{field.name}}"
 			{{{field.required}}}
 			{{#field.multiple}}multiple{{/field.multiple}}
+			data-max-size="{{field.max_file_size}}"
+			data-max-files="{{field.max_files}}"
+			data-accepted-types="{{field.accepted_types}}"
 		>
 		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-max-files" style="display: none;">{{field.locale.error_too_many_files}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-max-size" style="display: none;">{{field.locale.error_max_size}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-file-type" style="display: none;">{{field.locale.error_file_type}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-still-uploading" style="display: none;">{{field.locale.error_still_uploading}}</div>
 		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>
 		{{/field.errors}}
 		<div class="{{CSSPRFX}}template {{CSSPRFX}}upload-file">
 			<div class="{{CSSPRFX}}upload-file-name"></div>
 			<div class="{{CSSPRFX}}upload-file-size"></div>
-			<div class="{{CSSPRFX}}upload-file-progress">
+			<div class="{{CSSPRFX}}upload-file-action">
+				<div class="btn btn-sm btn-outline-danger p-0 {{CSSPRFX}}upload-file-action-delete"></div>
+			</div>
+			<div class="{{CSSPRFX}}upload-file-progress" style="display: none;">
+				<div class="{{CSSPRFX}}upload-file-progress-percent"></div>
 				<div class="{{CSSPRFX}}upload-file-progress-bar"></div>
 			</div>
 			<input

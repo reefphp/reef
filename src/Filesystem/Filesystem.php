@@ -31,6 +31,8 @@ class Filesystem {
 		'txt'   => 'text/plain',
 	];
 	
+	private $a_files;
+	
 	private $a_mutations = [];
 	private $b_inTransaction = false;
 
@@ -44,7 +46,22 @@ class Filesystem {
 		}
 	}
 	
+	public function getAllowedExtensions() {
+		return array_keys($this->a_allowedFileTypes);
+	}
+	
 	protected function getDir(string $s_dir) : string {
+		$s_dir = trim($s_dir, '/');
+		$a_dir = explode('/', $s_dir);
+		for($i=1; $i>=0; $i--) {
+			if(!isset($a_dir[$i]) || strlen($a_dir[$i]) < 32) {
+				continue;
+			}
+			
+			array_splice($a_dir, $i, 0, substr($a_dir[$i], 0, 2));
+		}
+		$s_dir = implode('/', $a_dir);
+		
 		$s_dir = $this->s_dir . '/' . $s_dir . '/';
 		
 		if(!is_dir($s_dir)) {
@@ -52,6 +69,10 @@ class Filesystem {
 		}
 		
 		return $s_dir;
+	}
+	
+	public function inTransaction() {
+		return $this->b_inTransaction;
 	}
 	
 	public function startTransaction() {
@@ -93,6 +114,7 @@ class Filesystem {
 			}
 			
 			if($a_mutation[0] == 'delete') {
+				$a_mutation[1]->_setDelete(false);
 				continue;
 			}
 		}
@@ -171,7 +193,7 @@ class Filesystem {
 	public function uploadFiles($s_name) {
 		
 		if(!array_key_exists($s_name, $_FILES)) {
-			throw new FilesystemException($this->Reef->trans('upload_err_no_file'));
+			throw new FilesystemException('No file found');
 		}
 		
 		$a_files = [];
@@ -234,20 +256,25 @@ class Filesystem {
 			throw new FilesystemException('Invalid file UUID "'.$s_uuid.'"');
 		}
 		
+		if(isset($this->a_files[$s_uuid]) && trim($this->a_files[$s_uuid]->getDir(), '/') == trim($s_contextDir, '/')) {
+			return $this->a_files[$s_uuid];
+		}
+		
 		$a_file = glob($s_contextDir . $s_uuid . '*');
 		
 		if(empty($a_file)) {
 			throw new FilesystemException('Could not find file "'.$s_uuid.'"');
 		}
 		
-		return new File($this, $a_file[0]);
+		$this->a_files[$s_uuid] = new File($this, $a_file[0]);
+		return $this->a_files[$s_uuid];
 	}
 	
 	private function _uploadFile($a_upload) {
 		$s_dir = $this->getDir('_upload');
 		
 		if($a_upload['name'] == '') {
-			throw new FilesystemException($this->Reef->trans('upload_error_empty'));
+			throw new FilesystemException('Error: received invalid empty filename');
 		}
 		
 		switch($a_upload['error']) {
@@ -260,15 +287,15 @@ class Filesystem {
 			
 			case UPLOAD_ERR_PARTIAL:
 			case UPLOAD_ERR_NO_FILE:
-				throw new FilesystemException($this->Reef->trans('upload_error_transfer'));
+				throw new FilesystemException('Something went wrong while transferring the file');
 			
 			case UPLOAD_ERR_NO_TMP_DIR:
 			case UPLOAD_ERR_CANT_WRITE:
 			case UPLOAD_ERR_EXTENSION:
-				throw new FilesystemException($this->Reef->trans('upload_error_server'));
+				throw new FilesystemException('A server error occurred while processing the upload');
 			
 			default:
-				throw new FilesystemException($this->Reef->trans('upload_error'));
+				throw new FilesystemException('An unknown error occurred while uploading the file');
 		}
 		
 		$s_mimetype = $this->getMimeType($a_upload['tmp_name']);
@@ -289,14 +316,14 @@ class Filesystem {
 			throw new FilesystemException($this->Reef->trans('upload_error_size'));
 		}
 		
-		$s_cleanName = substr(preg_replace('[^a-zA-Z0-9-_\.]', '', $a_upload['name']), 0, 255);
+		$s_cleanName = substr(preg_replace('[^a-zA-Z0-9-_\.]', '', $a_upload['name']), -255);
 		
 		do {
 			$s_destPath = $s_dir.\Reef\unique_id().'_'.$s_cleanName;
 		} while(file_exists($s_destPath));
 		
 		if(!move_uploaded_file($a_upload['tmp_name'], $s_destPath)) {
-			throw new FilesystemException($this->Reef->trans('upload_error'));
+			throw new FilesystemException('An error occurred while processing the uploaded file');
 		}
 		
 		$File = new File($this, $s_destPath);
@@ -322,6 +349,7 @@ class Filesystem {
 	
 	public function deleteFile(File $File) {
 		$this->logMutation('delete', $File);
+		$File->_setDelete(true);
 	}
 	
 }

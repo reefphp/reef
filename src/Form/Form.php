@@ -296,6 +296,7 @@ abstract class Form {
 		$a_data['layout_name'] = $Layout->getName();
 		$a_data['layout'] = $Layout->view($this->a_definition['layout'][$Layout->getName()] ?? []);
 		$a_data['internal_request_url'] = $this->Reef->getOption('internal_request_url');
+		$a_data['byte_base'] = $this->Reef->getOption('byte_base');
 		$a_data['form_uuid'] = $this->getUUID();
 		
 		$Mustache = $this->Reef->newMustache();

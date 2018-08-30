@@ -24,3 +24,5 @@ cat_choice: Choice
 cat_other: Other
 rf_submission_empty_value: Not filled in
 overview_submission_id: Submission id
+upload_error_type: Invalid file type
+upload_error_size: File too large

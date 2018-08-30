@@ -1,1 +1,70 @@
- 
+
+[data-rf-type="reef:upload"] .form-control-file.is-invalid ~ .invalid-feedback {
+	display: block;
+}
+
+.CSSPRFXupload-file {
+	margin: 5px 0px;
+}
+
+.CSSPRFXupload-file {
+	display: flex;
+	flex-wrap: wrap;
+	max-width: 250px;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 3px;
+	padding: 2px 3px;
+}
+
+.CSSPRFXupload-file .CSSPRFXupload-file-name {
+	flex: auto;
+	
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.CSSPRFXupload-file.CSSPRFXupload-delete .CSSPRFXupload-file-name {
+	text-decoration: line-through;
+	color: #999;
+}
+
+.CSSPRFXupload-file .CSSPRFXupload-file-size {
+	flex: auto;
+	text-align: right;
+}
+
+.CSSPRFXupload-file.CSSPRFXupload-delete .CSSPRFXupload-file-size {
+	text-decoration: line-through;
+	color: #999;
+}
+
+.CSSPRFXupload-file-action {
+	flex: auto;
+	max-width: 2em;
+	text-align: right;
+}
+
+.CSSPRFXupload-file-action-delete {
+	width: 1.5em;
+	text-align: center;
+}
+
+.CSSPRFXupload-file-action-delete::before {
+	display: inline-block;
+	content: "\D7";
+}
+
+.CSSPRFXupload-file.CSSPRFXupload-delete .CSSPRFXupload-file-action-delete::before {
+	content: "\21BA";
+	transform: rotate(-90deg);
+}
+
+.CSSPRFXupload-file .CSSPRFXupload-file-progress {
+	flex: 1 100%;
+}
+
+.CSSPRFXupload-file-progress-bar {
+	height: 2px;
+	background-color: #0f0;
+}

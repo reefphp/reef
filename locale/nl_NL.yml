@@ -24,3 +24,5 @@ cat_choice: Keuze
 cat_other: Anders
 rf_submission_empty_value: Niet ingevuld
 overview_submission_id: Inzending nr.
+upload_error_type: Incorrect bestandstype
+upload_error_size: Bestand te groot

@@ -13,6 +13,8 @@ class UploadField extends Field implements RequiredFieldInterface {
 	
 	use RequiredFieldTrait;
 	
+	private $a_allowedExtensions;
+	
 	/**
 	 * @inherit
 	 */
@@ -24,16 +26,26 @@ class UploadField extends Field implements RequiredFieldInterface {
 		return $b_valid;
 	}
 	
-	public function multipleFilesAllowed() {
+	public function multipleFilesAllowed() : bool {
 		return $this->a_declaration['multiple'] ?? false;
 	}
 	
-	public function getMaxFiles() {
+	public function getMaxFiles() : int {
 		if(!$this->multipleFilesAllowed()) {
 			return 1;
 		}
 		
 		return min($this->a_declaration['max_files'] ?? static::MAX_FILES, ini_get('max_file_uploads'), static::MAX_FILES);
+	}
+	
+	public function getAllowedExtensions() : array {
+		if($this->a_allowedExtensions === null) {
+			$this->a_allowedExtensions = array_intersect(
+				isset($this->a_declaration['types']) ? array_keys(array_filter($this->a_declaration['types'])) : $this->getComponent()->getDefaultTypes(),
+				$this->getForm()->getReef()->getDataStore()->getFilesystem()->getAllowedExtensions()
+			);
+		}
+		return $this->a_allowedExtensions;
 	}
 	
 	/**
@@ -61,6 +73,9 @@ class UploadField extends Field implements RequiredFieldInterface {
 	public function view_form($Value, $a_options = []) : array {
 		$a_vars = parent::view_form($Value, $a_options);
 		$a_vars['files_data'] = json_encode($Value->toTemplateVar());
+		$a_vars['max_files'] = $this->getMaxFiles();
+		$a_vars['max_file_size'] = $this->getForm()->getReef()->getDataStore()->getFilesystem()->getMaxUploadSize();
+		$a_vars['accepted_types'] = implode(',', $this->getAllowedExtensions());
 		return $a_vars;
 	}
 	
@@ -87,5 +102,19 @@ class UploadField extends Field implements RequiredFieldInterface {
 	 */
 	public function updateDataLoss($OldField) {
 		return Updater::DATALOSS_NO;
+	}
+	
+	/**
+	 * @inherit
+	 */
+	protected function getLanguageReplacements() : array {
+		$Filesystem = $this->getForm()->getReef()->getDataStore()->getFilesystem();
+		$i_byteBase = $this->getForm()->getReef()->getOption('byte_base');
+		
+		return [
+			'max_files' => $this->getMaxFiles(),
+			'max_size' => \Reef\bytes_format($Filesystem->getMaxUploadSize(), $i_byteBase),
+			'accepted_types' => '.' . implode(', .', $this->getAllowedExtensions()),
+		];
 	}
 }

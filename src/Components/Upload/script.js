@@ -15,6 +15,12 @@ Reef.addComponent((function() {
 		var self = this;
 		
 		this.$upload.on('change', function(evt) {
+			if(this.files.length == 0) {
+				return;
+			}
+			
+			self.removeErrors();
+			
 			var i;
 			var uploads = [];
 			
@@ -36,33 +42,70 @@ Reef.addComponent((function() {
 			}
 		});
 		
-		/*var requiredCondition = (this.$upload.attr('data-required-if') || '') + '';
-		if(requiredCondition.length > 0) {
-			requiredCondition = '(' + requiredCondition + ') and ';
-		}
-		requiredCondition += this.$field.data(CSSPRFX+'name')+' is not empty ';
-		this.$upload.attr('data-required-if', requiredCondition);*/
-		
-		this.Reef.listenRequired(this, this.$field.find('input'));
-		
 		var existingFiles = JSON.parse(this.$field.find('.'+CSSPRFX+'upload-files').attr('data-files') || '[]');
+		var $file;
 		
 		for(var i in existingFiles) {
-			var $file = this.$field.find('.'+CSSPRFX+'template.'+CSSPRFX+'upload-file').clone().removeClass(CSSPRFX+'template');
-			$file.find('.'+CSSPRFX+'upload-file-name').text(existingFiles[i].name);
-			$file.find('.'+CSSPRFX+'upload-file-size').text(existingFiles[i].size);
-			$file.find('input').val(existingFiles[i].uuid);
-			this.$field.find('.'+CSSPRFX+'upload-files').append($file);
+			$file = this.addFile({
+				name: existingFiles[i].name,
+				size: existingFiles[i].size,
+				uuid: existingFiles[i].uuid
+			});
+			if(existingFiles[i].deleted) {
+				self.deleteFile($file);
+			}
 		}
+		
+		this.Reef.listenRequired(this, this.$upload);
+		
+		this.$field.on('change '+EVTPRFX+'change', function() {
+			self.determineState();
+		});
+		
+		$(function() {
+			// Wrap this in $() to make sure the builder does not fail
+			self.determineState();
+		});
 	};
+	
+	Field.prototype.determineState = function() {
+		var numFiles = this.getValue().length;
+		this.$upload.prop('required', numFiles == 0 && ReefConditionEvaluator.evaluate(this.Reef, this.$upload.attr('data-required-if')));
+		this.$upload.prop('disabled', numFiles >= this.$upload.attr('data-max-files'));
+	}
 	
 	Field.prototype.upload = function(file) {
 		var self = this;
 		
-		var $file = this.$field.find('.'+CSSPRFX+'template.'+CSSPRFX+'upload-file').clone().removeClass(CSSPRFX+'template');
-		$file.find('.'+CSSPRFX+'upload-file-name').text(file.name);
-		$file.find('.'+CSSPRFX+'upload-file-size').text(file.size);
-		this.$field.find('.'+CSSPRFX+'upload-files').append($file);
+		if(this.getValue().length >= this.$upload.attr('data-max-files')) {
+			this.setError('error-max-files');
+			return;
+		}
+		
+		var allowed_types = this.$upload.attr('data-accepted-types').split(',');
+		var found = false;
+		for(var i in allowed_types) {
+			if(file.name.substr(-allowed_types[i].length-1) == '.'+allowed_types[i]) {
+				found = true;
+				break;
+			}
+		}
+		if(!found) {
+			this.setError('error-file-type');
+			return;
+		}
+		
+		if(file.size > this.$upload.attr('data-max-size')) {
+			this.setError('error-max-size');
+			return;
+		}
+		
+		var $file = this.addFile({
+			name: file.name,
+			size: file.size,
+			uuid: ''
+		});
+		$file.find('.'+CSSPRFX+'upload-file-progress').show();
 		
 		var formData = new FormData();
 		formData.append('files', file, file.name);
@@ -75,19 +118,22 @@ Reef.addComponent((function() {
 				if (myXhr.upload) {
 					myXhr.upload.addEventListener('progress', function(evt) { self.upload_progress(evt, $file); }, false);
 				}
+				$file.data('xhr', myXhr);
 				return myXhr;
 			},
 			success: function(response) {
+				$file.data('xhr', null);
 				if(response.success) {
 					$file.find('input').val(response.files[0]);
-					alert('success');
+					$file.find('.'+CSSPRFX+'upload-file-progress-percent').text('100%');
 				}
 				else {
-					alert(response.error);
+					self.addError(response.error);
 				}
 			},
-			error: function (error) {
-				alert('error');
+			error: function () {
+				$file.data('xhr', null);
+				self.addError('An unknown error occurred');
 			},
 			async: true,
 			data: formData,
@@ -107,41 +153,97 @@ Reef.addComponent((function() {
 		}
 		
 		$file.find('.'+CSSPRFX+'upload-file-progress-bar').css('width', +percent + '%');
-		$file.find('.'+CSSPRFX+'upload-file-progress-bar').text(percent + '%');
+		$file.find('.'+CSSPRFX+'upload-file-progress-percent').text(Math.min(percent, 99) + '%');
+	};
+	
+	Field.prototype.addFile = function(file_data) {
+		var self = this;
+		
+		var $file = this.$field.find('.'+CSSPRFX+'template.'+CSSPRFX+'upload-file').clone().removeClass(CSSPRFX+'template');
+		$file.find('.'+CSSPRFX+'upload-file-name').text(file_data.name);
+		$file.find('.'+CSSPRFX+'upload-file-size').text(ReefUtil.bytes_format(file_data.size, this.Reef.config.byte_base));
+		$file.find('input').val(file_data.uuid);
+		this.$field.find('.'+CSSPRFX+'upload-files').append($file);
+		
+		$file.find('.'+CSSPRFX+'upload-file-action-delete').on('click', function() {
+			self.deleteFile($file, 'toggle');
+		});
+		
+		this.$field.trigger(EVTPRFX+'change');
+		return $file;
+	};
+	
+	Field.prototype.deleteFile = function($file, doDelete) {
+		if(typeof doDelete === 'undefined') {
+			doDelete = true;
+		}
+		
+		var wasDeleted = $file.hasClass(CSSPRFX+'upload-delete');
+		if(doDelete === 'toggle') {
+			doDelete = !wasDeleted;
+		}
+		else if(wasDeleted == doDelete) {
+			return;
+		}
+		
+		if(doDelete && $file.data('xhr')) {
+			$file.data('xhr').abort();
+			$file.remove();
+			
+			this.$field.trigger(EVTPRFX+'change');
+			return;
+		}
+		
+		$file.toggleClass(CSSPRFX+'upload-delete', doDelete);
+		
+		var uuid = $file.find('input').val().substr(-32);
+		if(uuid.length != 32) {
+			// Can happen if you delete the file before it has been successfully uploaded
+			uuid = '';
+		}
+		$file.find('input').val(doDelete ? 'x'+uuid : uuid);
+		
+		this.$field.trigger(EVTPRFX+'change');
 	};
 	
 	Field.prototype.getValue = function() {
-		return this.$field.find('input').val();
+		var uuids = [];
+		this.$field.find('.'+CSSPRFX+'upload-files .'+CSSPRFX+'upload-file input').each(function() {
+			var uuid = $(this).val();
+			if(uuid.substr(0, 1) !== 'x') {
+				uuids.push(uuid);
+			}
+		});
+		return uuids;
 	};
 	
 	Field.prototype.setValue = function(value) {
-		this.$field.find('input').val(value).change();
+		alert('Cannot set value on upload');
+		throw 'Cannot set value on upload';
 	};
 	
 	Field.prototype.toDefault = function() {
-		this.setValue(this.$field.find('input').attr('data-default'));
+		this.$field.find('.'+CSSPRFX+'upload-files .'+CSSPRFX+'upload-file input').remove();
+		this.$field.trigger(EVTPRFX+'change');
 	};
 	
 	Field.prototype.validate = function() {
 		this.removeErrors();
 		
-		var $input = this.$field.find('input');
-		
-		if($input.prop('required')) {
-			if($.trim($input.val()) == '') {
-				this.setError('error-required-empty');
-				return false;
-			}
-		}
-		
-		if($input.attr('maxlength') && $input.attr('maxlength') > 0 && $input.val().length > $input.attr('maxlength')) {
-			this.setError('error-value-too-long');
+		if(this.$upload.prop('required')) {
+			this.setError('error-required-empty');
 			return false;
 		}
 		
-		if($input.attr('pattern')) {
-			if(!$input.val().match(new RegExp($input.attr('pattern')))) {
-				this.setError('error-regexp');
+		var uuids = this.getValue();
+		if(uuids.length > this.$upload.attr('data-max-files')) {
+			this.setError('error-max-files');
+			return false;
+		}
+		
+		for(var i in uuids) {
+			if(uuids[i] == '') {
+				this.setError('error-still-uploading');
 				return false;
 			}
 		}
@@ -153,7 +255,7 @@ Reef.addComponent((function() {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
 		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
+			this.$upload.addClass('is-invalid');
 			this.$field.find('.invalid-feedback').hide().filter('.'+CSSPRFX+message_key).show();
 		}
 	};
@@ -162,7 +264,7 @@ Reef.addComponent((function() {
 		this.$field.removeClass(CSSPRFX+'invalid');
 		
 		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').removeClass('is-invalid');
+			this.$upload.removeClass('is-invalid');
 			this.$field.find('.invalid-feedback').hide();
 		}
 	};
@@ -171,8 +273,8 @@ Reef.addComponent((function() {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
 		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('input').parent().append($('<div class="invalid-feedback"></div>').text(message));
+			this.$upload.addClass('is-invalid');
+			this.$upload.parent().append($('<div class="invalid-feedback"></div>').text(message));
 		}
 	};
 	
@@ -205,9 +307,9 @@ Reef.addComponent((function() {
 		
 		switch(operator) {
 			case 'is empty':
-				return $.trim(value) === '';
+				return value.length == 0;
 			case 'is not empty':
-				return $.trim(value) !== '';
+				return value.length > 0;
 		};
 	};
 	

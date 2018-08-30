@@ -11,13 +11,24 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	use RequiredFieldValueTrait;
 	
 	protected $a_uuids;
+	protected $a_uuidsDel;
 	
-	public function getFiles() {
+	public function getFiles(bool $b_includeDeleted = false) {
 		$Filesystem = $this->getField()->getForm()->getReef()->getDataStore()->getFilesystem();
 		
+		$a_uuids = $this->a_uuids??[];
+		if($b_includeDeleted) {
+			$a_uuids = array_merge($a_uuids, $this->a_uuidsDel??[]);
+		}
+		
 		$a_files = [];
-		foreach($this->a_uuids??[] as $s_uuid) {
-			$a_files[] = $Filesystem->getFile($s_uuid, $this);
+		foreach($a_uuids as $s_uuid) {
+			try {
+				$a_files[] = $Filesystem->getFile($s_uuid, $this);
+			}
+			catch(\Reef\Exception\FilesystemException $e) {
+				$a_files[] = $Filesystem->getFile($s_uuid, 'upload');
+			}
 		}
 		
 		return $a_files;
@@ -34,8 +45,16 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 		}
 		
 		if(count($this->a_uuids) > $this->Field->getMaxFiles()) {
-			$this->a_errors[] = $this->Field->trans('error_value_too_long');
+			$this->a_errors[] = $this->Field->trans('error_too_many_files');
 			return false;
+		}
+		
+		$a_allowedExtensions = $this->Field->getAllowedExtensions();
+		foreach($this->getFiles() as $File) {
+			if(!in_array($File->getExtension(), $a_allowedExtensions)) {
+				$this->a_errors[] = $this->Field->trans('error_file_type') . ' ('.$File->getExtension().')';
+				return false;
+			}
 		}
 		
 		return true;
@@ -64,30 +83,54 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 		
 		$a_oldUUIDS = array_flip($this->a_uuids??[]);
 		
-		$this->a_uuids = [];
+		$this->a_uuidsDel = $this->a_uuids = [];
 		
 		foreach($a_uuids??[] as $s_uuid) {
 			if(empty($s_uuid)) {
 				continue;
 			}
 			
+			$b_delete = false;
+			if(substr($s_uuid, 0, 1) == 'x') {
+				$b_delete = true;
+				$s_uuid = substr($s_uuid, 1);
+			}
+			
 			if(isset($a_oldUUIDS[$s_uuid])) {
 				// Already was present
 				unset($a_oldUUIDS[$s_uuid]);
 				$File = $Filesystem->getFile($s_uuid, $this);
+				
+				if($b_delete) {
+					$Filesystem->deleteFile($File);
+				}
 			}
 			else {
 				// Was not already present, so it has been newly uploaded
 				$File = $Filesystem->getFile($s_uuid, 'upload');
-				$Filesystem->changeFileContext($File, $this);
+				
+				//TODO: Check that $File belongs to current user's session
+				
+				if($b_delete) {
+					$Filesystem->deleteFile($File);
+				}
+				else {
+					$Filesystem->changeFileContext($File, $this);
+				}
 			}
 			
-			$this->a_uuids[] = $File->getUUID();
+			if($b_delete) {
+				$this->a_uuidsDel[] = $File->getUUID();
+			}
+			else {
+				$this->a_uuids[] = $File->getUUID();
+			}
 		}
 		
 		foreach($a_oldUUIDS as $s_uuid => $tmp) {
 			$File = $Filesystem->getFile($s_uuid, $this);
 			$Filesystem->deleteFile($File);
+			$this->a_uuidsDel[] = $File->getUUID();
 		}
 		
 		$this->a_errors = null;
@@ -114,7 +157,8 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->a_uuids = explode(',', $a_flat[0]??'');
+		$s_uuids = $a_flat[0]??'';
+		$this->a_uuids = empty($s_uuids) ? [] : explode(',', $s_uuids);
 		$this->a_errors = null;
 	}
 	
@@ -139,11 +183,12 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	 */
 	public function toTemplateVar() {
 		$a_filesVar = [];
-		foreach($this->getFiles() as $File) {
+		foreach($this->getFiles(true) as $File) {
 			$a_filesVar[] = [
 				'name' => $File->getFilename(),
 				'uuid' => $File->getUUID(),
 				'size' => $File->getSize(),
+				'deleted' => in_array($File->getUUID(), $this->a_uuidsDel??[]),
 			];
 		}
 		return $a_filesVar;
@@ -189,7 +234,7 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 			
 			$File->stream();
 		}
-		catch(Exception $e) {
+		catch(\Exception $e) {
 			die($e->getMessage());
 		}
 	}

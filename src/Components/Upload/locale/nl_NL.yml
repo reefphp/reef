@@ -1,3 +1,7 @@
 component_title: Upload
 operator_empty: is leeg
 operator_nempty: is niet leeg
+error_too_many_files: Je kunt maximaal [[max_files]] bestanden uploaden
+error_max_size: Bestanden mogen niet groter zijn dan [[max_size]]
+error_file_type: "Je mag alleen de volgende types uploaden: [[accepted_types]]"
+error_still_uploading: Wacht a.u.b. tot alle bestanden zijn geupload

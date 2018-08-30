@@ -9,6 +9,7 @@ class File {
 	
 	private $Filesystem;
 	private $s_filepath;
+	private $b_deleted = false;
 	
 	public function __construct(Filesystem $Filesystem, string $s_filepath) {
 		$this->Filesystem = $Filesystem;
@@ -17,6 +18,14 @@ class File {
 	
 	public function _setPath(string $s_path) {
 		$this->s_filepath = $s_path;
+	}
+	
+	public function _setDelete(bool $b_delete) {
+		$this->b_deleted = $b_delete;
+	}
+	
+	public function isDeleted() {
+		return $this->b_deleted;
 	}
 	
 	public function getPath() : string {
@@ -53,6 +62,14 @@ class File {
 	
 	public function getSize() : int {
 		return filesize($this->getPath());
+	}
+	
+	public function getExtension() : string {
+		return $this->Filesystem->getExtension($this->getPath());
+	}
+	
+	public function getMimeType() : string {
+		return $this->Filesystem->getMimeType($this->getPath());
 	}
 	
 	public function stream() {

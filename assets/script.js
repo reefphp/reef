@@ -31,6 +31,75 @@ if(typeof Reef === 'undefined') {
 			});
 			
 			return new RegExp('^'+regexp+'$');
+		},
+		
+		/**
+		 * Parse a filesize into bytes. Possible input:
+		 *  - numeric input, will be interpreted as bytes
+		 *  - e.g. number KiB or number Ki, will be interpreted as base-1024 bytes
+		 *  - e.g. number MB or number M, will be interpreted as base-i_base bytes
+		 * This function has an equivalent in php
+		 * @param string s_size The input size
+		 * @param ?int i_base The base, either 1000, 1024 or null to autodetermine
+		 * @return int Number of bytes
+		 */
+		parseBytes : function(s_size, i_base) {
+			s_size = $.trim(s_size);
+			
+			if(!isNaN(parseFloat(s_size)) && isFinite(s_size)) {
+				return Math.max(parseFloat(s_size), 0);
+			}
+			
+			// Drop the 'b'
+			s_size = s_size.toLowerCase();
+			if(s_size.substr(-1) == 'b') {
+				s_size = $.trim(s_size.substr(0, s_size.length-1));
+			}
+			
+			if(!isNaN(parseFloat(s_size)) && isFinite(s_size)) {
+				return Math.max(parseFloat(s_size), 0);
+			}
+			
+			// Get size and unit
+			var s_unit = s_size.substr(-1);
+			s_size = $.trim(s_size.substr(0, s_size.length-1));
+			if(s_unit == 'i') {
+				i_base = 1024;
+				s_unit = s_size.substr(-1);
+				s_size = $.trim(s_size.substr(0, s_size.length-1));
+			}
+			var f_size = Math.max(parseFloat(s_size), 0);
+			
+			return Math.round(f_size * Math.pow(i_base||1000, 'bkmgtpezy'.indexOf(s_unit)));
+		},
+		
+		/**
+		 * Format the given number of bytes into human-readable format
+		 * This function has an equivalent in php
+		 * @param int i_bytes The number of bytes to format
+		 * @param ?int i_base The base, either 1000, 1024 or null for 1024
+		 * @return string The human-readable representation
+		 */
+		bytes_format : function(i_bytes, i_base) {
+			i_base = parseInt(i_base || 1024);
+			if(i_base !== 1000 && i_base !== 1024) {
+				throw "Invalid byte base "+i_base;
+			}
+			
+			if(i_bytes < i_base) {
+				return i_bytes + ' B';
+			}
+			
+			// In base 1000, the kilo is lower case
+			var s_symbols = ((i_base == 1000) ? '-k' : '-K') + 'MGTPEZY';
+			
+			var i_exp = parseInt(Math.floor(Math.log(i_bytes) / Math.log(i_base)));
+			
+			var s_bytes = Math.round(i_bytes / Math.pow(i_base, i_exp) * 10) / 10 + ' ';
+			s_bytes += s_symbols[i_exp] + ((i_base == 1024) ? 'i' : '');
+			s_bytes += 'B';
+			
+			return s_bytes;
 		}
 	};
 
@@ -78,6 +147,10 @@ if(typeof Reef === 'undefined') {
 			this.options.submit_error = this.options.submit_error || $.noop;
 			this.options.submit_after = this.options.submit_after || $.noop;
 			
+			// Set config
+			var config = this.$wrapper.find('.'+CSSPRFX+'main-config').data('config');
+			this.config = (typeof config !== 'undefined') ? JSON.parse(atob(config)) : {};
+			
 			// Initialize all fields
 			this.$wrapper.find('.'+CSSPRFX+'field').each(function() {
 				var name = $(this).data(CSSPRFX+'name');
@@ -91,10 +164,6 @@ if(typeof Reef === 'undefined') {
 					self.listenVisible($(this));
 				}
 			});
-			
-			// Set config
-			var config = this.$wrapper.find('.'+CSSPRFX+'main-config').data('config');
-			this.config = (typeof config !== 'undefined') ? JSON.parse(atob(config)) : {};
 			
 			// Attach to submit, if required
 			if(this.options.submit_form) {

@@ -114,13 +114,15 @@ function matcherToRegExp(string $s_matcher) : string {
 /**
  * Parse a filesize into bytes. Possible input:
  *  - numeric input, will be interpreted as bytes
- *  - e.g. number KiB, will be interpreted as base-1024 bytes
- *  - e.g. number MB, will be interpreted as base-$i_base bytes
+ *  - e.g. number KiB or number Ki, will be interpreted as base-1024 bytes
+ *  - e.g. number MB or number M, will be interpreted as base-$i_base bytes
  * @param string $s_size The input size
  * @param ?int $i_base The base, either 1000, 1024 or null to autodetermine
  * @return int Number of bytes
  */
 function parseBytes(string $s_size, ?int $i_base) : int {
+	$s_size = trim($s_size);
+	
 	if(is_numeric($s_size)) {
 		return max((int)$s_size, 0);
 	}
@@ -128,22 +130,24 @@ function parseBytes(string $s_size, ?int $i_base) : int {
 	// Drop the 'b'
 	$s_size = strtolower($s_size);
 	if(substr($s_size, -1) == 'b') {
-		$s_size = substr($s_size, 0, -1);
+		$s_size = trim(substr($s_size, 0, -1));
 	}
 	
 	if(is_numeric($s_size)) {
-		return (int)$s_size;
+		return max((int)$s_size, 0);
 	}
 	
 	// Get size and unit
 	$s_unit = substr($s_size, -1);
+	$s_size = trim(substr($s_size, 0, -1));
 	if($s_unit == 'i') {
 		$i_base = 1024;
 		$s_unit = substr($s_size, -1);
+		$s_size = trim(substr($s_size, 0, -1));
 	}
-	$i_size = (int)substr($s_size, 0, -1);
+	$f_size = max((float)$s_size, 0);
 	
-	return $i_size * pow($i_base??1000, strpos('bkmgtpezy', $s_unit));
+	return round($f_size * pow($i_base??1000, strpos('bkmgtpezy', $s_unit)));
 }
 
 /**
@@ -155,7 +159,7 @@ function parseBytes(string $s_size, ?int $i_base) : int {
 function bytes_format(int $i_bytes, ?int $i_base) : string {
 	$i_base = $i_base ?? 1024;
 	if($i_base !== 1000 && $i_base !== 1024) {
-		$i_base = 1024;
+		throw new \Reef\Exception\InvalidArgumentException("Invalid byte base ".$i_base);
 	}
 	
 	if($i_bytes < $i_base) {

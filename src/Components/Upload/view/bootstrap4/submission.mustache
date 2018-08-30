@@ -4,7 +4,17 @@
 	</label>
 	<div class="{{layout.col_right}}">
 		{{#field.files_data}}
-		<a href="{{#internalRequest}}{{request_hash}}{{/internalRequest}}">{{name}}</a>{{size}}
+		<div class="{{CSSPRFX}}upload-file">
+			<div class="{{CSSPRFX}}upload-file-name">
+				<a href="{{#internalRequest}}{{request_hash}}{{/internalRequest}}" title="{{name}}">{{name}}</a>
+			</div>
+			<div class="{{CSSPRFX}}upload-file-size">
+				{{size}}
+			</div>
+		</div>
+		{{/field.files_data}}
+		{{^field.files_data}}
+			<span class="font-italic text-muted">{{field.locale.rf_submission_empty_value}}</span>
 		{{/field.files_data}}
 	</div>
 </div>
