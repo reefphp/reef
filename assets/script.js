@@ -319,21 +319,29 @@ if(typeof Reef === 'undefined') {
 			return this.builder;
 		};
 		
-		Reef.prototype.onConditionChange = function(condition, callback) {
+		Reef.prototype.onConditionChange = function(condition, callback, options) {
 			var self = this;
+			
+			options = options || {};
 			
 			var fieldNames = ReefConditionEvaluator.fetchFieldNames(this, condition);
 			
 			for(var i in fieldNames) {
 				var fieldName = fieldNames[i];
 				this.fields[fieldName].$field.on('change '+EVTPRFX+'change', function() {
-					callback(ReefConditionEvaluator.evaluate(self, condition));
+					var result = ReefConditionEvaluator.evaluate(self, condition);
+					if(typeof options.veto === 'function') {
+						result = options.veto(result);
+					}
+					callback(result);
 				});
 			}
 		};
 		
-		Reef.prototype.listenRequired = function(field, $input) {
+		Reef.prototype.listenRequired = function(field, $input, options) {
 			var conditions = [];
+			
+			options = options || {};
 			
 			if($input.attr('data-required-if') && $input.attr('data-required-if').length > 0) {
 				conditions.push(' ('+$input.attr('data-required-if')+') ');
@@ -356,7 +364,7 @@ if(typeof Reef === 'undefined') {
 					$input.prop('required', should_be_required);
 					field.validate();
 				}
-			});
+			}, options);
 		}
 		
 		Reef.prototype.listenVisible = function($field, field) {

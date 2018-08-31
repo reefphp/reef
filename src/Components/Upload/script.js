@@ -56,7 +56,15 @@ Reef.addComponent((function() {
 			}
 		}
 		
-		this.Reef.listenRequired(this, this.$upload);
+		this.Reef.listenRequired(this, this.$upload, {
+			veto : function(result) {
+				if(self.getValue().length > 0) {
+					return false;
+				}
+				
+				return result;
+			}
+		});
 		
 		this.$field.on('change '+EVTPRFX+'change', function() {
 			self.determineState();
