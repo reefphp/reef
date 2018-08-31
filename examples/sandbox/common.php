@@ -11,6 +11,7 @@ $Setup = new \Reef\ReefSetup(
 	new Reef\Storage\NoStorageFactory(),
 	new Reef\Layout\bootstrap4\bootstrap4()
 );
+$Setup->addComponent(new \Reef\Components\Upload\UploadComponent);
 
 $a_locales = ['en_US', 'nl_NL'];
 if(isset($_GET['locale']) && ($i_pos = array_search($_GET['locale'], $a_locales)) !== false) {

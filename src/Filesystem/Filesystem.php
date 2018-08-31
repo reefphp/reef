@@ -40,10 +40,6 @@ class Filesystem {
 	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
 		$this->s_dir = $this->Reef->getOption('files_dir');
-		
-		if(!is_dir($this->s_dir) || !is_writable($this->s_dir)) {
-			throw new \Reef\Exception\InvalidArgumentException("Invalid files dir '".$this->s_dir."'");
-		}
 	}
 	
 	public function getAllowedExtensions() {
@@ -51,6 +47,10 @@ class Filesystem {
 	}
 	
 	protected function getDir(string $s_dir) : string {
+		if($this->s_dir === null) {
+			throw new \Reef\Exception\InvalidArgumentException("No files dir set");
+		}
+		
 		$s_dir = trim($s_dir, '/');
 		$a_dir = explode('/', $s_dir);
 		for($i=1; $i>=0; $i--) {
@@ -86,12 +86,15 @@ class Filesystem {
 				continue;
 			}
 			
-			if($a_mutation[0] == 'move') {
-				continue;
-			}
+			if($a_mutation[0] == 'move' || $a_mutation[0] == 'delete') {
+				$this->clearEmptyDirs($a_mutation[1][1]);
 			
-			if($a_mutation[0] == 'delete') {
-				unlink($a_mutation[1]->getPath());
+				if($a_mutation[0] == 'delete') {
+					unlink($a_mutation[1][0]->getPath());
+					$this->clearEmptyDirs($a_mutation[1][0]->getPath());
+				}
+				
+				continue;
 			}
 		}
 		
@@ -103,18 +106,24 @@ class Filesystem {
 		foreach($this->a_mutations as $a_mutation) {
 			if($a_mutation[0] == 'add') {
 				unlink($a_mutation[1]->getPath());
+				$this->clearEmptyDirs($a_mutation[1]->getPath());
+				$a_mutation[1]->_setDelete(true);
+				continue;
 			}
 			
-			if($a_mutation[0] == 'move') {
+			if($a_mutation[0] == 'move' || $a_mutation[0] == 'delete') {
 				$File = $a_mutation[1][0];
 				$s_pathFrom = $a_mutation[1][1];
+				$s_pathTo = $File->getPath();
 				
-				rename($File->getPath(), $s_pathFrom);
+				rename($s_pathTo, $s_pathFrom);
 				$File->_setPath($s_pathFrom);
-			}
-			
-			if($a_mutation[0] == 'delete') {
-				$a_mutation[1]->_setDelete(false);
+				$this->clearEmptyDirs($s_pathTo);
+				
+				if($a_mutation[0] == 'delete') {
+					$File->_setDelete(false);
+				}
+				
 				continue;
 			}
 		}
@@ -129,6 +138,47 @@ class Filesystem {
 		if(!$this->b_inTransaction) {
 			$this->commitTransaction();
 		}
+	}
+	
+	private function clearEmptyDirs($s_path) {
+		if(substr($s_path, 0, strlen($this->s_dir)) != $this->s_dir) {
+			throw new FilesystemException('Invalid directory');
+		}
+		
+		$s_path = substr($s_path, strlen($this->s_dir));
+		
+		if(!is_dir($s_path)) {
+			$s_path = substr($s_path, 0, strrpos($s_path, '/'));
+		}
+		
+		while(!empty($s_path)) {
+			if($this->numFilesInDir($this->s_dir . $s_path) > 0) {
+				break;
+			}
+			rmdir($this->s_dir . $s_path);
+			
+			$s_path = substr($s_path, 0, strrpos($s_path, '/'));
+		}
+	}
+	
+	/**
+	 * Returns the number of files in the given directory
+	 * 
+	 * @param string $s_dir The directory name
+	 * @return int The number of files
+	 */
+	private function numFilesInDir(string $s_dir) : int {
+		return is_dir($s_dir) ? iterator_count(new \FilesystemIterator($s_dir)) : 0;
+	}
+	
+	/**
+	 * Returns the number of files the given context has
+	 * 
+	 * @param mixed $context The context
+	 * @return int The number of files
+	 */
+	public function numFilesInContext($context) : int {
+		return $this->numFilesInDir($this->getContextDir($context));
 	}
 	
 	/**
@@ -170,7 +220,7 @@ class Filesystem {
 		
 		$i_extOffset = strlen($s_filename);
 		do {
-			$i_extOffset = strrpos($s_filename, '.', -(strlen($s_filename) - $i_extOffset));
+			$i_extOffset = strrpos(substr($s_filename, 0, $i_extOffset), '.');
 			if($i_extOffset === false) {
 				throw new FilesystemException($this->Reef->trans('upload_error_type'));
 			}
@@ -181,7 +231,7 @@ class Filesystem {
 		return $s_extension;
 	}
 	
-	public function getMaxUploadSize() {
+	public function getMaxUploadSize() : int {
 		return min(array_filter([
 			\Reef\parseBytes($this->Reef->getOption('max_upload_size') ?? 0, $this->Reef->getOption('byte_base')),
 			\Reef\parseBytes(ini_get('upload_max_filesize'), 1024),
@@ -190,24 +240,26 @@ class Filesystem {
 		]));
 	}
 	
-	public function uploadFiles($s_name) {
+	public function uploadFiles($s_key) {
 		
-		if(!array_key_exists($s_name, $_FILES)) {
+		if(!array_key_exists($s_key, $_FILES)) {
 			throw new FilesystemException('No file found');
 		}
 		
 		$a_files = [];
-		if(is_array($_FILES[$s_name]['name'])) {
-			foreach($_FILES[$s_name]['name'] as $i => $s_name) {
+		if(is_array($_FILES[$s_key]['name'])) {
+			foreach($_FILES[$s_key]['name'] as $i => $s_name) {
 				if(!is_string($s_name)) {
 					throw new FilesystemException('Reef does not support multiple dimensional uploads');
 				}
 				
-				$a_files[] = $this->_uploadFile(array_column($_FILES[$s_name], $i));
+				$a_file = array_combine(array_keys($_FILES[$s_key]), array_column($_FILES[$s_key], $i));
+				
+				$a_files[] = $this->_uploadFile($a_file);
 			}
 		}
 		else {
-			$a_files[] = $this->_uploadFile($_FILES[$s_name]);
+			$a_files[] = $this->_uploadFile($_FILES[$s_key]);
 		}
 		
 		return $a_files;
@@ -216,6 +268,10 @@ class Filesystem {
 	protected function getContextDir($context) {
 		if($context == 'upload') {
 			return $this->getDir('_upload');
+		}
+		
+		if($context == 'trash') {
+			return $this->getDir('_trash');
 		}
 		
 		if($context instanceof \Reef\Components\Component) {
@@ -329,6 +385,7 @@ class Filesystem {
 		$File = new File($this, $s_destPath);
 		
 		$this->logMutation('add', $File);
+		$this->a_files[$File->getUUID()] = $File;
 		
 		return $File;
 	}
@@ -344,12 +401,17 @@ class Filesystem {
 		}
 		$File->_setPath($s_pathTo);
 		
-		$this->logMutation('move', [$File, $s_pathFrom]);
+		if($context != 'trash') {
+			$this->logMutation('move', [$File, $s_pathFrom]);
+		}
+		else {
+			$this->logMutation('delete', [$File, $s_pathFrom]);
+			$File->_setDelete(true);
+		}
 	}
 	
 	public function deleteFile(File $File) {
-		$this->logMutation('delete', $File);
-		$File->_setDelete(true);
+		$this->changeFileContext($File, 'trash');
 	}
 	
 }

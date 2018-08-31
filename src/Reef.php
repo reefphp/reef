@@ -102,6 +102,12 @@ class Reef {
 			$this->a_options['byte_base'] = 1024;
 		}
 		
+		if($this->a_options['files_dir'] !== null) {
+			if(!is_dir($this->a_options['files_dir']) || !is_writable($this->a_options['files_dir'])) {
+				throw new \Reef\Exception\InvalidArgumentException("Cannot write to files dir '".$this->a_options['files_dir']."'");
+			}
+		}
+		
 		$this->ReefSetup = $ReefSetup;
 		$this->DataStore = new DataStore($this);
 		$this->ReefSetup->checkSetup($this);

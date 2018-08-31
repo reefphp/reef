@@ -37,7 +37,6 @@ class ReefSetup {
 		$this->addComponent(new \Reef\Components\Select\SelectComponent);
 		$this->addComponent(new \Reef\Components\Condition\ConditionComponent);
 		$this->addComponent(new \Reef\Components\Submit\SubmitComponent);
-		$this->addComponent(new \Reef\Components\Upload\UploadComponent);
 	}
 	
 	public function getStorageFactory() : StorageFactory {
@@ -53,6 +52,7 @@ class ReefSetup {
 		
 		foreach($this->a_componentMapping as $Component) {
 			$Component->setReef($this->Reef);
+			$Component->checkSetup();
 		}
 		
 		$s_layout = $this->Layout::getName();

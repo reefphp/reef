@@ -22,6 +22,15 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 	/**
 	 * @inherit
 	 */
+	public function checkSetup() {
+		if($this->Reef->getOption('files_dir') === null) {
+			throw new \Reef\Exception\InvalidArgumentException("No files dir set");
+		}
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public static function getDir() : string {
 		return __DIR__.'/';
 	}

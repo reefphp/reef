@@ -11,6 +11,7 @@ $Setup = new \Reef\ReefSetup(
 	\Reef\Storage\PDOStorageFactory::createFactory($PDO),
 	new Reef\Layout\bootstrap4\bootstrap4()
 );
+$Setup->addComponent(new \Reef\Components\Upload\UploadComponent);
 
 $Reef = new Reef\Reef(
 	$Setup,

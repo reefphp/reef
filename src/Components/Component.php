@@ -37,6 +37,12 @@ abstract class Component implements HidableComponentInterface {
 	}
 	
 	/**
+	 * Check the setup, may throw an exception if something is not valid
+	 */
+	public function checkSetup() {
+	}
+	
+	/**
 	 * Get the parent component
 	 * @return Component The parent component
 	 */
