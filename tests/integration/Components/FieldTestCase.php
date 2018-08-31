@@ -61,6 +61,12 @@ abstract class FieldTestCase extends TestCase {
 	
 	abstract protected function createComponent();
 	
+	public function getReefOptions() {
+		return [
+			'cache_dir' => static::CACHE_DIR,
+		];
+	}
+	
 	public function testCanBeCreated() {
 		$Component = $this->createComponent();
 		static::$Setup->addComponent($Component);
@@ -72,9 +78,7 @@ abstract class FieldTestCase extends TestCase {
 		
 		static::$Reef = new \Reef\Reef(
 			static::$Setup,
-			[
-				'cache_dir' => static::CACHE_DIR,
-			]
+			$this->getReefOptions()
 		);
 	}
 	

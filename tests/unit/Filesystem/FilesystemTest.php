@@ -1,12 +1,8 @@
 <?php
 
-namespace Reef\Filesystem {
-	function move_uploaded_file($s_tmpName, $s_dest) {
-		return copy($s_tmpName, $s_dest);
-	}
-}
+namespace tests\Filesystem;
 
-namespace tests\Form {
+require_once(__DIR__ . '/../../filesystem_move_uploaded_file.php');
 
 use PHPUnit\Framework\TestCase;
 use \Reef\Exception\FilesystemException;
@@ -357,5 +353,3 @@ final class FilesystemTest extends TestCase {
 	}
 	
 }
-
-} // namespace

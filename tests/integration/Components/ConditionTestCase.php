@@ -52,6 +52,12 @@ abstract class ConditionTestCase extends TestCase {
 	
 	abstract protected function createComponent();
 	
+	public function getReefOptions() {
+		return [
+			'cache_dir' => static::CACHE_DIR,
+		];
+	}
+	
 	public function testCanBeCreated() {
 		$Component = $this->createComponent();
 		static::$Setup->addComponent($Component);
@@ -63,9 +69,7 @@ abstract class ConditionTestCase extends TestCase {
 		
 		static::$Reef = new \Reef\Reef(
 			static::$Setup,
-			[
-				'cache_dir' => static::CACHE_DIR,
-			]
+			$this->getReefOptions()
 		);
 	}
 	
@@ -105,12 +109,20 @@ abstract class ConditionTestCase extends TestCase {
 			$this->assertTrue($Form->getConditionEvaluator()->validate($a_validCondition['condition'], $a_errors), "Errors found for valid condition ".$i.": ".implode(', ', $a_errors));
 			
 			foreach($a_validCondition['true_for']??[] as $j => $m_trueValue) {
+				if(is_callable($m_trueValue)) {
+					$m_trueValue = $m_trueValue();
+				}
+				
 				$Submission = $Form->newSubmission();
 				$Submission->fromStructured([$s_fieldName => $m_trueValue]);
 				$this->assertTrue($Submission->evaluateCondition($a_validCondition['condition']), 'Failed that condition '.$i.' is true for value '.$j);
 			}
 			
 			foreach($a_validCondition['false_for']??[] as $j => $m_falseValue) {
+				if(is_callable($m_falseValue)) {
+					$m_falseValue = $m_falseValue();
+				}
+				
 				$Submission = $Form->newSubmission();
 				$Submission->fromStructured([$s_fieldName => $m_falseValue]);
 				$this->assertFalse($Submission->evaluateCondition($a_validCondition['condition']), 'Failed that condition '.$i.' is false for value '.$j);

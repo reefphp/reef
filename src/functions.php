@@ -180,3 +180,13 @@ function bytes_format(int $i_bytes, ?int $i_base) : string {
 	
 	return $s_bytes;
 }
+
+/**
+ * Stop execution of the script. Used whenever we want to return
+ * formatted output to a browser, such as HTML, JSON or a file.
+ */
+function stop() {
+	if(!defined('REEF_IN_PHPUNIT') || !REEF_IN_PHPUNIT) {
+		exit;
+	}
+}

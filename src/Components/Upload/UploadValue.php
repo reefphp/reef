@@ -3,6 +3,7 @@
 namespace Reef\Components\Upload;
 
 use Reef\Components\FieldValue;
+use \Reef\Exception\FilesystemException;
 use \Reef\Components\Traits\Required\RequiredFieldValueInterface;
 use \Reef\Components\Traits\Required\RequiredFieldValueTrait;
 
@@ -26,7 +27,7 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 			try {
 				$a_files[] = $Filesystem->getFile($s_uuid, $this);
 			}
-			catch(\Reef\Exception\FilesystemException $e) {
+			catch(FilesystemException $e) {
 				$a_files[] = $Filesystem->getFile($s_uuid, 'upload');
 			}
 		}
@@ -57,6 +58,11 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 			}
 		}
 		
+		if(!empty($this->a_uuidsMissing)) {
+			$this->a_errors[] = 'Files not found: '.implode(', ', $this->a_uuidsMissing);
+			return false;
+		}
+		
 		return true;
 	}
 	
@@ -83,7 +89,7 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 		
 		$a_oldUUIDS = array_flip($this->a_uuids??[]);
 		
-		$this->a_uuidsDel = $this->a_uuids = [];
+		$this->a_uuidsDel = $this->a_uuids = $this->a_uuidsMissing = [];
 		
 		foreach($a_uuids??[] as $s_uuid) {
 			if(empty($s_uuid)) {
@@ -99,7 +105,13 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 			if(isset($a_oldUUIDS[$s_uuid])) {
 				// Already was present
 				unset($a_oldUUIDS[$s_uuid]);
-				$File = $Filesystem->getFile($s_uuid, $this);
+				try {
+					$File = $Filesystem->getFile($s_uuid, $this);
+				}
+				catch(FilesystemException $e) {
+					$this->a_uuidsMissing[] = $s_uuid;
+					continue;
+				}
 				
 				if($b_delete) {
 					$Filesystem->deleteFile($File);
@@ -107,7 +119,13 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 			}
 			else {
 				// Was not already present, so it has been newly uploaded
-				$File = $Filesystem->getFile($s_uuid, 'upload');
+				try {
+					$File = $Filesystem->getFile($s_uuid, 'upload');
+				}
+				catch(FilesystemException $e) {
+					$this->a_uuidsMissing[] = $s_uuid;
+					continue;
+				}
 				
 				//TODO: Check that $File belongs to current user's session
 				

@@ -13,4 +13,7 @@
             <directory suffix=".php">../src</directory>
         </whitelist>
     </filter>
+    <php>
+        <const name="REEF_IN_PHPUNIT" value="true"/>
+    </php>
 </phpunit>

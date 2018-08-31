@@ -1,0 +1,5 @@
+component: reef:upload
+name: 'name'
+max_files: 0
+locale:
+    title: 'The title'

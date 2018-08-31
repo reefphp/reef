@@ -1,0 +1,8 @@
+component: reef:upload
+name: 'multiple'
+max_files: 6
+required: false
+types:
+    txt: true
+locale:
+    title: 'The title'

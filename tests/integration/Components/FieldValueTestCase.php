@@ -52,6 +52,12 @@ abstract class FieldValueTestCase extends TestCase {
 	
 	abstract protected function createComponent();
 	
+	public function getReefOptions() {
+		return [
+			'cache_dir' => static::CACHE_DIR,
+		];
+	}
+	
 	public function testCanBeCreated() {
 		$Component = $this->createComponent();
 		static::$Setup->addComponent($Component);
@@ -63,9 +69,7 @@ abstract class FieldValueTestCase extends TestCase {
 		
 		static::$Reef = new \Reef\Reef(
 			static::$Setup,
-			[
-				'cache_dir' => static::CACHE_DIR,
-			]
+			$this->getReefOptions()
 		);
 	}
 	
@@ -92,6 +96,10 @@ abstract class FieldValueTestCase extends TestCase {
 		$Field = static::$Component->newField($a_declaration, $Form);
 		
 		foreach($a_invalidValues as $i => $m_invalidValue) {
+			if(is_callable($m_invalidValue)) {
+				$m_invalidValue = $m_invalidValue();
+			}
+			
 			$Value = $Field->newValue($Form->newSubmission());
 			$Value->fromUserInput($m_invalidValue);
 			$this->assertFalse($Value->validate(), "No errors found for invalid value ".$i);
@@ -110,6 +118,10 @@ abstract class FieldValueTestCase extends TestCase {
 		$Field = static::$Component->newField($a_declaration, $Form);
 		
 		foreach($a_validValues as $i => $m_validValue) {
+			if(is_callable($m_validValue)) {
+				$m_validValue = $m_validValue();
+			}
+			
 			$Value = $Field->newValue($Submission);
 			$Value->fromUserInput($m_validValue);
 			$this->assertTrue($Value->validate(), "Errors found for valid value ".$i.": ".implode('; ', $Value->getErrors()??[]));

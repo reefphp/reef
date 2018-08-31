@@ -41,6 +41,13 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 	public function validateDeclaration(array $a_declaration, array &$a_errors = null) : bool {
 		$b_valid = true;
 		
+		if(isset($a_declaration['max_files'])) {
+			if($a_declaration['max_files'] <= 0 || $a_declaration['max_files'] > min(ini_get('max_file_uploads'), UploadField::MAX_FILES)) {
+				$a_errors['max_files'] = 'Invalid number of max files';
+				$b_valid = false;
+			}
+		}
+		
 		return $b_valid;
 	}
 	
@@ -139,7 +146,7 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 		}
 		
 		echo(json_encode($a_return));
-		die();
+		\Reef\stop();
 	}
 	
 }
