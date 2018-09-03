@@ -7,6 +7,7 @@ use \Reef\Components\Component;
 use \Reef\Storage\StorageFactory;
 use \Reef\Storage\NoStorageFactory;
 use \Reef\Layout\Layout;
+use \Reef\Session\SessionInterface;
 use \Reef\Exception\LogicException;
 use \Reef\Exception\DomainException;
 use \Reef\Exception\BadMethodCallException;
@@ -15,14 +16,16 @@ class ReefSetup {
 	
 	private $StorageFactory;
 	private $Layout;
+	private $SessionObject;
 	
 	private $a_componentMapping = [];
 	
 	private $Reef;
 	
-	public function __construct(StorageFactory $StorageFactory, Layout $Layout) {
+	public function __construct(StorageFactory $StorageFactory, Layout $Layout, SessionInterface $SessionObject) {
 		$this->StorageFactory = $StorageFactory;
 		$this->Layout = $Layout;
+		$this->SessionObject = $SessionObject;
 		
 		$this->addComponent(new \Reef\Components\TextLine\TextLineComponent);
 		$this->addComponent(new \Reef\Components\Textarea\TextareaComponent);
@@ -45,6 +48,10 @@ class ReefSetup {
 	
 	public function getLayout() : Layout {
 		return $this->Layout;
+	}
+	
+	public function getSessionObject() : SessionInterface {
+		return $this->SessionObject;
 	}
 	
 	public function checkSetup(\Reef\Reef $Reef) {

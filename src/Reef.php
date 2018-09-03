@@ -12,6 +12,7 @@ use \Reef\Form\TempStoredFormFactory;
 use \Reef\Form\TempStoredForm;
 use \Reef\Form\TempFormFactory;
 use \Reef\Form\TempForm;
+use \Reef\Session\ContextSession;
 use \Reef\Exception\BadMethodCallException;
 use \Reef\Exception\ValidationException;
 use Symfony\Component\Cache\Simple\FilesystemCache;
@@ -74,6 +75,12 @@ class Reef {
 	private $ReefAssets;
 	
 	/**
+	 * Reef context session object
+	 * @type ContextSession
+	 */
+	private $Session;
+	
+	/**
 	 * Constructor
 	 */
 	public function __construct(ReefSetup $ReefSetup, $a_options = []) {
@@ -92,6 +99,7 @@ class Reef {
 		$this->a_options['css_prefix'] = $a_options['css_prefix'] ?? 'rf-';
 		$this->a_options['js_event_prefix'] = $a_options['js_event_prefix'] ?? 'reef:';
 		$this->a_options['db_prefix'] = $a_options['db_prefix'] ?? 'reef_';
+		$this->a_options['reef_name'] = $a_options['reef_name'] ?? 'reef';
 		$this->a_options['locales'] = $a_options['locales'] ?? ['_no_locale'];
 		$this->a_options['default_locale'] = $a_options['default_locale'] ?? reset($this->a_options['locales']) ?? 'en_US';
 		$this->a_options['internal_request_url'] = $a_options['internal_request_url'] ?? './reef.php?hash=[[request_hash]]';
@@ -111,6 +119,12 @@ class Reef {
 		$this->ReefSetup = $ReefSetup;
 		$this->DataStore = new DataStore($this);
 		$this->ReefSetup->checkSetup($this);
+		
+		$SessionObject = $this->ReefSetup->getSessionObject();
+		if($SessionObject instanceof \Reef\Session\PhpSession) {
+			$SessionObject->setReef($this);
+		}
+		$this->Session = new ContextSession($SessionObject);
 	}
 	
 	public static function getDir() : string {
@@ -136,6 +150,10 @@ class Reef {
 		$Cache->set($s_cacheKey, $m_val);
 		
 		return $m_val;
+	}
+	
+	public function getSession() {
+		return $this->Session;
 	}
 	
 	public function getOption($s_name) {

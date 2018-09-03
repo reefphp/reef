@@ -27,7 +27,8 @@ final class FilesystemTest extends TestCase {
 		// Specify which components we want to use
 		$Setup = new \Reef\ReefSetup(
 			\Reef\Storage\PDOStorageFactory::createFactory($PDO),
-			new \Reef\Layout\bootstrap4\bootstrap4()
+			new \Reef\Layout\bootstrap4\bootstrap4(),
+			new \Reef\Session\TmpSession()
 		);
 		
 		static::$Reef = new \Reef\Reef(

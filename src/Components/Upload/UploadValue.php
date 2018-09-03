@@ -86,6 +86,8 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	 */
 	public function fromUserInput($a_uuids) {
 		$Filesystem = $this->getField()->getForm()->getReef()->getDataStore()->getFilesystem();
+		$Session = $this->getField()->getForm()->getReef()->getSession();
+		$a_uploadedFiles = $Session->get($this->getField()->getComponent(), 'uploaded_files', []);
 		
 		$a_oldUUIDS = array_flip($this->a_uuids??[]);
 		
@@ -127,7 +129,10 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 					continue;
 				}
 				
-				//TODO: Check that $File belongs to current user's session
+				if(!in_array($s_uuid, $a_uploadedFiles)) {
+					$this->a_uuidsMissing[] = $s_uuid;
+					continue;
+				}
 				
 				if($b_delete) {
 					$Filesystem->deleteFile($File);

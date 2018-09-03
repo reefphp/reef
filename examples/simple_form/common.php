@@ -2,6 +2,8 @@
 
 ini_set('display_errors', 'on'); error_reporting(E_ALL);
 
+session_start();
+
 require('../../vendor/autoload.php');
 
 $PDO = new \PDO("sqlite:storage/reef.db");
@@ -9,7 +11,8 @@ $PDO = new \PDO("sqlite:storage/reef.db");
 // Specify which components we want to use
 $Setup = new \Reef\ReefSetup(
 	\Reef\Storage\PDOStorageFactory::createFactory($PDO),
-	new Reef\Layout\bootstrap4\bootstrap4()
+	new Reef\Layout\bootstrap4\bootstrap4(),
+	new \Reef\Session\PhpSession()
 );
 
 $Reef = new Reef\Reef(

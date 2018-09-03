@@ -26,6 +26,10 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 		if($this->Reef->getOption('files_dir') === null) {
 			throw new \Reef\Exception\InvalidArgumentException("No files dir set");
 		}
+		
+		if($this->Reef->getSetup()->getSessionObject() instanceof \Reef\Session\NoSession) {
+			throw new \Reef\Exception\InvalidArgumentException("Upload component requires session");
+		}
 	}
 	
 	/**
@@ -136,6 +140,12 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 			foreach($a_files as $File) {
 				$a_fileUUIDs[] = $File->getUUID();
 			}
+			
+			$Session = $this->getReef()->getSession();
+			$Session->set($this, 'uploaded_files', array_merge(
+				$Session->get($this, 'uploaded_files', []),
+				$a_fileUUIDs
+			));
 			
 			$a_return['success'] = true;
 			$a_return['files'] = $a_fileUUIDs;

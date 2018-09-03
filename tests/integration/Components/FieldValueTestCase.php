@@ -24,7 +24,8 @@ abstract class FieldValueTestCase extends TestCase {
 		// Specify which components we want to use
 		static::$Setup = new \Reef\ReefSetup(
 			\Reef\Storage\PDOStorageFactory::createFactory($_reef_PDO),
-			new \Reef\Layout\bootstrap4\bootstrap4()
+			new \Reef\Layout\bootstrap4\bootstrap4(),
+			new \Reef\Session\TmpSession()
 		);
 	}
 	
