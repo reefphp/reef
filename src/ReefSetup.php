@@ -12,20 +12,34 @@ use \Reef\Exception\LogicException;
 use \Reef\Exception\DomainException;
 use \Reef\Exception\BadMethodCallException;
 
+require_once(__DIR__ . '/functions.php');
+
 class ReefSetup {
 	
 	private $StorageFactory;
-	private $Layout;
+	private $a_layouts;
 	private $SessionObject;
 	
 	private $a_componentMapping = [];
+	private $s_currentLayout;
 	
 	private $Reef;
 	
-	public function __construct(StorageFactory $StorageFactory, Layout $Layout, SessionInterface $SessionObject) {
+	public function __construct(StorageFactory $StorageFactory, $a_layouts, SessionInterface $SessionObject) {
 		$this->StorageFactory = $StorageFactory;
-		$this->Layout = $Layout;
 		$this->SessionObject = $SessionObject;
+		
+		if(!is_array($a_layouts)) {
+			$a_layouts = [$a_layouts];
+		}
+		$this->a_layouts = [];
+		foreach($a_layouts as $Layout) {
+			if(!($Layout instanceof Layout)) {
+				throw new LogicException("Caught invalid layout object");
+			}
+			$this->a_layouts[$Layout::getName()] = $Layout;
+		}
+		$this->s_currentLayout = \Reef\array_first_key($this->a_layouts);
 		
 		$this->addComponent(new \Reef\Components\TextLine\TextLineComponent);
 		$this->addComponent(new \Reef\Components\Textarea\TextareaComponent);
@@ -47,7 +61,20 @@ class ReefSetup {
 	}
 	
 	public function getLayout() : Layout {
-		return $this->Layout;
+		return $this->a_layouts[$this->s_currentLayout];
+	}
+	
+	public function setLayout(?string $s_layoutName) {
+		if($s_layoutName == null) {
+			$this->s_currentLayout = \Reef\array_first_key($this->a_layouts);
+			return;
+		}
+		
+		if(!isset($this->a_layouts[$s_layoutName])) {
+			throw new DomainException("Unknown layout ".$s_layoutName);
+		}
+		
+		$this->s_currentLayout = $s_layoutName;
 	}
 	
 	public function getSessionObject() : SessionInterface {
@@ -62,7 +89,6 @@ class ReefSetup {
 			$Component->checkSetup();
 		}
 		
-		$s_layout = $this->Layout::getName();
 		$s_storage = $this->StorageFactory::getName();
 		
 		foreach($this->a_componentMapping as $Component) {
@@ -72,8 +98,10 @@ class ReefSetup {
 				}
 			}
 			
-			if(!in_array($s_layout, $Component->supportedLayouts())) {
-				throw new LogicException("Component ".$Component::COMPONENT_NAME." does not support layout ".$s_layout.".");
+			foreach($this->a_layouts as $s_layout => $Layout) {
+				if(!in_array($s_layout, $Component->supportedLayouts())) {
+					throw new LogicException("Component ".$Component::COMPONENT_NAME." does not support layout ".$s_layout.".");
+				}
 			}
 			
 			$a_supportedStorages = $Component->supportedStorages();

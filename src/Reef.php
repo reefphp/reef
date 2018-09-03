@@ -18,7 +18,7 @@ use \Reef\Exception\ValidationException;
 use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Yaml\Yaml;
 
-require(__DIR__ . '/functions.php');
+require_once(__DIR__ . '/functions.php');
 
 class Reef {
 	
@@ -178,6 +178,10 @@ class Reef {
 	
 	public function getBuilder() : Builder {
 		return new Builder($this);
+	}
+	
+	public function setLayout(?string $s_layoutName) {
+		$this->ReefSetup->setLayout($s_layoutName);
 	}
 	
 	public function getStoredFormFactory() : StoredFormFactory {
