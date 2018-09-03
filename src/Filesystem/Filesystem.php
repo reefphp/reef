@@ -39,7 +39,7 @@ class Filesystem {
 	
 	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
-		$this->s_dir = $this->Reef->getOption('files_dir');
+		$this->s_dir = rtrim($this->Reef->getOption('files_dir'), '/') . '/';
 	}
 	
 	public function getAllowedExtensions() {
@@ -146,8 +146,9 @@ class Filesystem {
 		}
 		
 		$s_path = substr($s_path, strlen($this->s_dir));
+		$s_path = trim($s_path, '/');
 		
-		if(!is_dir($s_path)) {
+		if(!is_dir($this->s_dir . $s_path)) {
 			$s_path = substr($s_path, 0, strrpos($s_path, '/'));
 		}
 		
