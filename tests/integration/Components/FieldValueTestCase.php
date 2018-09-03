@@ -140,6 +140,7 @@ abstract class FieldValueTestCase extends TestCase {
 			
 			// Test overview
 			$this->assertEquals(array_keys($Value->toOverviewColumns()), array_keys($Field->getOverviewColumns()), "Overview column keys do not match");
+			$this->assertEmpty(array_filter(array_map(function($m_value) { return !is_null($m_value) && !is_scalar($m_value); }, $Value->toOverviewColumns())), "Found non-scalar overview column value");
 			
 			// Test view_form()
 			$this->assertInternalType('array', $Field->view_form($Value));

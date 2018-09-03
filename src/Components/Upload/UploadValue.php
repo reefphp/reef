@@ -192,7 +192,7 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	 */
 	public function toOverviewColumns() : array {
 		return [
-			$this->a_uuids,
+			count($this->a_uuids) . ' files',
 		];
 	}
 	
