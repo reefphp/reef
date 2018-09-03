@@ -57,7 +57,7 @@ Reef.addComponent((function() {
 		}
 		
 		this.Reef.listenRequired(this, this.$upload, {
-			veto : function(result) {
+			override : function(result) {
 				if(self.getValue().length > 0) {
 					return false;
 				}

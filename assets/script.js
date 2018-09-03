@@ -330,8 +330,8 @@ if(typeof Reef === 'undefined') {
 				var fieldName = fieldNames[i];
 				this.fields[fieldName].$field.on('change '+EVTPRFX+'change', function() {
 					var result = ReefConditionEvaluator.evaluate(self, condition);
-					if(typeof options.veto === 'function') {
-						result = options.veto(result);
+					if(typeof options.override === 'function') {
+						result = options.override(result);
 					}
 					callback(result);
 				});
