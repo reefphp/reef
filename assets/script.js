@@ -259,7 +259,7 @@ if(typeof Reef === 'undefined') {
 			var self = this;
 			
 			return function(text, render) {
-				return self.config.internal_request_url.replace('[[request_hash]]', render(text)+'@'+self.initTime);
+				return self.config.internal_request_url.replace('[[request_hash]]', render(text)+':'+self.initTime);
 			};
 		};
 		

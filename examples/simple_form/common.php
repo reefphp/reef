@@ -12,7 +12,7 @@ $PDO = new \PDO("sqlite:storage/reef.db");
 $Setup = new \Reef\ReefSetup(
 	\Reef\Storage\PDOStorageFactory::createFactory($PDO),
 	new Reef\Layout\bootstrap4\bootstrap4(),
-	new \Reef\Session\PhpSession()
+	new \Reef\Session\NoSession()
 );
 
 $Reef = new Reef\Reef(
