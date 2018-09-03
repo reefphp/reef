@@ -32,16 +32,58 @@ class ConditionEvaluator {
 	
 	const WHITESPACE = " \t\r\n";
 	
+	/**
+	 * The form this ConditionEvaluator is used on
+	 * @type Form
+	 */
 	private $Form;
+	
+	/**
+	 * The value fields of the form, cached for performance, index by field name
+	 * @type Field[]
+	 */
 	private $a_fields;
+	
+	/**
+	 * Token stack, holding any tokens that were read prematurely and should be saved for later processing
+	 * @type string[]
+	 */
 	private $a_tokenStack;
+	
+	/**
+	 * Cached empty submission for $Form
+	 * @type string[]
+	 */
 	private $EmptySubmission;
 	
+	/**
+	 * During evaluation, the submission we are currently working upon
+	 * @type Submission
+	 */
 	private $Submission;
+	
+	/**
+	 * During evaluation, the current condition
+	 * @type string
+	 */
 	private $s_condition;
+	
+	/**
+	 * During evaluation, the current cursor position
+	 * @type int
+	 */
 	private $i_cursor;
+	
+	/**
+	 * During evaluation, the length of the condition
+	 * @type int
+	 */
 	private $i_length;
 	
+	/**
+	 * Constructor
+	 * @param Form $Form The form this evaluator is for
+	 */
 	public function __construct(\Reef\Form\Form $Form) {
 		$this->Form = $Form;
 		$this->a_fields = $this->Form->getValueFieldsByName();

@@ -8,15 +8,38 @@ use Symfony\Component\Yaml\Yaml;
 use \Reef\Components\Traits\Hidable\HidableFieldInterface;
 use \Reef\Components\Traits\Hidable\HidableFieldTrait;
 
+/**
+ * A field is an instance of a component in a form
+ */
 abstract class Field implements HidableFieldInterface {
 	
 	use Trait_FieldLocale;
 	use HidableFieldTrait;
 	
+	/**
+	 * The field declaration
+	 * @type array
+	 */
 	protected $a_declaration;
+	
+	/**
+	 * The component object this field belongs to
+	 * @type Component
+	 */
 	protected $Component;
+	
+	/**
+	 * The form this field belongs to
+	 * @type Form
+	 */
 	protected $Form;
 	
+	/**
+	 * Constructor
+	 * @param array $a_declaration The field declaration
+	 * @param Form $Form The form this field belongs to
+	 * @param Component $Component The component object
+	 */
 	public function __construct(array $a_declaration, Form $Form, Component $Component) {
 		$this->a_declaration = $a_declaration;
 		$this->Form = $Form;
@@ -85,10 +108,18 @@ abstract class Field implements HidableFieldInterface {
 	 */
 	abstract public function getFlatStructure() : array;
 	
+	/**
+	 * Determine whether this field holds a value
+	 * @return bool
+	 */
 	public function hasValue() {
 		return !empty($this->getFlatStructure());
 	}
 	
+	/**
+	 * Retrieve the flat structure of the columns, by column name
+	 * @return array[] Field structure data arrays indexed by column name
+	 */
 	final public function getFlatStructureByColumnName() : array {
 		$s_name = $this->getDeclaration()['name'];
 		
@@ -107,6 +138,10 @@ abstract class Field implements HidableFieldInterface {
 		return $a_columnStructure;
 	}
 	
+	/**
+	 * Compute a mapping from data field names to column names
+	 * @return string[] Column names indexed by data field names
+	 */
 	final public function dataFieldNamesToColumnNames() : array {
 		$s_name = $this->getDeclaration()['name'];
 		$a_fieldStructure = $this->getFlatStructure();
@@ -124,6 +159,10 @@ abstract class Field implements HidableFieldInterface {
 		return $a_fieldNames;
 	}
 	
+	/**
+	 * Compute a mapping from column names to data field names
+	 * @return string[] Data field names indexed by column names
+	 */
 	final public function columnNamesToDataFieldNames() : array {
 		$s_name = $this->getDeclaration()['name'];
 		$a_fieldStructure = $this->getFlatStructure();

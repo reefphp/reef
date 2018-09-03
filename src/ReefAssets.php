@@ -5,25 +5,46 @@ namespace Reef;
 use \Reef\Exception\DomainException;
 use \Reef\Exception\InvalidArgumentException;
 
+/**
+ * ReefAssets can be used to load all assets for all components that are
+ * loaded into the Reef setup
+ */
 class ReefAssets extends Assets {
 	
+	/**
+	 * The Reef object
+	 * @type Reef
+	 */
 	private $Reef;
 	
 	/**
 	 * Constructor
+	 * @param Reef $Reef
 	 */
 	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function getReef() : Reef {
 		return $this->Reef;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	protected function getComponents() : array {
 		return array_values($this->Reef->getSetup()->getComponentMapping());
 	}
 	
+	/**
+	 * Write an asset file to the browser, identified by the asset hash.
+	 * This is a specific kind of internal request.
+	 * This function exists the script.
+	 * @param string $s_assetsHash The asset hash to write the asset of
+	 */
 	public function writeAssetByHash($s_assetsHash) {
 		
 		header_remove('Pragma');
@@ -46,6 +67,11 @@ class ReefAssets extends Assets {
 		
 	}
 	
+	/**
+	 * Write a JS or CSS asset file to the browser, identified by the asset hash.
+	 * This function exists the script.
+	 * @param string $s_assetsHash The asset hash to write the asset of
+	 */
 	private function writeVarAsset($s_assetsHash) {
 		$s_type = (substr($s_assetsHash, 0, 3) == 'js:') ? 'js' : 'css';
 		$s_assetsHash = substr($s_assetsHash, ($s_type == 'js') ? 3 : 4);
@@ -74,6 +100,13 @@ class ReefAssets extends Assets {
 		die();
 	}
 	
+	/**
+	 * Write a static asset file to the browser, identified by the asset hash.
+	 * This function exists the script.
+	 * @param string $s_assetName The asset name as returned by parseAssetHash()
+	 * @param string $s_dir The directory to search the asset in
+	 * @param string[] $a_assets Array of available asset files
+	 */
 	private function writeStaticAsset($s_assetName, $s_dir, $a_assets) {
 		if(!isset($a_assets[$s_assetName])) {
 			throw new DomainException("Unknown asset name");
@@ -90,6 +123,11 @@ class ReefAssets extends Assets {
 		die();
 	}
 	
+	/**
+	 * Parse an asset hash (not a JS or CSS asset), determining whether it is a Reef asset or a Component asset
+	 * @param string $s_assetsHash The asset hash to parse
+	 * @return string[] [type ('reef'/'component'), subname (component name), asset name]
+	 */
 	private function parseAssetHash($s_assetHash) {
 		$a_assetHash = explode(':', $s_assetHash);
 		
@@ -122,6 +160,11 @@ class ReefAssets extends Assets {
 		return [$s_assetType, $s_subName, $s_assetName];
 	}
 	
+	/**
+	 * Append the file time to an asset hash, to facilitate efficient browser caching
+	 * @param string $s_assetsHash The asset hash to append the file time to
+	 * @return string The new asset hash
+	 */
 	public function appendFiletime($s_assetHash) {
 		
 		[$s_assetType, $s_subName, $s_assetName] = $this->parseAssetHash($s_assetHash);

@@ -94,15 +94,6 @@ class StoredForm extends AbstractStoredForm {
 		}
 	}
 	
-	public function saveAs(int $i_formId) {
-		if($this->i_formId !== null) {
-			throw new BadMethodCallException("Already saved form");
-		}
-		
-		$a_definition = $this->getDefinition();
-		$this->i_formId = $this->Reef->getFormStorage()->insertAs($i_formId, ['definition' => json_encode($a_definition), '_uuid' => $this->getUUID()]);
-	}
-	
 	public function delete() {
 		$this->Reef->getDataStore()->deleteSubmissionStorageIfExists($this);
 		$this->Reef->getDataStore()->getFilesystem()->removeContextDir($this);

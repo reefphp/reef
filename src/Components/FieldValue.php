@@ -4,14 +4,36 @@ namespace Reef\Components;
 use \Reef\Components\Traits\Hidable\HidableFieldValueInterface;
 use \Reef\Components\Traits\Hidable\HidableFieldValueTrait;
 
+/**
+ * A field value represents a value submitted to a field
+ */
 abstract class FieldValue implements HidableFieldValueInterface {
 	
 	use HidableFieldValueTrait;
 	
+	/**
+	 * The submission this value belongs to
+	 * @type Submission
+	 */
 	protected $Submission;
+	
+	/**
+	 * The field this value belongs to
+	 * @type Field
+	 */
 	protected $Field;
+	
+	/**
+	 * Array of validation errors
+	 * @type ?string[]
+	 */
 	protected $a_errors;
 	
+	/**
+	 * Constructor
+	 * @param Submission $Submission The submission this value belongs to
+	 * @param Field $Field The field this value belongs to
+	 */
 	public function __construct(\Reef\Submission $Submission, Field $Field) {
 		$this->Submission = $Submission;
 		$this->Field = $Field;
@@ -58,13 +80,13 @@ abstract class FieldValue implements HidableFieldValueInterface {
 	
 	/**
 	 * Serialize the current value into a flat array
-	 * @return array The value
+	 * @return scalar[] The value
 	 */
 	abstract public function toFlat() : array;
 	
 	/**
 	 * Parse the value from a flat array created with toFlat()
-	 * @param array $a_flat The flat value array
+	 * @param scalar[] $a_flat The flat value array
 	 */
 	abstract public function fromFlat(?array $a_flat);
 	
@@ -82,7 +104,7 @@ abstract class FieldValue implements HidableFieldValueInterface {
 	
 	/**
 	 * Serialize the current value into a flat array for display purposes in an overview
-	 * @return array The value
+	 * @return scalar[] The value
 	 */
 	abstract public function toOverviewColumns() : array;
 	
@@ -116,7 +138,7 @@ abstract class FieldValue implements HidableFieldValueInterface {
 	
 	/**
 	 * Retrieve errors from validation
-	 * @return array The errors
+	 * @return ?string[] The errors
 	 */
 	public function getErrors() : ?array {
 		return $this->a_errors;

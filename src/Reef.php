@@ -20,6 +20,10 @@ use Symfony\Component\Yaml\Yaml;
 
 require_once(__DIR__ . '/functions.php');
 
+/**
+ * The Reef class is the main API class, providing ways to reach
+ * all functionality of the library.
+ */
 class Reef {
 	
 	use Trait_ReefLocale;

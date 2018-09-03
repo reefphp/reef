@@ -4,13 +4,35 @@ namespace Reef;
 
 use \Reef\Exception\InvalidArgumentException;
 
+/**
+ * This Assets class contains general functionality for asset management
+ */
 abstract class Assets {
 	
+	/**
+	 * Array of custom assets
+	 * @type array
+	 */
 	private $customAssets = ['CSS' => [], 'JS' => []];
 	
+	/**
+	 * Retrieve the current Reef object
+	 * @type Reef
+	 */
 	abstract public function getReef() : Reef;
+	
+	/**
+	 * Get all components for which we should build the assets
+	 * @type Component[]
+	 */
 	abstract protected function getComponents() : array;
 	
+	/**
+	 * Build HTML for the CSS assets
+	 * @param array $a_options, to choose from:
+	 *  - builder   bool  True to include builder assets. Defaults to false
+	 *  - exclude   array Assets to exclude, e.g. because you include them already in your own code
+	 */
 	public function getCSSHTML($a_options = []) {
 		$a_assets = $this->getCSS($a_options);
 		$s_html = '';
@@ -30,6 +52,12 @@ abstract class Assets {
 		return $s_html;
 	}
 	
+	/**
+	 * Build HTML for the JS assets
+	 * @param array $a_options, to choose from:
+	 *  - builder   bool  True to include builder assets. Defaults to false
+	 *  - exclude   array Assets to exclude, e.g. because you include them already in your own code
+	 */
 	public function getJSHTML($a_options = []) {
 		$a_assets = $this->getJS($a_options);
 		$s_html = '';
@@ -49,22 +77,46 @@ abstract class Assets {
 		return $s_html;
 	}
 	
+	/**
+	 * Get all CSS assets in an array
+	 * @param array $a_options @see getCSSHTML
+	 * @return array
+	 */
 	public function getCSS($a_options = []) {
 		return $this->getAssets('CSS', $a_options);
 	}
 	
+	/**
+	 * Get all JS assets in an array
+	 * @param array $a_options @see getJSHTML
+	 * @return array
+	 */
 	public function getJS($a_options = []) {
 		return $this->getAssets('JS', $a_options);
 	}
 	
+	/**
+	 * Add a custom CSS asset
+	 * @param string $s_path The asset path relative to the Reef root directory
+	 */
 	public function addLocalCSS($s_path) {
 		$this->customAssets['CSS'][] = __DIR__ . '/../'.$s_path;
 	}
 	
+	/**
+	 * Add a custom JS asset
+	 * @param string $s_path The asset path relative to the Reef root directory
+	 */
 	public function addLocalJS($s_path) {
 		$this->customAssets['JS'][] = __DIR__ . '/../'.$s_path;
 	}
 	
+	/**
+	 * Get all CSS/JS assets in an array
+	 * @param string $s_type Either 'JS' or 'CSS'
+	 * @param array $a_options
+	 * @return array
+	 */
 	private function getAssets($s_type, $a_options) {
 		if($s_type != 'JS' && $s_type != 'CSS') {
 			throw new InvalidArgumentException("Invalid asset type '".$s_type."'.");
@@ -128,6 +180,11 @@ abstract class Assets {
 		return $a_assets;
 	}
 	
+	/**
+	 * Combine all local CSS/JS assets into a single file, or fetch its asset hash if it is in cache already
+	 * @param string $s_type Either 'JS' or 'CSS'
+	 * @param string &$s_assetsHash (Out) The asset hash to use to refer to this asset file
+	 */
 	private function checkLocalAsset($s_type, &$s_assetsHash = null) {
 		if($s_type != 'JS' && $s_type != 'CSS') {
 			throw new InvalidArgumentException("Invalid asset type '".$s_type."'.");

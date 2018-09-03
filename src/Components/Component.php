@@ -9,15 +9,41 @@ use Symfony\Component\Yaml\Yaml;
 use \Reef\Components\Traits\Hidable\HidableComponentInterface;
 use \Reef\Components\Traits\Hidable\HidableComponentTrait;
 
+/**
+ * A component describes the appearance and behaviour of a specific element that can be used
+ * in a form. It can be e.g. a text input, checkbox, title or paragraph of text. A component
+ * added to a Form is called a field. Whenever a field is filled in, its value is represented
+ * by a FieldValue object.
+ * A Form is a set of Fields; all FieldValue objects of all Fields in a Form are agglomorated
+ * into a single Submission object.
+ */
 abstract class Component implements HidableComponentInterface {
 	
 	use Trait_ComponentLocale;
 	use HidableComponentTrait;
 	
+	/**
+	 * The Reef object this component instance if member of
+	 * @type Reef
+	 */
 	protected $Reef;
+	
+	/**
+	 * The component configuration
+	 * @type array
+	 */
 	protected $a_configuration;
 	
+	/**
+	 * Cached result of getConditionOperators()
+	 * @type array
+	 */
 	private $a_conditionOperators = null;
+	
+	/**
+	 * Cached result of getBuilderOperators()
+	 * @type array
+	 */
 	private $a_builderOperators = null;
 	
 	/**
@@ -428,18 +454,35 @@ abstract class Component implements HidableComponentInterface {
 		return [];
 	}
 	
+	/**
+	 * Generate the basic declaration form
+	 * @return TempForm
+	 */
 	public function generateBasicDeclarationForm() {
 		return $this->generateDeclarationForm('basic');
 	}
 	
+	/**
+	 * Generate the advanced declaration form
+	 * @return TempForm
+	 */
 	public function generateAdvancedDeclarationForm() {
 		return $this->generateDeclarationForm('advanced');
 	}
 	
+	/**
+	 * Generate the combined basic and advanced declaration form
+	 * @return TempForm
+	 */
 	public function generateCombinedDeclarationForm() {
 		return $this->generateDeclarationForm('combined');
 	}
 	
+	/**
+	 * Generate a declaration form
+	 * @param string $s_type The type, either 'basic', 'advanced' or 'combined'
+	 * @return TempForm
+	 */
 	private function generateDeclarationForm(string $s_type) {
 		$a_configuration = $this->getConfiguration();
 		
@@ -478,14 +521,30 @@ abstract class Component implements HidableComponentInterface {
 		return $this->Reef->newValidTempForm($a_formDefinition);
 	}
 	
+	/**
+	 * Generate the basic locale form
+	 * @param string $s_locale The locale to generate the form for
+	 * @return TempForm
+	 */
 	public function generateBasicLocaleForm(string $s_locale) {
 		return $this->generateLocaleForm(array_keys($this->getConfiguration()['basicLocale']??[]), $s_locale);
 	}
 	
+	/**
+	 * Generate the advanced locale form
+	 * @param string $s_locale The locale to generate the form for
+	 * @return TempForm
+	 */
 	public function generateAdvancedLocaleForm(string $s_locale) {
 		return $this->generateLocaleForm(array_keys($this->getConfiguration()['advancedLocale']??[]), $s_locale);
 	}
 	
+	/**
+	 * Generate a locale form
+	 * @param string[] $a_keys The locale keys
+	 * @param string $s_locale The locale to generate the form for
+	 * @return TempForm
+	 */
 	private function generateLocaleForm(array $a_keys, string $s_locale) {
 		$a_configuration = $this->getConfiguration();
 		
