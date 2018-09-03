@@ -105,6 +105,7 @@ class StoredForm extends AbstractStoredForm {
 	
 	public function delete() {
 		$this->Reef->getDataStore()->deleteSubmissionStorageIfExists($this);
+		$this->Reef->getDataStore()->getFilesystem()->removeContextDir($this);
 		
 		if($this->i_formId !== null) {
 			$this->Reef->getFormStorage()->delete($this->i_formId);

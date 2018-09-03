@@ -153,10 +153,15 @@ class Filesystem {
 		}
 		
 		while(!empty($s_path)) {
-			if($this->numFilesInDir($this->s_dir . $s_path) > 0) {
-				break;
+			// Check whether the path is a directory; it may
+			// already have been deleted in a previous call
+			// to clearEmptyDirs()
+			if(is_dir($this->s_dir . $s_path)) {
+				if($this->numFilesInDir($this->s_dir . $s_path) > 0) {
+					break;
+				}
+				rmdir($this->s_dir . $s_path);
 			}
-			rmdir($this->s_dir . $s_path);
 			
 			$s_path = substr($s_path, 0, strrpos($s_path, '/'));
 		}
@@ -413,6 +418,21 @@ class Filesystem {
 	
 	public function deleteFile(File $File) {
 		$this->changeFileContext($File, 'trash');
+	}
+	
+	public function removeContextDir($context) {
+		if($this->s_dir === null) {
+			return;
+		}
+		
+		if(!($context instanceof \Reef\StoredSubmission) && !($context instanceof \Reef\Form\AbstractStoredForm)) {
+			throw new FilesystemException('Invalid remove context');
+		}
+		
+		$s_contextDir = $this->getContextDir($context);
+		
+		\Reef\rmTree($s_contextDir, true);
+		$this->clearEmptyDirs($s_contextDir);
 	}
 	
 }

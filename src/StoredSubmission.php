@@ -71,6 +71,7 @@ class StoredSubmission extends Submission {
 			throw new BadMethodCallException("Unsaved submission.");
 		}
 		$this->Form->getSubmissionStorage()->delete($this->i_submissionId);
+		$this->getForm()->getReef()->getDataStore()->getFilesystem()->removeContextDir($this);
 	}
 	
 	public function processUserInput(?array $a_userInput, array $a_options = []) : bool {
