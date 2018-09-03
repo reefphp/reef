@@ -225,7 +225,7 @@ abstract class Submission {
 			array_shift($a_requestHash);
 			array_shift($a_requestHash);
 			
-			return $Value->internalRequest(implode(':', $a_requestHash));
+			return $Value->internalRequest(implode(':', $a_requestHash), $a_options);
 		}
 		
 		throw new \Reef\Exception\InvalidArgumentException('Invalid request hash');

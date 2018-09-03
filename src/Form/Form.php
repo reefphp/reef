@@ -459,7 +459,7 @@ abstract class Form {
 			array_shift($a_requestHash);
 			array_shift($a_requestHash);
 			
-			return $Submission->internalRequest(implode(':', $a_requestHash));
+			return $Submission->internalRequest(implode(':', $a_requestHash), $a_options);
 		}
 		
 		if($a_requestHash[0] == 'field') {
@@ -474,7 +474,7 @@ abstract class Form {
 			array_shift($a_requestHash);
 			array_shift($a_requestHash);
 			
-			return $Field->internalRequest(implode(':', $a_requestHash));
+			return $Field->internalRequest(implode(':', $a_requestHash), $a_options);
 		}
 		
 		throw new \Reef\Exception\InvalidArgumentException('Invalid request hash');

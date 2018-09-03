@@ -82,6 +82,33 @@ class Reef {
 	
 	/**
 	 * Constructor
+	 * @param ReefSetup A reef setup, defining a well-defined basis on which this Reef object can operate
+	 * @param array $a_options Options array, to choose from:
+	 * NAMING:
+	 *  - css_prefix              string   The CSS prefix to use, defaults to 'rf-'
+	 *  - js_event_prefix         string   The JS prefix to use for events, defaults to 'reef:'
+	 *  - db_prefix               string   The prefix to use for database tables, defaults to 'reef_'
+	 *  - reef_name               string   The name of this reef. Make sure to use different names for different
+	 *                                     reef instances on your website, if you are using more than one instance
+	 * 
+	 * CACHING:
+	 *  - cache_dir               string   The directory to use for caching. Defaults to '/tmp/reef'
+	 * 
+	 * LOCALE:
+	 *  - locales                 string[] The locales to use
+	 *  - default_locale          string   The default locale, defaults to the first locale in `locales` if set, or
+	 *                                     'en_US' otherwise
+	 * 
+	 * FILES:
+	 *  - files_dir               string   The directory to store files in, when using a component that requires this
+	 *  - byte_base               int      The default byte base; use 1024 for MiB notation, 1000 for MB notation
+	 *  - max_upload_size         int      Maximum allowed upload file size. In addition, Reef also auto-detects
+	 *                                     other maxima induced by the environment
+	 * 
+	 * OTHER:
+	 *  - internal_request_url    string   URL to call for internal requests. Required for a well-behaving application.
+	 *                                     Defaults to './reef.php?hash=[[request_hash]]', but you will probably want to
+	 *                                     set a custom URL. Must contain `[[request_hash]]`
 	 */
 	public function __construct(ReefSetup $ReefSetup, $a_options = []) {
 		
@@ -127,10 +154,19 @@ class Reef {
 		$this->Session = new ContextSession($SessionObject);
 	}
 	
+	/**
+	 * Get the Reef root directory. As this file is situated in src/, the root is one
+	 * level above.
+	 * @return string The Reef root directory
+	 */
 	public static function getDir() : string {
 		return __DIR__.'/../';
 	}
 	
+	/**
+	 * Get the cache object for this Reef instance
+	 * @return FilesystemCache The cache object
+	 */
 	public function getCache() : FilesystemCache {
 		if($this->Cache == null) {
 			$this->Cache = new FilesystemCache('reef', 0, $this->a_options['cache_dir']);
@@ -138,6 +174,13 @@ class Reef {
 		return $this->Cache;
 	}
 	
+	/**
+	 * Get a cache value defined by the callback. Returns the cached value if present, or executes
+	 * the callback and stores & returns that value instead otherwise
+	 * @param string $s_cacheKey The key identifying the desired value
+	 * @param function $fn_val Callback to a function yielding the value that should be cached
+	 * @return mixed The (cached) value
+	 */
 	public function cache($s_cacheKey, $fn_val) {
 		$Cache = $this->getCache();
 		$s_cacheKey = str_replace(['{','}','(',')','/','\\','@',':'], '_', $s_cacheKey);
@@ -152,38 +195,78 @@ class Reef {
 		return $m_val;
 	}
 	
+	/**
+	 * Get the session object of this Reef
+	 * @return ContextSession
+	 */
 	public function getSession() {
 		return $this->Session;
 	}
 	
+	/**
+	 * Get the value of the given option
+	 * @param string The option name
+	 * @return string The value
+	 */
 	public function getOption($s_name) {
 		return $this->a_options[$s_name];
 	}
 	
+	/**
+	 * Get the form storage
+	 * @return Storage The form storage
+	 */
 	public function getFormStorage() : Storage {
 		return $this->DataStore->getFormStorage();
 	}
 	
+	/**
+	 * Get the data store
+	 * @return DataStore The data store
+	 */
 	public function getDataStore() : DataStore {
 		return $this->DataStore;
 	}
 	
+	/**
+	 * Get all stored form ids
+	 * @return int[] The form ids
+	 */
 	public function getFormIds() {
 		return $this->getFormStorage()->list();
 	}
 	
+	/**
+	 * Get the submission storage of a form
+	 * @param Form $Form The form to obtain the submission storage for
+	 * @return Storage The submission storage
+	 */
 	public function getSubmissionStorage($Form) {
 		return $this->DataStore->getSubmissionStorage($Form);
 	}
 	
+	/**
+	 * Return a new Builder object for this Reef
+	 * @return Builder
+	 */
 	public function getBuilder() : Builder {
 		return new Builder($this);
 	}
 	
+	/**
+	 * Switch to an other layout. Must be one of the layouts initialized
+	 * in the reef setup.
+	 * @param ?string $s_layoutName The layout name, or null for the default layout
+	 */
 	public function setLayout(?string $s_layoutName) {
 		$this->ReefSetup->setLayout($s_layoutName);
 	}
 	
+	/**
+	 * Retrieve the StoredForm factory
+	 * @return StoredFormFactory
+	 * @throws BadMethodCallException When there is no storage attached
+	 */
 	public function getStoredFormFactory() : StoredFormFactory {
 		if($this->ReefSetup->getStorageFactory() instanceof \Reef\Storage\NoStorageFactory) {
 			throw new BadMethodCallException("Cannot get StoredFormFactory using NoStorage");
@@ -195,6 +278,11 @@ class Reef {
 		return $this->StoredFormFactory;
 	}
 	
+	/**
+	 * Retrieve the TempStoredForm factory
+	 * @return TempStoredFormFactory
+	 * @throws BadMethodCallException When there is no storage attached
+	 */
 	public function getTempStoredFormFactory() : TempStoredFormFactory {
 		if($this->ReefSetup->getStorageFactory() instanceof \Reef\Storage\NoStorageFactory) {
 			throw new BadMethodCallException("Cannot get TempStoredFormFactory using NoStorage");
@@ -206,6 +294,10 @@ class Reef {
 		return $this->TempStoredFormFactory;
 	}
 	
+	/**
+	 * Retrieve the TempForm factory
+	 * @return TempFormFactory
+	 */
 	public function getTempFormFactory() : TempFormFactory {
 		if($this->TempFormFactory == null) {
 			$this->TempFormFactory = new \Reef\Form\TempFormFactory($this);
@@ -213,34 +305,81 @@ class Reef {
 		return $this->TempFormFactory;
 	}
 	
+	/**
+	 * Get a form by its id
+	 * @param int $i_formId The form id
+	 * @return StoredForm
+	 */
 	public function getForm(int $i_formId) : StoredForm {
 		return $this->getStoredFormFactory()->load($i_formId);
 	}
 	
+	/**
+	 * Get a form by its uuid
+	 * @param string $s_formUUID The form uuid
+	 * @return StoredForm
+	 */
 	public function getFormByUUID(string $s_formUUID) : StoredForm {
 		return $this->getStoredFormFactory()->loadByUUID($s_formUUID);
 	}
 	
+	/**
+	 * Create a new TempStoredForm
+	 * @param array $a_definition The form definition (optional)
+	 * @return TempStoredForm
+	 */
 	public function newTempStoredForm(array $a_definition = []) : TempStoredForm {
 		return $this->getTempStoredFormFactory()->createFromArray($a_definition);
 	}
 	
+	/**
+	 * Create a new StoredForm. In most cases, you'll likely want to use newTempStoredForm() instead
+	 * @param array $a_definition The form definition (optional)
+	 * @return StoredForm
+	 */
 	public function newStoredForm(array $a_definition = []) : StoredForm {
 		return $this->getStoredFormFactory()->createFromArray($a_definition);
 	}
 	
+	/**
+	 * Create a new TempForm without performing any definition validation
+	 * @param array $a_definition The form definition (optional)
+	 * @return TempForm
+	 */
 	public function newValidTempForm(array $a_definition = []) : TempForm {
 		return $this->getTempFormFactory()->createFromValidatedArray($a_definition);
 	}
 	
+	/**
+	 * Create a new TempForm
+	 * @param array $a_definition The form definition (optional)
+	 * @return TempForm
+	 */
 	public function newTempForm(array $a_definition = []) : TempForm {
 		return $this->getTempFormFactory()->createFromArray($a_definition);
 	}
 	
+	/**
+	 * Get the ReefSetup object
+	 * @return ReefSetup
+	 */
 	public function getSetup() : ReefSetup {
 		return $this->ReefSetup;
 	}
 	
+	/**
+	 * Entry-point for performin internal requests. A call to the `internal_request_url` URL
+	 * should be redirected to this function
+	 * 
+	 * @param string $s_requestHash The used request hash
+	 * @param array $a_options Array of options that you can pass yourself. To choose from:
+	 *  - form_check        function  Callback to e.g. check the current user may access the
+	 *                                requested form. Receives the Form as first parameter
+	 *  - submission_check  function  Callback to e.g. check the current user may access the
+	 *                                requested submission. Receives the Submission as first parameter
+	 * 
+	 * @throws \Reef\Exception\InvalidArgumentException When the request hash is invalid
+	 */
 	public function internalRequest(string $s_requestHash, array $a_options = []) {
 		$a_requestHash = explode(':', $s_requestHash);
 		if(count($a_requestHash) == 1) {
@@ -267,7 +406,7 @@ class Reef {
 			array_shift($a_requestHash);
 			array_shift($a_requestHash);
 			
-			return $Form->internalRequest(implode(':', $a_requestHash));
+			return $Form->internalRequest(implode(':', $a_requestHash), $a_options);
 		}
 		
 		if($a_requestHash[0] == 'component') {
@@ -277,12 +416,16 @@ class Reef {
 			array_shift($a_requestHash);
 			array_shift($a_requestHash);
 			
-			return $Component->internalRequest(implode(':', $a_requestHash));
+			return $Component->internalRequest(implode(':', $a_requestHash), $a_options);
 		}
 		
 		throw new \Reef\Exception\InvalidArgumentException('Invalid request hash');
 	}
 	
+	/**
+	 * Return array of general assets used by Reef
+	 * @return string[]
+	 */
 	public function getAssets() {
 		return [
 			'builder-tick' => 'assets/img/builder-tick.svg',
@@ -292,6 +435,10 @@ class Reef {
 		];
 	}
 	
+	/**
+	 * Obtain a new Mustache_Engine instance, with some general helpers already added
+	 * @return Mustache_Engine
+	 */
 	public function newMustache() : \Mustache_Engine {
 		$a_helpers = [];
 		
@@ -309,6 +456,10 @@ class Reef {
 		return $Mustache;
 	}
 	
+	/**
+	 * Get the ReefAssets object
+	 * @return ReefAssets
+	 */
 	public function getReefAssets() {
 		if($this->ReefAssets == null) {
 			$this->ReefAssets = new ReefAssets($this);
@@ -317,6 +468,11 @@ class Reef {
 		return $this->ReefAssets;
 	}
 	
+	/**
+	 * InternalRequest helper for Mustache
+	 * @param string $s_requestHash The request hash
+	 * @return string The resulting internal request URL
+	 */
 	public function internalRequestHelper($s_requestHash) {
 		if(substr($s_requestHash, 0, 6) == 'asset:') {
 			$s_requestHash = $this->getReefAssets()->appendFiletime($s_requestHash);
@@ -325,6 +481,11 @@ class Reef {
 		return str_replace('[[request_hash]]', $s_requestHash, $this->getOption('internal_request_url'));
 	}
 	
+	/**
+	 * Validate a form definition
+	 * @param array $a_definition The form definition to check
+	 * @throws ValidationException If the form definition is invalid
+	 */
 	public function checkDefinition(array $a_definition) {
 		$a_unknown = array_diff(array_keys($a_definition), ['storage_name', 'fields', 'locale', 'locales', 'layout']);
 		if(count($a_unknown) > 0) {
@@ -369,6 +530,11 @@ class Reef {
 		}
 	}
 	
+	/**
+	 * Validate a field declaration
+	 * @param array $a_definition The field declaration to check
+	 * @throws ValidationException If the field declaration is invalid
+	 */
 	public function checkDeclaration(array $a_declaration) {
 		foreach(['component'] as $s_key) {
 			if(!array_key_exists($s_key, $a_declaration)) {
