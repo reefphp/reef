@@ -2,53 +2,77 @@
 
 namespace Reef\Locale;
 
+/**
+ * Trait providing general locale functionality
+ */
 trait Trait_Locale {
 	
+	/**
+	 * Cache of combined locales
+	 * @type string[][]
+	 */
 	private $a_locales = [];
+	
+	/**
+	 * Cache of locale sources
+	 * @type string[][]
+	 */
 	private $a_localeSources = [];
 	
 	/**
-	 * Retrieve & cache base locale array from file system
+	 * Retrieve base locale array from file system
 	 * @param string $s_locale The locale to fetch
-	 * @return array The locale data
+	 * @return string[] The locale data
 	 */
 	abstract protected function fetchBaseLocale($s_locale) : array;
 	
 	/**
-	 * @override
+	 * Return an array of language replacements: key/value pairs of
+	 * variables to be used in translations
+	 * @return array
 	 */
 	protected function getLanguageReplacements() : array {
 		return [];
 	}
 	
 	/**
-	 * @override
+	 * Return an array of all locale keys that can be used
+	 * @return string[]
 	 */
 	protected function getLocaleKeys() : array {
 		return [];
 	}
 	
 	/**
-	 * @override
+	 * Return the default locale to use
+	 * @return ?string
 	 */
 	abstract protected function getDefaultLocale() : ?string;
 	
 	/**
-	 * @override
+	 * Combine multiple locale sources by using combineLocaleSources() with
+	 * multiple invocations of getOwnLocaleSource() and/or getCombinedLocaleSources()
+	 * on different related objects
+	 * @return string[]
 	 */
 	public function getCombinedLocaleSources($s_locale) : array {
 		return $this->getOwnLocaleSource($s_locale);
 	}
 	
+	/**
+	 * Temporarily overwrite some locale
+	 * @param string $s_locale The locale key to use
+	 * @param string[] $a_locale The locale
+	 */
 	public function setLocale($s_locale, $a_locale) {
 		$this->getLocale($s_locale);
 		$this->a_localeSources[$s_locale] = array_merge($this->a_localeSources[$s_locale], $a_locale);
 	}
 	
 	/**
-	 * Get current locale array
+	 * Retrieve & cache a local locale source
 	 * @param string $s_locale The locale to fetch
-	 * @return array The locale data
+	 * @return string[] The locale data
 	 */
 	public function getOwnLocaleSource($s_locale) {
 		if(isset($this->a_localeSources[$s_locale])) {
@@ -67,6 +91,14 @@ trait Trait_Locale {
 		return $a_locale;
 	}
 	
+	/**
+	 * Combine multiple locale sources into a single locale array
+	 * This function tries to find a translation for each locale key in the provided locale sources,
+	 * and stops searching for a translation as soon as one is found, continuing to the next locale key.
+	 * @param string[] $a_baseLocale The base locale, with base values and including all keys to search for
+	 * @param string[] ...$a_mergeLocales Any other locale sources
+	 * @return string[] The resulting locale array
+	 */
 	protected function combineLocaleSources($a_baseLocale, ...$a_mergeLocales) {
 		foreach($a_baseLocale as $s_key => $s_val) {
 			if($s_val === null) {
@@ -83,8 +115,8 @@ trait Trait_Locale {
 	
 	/**
 	 * Get locale array
-	 * @param array $a_locales The locale to fetch, or null for default locale. If you provide multiple locales, the first available locale will be fetched
-	 * @return array The locale data
+	 * @param null|string|string[] $a_locales The locale to fetch, or null for default locale. If you provide multiple locales, the first available locale will be fetched
+	 * @return string[] The locale data
 	 */
 	public function getLocale($a_locales = null) {
 		if(!is_array($a_locales)) {
@@ -156,11 +188,22 @@ trait Trait_Locale {
 		return $a_locale;
 	}
 	
-	
+	/**
+	 * Get a single locale translation
+	 * @param string $s_langKey The language key to retrieve
+	 * @param ?(string[]) $a_locales The locales to use, in order of precedence
+	 * @return ?string The value, or null if it is not set
+	 */
 	public function trans($s_langKey, $a_locales = null) {
 		return $this->getLocale($a_locales)[$s_langKey]??null;
 	}
 	
+	/**
+	 * Retrieve multiple locale translations
+	 * @param string[] $a_langKeys The language keys to retrieve
+	 * @param ?(string[]) $a_locales The locales to use, in order of precedence
+	 * @return (?string)[] The values
+	 */
 	public function transMultiple($a_langKeys, $a_locales = null) {
 		$a_locale = $this->getLocale($a_locales);
 		
@@ -173,6 +216,12 @@ trait Trait_Locale {
 		return $a_trans;
 	}
 	
+	/**
+	 * Retrieve multiple locale translations, for multiple locales
+	 * @param string[] $a_langKeys The language keys to retrieve
+	 * @param string[] $a_locales The locales to retrieve
+	 * @return (?string)[][] The values, indexed by locale and language-key, respectively
+	 */
 	public function transMultipleLocales($a_langKeys, $a_locales) {
 		$a_trans = [];
 		foreach($a_locales as $s_locale) {
@@ -180,6 +229,5 @@ trait Trait_Locale {
 		}
 		return $a_trans;
 	}
-	
 	
 }

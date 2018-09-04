@@ -2,8 +2,16 @@
 
 namespace Reef\Session;
 
+/**
+ * Session implementation using an array that is not persisted between
+ * client calls. Primarily useful for testing
+ */
 class TmpSession implements SessionInterface {
 	
+	/**
+	 * The session data array
+	 * @type array
+	 */
 	protected $a_data = [];
 	
 	/**

@@ -13,6 +13,10 @@ use \Reef\Exception\LogicException;
 use \Reef\Exception\RuntimeException;
 use \Reef\Exception\ValidationException;
 
+/**
+ * The builder provides functionality for manipulating forms using the
+ * reef builder interface
+ */
 class Builder {
 	
 	const CATEGORIES = [
@@ -22,7 +26,16 @@ class Builder {
 		'other',
 	];
 	
+	/**
+	 * The Reef object
+	 * @type Reef
+	 */
 	private $Reef;
+	
+	/**
+	 * Settings for the builder
+	 * @type array
+	 */
 	private $a_settings = [
 		'submit_action' => null,
 		'components' => null,
@@ -31,23 +44,38 @@ class Builder {
 	
 	/**
 	 * Constructor
+	 * @param Reef $Reef The Reef object
 	 */
 	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
 	}
 	
+	/**
+	 * Set a setting
+	 * @param string $s_key The setting key
+	 * @param string $s_val The setting value
+	 */
 	public function setSetting($s_key, $s_val) {
 		if(array_key_exists($s_key, $this->a_settings)) {
 			$this->a_settings[$s_key] = $s_val;
 		}
 	}
 	
+	/**
+	 * Set multiple settings
+	 * @param string[] $a_settings Array of settings
+	 */
 	public function setSettings($a_settings) {
 		foreach($a_settings as $s_key => $s_val) {
 			$this->setSetting($s_key, $s_val);
 		}
 	}
 	
+	/**
+	 * Create HTML for the builder
+	 * @param Form $Form The form to generate the builder for
+	 * @return string The builder HTML
+	 */
 	public function generateBuilderHtml(Form $Form) {
 		$ReefAssets = $this->Reef->getReefAssets();
 		$ReefAssets->addLocalCSS('assets/builder.css');
@@ -175,7 +203,12 @@ class Builder {
 		return $s_html;
 	}
 	
-	
+	/**
+	 * Parse builder data into a new form definition and a list of field renames
+	 * @param Form $Form The form
+	 * @param array $a_data The submitted builder data
+	 * @return array [(array) new form definition, (string[]) field renames]
+	 */
 	private function parseBuilderData(Form $Form, array $a_data) {
 		$Setup = $this->Reef->getSetup();
 		$a_locales = $this->Reef->getOption('locales');
@@ -247,6 +280,7 @@ class Builder {
 			throw new ValidationException($a_errors);
 		}
 		
+		// Turn the field form submissions into field declarations
 		$a_fields = $a_fieldRenames = [];
 		foreach($a_submissions as $i_index => $a_fieldSubmissions) {
 			$Component = $a_fieldSubmissions['component'];
@@ -289,6 +323,7 @@ class Builder {
 			$a_fields[] = $a_fieldDecl;
 		}
 		
+		// Create the new form definition
 		$a_newDefinition = array_merge($Form->getPartialDefinition(), array_subset($DefinitionSubmission->toStructured(['skip_default' => true]), ['storage_name']));
 		$a_newDefinition['fields'] = $a_fields;
 		
@@ -349,8 +384,8 @@ class Builder {
 	 * @param Form &$Form The form to modify. In case a TempStoredForm is passed, upon applying the changes this variable
 	 *                    will be replaced with a corresponding StoredForm object
 	 * @param array $a_data The builder data from the builder
-	 * @param ?callable $fn_callback Callback to apply just before exiting.
-	 * 			The return array (@see processBuilderData_return()) is passed as first argument
+	 * @param ?callable $fn_callback Callback to apply just before exiting. The return array
+	 *                  (@see processBuilderData_return()) is passed as first argument
 	 */
 	public function processBuilderData_write(Form &$Form, array $a_data, ?callable $fn_callback = null) {
 		$a_return = $this->processBuilderData_return($Form, $a_data);
@@ -363,6 +398,12 @@ class Builder {
 		die();
 	}
 	
+	/**
+	 * Generate the definition form, allowing to edit form properties except
+	 * for the field declarations
+	 * @param Form $Form The form to generate the definition form for
+	 * @return TempForm
+	 */
 	private function generateDefinitionForm(Form $Form) {
 		
 		$a_definition = [
@@ -395,6 +436,13 @@ class Builder {
 		return $ConfigForm;
 	}
 	
+	/**
+	 * Generate a declaration form for a component
+	 * @param Component $Component The component to generate the form for
+	 * @param ?Field $Field The field to generate the form for, or null for a 'new' field
+	 * @param string $s_type Either 'basic' or 'advanced'
+	 * @return string The declaration form html
+	 */
 	private function generateDeclarationForm(Component $Component, ?Field $Field, string $s_type) {
 		if($s_type == 'advanced') {
 			$DeclarationForm = $Component->generateAdvancedDeclarationForm();
@@ -419,6 +467,13 @@ class Builder {
 		return $DeclarationForm->generateFormHtml($DeclarationSubmission, ['main_var' => 'form_data['.$s_type.'_declaration]']);
 	}
 	
+	/**
+	 * Generate a locale form for a component
+	 * @param Component $Component The component to generate the form for
+	 * @param ?Field $Field The field to generate the form for, or null for a 'new' field
+	 * @param string $s_type Either 'basic' or 'advanced'
+	 * @return string The locale form html
+	 */
 	private function generateLocaleForms(Component $Component, ?Field $Field, string $s_type) {
 		$a_locales = $this->Reef->getOption('locales');
 		

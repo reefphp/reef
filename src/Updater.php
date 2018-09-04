@@ -21,6 +21,9 @@ class Updater {
 	const DATALOSS_POTENTIAL = 'potential';
 	const DATALOSS_NO = 'no';
 	
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 	}
 	

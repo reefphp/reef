@@ -5,12 +5,41 @@ namespace Reef\Storage;
 use \PDO;
 use \Reef\Exception\StorageException;
 
+/**
+ * PDOStorage can be used to let Reef store data in a database using PDO
+ */
 abstract class PDOStorage implements Storage {
+	/**
+	 * The PDOStorageFactory this object belongs to
+	 * @type PDOStorageFactory
+	 */
 	protected $StorageFactory;
+	
+	/**
+	 * The PDO object
+	 * @type PDO
+	 */
 	protected $PDO;
+	
+	/**
+	 * The table name used by this storage object
+	 * @type string
+	 */
 	protected $s_table;
+	
+	/**
+	 * The escaped table name
+	 * @type string
+	 */
 	protected $es_table;
 	
+	/**
+	 * Constructor
+	 * @param PDOStorageFactory $StorageFactory The PDOStorageFactory this object belongs to
+	 * @param PDO $PDO The PDO object
+	 * @param string $s_table The table name used by this storage object
+	 * @throws StorageException If the table name does not exist
+	 */
 	public function __construct(PDOStorageFactory $StorageFactory, PDO $PDO, string $s_table) {
 		$this->StorageFactory = $StorageFactory;
 		$this->PDO = $PDO;
@@ -22,26 +51,67 @@ abstract class PDOStorage implements Storage {
 		}
 	}
 	
+	/**
+	 * Get the used PDO object
+	 * @return PDO
+	 */
 	public function getPDO() {
 		return $this->PDO;
 	}
 	
+	/**
+	 * Get the used table name
+	 * @return string
+	 */
 	public function getTableName() {
 		return $this->s_table;
 	}
 	
+	/**
+	 * Start a transaction
+	 * @param PDO $PDO The PDO object
+	 */
 	abstract public static function startTransaction(\PDO $PDO);
 	
+	/**
+	 * Add new savepoint to the current transaction
+	 * @param PDO $PDO The PDO object
+	 * @param string $s_savepoint The savepoint name
+	 */
 	abstract public static function newSavepoint(\PDO $PDO, string $s_savepoint);
 	
+	/**
+	 * Rollback to a previously set savepoint
+	 * @param PDO $PDO The PDO object
+	 * @param string $s_savepoint The savepoint name to rollback to
+	 */
 	abstract public static function rollbackToSavepoint(\PDO $PDO, string $s_savepoint);
 	
+	/**
+	 * Commit the current transaction
+	 * @param PDO $PDO The PDO object
+	 */
 	abstract public static function commitTransaction(\PDO $PDO);
 	
+	/**
+	 * Rollback the current transaction
+	 * @param PDO $PDO The PDO object
+	 */
 	abstract public static function rollbackTransaction(\PDO $PDO);
 	
+	/**
+	 * Create new storage with the specified name
+	 * @param PDOStorageFactory $StorageFactory The calling factory
+	 * @param PDO $PDO The PDO object
+	 * @param string $s_table The table name to use for the storage
+	 * @return PDOStorage The PDOStorage object for the new storage
+	 */
 	abstract public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage;
 	
+	/**
+	 * Rename this storage
+	 * @param string $s_newTableName The new table name
+	 */
 	public function renameStorage(string $s_newTableName) {
 		$sth = $this->PDO->prepare("ALTER TABLE ".$this->es_table." RENAME TO ".static::sanitizeName($s_newTableName)." ");
 		$sth->execute();
@@ -56,8 +126,25 @@ abstract class PDOStorage implements Storage {
 		$this->es_table = static::sanitizeName($s_newTableName);
 	}
 	
+	/**
+	 * Add columns to the storage table
+	 * @param array $a_subfields Array of column structure arrays, indexed by new column name
+	 */
 	abstract public function addColumns($a_subfields);
 	
+	/**
+	 * Remove columns from the storage table
+	 * @param array $a_subfields Array of update arrays, indexed by old column name. An update array consists of:
+	 *  - 'name'          => new column name
+	 *  - 'structureFrom' => old column structure array
+	 *  - 'structureTo'   => new column structure array
+	 */
+	abstract public function updateColumns($a_subfields);
+	
+	/**
+	 * Remove columns from the storage table
+	 * @param string[] $a_columns The old column names to delete
+	 */
 	abstract public function removeColumns($a_columns);
 	
 	/**
@@ -290,6 +377,11 @@ abstract class PDOStorage implements Storage {
 	 */
 	abstract public function next() : int;
 	
+	/**
+	 * Check that the provided data corresponds to the table structure
+	 * @param scalar[] $a_data The data to check
+	 * @throws StorageException If the data is invalid
+	 */
 	protected function checkIntegrity(array $a_data) {
 		$a_data['_entry_id'] = $a_data['_uuid'] = null;
 		
@@ -302,10 +394,28 @@ abstract class PDOStorage implements Storage {
 		}
 	}
 	
+	/**
+	 * Get a list of column names
+	 * @return string[] The column names
+	 */
 	abstract public function getColumns() : array;
 	
+	/**
+	 * Determine whether a table exists
+	 * @param PDOStorageFactory $StorageFactory The storage factory
+	 * @param PDO $PDO The PDO object
+	 * @param string $s_tableName The table name to check
+	 * @return bool
+	 */
 	abstract public static function table_exists(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_tableName) : bool;
 	
+	/**
+	 * Sanitize a name for use in a query. Unfortunately we cannot use quote() as table and column names
+	 * should not be quoted. Hence we resort to removing everything but althanumeric characters and
+	 * underscores.
+	 * @param string $s_name The name to sanitize
+	 * @return string
+	 */
 	public static function sanitizeName($s_name) {
 		return preg_replace('/[^a-zA-Z0-9_]/', '', $s_name);
 	}

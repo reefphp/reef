@@ -2,6 +2,9 @@
 
 namespace Reef\Storage;
 
+/**
+ * Factory for PDO_MySQL_Storage objects
+ */
 class PDO_MySQL_StorageFactory extends PDOStorageFactory {
 	
 	/**
@@ -11,10 +14,16 @@ class PDO_MySQL_StorageFactory extends PDOStorageFactory {
 		return 'mysql';
 	}
 	
+	/**
+	 * @inherit
+	 */
 	protected function getStorageClass() {
-		return '\Reef\Storage\PDO_MySQL_Storage';
+		return '\\Reef\\Storage\\PDO_MySQL_Storage';
 	}
 	
+	/**
+	 * @inherit
+	 */
 	protected function getPDODriverName() {
 		return 'mysql';
 	}

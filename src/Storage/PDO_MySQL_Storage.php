@@ -5,30 +5,55 @@ namespace Reef\Storage;
 use \PDO;
 use \Reef\Exception\StorageException;
 
+/**
+ * Storage implementation using MySQL
+ */
 class PDO_MySQL_Storage extends PDOStorage {
 	
+	/**
+	 * Cached column names
+	 * @type string[]
+	 */
 	private $a_columns;
 	
+	/**
+	 * @inherit
+	 */
 	public static function startTransaction(\PDO $PDO) {
 		$PDO->exec("START TRANSACTION;");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function newSavepoint(\PDO $PDO, string $s_savepoint) {
 		$PDO->exec("SAVEPOINT ".static::sanitizeName($s_savepoint)." ;");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function rollbackToSavepoint(\PDO $PDO, string $s_savepoint) {
 		$PDO->exec("ROLLBACK TO SAVEPOINT ".static::sanitizeName($s_savepoint).";");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function commitTransaction(\PDO $PDO) {
 		$PDO->exec("COMMIT;");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function rollbackTransaction(\PDO $PDO) {
 		$PDO->exec("ROLLBACK;");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage {
 		$sth = $PDO->prepare("
 			CREATE TABLE ".static::sanitizeName($s_table)." (
@@ -67,6 +92,11 @@ class PDO_MySQL_Storage extends PDOStorage {
 		return $sth;
 	}
 	
+	/**
+	 * Convert a column structure array into a SQL field specification
+	 * @param array $a_subfield The column structure array
+	 * @return string The column type specification
+	 */
 	private function subfield2type($a_subfield) {
 		switch($a_subfield['type']) {
 			case Storage::TYPE_TEXT:
@@ -166,6 +196,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		return $s_columnType;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function addColumns($a_subfields) {
 		$this->a_columns = null;
 		foreach($a_subfields as $s_column => $a_subfield) {
@@ -180,6 +213,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		}
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function updateColumns($a_subfields) {
 		
 		$s_query = "ALTER TABLE ".$this->es_table." ";
@@ -209,6 +245,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function removeColumns($a_columns) {
 		
 		$s_query = "ALTER TABLE ".$this->es_table." ";
@@ -243,6 +282,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		return $sth->fetch(PDO::FETCH_ASSOC)['Auto_increment'];
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function getColumns() : array {
 		if($this->a_columns !== null) {
 			return $this->a_columns;
@@ -264,6 +306,9 @@ class PDO_MySQL_Storage extends PDOStorage {
 		return $this->a_columns;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function table_exists(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_tableName) : bool {
 		$sth = $PDO->prepare("SHOW TABLES LIKE ?");
 		$sth->execute([$s_tableName]);

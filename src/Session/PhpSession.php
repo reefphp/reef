@@ -2,10 +2,23 @@
 
 namespace Reef\Session;
 
+/**
+ * Session implementation using PHP sessions
+ */
 class PhpSession implements SessionInterface {
 	
+	/**
+	 * The key within $_SESSION to register all variables in. Reef uses a single configurable key
+	 * within $_SESSION to prevent collisions with other software.
+	 * @type string
+	 */
 	protected $s_rootKey;
 	
+	/**
+	 * Constructor
+	 * @param string $s_rootKey The key within $_SESSION to use. Optional, defaults to the value
+	 * of the 'reef_name' reef option
+	 */
 	public function __construct(string $s_rootKey = null) {
 		if(session_status() == PHP_SESSION_NONE) {
 			throw new \Reef\Exception\BadMethodCallException("Sessions should already have been started");
@@ -14,6 +27,10 @@ class PhpSession implements SessionInterface {
 		$this->s_rootKey = $s_rootKey;
 	}
 	
+	/**
+	 * (Internal) Set the reef object
+	 * @param Reef $Reef
+	 */
 	public function setReef($Reef) {
 		if(empty($this->s_rootKey)) {
 			$this->s_rootKey = $Reef->getOption('reef_name');

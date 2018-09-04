@@ -2,8 +2,15 @@
 
 namespace Reef\Session;
 
+/**
+ * Session implementation using no implementation. Can be used when using
+ * components that do not require sessions.
+ */
 class NoSession implements SessionInterface {
 	
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		
 	}

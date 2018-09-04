@@ -2,6 +2,9 @@
 
 namespace Reef\Session;
 
+/**
+ * Interface for session data manipulation
+ */
 interface SessionInterface {
 	
 	/**

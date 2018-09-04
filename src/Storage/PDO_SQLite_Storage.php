@@ -5,30 +5,55 @@ namespace Reef\Storage;
 use \PDO;
 use \Reef\Exception\StorageException;
 
+/**
+ * Storage implementation using SQLite
+ */
 class PDO_SQLite_Storage extends PDOStorage {
 	
+	/**
+	 * Columns information cache
+	 * @type array
+	 */
 	private $a_columnData;
 	
+	/**
+	 * @inherit
+	 */
 	public static function startTransaction(\PDO $PDO) {
 		$PDO->exec("BEGIN TRANSACTION;");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function newSavepoint(\PDO $PDO, string $s_savepoint) {
 		$PDO->exec("SAVEPOINT ".static::sanitizeName($s_savepoint)." ;");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function rollbackToSavepoint(\PDO $PDO, string $s_savepoint) {
 		$PDO->exec("ROLLBACK TRANSACTION TO SAVEPOINT ".static::sanitizeName($s_savepoint).";");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function commitTransaction(\PDO $PDO) {
 		$PDO->exec("COMMIT TRANSACTION;");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function rollbackTransaction(\PDO $PDO) {
 		$PDO->exec("ROLLBACK TRANSACTION;");
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage {
 		$sth = $PDO->prepare("
 			CREATE TABLE ".static::sanitizeName($s_table)." (
@@ -62,6 +87,11 @@ class PDO_SQLite_Storage extends PDOStorage {
 		return $sth;
 	}
 	
+	/**
+	 * Convert a column structure array into a SQL field specification
+	 * @param array $a_subfield The column structure array
+	 * @return string The column type specification
+	 */
 	private function subfield2type($a_subfield) {
 		$s_columnType = '';
 		
@@ -95,6 +125,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 		return $s_columnType;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function addColumns($a_subfields) {
 		$this->StorageFactory->ensureTransaction(function() use($a_subfields) {
 			
@@ -113,6 +146,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 		});
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function updateColumns($a_subfields) {
 		
 		$a_update = [];
@@ -140,10 +176,24 @@ class PDO_SQLite_Storage extends PDOStorage {
 		}
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function removeColumns($a_deleteColumns) {
 		$this->migrateColumns($a_deleteColumns, []);
 	}
 	
+	/**
+	 * Update and delete columns
+	 * SQLite does not provide commands to delete or modify columns, hence we will have to migrate
+	 * to a new table. As this is required for both deleting and updating columns, we implement these
+	 * features here in the same method.
+	 * @param string[] $a_deleteColumns The column names to delete
+	 * @param array $a_updateColumns The update data, an entry for each column to update with the old
+	 * column name as key and the following array as value:
+	 *  - 'name'     => The new column name
+	 *  - 'default'  => The new default value
+	 */
 	private function migrateColumns($a_deleteColumns, $a_updateColumns) {
 		$this->StorageFactory->ensureTransaction(function() use($a_deleteColumns, $a_updateColumns) {
 			
@@ -244,6 +294,10 @@ class PDO_SQLite_Storage extends PDOStorage {
 		return count($a_result) > 0 ? $a_result[0]['seq']+1 : 1;
 	}
 	
+	/**
+	 * Get raw column data
+	 * @return array
+	 */
 	private function getColumnData() : array {
 		if($this->a_columnData !== null) {
 			return $this->a_columnData;
@@ -259,6 +313,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 		return $this->a_columnData;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function getColumns() : array {
 		$a_columnData = $this->getColumnData();
 		$a_columns = [];
@@ -270,6 +327,9 @@ class PDO_SQLite_Storage extends PDOStorage {
 		return $a_columns;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public static function table_exists(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_tableName) : bool {
 		$sth = $PDO->prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=? COLLATE NOCASE");
 		$sth->execute([$s_tableName]);

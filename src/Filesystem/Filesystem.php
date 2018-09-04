@@ -5,10 +5,28 @@ namespace Reef\Filesystem;
 use \Reef\Reef;
 use \Reef\Exception\FilesystemException;
 
+/**
+ * The Filesystem class provides logic for large file storage on the harddisk.
+ * When necessary, operations can be grouped in a transaction to make them atomic.
+ */
 class Filesystem {
 	
+	/**
+	 * The Reef object this filesystem belongs to
+	 * @type Reef
+	 */
 	private $Reef;
+	
+	/**
+	 * The root storage directory
+	 * @type string
+	 */
 	private $s_dir;
+	
+	/**
+	 * Array of allowed file types. Each entry is a mime type or list of mime types, indexed by the file extension
+	 * @type array
+	 */
 	private $a_allowedFileTypes = [
 		'doc'   => 'application/msword',
 		'docx'  => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -31,21 +49,48 @@ class Filesystem {
 		'txt'   => 'text/plain',
 	];
 	
+	/**
+	 * File objects cache
+	 * @type File[]
+	 */
 	private $a_files;
 	
+	/**
+	 * Mutations log used in transactions
+	 * @type array
+	 */
 	private $a_mutations = [];
-	private $b_inTransaction = false;
-
 	
+	/**
+	 * Switch keeping track whether we are in a transaction or not
+	 * @type bool
+	 */
+	private $b_inTransaction = false;
+	
+	/**
+	 * Constructor
+	 * @param Reef $Reef The reef object this filesystem belongs to
+	 */
 	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
-		$this->s_dir = rtrim($this->Reef->getOption('files_dir'), '/') . '/';
+		$this->s_dir = $this->Reef->getOption('files_dir');
+		if($this->s_dir !== null) {
+			$this->s_dir = rtrim($this->s_dir, '/') . '/';
+		}
 	}
 	
+	/**
+	 * Get a list of allowed extensions
+	 * @return string[] The extensions
+	 */
 	public function getAllowedExtensions() {
 		return array_keys($this->a_allowedFileTypes);
 	}
 	
+	/**
+	 * Get a list of allowed extensions
+	 * @return string[] The extensions
+	 */
 	protected function getDir(string $s_dir) : string {
 		if($this->s_dir === null) {
 			throw new \Reef\Exception\InvalidArgumentException("No files dir set");
@@ -71,15 +116,27 @@ class Filesystem {
 		return $s_dir;
 	}
 	
+	/**
+	 * Return whether we are in a transaction or not
+	 * @return bool
+	 */
 	public function inTransaction() {
 		return $this->b_inTransaction;
 	}
 	
+	/**
+	 * Start a transaction
+	 * Modifications done after startTransaction() can be undone using rollbackTransaction()
+	 */
 	public function startTransaction() {
 		$this->b_inTransaction = true;
 		$this->a_mutations = [];
 	}
 	
+	/**
+	 * Commit the current transaction
+	 * This empties the mutation log, and performs any cleanup actions
+	 */
 	public function commitTransaction() {
 		foreach($this->a_mutations as $a_mutation) {
 			if($a_mutation[0] == 'add') {
@@ -102,6 +159,10 @@ class Filesystem {
 		$this->a_mutations = [];
 	}
 	
+	/**
+	 * Rollback the current transaction
+	 * This reverses all actions in the mutation log, done after startTransaction()
+	 */
 	public function rollbackTransaction() {
 		foreach($this->a_mutations as $a_mutation) {
 			if($a_mutation[0] == 'add') {
@@ -132,6 +193,11 @@ class Filesystem {
 		$this->a_mutations = [];
 	}
 	
+	/**
+	 * Add a mutation to the mutation log
+	 * @param string $s_action Either 'add', 'move' or 'delete'
+	 * @param mixed $m_data Data related to the mutation, to be used to commit/rollback the mutation
+	 */
 	private function logMutation(string $s_action, $m_data) {
 		$this->a_mutations[] = [$s_action, $m_data];
 		
@@ -140,6 +206,13 @@ class Filesystem {
 		}
 	}
 	
+	/**
+	 * Remove a directory if it is empty
+	 * This function checks whether the given directory is empty, in which case it will delete the directory.
+	 * Any parent directory that becomes empty in this way is also deleted, until a non-empty directory (or
+	 * the root storage directory) is reached.
+	 * @param string $s_path The path to check. May be a path to a (deleted) file or a (deleted) directory
+	 */
 	private function clearEmptyDirs($s_path) {
 		if(substr($s_path, 0, strlen($this->s_dir)) != $this->s_dir) {
 			throw new FilesystemException('Invalid directory');
@@ -237,6 +310,17 @@ class Filesystem {
 		return $s_extension;
 	}
 	
+	/**
+	 * Return the maximum upload size
+	 * The maximum upload size is the minimum of:
+	 *  - upload_max_filesize in php.ini
+	 *  - post_max_size in php.ini
+	 *  - memory_limit in php.ini
+	 *  - max_upload_size in Reef options
+	 * Hence, note that the max_upload_size option is not necessarily the effective maximum
+	 * 
+	 * @return int Maximum number of bytes in an uploaded file
+	 */
 	public function getMaxUploadSize() : int {
 		return min(array_filter([
 			\Reef\parseBytes($this->Reef->getOption('max_upload_size') ?? 0, $this->Reef->getOption('byte_base')),
@@ -246,6 +330,13 @@ class Filesystem {
 		]));
 	}
 	
+	/**
+	 * Upload files
+	 * This function handles uploaded files with the given value key. Only single file
+	 * uploads and a list of uploads are supported: multi-dimensional uploads are not.
+	 * @param string $s_key The key in $_FILES to process
+	 * @return File[] The uploaded files
+	 */
 	public function uploadFiles($s_key) {
 		
 		if(!array_key_exists($s_key, $_FILES)) {
@@ -271,6 +362,12 @@ class Filesystem {
 		return $a_files;
 	}
 	
+	/**
+	 * Retrieve the directory belonging to a context
+	 * The context can be a component, field, value, form or submission, or some internal identification string
+	 * @param mixed $context The context
+	 * @return string The directory belonging to the context
+	 */
 	protected function getContextDir($context) {
 		if($context == 'upload') {
 			return $this->getDir('_upload');
@@ -311,6 +408,13 @@ class Filesystem {
 		throw new FilesystemException('Invalid context');
 	}
 	
+	/**
+	 * Retrieve a file
+	 * @param string $s_uuid The uuid of the file to obtain
+	 * @param mixed $context @see getContextDir()
+	 * @return File The file object
+	 * @throws FilesystemException If the file is not found
+	 */
 	public function getFile($s_uuid, $context) {
 		$s_contextDir = $this->getContextDir($context);
 		
@@ -332,6 +436,12 @@ class Filesystem {
 		return $this->a_files[$s_uuid];
 	}
 	
+	/**
+	 * Perform a single file upload
+	 * @param array $a_upload The upload data from $_FILES, belonging to a single file
+	 * @return File The file object
+	 * @throws FilesystemException If the upload did not succeed
+	 */
 	private function _uploadFile($a_upload) {
 		$s_dir = $this->getDir('_upload');
 		
@@ -396,6 +506,13 @@ class Filesystem {
 		return $File;
 	}
 	
+	/**
+	 * Move the file between contexts
+	 * Should be used to e.g. move a file from the temporary upload directory to its final destination
+	 * @param File $File The file to move
+	 * @param mixed $context @see getContextDir()
+	 * @throws FilesystemException If the move did not succeed
+	 */
 	public function changeFileContext(File $File, $context) {
 		$s_contextDir = $this->getContextDir($context);
 		
@@ -416,10 +533,20 @@ class Filesystem {
 		}
 	}
 	
+	/**
+	 * Delete a file
+	 * Should be used to delete a file
+	 * @param File $File The file to delete
+	 */
 	public function deleteFile(File $File) {
 		$this->changeFileContext($File, 'trash');
 	}
 	
+	/**
+	 * Remove an entire context directory, including contents
+	 * @param mixed $context @see getContextDir()
+	 * @throws FilesystemException If the context does not belong to a stored submission or stored form
+	 */
 	public function removeContextDir($context) {
 		if($this->s_dir === null) {
 			return;

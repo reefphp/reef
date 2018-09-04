@@ -2,6 +2,10 @@
 
 namespace Reef\Storage;
 
+/**
+ * Interface for storage classes, defining how data should be
+ * persisted into databases
+ */
 interface Storage {
 	
 	const TYPE_TEXT = 'type_text';

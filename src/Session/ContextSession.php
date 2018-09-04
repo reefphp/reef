@@ -2,10 +2,23 @@
 
 namespace Reef\Session;
 
+/**
+ * This is the session class used by Reef, providing functionality to get and set session
+ * values based on specified contexts. It uses the session implementation submitted during
+ * the initialization of Reef.
+ */
 class ContextSession {
 	
+	/**
+	 * The session implementation to use
+	 * @type SessionInterface
+	 */
 	protected $SessionObject;
 	
+	/**
+	 * Constructor
+	 * @param SessionInterface $SessionObject The session implementation to use
+	 */
 	public function __construct(SessionInterface $SessionObject) {
 		$this->SessionObject = $SessionObject;
 	}

@@ -4,10 +4,16 @@ namespace Reef\Storage;
 
 use Reef\Exception\BadMethodCallException;
 
+/**
+ * Storage implementation that can be used to not use any storage.
+ * This may be useful if you only want to use temporary forms.
+ */
 class NoStorage implements Storage {
 	
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
-		
 	}
 	
 	/**

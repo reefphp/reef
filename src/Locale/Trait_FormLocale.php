@@ -15,7 +15,6 @@ namespace Reef\Locale;
  * The used keys are taken from the locale/locales definition
  */
 
-
 trait Trait_FormLocale {
 	
 	use Trait_Locale;

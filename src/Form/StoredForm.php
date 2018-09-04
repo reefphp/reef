@@ -8,9 +8,21 @@ use \Reef\StoredSubmission;
 use \Reef\SubmissionOverview;
 use \Reef\Exception\BadMethodCallException;
 
+/**
+ * A StoredForm is a Form that is persisted in the database
+ */
 class StoredForm extends AbstractStoredForm {
 	
+	/**
+	 * The submission storage of this form
+	 * @type Storage
+	 */
 	private $SubmissionStorage;
+	
+	/**
+	 * The form id of this form
+	 * @type ?int
+	 */
 	private $i_formId;
 	
 	/**
@@ -33,10 +45,17 @@ class StoredForm extends AbstractStoredForm {
 		$this->i_formId = $i_formId;
 	}
 	
+	/**
+	 * Get the form id of this form
+	 * @return ?int The form id, or null if this form is not yet saved
+	 */
 	public function getFormId() {
 		return $this->i_formId;
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function setStorageName($s_newStorageName) {
 		if(!empty($this->a_definition['storage_name'])) {
 			$this->Reef->getDataStore()->changeSubmissionStorageName($this, $s_newStorageName);
@@ -44,12 +63,20 @@ class StoredForm extends AbstractStoredForm {
 		parent::setStorageName($s_newStorageName);
 	}
 	
+	/**
+	 * Create the submission storage in the database if it does not exist yet
+	 */
 	public function createSubmissionStorageIfNotExists() {
 		if(!$this->Reef->getDataStore()->hasSubmissionStorage($this->getStorageName())) {
 			$this->Reef->getDataStore()->createSubmissionStorage($this);
 		}
 	}
 	
+	/**
+	 * Get the submission storage
+	 * @return Storage The submission storage
+	 * @throws BadMethodCallException If the storage name is empty
+	 */
 	public function getSubmissionStorage() {
 		if(empty($this->a_definition['storage_name']??null)) {
 			throw new BadMethodCallException('Storage name not set');
@@ -62,6 +89,10 @@ class StoredForm extends AbstractStoredForm {
 		return $this->SubmissionStorage;
 	}
 	
+	/**
+	 * Update the definition of this form, migrating the data using the Updater class
+	 * @inherit
+	 */
 	public function updateDefinition(array $a_definition, array $a_fieldRenames = []) {
 		$Form2 = $this->Reef->newTempStoredForm();
 		$Form2->setDefinition($a_definition);
@@ -70,6 +101,9 @@ class StoredForm extends AbstractStoredForm {
 		$Updater->update($this, $Form2, $a_fieldRenames);
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function checkUpdateDataLoss(array $a_definition, array $a_fieldRenames = []) {
 		$Form2 = $this->Reef->newTempStoredForm();
 		$Form2->setDefinition($a_definition);
@@ -83,6 +117,9 @@ class StoredForm extends AbstractStoredForm {
 		return $Updater->determineUpdateDataLoss($this, $Form2, $a_fieldRenames);
 	}
 	
+	/**
+	 * Save this form to the database
+	 */
 	public function save() {
 		$a_definition = $this->getDefinition();
 		
@@ -94,6 +131,9 @@ class StoredForm extends AbstractStoredForm {
 		}
 	}
 	
+	/**
+	 * Delete this form
+	 */
 	public function delete() {
 		$this->Reef->getDataStore()->deleteSubmissionStorageIfExists($this);
 		$this->Reef->getDataStore()->getFilesystem()->removeContextDir($this);
@@ -103,14 +143,27 @@ class StoredForm extends AbstractStoredForm {
 		}
 	}
 	
+	/**
+	 * Get all submission ids of this form
+	 * @return int[]
+	 */
 	public function getSubmissionIds() {
 		return ($this->i_formId === null) ? [] : $this->getSubmissionStorage()->list();
 	}
 	
+	/**
+	 * Get the number of submissions of this form
+	 * @return int
+	 */
 	public function getNumSubmissions() : int {
 		return ($this->i_formId === null) ? 0 : $this->getSubmissionStorage()->count();
 	}
 	
+	/**
+	 * Get the submission with the specified submission id
+	 * @param int $i_submissionId The submission id
+	 * @return Submission
+	 */
 	public function getSubmission(int $i_submissionId) : Submission {
 		$Submission = $this->newSubmission();
 		
@@ -119,6 +172,11 @@ class StoredForm extends AbstractStoredForm {
 		return $Submission;
 	}
 	
+	/**
+	 * Get the submission with the specified submission uuid
+	 * @param string $s_submissionUUID The submission uuid
+	 * @return Submission
+	 */
 	public function getSubmissionByUUID(string $s_submissionUUID) : Submission {
 		$Submission = $this->newSubmission();
 		
@@ -127,10 +185,17 @@ class StoredForm extends AbstractStoredForm {
 		return $Submission;
 	}
 	
+	/**
+	 * Create a new submission overview instance for this form
+	 * @return SubmissionOverview
+	 */
 	public function newSubmissionOverview() {
 		return new SubmissionOverview($this);
 	}
 	
+	/**
+	 * @inherit
+	 */
 	public function newSubmission() {
 		return new StoredSubmission($this);
 	}
