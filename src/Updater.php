@@ -100,7 +100,7 @@ class Updater {
 	 * @param StoredForm $Form1 The form that is being migrated
 	 * @param TempStoredForm $Form2 The new form definition
 	 * @param string[] $a_fieldRenames Mapping from old field names to new field names, where applicable
-	 * @return array Schema update plan, consisting of:
+	 * @return array Schema update plan, consisting of the return values of computeFieldUpdatePlan() and:
 	 *  - array $a_createColumns: list of created columns, the column name in $Form2 as key and structure array as value
 	 *  - array $a_updateColumns: list of updated columns, the column name in $Form1 as key and the following array as value:
 	 *     - fieldNameFrom    string   The old field name
@@ -200,7 +200,7 @@ class Updater {
 			}
 		}
 		
-		return [$a_createColumns, $a_updateColumns, $a_deleteColumns];
+		return [$a_createFields, $a_updateFields, $a_deleteFields, $a_createColumns, $a_updateColumns, $a_deleteColumns];
 	}
 	
 	/**
@@ -234,7 +234,7 @@ class Updater {
 	 */
 	public function update(StoredForm $Form, TempStoredForm $newForm, $a_fieldRenames) {
 		
-		[$a_create, $a_update, $a_delete] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
+		[$a_createFields, $a_updateFields, $a_deleteFields, $a_createColumns, $a_updateColumns, $a_deleteColumns] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
 		
 		if(empty($Form->getStorageName())) {
 			$Form->setStorageName($newForm->getStorageName());
@@ -274,11 +274,6 @@ class Updater {
 			};
 		};
 		
-		$a_updateFields = [];
-		foreach($a_update as $a_fieldUpdate) {
-			$a_updateFields[$a_fieldUpdate['fieldNameFrom']] = $a_fieldUpdate['fieldNameTo'];
-		}
-		
 		$a_info = [
 			'PDO_DRIVER' => $PDO->getAttribute(\PDO::ATTR_DRIVER_NAME),
 		];
@@ -288,14 +283,15 @@ class Updater {
 			$Form,
 			$newForm,
 			$a_info,
-			$a_create,
-			$a_update,
-			$a_delete,
+			$a_createColumns,
+			$a_updateColumns,
+			$a_deleteColumns,
 			$a_updateFields,
+			$a_deleteFields,
 			$fn_getContentUpdater
 			) {
 			
-			$SubmissionStorage->addColumns($a_create);
+			$SubmissionStorage->addColumns($a_createColumns);
 			
 			$a_fields1 = $Form->getValueFieldsByName();
 			$a_fields2 = $newForm->getValueFieldsByName();
@@ -309,9 +305,16 @@ class Updater {
 				]));
 			}
 			
-			$SubmissionStorage->updateColumns($a_update);
+			foreach($a_deleteFields as $s_fieldName1) {
+				$a_fields1[$s_fieldName1]->beforeDelete(array_merge($a_info, [
+					'content_updater' => $fn_getContentUpdater($a_fields1[$s_fieldName1]),
+					'columns' => $this->getColumns($a_fields1[$s_fieldName1]),
+				]));
+			}
 			
-			$SubmissionStorage->removeColumns(array_keys($a_delete));
+			$SubmissionStorage->updateColumns($a_updateColumns);
+			
+			$SubmissionStorage->removeColumns(array_keys($a_deleteColumns));
 			
 			$Form->setFields($newForm->getDefinition()['fields']);
 			

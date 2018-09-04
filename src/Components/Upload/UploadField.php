@@ -106,6 +106,25 @@ class UploadField extends Field implements RequiredFieldInterface {
 	
 	/**
 	 * @inherit
+	 * @todo Can this be done more efficiently?
+	 */
+	public function beforeDelete($a_data) {
+		$Form = $this->getForm();
+		if(!($Form instanceof \Reef\Form\StoredForm)) {
+			return;
+		}
+		
+		$s_fieldName = $this->getDeclaration()['name'];
+		
+		foreach($Form->getSubmissionIds() as $i_submissionId) {
+			$Submission = $Form->getSubmission($i_submissionId);
+			
+			$Submission->getFieldValue($s_fieldName)->fromUserInput([]);
+		}
+	}
+	
+	/**
+	 * @inherit
 	 */
 	protected function getLanguageReplacements() : array {
 		$Filesystem = $this->getForm()->getReef()->getDataStore()->getFilesystem();

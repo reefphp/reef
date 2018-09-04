@@ -155,4 +155,79 @@ final class UploadValueTest extends FieldValueTestCase {
 		$this->assertSame(1, count($Value->getFiles()));
 		$this->assertSame(0, $Filesystem->numFilesInContext('upload'));
 	}
+	
+	/**
+	 * @depends testCanBeCreated
+	 */
+	public function testDeleteField() {
+		$Form = static::$Reef->newStoredForm([
+			'storage_name' => \Reef\unique_id(),
+			'fields' => [
+				[
+					'component' => 'reef:upload',
+					'name' => 'field1',
+					'multiple' => true,
+					'max_files' => 3,
+					'types' => [
+						'txt' => true,
+					],
+					'locale' => [
+						'title' => 'The title'
+					],
+				],
+				[
+					'component' => 'reef:upload',
+					'name' => 'field2',
+					'multiple' => true,
+					'max_files' => 3,
+					'types' => [
+						'txt' => true,
+					],
+					'locale' => [
+						'title' => 'The title'
+					],
+				],
+			],
+		]);
+		
+		$this->uploadFile('file1.txt', 'somecontent', $s_uuid1);
+		$this->uploadFile('file2.txt', 'somecontent', $s_uuid2);
+		$this->uploadFile('file3.txt', 'somecontent', $s_uuid3);
+		$this->uploadFile('file4.txt', 'somecontent', $s_uuid4);
+		$this->uploadFile('file5.txt', 'somecontent', $s_uuid5);
+		
+		$Filesystem = static::$Reef->getDataStore()->getFilesystem();
+		
+		$Submission = $Form->newSubmission();
+		$Submission->emptySubmission();
+		$Submission->save();
+		$Value1 = $Submission->getFieldValue('field1');
+		$Value2 = $Submission->getFieldValue('field2');
+		
+		// Start: only uploaded, not assigned
+		$this->assertSame(0, count($Value1->getFiles()));
+		$this->assertSame(0, count($Value2->getFiles()));
+		$this->assertSame(0, $Filesystem->numFilesInContext($Submission));
+		$this->assertSame(5, $Filesystem->numFilesInContext('upload'));
+		
+		// Assign files
+		$Value1->fromUserInput([$s_uuid1, $s_uuid2]);
+		$Value2->fromUserInput([$s_uuid3, $s_uuid4]);
+		$Submission->save();
+		
+		$this->assertSame(2, count($Value1->getFiles()));
+		$this->assertSame(2, count($Value2->getFiles()));
+		$this->assertSame(4, $Filesystem->numFilesInContext($Submission));
+		$this->assertSame(1, $Filesystem->numFilesInContext('upload'));
+		
+		// Remove one field
+		$Form->newCreator()->getFieldByName('field1')->delete()->apply();
+		
+		$this->assertSame(2, count($Value2->getFiles()));
+		$this->assertSame(2, $Filesystem->numFilesInContext($Submission));
+		$this->assertSame(1, $Filesystem->numFilesInContext('upload'));
+		
+		// Delete form
+		$Form->delete();
+	}
 }

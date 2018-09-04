@@ -202,6 +202,17 @@ abstract class Field implements HidableFieldInterface {
 	public function beforeSchemaUpdate($a_data) {
 	}
 	
+	/**
+	 * Perform data updates before the field is removed from the form. Only called
+	 * when the form keeps existing without this field, not when the entire form is
+	 * deleted.
+	 * @param array $a_data Array containing:
+	 *   - PDO_DRIVER : The PDO driver used
+	 *   - content_updater : A function that can be used to perform SQL queries
+	 *   - columns : The old column names
+	 */
+	public function beforeDelete($a_data) {
+	}
 	
 	/**
 	 * Perform data updates after the schema is changed
