@@ -144,9 +144,9 @@ class CheckListField extends Field {
 		[$a_create, $a_update, $a_delete] = $this->getOptionUpdatePlan($this, $a_data['new_field']);
 		
 		foreach($a_update as $s_oldName => $s_newName) {
-			switch($a_data['PDO_DRIVER']) {
-				case 'sqlite':
-				case 'mysql':
+			switch($a_data['storageFactoryName']) {
+				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
+				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
 					$a_data['content_updater']('UPDATE %1$s SET '.$a_data['new_columns'][$s_newName].' = '.$a_data['old_columns'][$s_oldName].' ');
 				break;
 			}

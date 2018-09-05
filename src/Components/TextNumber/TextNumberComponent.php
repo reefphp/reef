@@ -62,8 +62,8 @@ class TextNumberComponent extends Component implements RequiredComponentInterfac
 	 */
 	public function supportedStorages() : ?array {
 		return [
-			'mysql',
-			'sqlite',
+			'pdo_mysql',
+			'pdo_sqlite',
 		];
 	}
 }

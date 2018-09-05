@@ -130,9 +130,9 @@ abstract class AbstractSingleChoiceField extends Field {
 		[$a_create, $a_update, $a_delete] = $this->getOptionUpdatePlan($this, $a_data['new_field']);
 		
 		foreach($a_update as $s_oldName => $s_newName) {
-			switch($a_data['PDO_DRIVER']) {
-				case 'sqlite':
-				case 'mysql':
+			switch($a_data['storageFactoryName']) {
+				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
+				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
 					$a_data['content_updater']('UPDATE %1$s SET %2$s = ? WHERE %2$s = ?', [$s_newName, $s_oldName]);
 				break;
 			}
@@ -143,17 +143,17 @@ abstract class AbstractSingleChoiceField extends Field {
 		if(count($a_names) > 0) {
 			$s_qs = str_repeat('?, ', count($a_names)-1).' ?';
 			
-			switch($a_data['PDO_DRIVER']) {
-				case 'sqlite':
-				case 'mysql':
+			switch($a_data['storageFactoryName']) {
+				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
+				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
 					$a_data['content_updater']('UPDATE %1$s SET %2$s = NULL WHERE %2$s NOT IN ('.$s_qs.') ', array_values($a_names));
 				break;
 			}
 		}
 		else {
-			switch($a_data['PDO_DRIVER']) {
-				case 'sqlite':
-				case 'mysql':
+			switch($a_data['storageFactoryName']) {
+				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
+				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
 					$a_data['content_updater']('UPDATE %1$s SET %2$s = NULL');
 				break;
 			}

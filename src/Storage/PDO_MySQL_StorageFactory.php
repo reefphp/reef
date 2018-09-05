@@ -11,7 +11,7 @@ class PDO_MySQL_StorageFactory extends PDOStorageFactory {
 	 * @inherit
 	 */
 	public static function getName() : string {
-		return 'mysql';
+		return 'pdo_mysql';
 	}
 	
 	/**

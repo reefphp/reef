@@ -11,7 +11,7 @@ class PDO_SQLite_StorageFactory extends PDOStorageFactory {
 	 * @inherit
 	 */
 	public static function getName() : string {
-		return 'sqlite';
+		return 'pdo_sqlite';
 	}
 	
 	/**

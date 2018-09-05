@@ -85,9 +85,9 @@ class TextLineField extends Field implements RequiredFieldInterface {
 	public function beforeSchemaUpdate($a_data) {
 		$NewField = $a_data['new_field'];
 		
-		switch($a_data['PDO_DRIVER']) {
-			case 'sqlite':
-			case 'mysql':
+		switch($a_data['storageFactoryName']) {
+			case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
+			case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
 				if($this->getMaxLength() > $NewField->getMaxLength()) {
 					$a_data['content_updater']('UPDATE %1$s SET %2$s = SUBSTR(%2$s, 1, '.$NewField->getMaxLength().') WHERE LENGTH(%2$s) > '.$NewField->getMaxLength().' ');
 				}

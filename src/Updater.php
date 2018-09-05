@@ -249,7 +249,6 @@ class Updater {
 		$Form->createSubmissionStorageIfNotExists();
 		
 		$SubmissionStorage = $Form->getSubmissionStorage();
-		$PDO = $SubmissionStorage->getPDO();
 		
 		$fn_getContentUpdater = function($Field) use($SubmissionStorage) {
 			return function(string $s_query, array $a_vars = []) use($Field, $SubmissionStorage) {
@@ -275,7 +274,7 @@ class Updater {
 		};
 		
 		$a_info = [
-			'PDO_DRIVER' => $PDO->getAttribute(\PDO::ATTR_DRIVER_NAME),
+			'storageFactoryName' => $Form->getReef()->getSetup()->getStorageFactory()::getName(),
 		];
 		
 		$Form->getReef()->getDataStore()->ensureTransaction(function() use(

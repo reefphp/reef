@@ -42,8 +42,8 @@ class HiddenComponent extends Component {
 	 */
 	public function supportedStorages() : ?array {
 		return [
-			'mysql',
-			'sqlite',
+			'pdo_mysql',
+			'pdo_sqlite',
 		];
 	}
 	

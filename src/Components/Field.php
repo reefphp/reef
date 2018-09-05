@@ -207,7 +207,7 @@ abstract class Field implements HidableFieldInterface {
 	 * when the form keeps existing without this field, not when the entire form is
 	 * deleted.
 	 * @param array $a_data Array containing:
-	 *   - PDO_DRIVER : The PDO driver used
+	 *   - storageFactoryName : The name of the used storage factory
 	 *   - content_updater : A function that can be used to perform SQL queries
 	 *   - columns : The old column names
 	 */
@@ -217,7 +217,7 @@ abstract class Field implements HidableFieldInterface {
 	/**
 	 * Perform data updates after the schema is changed
 	 * @param array $a_data Array containing:
-	 *   - PDO_DRIVER : The PDO driver used
+	 *   - storageFactoryName : The name of the used storage factory
 	 *   - content_updater : A function that can be used to perform SQL queries
 	 *   - old_columns : The old column names
 	 *   - new_columns : The new column names

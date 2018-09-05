@@ -117,9 +117,9 @@ class TextNumberField extends Field implements RequiredFieldInterface {
 		$NewField = $a_data['new_field'];
 		$a_newDecl = $NewField->getDeclaration();
 		
-		switch($a_data['PDO_DRIVER']) {
-			case 'sqlite':
-			case 'mysql':
+		switch($a_data['storageFactoryName']) {
+			case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
+			case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
 				if(isset($a_newDecl['max']) && (!isset($this->a_declaration['max']) || $this->a_declaration['max'] > $a_newDecl['max'])) {
 					$a_data['content_updater']('UPDATE %1$s SET %2$s = ? WHERE %2$s > ?', [$a_newDecl['max'], $a_newDecl['max']]);
 				}
