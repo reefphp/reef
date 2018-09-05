@@ -1,8 +1,6 @@
 <?php
 
-namespace tests\Storage;
-
-require_once(__DIR__ . '/PDOStorageTestCase.php');
+namespace ReefTests\unit\Storage;
 
 use \PDOException;
 use Reef\Storage\PDO_SQLite_Storage;

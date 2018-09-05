@@ -1,8 +1,8 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\Checkbox;
 
-require_once(__DIR__ . '/../ComponentTestCase.php');
+use \ReefTests\integration\Components\ComponentTestCase;
 
 final class CheckBoxComponentTest extends ComponentTestCase {
 	

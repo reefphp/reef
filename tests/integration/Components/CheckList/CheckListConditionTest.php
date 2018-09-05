@@ -1,8 +1,8 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\CheckList;
 
-require_once(__DIR__ . '/../ConditionTestCase.php');
+use \ReefTests\integration\Components\ConditionTestCase;
 
 final class CheckListConditionTest extends ConditionTestCase {
 	

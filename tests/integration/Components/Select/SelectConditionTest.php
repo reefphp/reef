@@ -1,8 +1,8 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\Select;
 
-require_once(__DIR__ . '/../ConditionTestCase.php');
+use \ReefTests\integration\Components\ConditionTestCase;
 
 final class SelectConditionTest extends ConditionTestCase {
 	

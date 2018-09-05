@@ -1,8 +1,8 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\TextNumber;
 
-require_once(__DIR__ . '/../FieldTestCase.php');
+use \ReefTests\integration\Components\FieldTestCase;
 
 final class TextNumberFieldTest extends FieldTestCase {
 	

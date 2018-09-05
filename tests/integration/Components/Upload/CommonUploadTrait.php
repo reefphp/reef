@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\Upload;
 
 require_once(__DIR__ . '/../../../filesystem_move_uploaded_file.php');
 

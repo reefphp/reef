@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Form;
+namespace ReefTests\unit\Exception;
 
 use PHPUnit\Framework\TestCase;
 use \Reef\Exception\ValidationException;

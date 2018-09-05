@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Session;
+namespace ReefTests\unit\Session;
 
 use PHPUnit\Framework\TestCase;
 use \Reef\Session\SessionInterface;

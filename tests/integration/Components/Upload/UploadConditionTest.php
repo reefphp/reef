@@ -1,9 +1,8 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\Upload;
 
-require_once(__DIR__ . '/../ConditionTestCase.php');
-require_once(__DIR__ . '/CommonUploadTrait.php');
+use \ReefTests\integration\Components\ConditionTestCase;
 
 final class UploadConditionTest extends ConditionTestCase {
 	

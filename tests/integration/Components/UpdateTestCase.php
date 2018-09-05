@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;

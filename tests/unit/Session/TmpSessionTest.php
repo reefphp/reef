@@ -1,10 +1,8 @@
 <?php
 
-namespace tests\Session;
+namespace ReefTests\unit\Session;
 
 use \Reef\Session\SessionInterface;
-
-require_once(__DIR__ . '/SessionTestCase.php');
 
 final class TmpSessionTest extends SessionTestCase {
 	

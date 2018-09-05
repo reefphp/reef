@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Filesystem;
+namespace ReefTests\unit\Filesystem;
 
 require_once(__DIR__ . '/../../filesystem_move_uploaded_file.php');
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\Select;
 
-require_once(__DIR__ . '/../UpdateTestCase.php');
+use \ReefTests\integration\Components\UpdateTestCase;
 
 final class SelectUpdateTest extends UpdateTestCase {
 	

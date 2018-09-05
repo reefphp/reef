@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Form;
+namespace ReefTests\unit;
 
 use PHPUnit\Framework\TestCase;
 

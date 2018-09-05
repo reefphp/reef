@@ -1,9 +1,8 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\Upload;
 
-require_once(__DIR__ . '/../FieldTestCase.php');
-require_once(__DIR__ . '/CommonUploadTrait.php');
+use \ReefTests\integration\Components\FieldTestCase;
 
 final class UploadFieldTest extends FieldTestCase {
 	

@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Storage;
+namespace ReefTests\unit\Storage;
 
 use PHPUnit\Framework\TestCase;
 use \Reef\Exception\StorageException;

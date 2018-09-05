@@ -1,8 +1,8 @@
 <?php
 
-namespace tests\Components;
+namespace ReefTests\integration\Components\Paragraph;
 
-require_once(__DIR__ . '/../FieldTestCase.php');
+use \ReefTests\integration\Components\FieldTestCase;
 
 final class ParagraphFieldTest extends FieldTestCase {
 	

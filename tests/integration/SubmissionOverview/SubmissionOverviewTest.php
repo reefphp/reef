@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\SubmissionOverview;
+namespace ReefTests\integration\SubmissionOverview;
 
 use PHPUnit\Framework\TestCase;
 use Reef\Storage\PDO_SQLite_Storage;
