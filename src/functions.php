@@ -187,6 +187,8 @@ function bytes_format(int $i_bytes, ?int $i_base) : string {
  */
 function stop() {
 	if(!defined('REEF_IN_PHPUNIT') || !REEF_IN_PHPUNIT) {
+		// @codeCoverageIgnoreStart
 		exit;
+		// @codeCoverageIgnoreEnd
 	}
 }
