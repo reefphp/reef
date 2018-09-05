@@ -229,5 +229,76 @@ final class UploadValueTest extends FieldValueTestCase {
 		
 		// Delete form
 		$Form->delete();
+		
+		// Clean up
+		$Filesystem->deleteFile($Filesystem->getFile($s_uuid5, 'upload'));
+		$this->assertSame(0, $Filesystem->numFilesInContext('upload'));
+	}
+	
+	/**
+	 * @depends testCanBeCreated
+	 */
+	public function testDeleteFile() {
+		$Form = static::$Reef->newStoredForm([
+			'storage_name' => \Reef\unique_id(),
+			'fields' => [
+				[
+					'component' => 'reef:upload',
+					'name' => 'field',
+					'multiple' => true,
+					'max_files' => 3,
+					'types' => [
+						'txt' => true,
+					],
+					'locale' => [
+						'title' => 'The title'
+					],
+				],
+			],
+		]);
+		
+		$this->uploadFile('file1.txt', 'somecontent', $s_uuid1);
+		$this->uploadFile('file2.txt', 'somecontent', $s_uuid2);
+		$this->uploadFile('file3.txt', 'somecontent', $s_uuid3);
+		$this->uploadFile('file4.txt', 'somecontent', $s_uuid4);
+		$this->uploadFile('file5.txt', 'somecontent', $s_uuid5);
+		
+		$Filesystem = static::$Reef->getDataStore()->getFilesystem();
+		
+		$Submission = $Form->newSubmission();
+		$Submission->emptySubmission();
+		$Submission->save();
+		$Value = $Submission->getFieldValue('field');
+		
+		// Start: only uploaded, not assigned
+		$this->assertSame(0, count($Value->getFiles()));
+		$this->assertSame(0, $Filesystem->numFilesInContext($Submission));
+		$this->assertSame(5, $Filesystem->numFilesInContext('upload'));
+		
+		// Assign files
+		$Value->fromUserInput([$s_uuid1, $s_uuid2]);
+		$Submission->save();
+		
+		$this->assertSame(2, count($Value->getFiles()));
+		$this->assertSame(2, $Filesystem->numFilesInContext($Submission));
+		$this->assertSame(3, $Filesystem->numFilesInContext('upload'));
+		
+		// Remove one file
+		$a_files = $Value->getFiles();
+		$Value->deleteFile(end($a_files));
+		$Submission->save();
+		
+		$this->assertSame(1, count($Value->getFiles()));
+		$this->assertSame(1, $Filesystem->numFilesInContext($Submission));
+		$this->assertSame(3, $Filesystem->numFilesInContext('upload'));
+		
+		// Delete form
+		$Form->delete();
+		
+		// Clean up
+		$Filesystem->deleteFile($Filesystem->getFile($s_uuid3, 'upload'));
+		$Filesystem->deleteFile($Filesystem->getFile($s_uuid4, 'upload'));
+		$Filesystem->deleteFile($Filesystem->getFile($s_uuid5, 'upload'));
+		$this->assertSame(0, $Filesystem->numFilesInContext('upload'));
 	}
 }

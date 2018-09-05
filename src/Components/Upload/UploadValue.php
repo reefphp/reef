@@ -14,6 +14,11 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	protected $a_uuids;
 	protected $a_uuidsDel;
 	
+	/**
+	 * Get all files of this field
+	 * @param bool $b_includeDeleted Whether to include recently deleted files. Optional, defaults to false
+	 * @return File[]
+	 */
 	public function getFiles(bool $b_includeDeleted = false) {
 		$Filesystem = $this->getField()->getForm()->getReef()->getDataStore()->getFilesystem();
 		
@@ -33,6 +38,22 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 		}
 		
 		return $a_files;
+	}
+	
+	/**
+	 * Delete a file
+	 * @param \Reef\Filesystem\File $File The file to delete
+	 * @return File[]
+	 */
+	public function deleteFile(\Reef\Filesystem\File $File) {
+		$i_key = array_search($File->getUUID(), $this->a_uuids);
+		if($i_key === false) {
+			throw new \Reef\Exception\DomainException('File "'.$File->getUUID().'" does not belong to this field');
+		}
+		
+		$Filesystem = $this->getField()->getForm()->getReef()->getDataStore()->getFilesystem();
+		$Filesystem->deleteFile($File);
+		unset($this->a_uuids[$i_key]);
 	}
 	
 	/**

@@ -26,10 +26,18 @@ class UploadField extends Field implements RequiredFieldInterface {
 		return $b_valid;
 	}
 	
+	/**
+	 * Determine whether multiple files are allowed to be uploaded at once
+	 * @return bool
+	 */
 	public function multipleFilesAllowed() : bool {
 		return $this->a_declaration['multiple'] ?? false;
 	}
 	
+	/**
+	 * Determine the maximum number of files to be uploaded at once
+	 * @return int
+	 */
 	public function getMaxFiles() : int {
 		if(!$this->multipleFilesAllowed()) {
 			return 1;
@@ -38,6 +46,10 @@ class UploadField extends Field implements RequiredFieldInterface {
 		return min($this->a_declaration['max_files'] ?? static::MAX_FILES, ini_get('max_file_uploads'), static::MAX_FILES);
 	}
 	
+	/**
+	 * Get an array of allowed uploaded file extensions
+	 * @return string[] The extensions
+	 */
 	public function getAllowedExtensions() : array {
 		if($this->a_allowedExtensions === null) {
 			$this->a_allowedExtensions = array_intersect(
