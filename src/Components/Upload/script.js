@@ -78,7 +78,7 @@ Reef.addComponent((function() {
 	
 	Field.prototype.determineState = function() {
 		var numFiles = this.getValue().length;
-		this.$upload.prop('required', numFiles == 0 && ReefConditionEvaluator.evaluate(this.Reef, this.$upload.attr('data-required-if')));
+		this.$upload.prop('required', numFiles == 0 && typeof this.$upload.attr('data-required-if') !== 'undefined' && ReefConditionEvaluator.evaluate(this.Reef, this.$upload.attr('data-required-if')));
 		this.$upload.prop('disabled', numFiles >= this.$upload.attr('data-max-files'));
 	}
 	
