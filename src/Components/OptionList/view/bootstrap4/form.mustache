@@ -1,4 +1,4 @@
-<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:option_list" data-{{CSSPRFX}}name="{{field.name}}" data-num_opt_def="{{field.default_num_options}}" data-num_opt_min="{{field.min_num_options}}" data-max_checked_def="{{field.max_checked_defaults}}" {{{field.visible}}}>
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:option_list" data-{{CSSPRFX}}name="{{field.name}}" data-num_opt_def="{{field.default_num_options}}" data-num_opt_min="{{field.min_num_options}}" data-num_opt_max="{{field.max_num_options}}" data-max_checked_def="{{field.max_checked_defaults}}" {{{field.visible}}}>
 	<div class="{{CSSPRFX}}ol-lang"
 		data-yes="{{field.locale.rf_yes}}"
 		data-no="{{field.locale.rf_no}}"
@@ -11,8 +11,12 @@
 		<table style="width: 100%;">
 			<thead>
 				<tr>
+					{{#field.max_checked_defaults}}
 					<th></th>
+					{{/field.max_checked_defaults}}
+					{{#field.names}}
 					<th>{{field.locale.option_name_title}}</th>
+					{{/field.names}}
 					<th>
 					{{#field.multipleLocales}}
 					{{#field.locales}}
@@ -30,13 +34,16 @@
 					<th></th>
 				</tr>
 				<tr class="{{CSSPRFX}}ol-option {{CSSPRFX}}template">
+					{{#field.max_checked_defaults}}
 					<td>
 						<input type="checkbox" name="{{main_var}}[{{field.name}}][default][]" class="{{CSSPRFX}}ol-default" value="1" style="width: 100%;" />
 					</td>
+					{{/field.max_checked_defaults}}
+					{{#field.names}}
 					<td style="width: 30%;">
-						<input type="hidden" name="{{main_var}}[{{field.name}}][old_name][]" class="{{CSSPRFX}}ol-old-name" value="" />
 						<input type="text" name="{{main_var}}[{{field.name}}][name][]" class="{{CSSPRFX}}ol-name" value="" style="width: 100%;" pattern="{{field.name_regexp}}" />
 					</td>
+					{{/field.names}}
 					<td>
 					{{#field.locales}}
 						<div class="{{CSSPRFX}}ol-locale" data-locale="{{.}}" style="display: none;">
@@ -45,6 +52,7 @@
 					{{/field.locales}}
 					</td>
 					<td>
+						<input type="hidden" name="{{main_var}}[{{field.name}}][old_name][]" class="{{CSSPRFX}}ol-old-name" value="" />
 						<div class="{{CSSPRFX}}ol-btns">
 							<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-btn-icon {{CSSPRFX}}ol-drag-handle">&#8661;</div>
 							<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-btn-icon {{CSSPRFX}}ol-remove-option">&times;</div>
@@ -59,6 +67,7 @@
 		<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-add">+ {{field.locale.add_button}}</div>
 		
 		<div class="invalid-feedback {{CSSPRFX}}error-min-options" style="display: none;">{{field.locale.error_min_options}}</div>
+		<div class="invalid-feedback {{CSSPRFX}}error-max-options" style="display: none;">{{field.locale.error_max_options}}</div>
 		<div class="invalid-feedback {{CSSPRFX}}error-max-checked-def" style="display: none;">{{field.locale.error_max_checked_defaults}}</div>
 		<div class="invalid-feedback {{CSSPRFX}}error-regexp" style="display: none;">{{field.locale.error_regexp}}</div>
 		<div class="invalid-feedback {{CSSPRFX}}error-duplicate" style="display: none;">{{field.locale.error_duplicate}}</div>

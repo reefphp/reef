@@ -8,6 +8,10 @@ class OptionListValue extends FieldValue {
 	
 	protected $a_value;
 	
+	public function askNames() {
+		return \Reef\interpretBool($this->Field->getDeclaration()['names'] ?? true);
+	}
+	
 	/**
 	 * @inherit
 	 */
@@ -18,6 +22,11 @@ class OptionListValue extends FieldValue {
 		
 		if(isset($a_declaration['min_num_options']) && $a_declaration['min_num_options'] > 0 && count($this->a_value) < $a_declaration['min_num_options']) {
 			$this->a_errors[] = $this->Field->trans('error_min_options');
+			return false;
+		}
+		
+		if(isset($a_declaration['max_num_options']) && $a_declaration['max_num_options'] > 0 && count($this->a_value) > $a_declaration['max_num_options']) {
+			$this->a_errors[] = $this->Field->trans('error_max_options');
 			return false;
 		}
 		
@@ -60,10 +69,18 @@ class OptionListValue extends FieldValue {
 	}
 	
 	/**
+	 * Obtain the default value
+	 * @return array
+	 */
+	public function getDefault() {
+		return (array)($this->Field->getDeclaration()['default'] ?? []);
+	}
+	
+	/**
 	 * @inherit
 	 */
 	public function fromDefault() {
-		$this->a_value = [];
+		$this->a_value = $this->getDefault();
 		$this->a_errors = null;
 	}
 	
@@ -71,7 +88,7 @@ class OptionListValue extends FieldValue {
 	 * @inherit
 	 */
 	public function isDefault() : bool {
-		return ($this->a_value === []);
+		return ($this->a_value === $this->getDefault());
 	}
 	
 	/**
@@ -79,9 +96,12 @@ class OptionListValue extends FieldValue {
 	 */
 	public function fromUserInput($a_input) {
 		$this->fromStructured($a_input);
+		$b_askNames = $this->askNames();
+		
+		$j = 1;
 		foreach($this->a_value as $i => $a_option) {
 			$this->a_value[$i] = [
-				'name' => $a_option['name'],
+				'name' => $b_askNames ? $a_option['name'] : ('option_'.$j++),
 				'default' => \Reef\interpretBool($a_option['default']??false),
 				'locale' => $a_option['locale'],
 			];

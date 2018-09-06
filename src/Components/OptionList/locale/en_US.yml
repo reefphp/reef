@@ -3,6 +3,7 @@ option_name_title: Name
 option_title_title: Title
 add_button: Add
 error_min_options: Please provide at least [[min_num_options]] options
+error_max_options: Please provide not more than [[max_num_options]] options
 error_max_checked_defaults: Exceded maximum number of selected defaults [[max_checked_defaults]]
 error_regexp: Invalid option name
 error_duplicate: Duplicate option name

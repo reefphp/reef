@@ -247,6 +247,11 @@ Reef.addComponent((function() {
 			return false;
 		}
 		
+		if(this.$field.attr('data-num_opt_max') > 0 && $trs.length > this.$field.attr('data-num_opt_max')) {
+			this.setError('error-max-options');
+			return false;
+		}
+		
 		if(this.$field.attr('data-max_checked_def') > 0 && $trs.find('.'+CSSPRFX+'ol-default').filter(':checked').length > this.$field.attr('data-max_checked_def')) {
 			this.setError('error-max-checked-def');
 			return false;
@@ -300,7 +305,7 @@ Reef.addComponent((function() {
 		
 		if(this.Reef.config.layout_name == 'bootstrap4') {
 			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('input').parent().append($('<div class="invalid-feedback"></div>').text(message));
+			this.$field.find('.'+CSSPRFX+'ol-add').after($('<div class="invalid-feedback" style="display: block;"></div>').text(message));
 		}
 	};
 	

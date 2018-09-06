@@ -10,6 +10,7 @@ internalLocale:
     option_title_title:
     add_button:
     error_min_options:
+    error_max_options:
     error_max_checked_defaults:
     error_regexp:
     error_duplicate:
@@ -29,6 +30,15 @@ basicDefinition:
             nl_NL:
                 title: 'Min. aantal opties'
       - component: reef:text_number
+        name: 'max_num_options'
+        min: 0
+        step: 1
+        locales:
+            en_US:
+                title: 'Max. number of options'
+            nl_NL:
+                title: 'Max. aantal opties'
+      - component: reef:text_number
         name: 'max_checked_defaults'
         min: 0
         step: 1
@@ -47,3 +57,20 @@ basicDefinition:
                 title: 'Default number of options'
             nl_NL:
                 title: 'Standaard aantal opties'
+advancedDefinition:
+    fields:
+      - component: reef:checkbox
+        name: 'names'
+        default: true
+        locales:
+            en_US:
+                title: 'Ask field names'
+            nl_NL:
+                title: 'Vraag veld namen'
+      - component: reef:option_list
+        name: 'default'
+        locales:
+            en_US:
+                title: 'Default options'
+            nl_NL:
+                title: 'Standaard opties'
