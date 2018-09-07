@@ -1,8 +1,13 @@
 <div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:checklist" data-{{CSSPRFX}}name="{{field.name}}" {{{field.visible}}}>
-	<label class="{{layout.col_left}} col-form-label">
-		{{field.locale.title}}
-	</label>
+	<div class="{{layout.col_left}}">
+		[[form_label_before]]
+		<label class="col-form-label">
+			{{field.locale.title}}
+		</label>
+		[[form_label_after]]
+	</div>
 	<div class="{{layout.col_right}}">
+		[[form_input_before]]
 		{{#field.options}}
 			<div class="form-check">
 				<input
@@ -20,6 +25,7 @@
 				</label>
 			</div>
 		{{/field.options}}
+		[[form_input_after]]
 		
 		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>

@@ -3,6 +3,7 @@
 namespace Reef;
 
 use \Reef\Form\Form;
+use \Reef\Extension\Extension;
 use \Reef\Components\Component;
 use \Reef\Storage\StorageFactory;
 use \Reef\Storage\NoStorageFactory;
@@ -44,6 +45,12 @@ class ReefSetup {
 	 * @type Component[]
 	 */
 	private $a_componentMapping = [];
+	
+	/**
+	 * The extension mapping, mapping extension names to extension objects
+	 * @type Extension[]
+	 */
+	private $a_extensions = [];
 	
 	/**
 	 * The currently active layout
@@ -168,6 +175,18 @@ class ReefSetup {
 				throw new LogicException("Component ".$Component::COMPONENT_NAME." does not support storage ".$s_storage.".");
 			}
 		}
+		
+		foreach($this->a_extensions as $Extension) {
+			$Extension->checkSetup();
+		}
+		
+		foreach($this->a_extensions as $Extension) {
+			foreach($this->a_layouts as $s_layout => $Layout) {
+				if(!in_array($s_layout, $Extension->supportedLayouts())) {
+					throw new LogicException("Extension ".$Extension::getName()." does not support layout ".$s_layout.".");
+				}
+			}
+		}
 	}
 	
 	/**
@@ -247,6 +266,26 @@ class ReefSetup {
 		}
 		
 		return $this->a_componentMapping[$a_declaration['component']]->newField($a_declaration, $Form);
+	}
+	
+	/**
+	 * Add an extension. Should be called before initializing Reef
+	 * @param Extension $Extension The new extension to add
+	 * @throws BadMethodCallException If Reef is already initialized
+	 */
+	public function addExtension(Extension $Extension) {
+		if(!empty($this->Reef)) {
+			throw new BadMethodCallException("Can only add extensions during Reef setup.");
+		}
+		$this->a_extensions[$Extension::getName()] = $Extension;
+	}
+	
+	/**
+	 * Return the list of added extensions
+	 * @return Extension[]
+	 */
+	public function getExtensionMapping() {
+		return $this->a_extensions;
 	}
 	
 	

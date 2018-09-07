@@ -65,6 +65,11 @@ class ReefAssets extends Assets {
 			$this->writeStaticAsset($s_assetName, $Component::getDir(), $Component->getAssets());
 		}
 		
+		if($s_assetType == 'extension') {
+			$Extension = $this->Reef->getExtensionCollection()->getExtension($s_subName);
+			$this->writeStaticAsset($s_assetName, $Extension::getDir(), $Extension->getAssets());
+		}
+		
 	}
 	
 	/**
@@ -141,7 +146,7 @@ class ReefAssets extends Assets {
 		
 		$s_assetType = $a_assetHash[0];
 		
-		if(!in_array($s_assetType, ['reef', 'component'])) {
+		if(!in_array($s_assetType, ['reef', 'component', 'extension'])) {
 			throw new InvalidArgumentException("Illegal asset type");
 		}
 		
@@ -151,8 +156,8 @@ class ReefAssets extends Assets {
 			$s_assetName = $a_assetHash[1];
 		}
 		
-		// component:vendor:name:asset_name:12345
-		if($s_assetType == 'component') {
+		// component:vendor:name:asset_name:12345, extension:vendor:name:asset_name:12345
+		if($s_assetType == 'component' || $s_assetType == 'extension') {
 			$s_subName = $a_assetHash[1] . ':' . $a_assetHash[2];
 			$s_assetName = $a_assetHash[3];
 		}
@@ -178,6 +183,11 @@ class ReefAssets extends Assets {
 		if($s_assetType == 'component') {
 			$Component = $this->Reef->getSetup()->getComponent($s_subName);
 			$s_newAssetHash = 'component:'.$s_subName.':'.$s_assetName.':'.filemtime($Component::getDir().$Component->getAssets()[$s_assetName]);
+		}
+		
+		if($s_assetType == 'extension') {
+			$Asset = $this->Reef->getExtensionCollection()->getExtension($s_subName);
+			$s_newAssetHash = 'extension:'.$s_subName.':'.$s_assetName.':'.filemtime($Asset::getDir().$Asset->getAssets()[$s_assetName]);
 		}
 		
 		return 'asset:'.$s_newAssetHash;

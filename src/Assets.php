@@ -125,8 +125,9 @@ abstract class Assets {
 		
 		$a_remoteAssets = $this->getReef()->getSetup()->getLayout()->$s_assetFnc();
 		
-		foreach($this->getComponents() as $Component) {
-			$a_assets = $Component->$s_assetFnc();
+		$a_assetSources = array_merge($this->getComponents(), $this->getReef()->getExtensionCollection()->getExtensionMapping());
+		foreach($a_assetSources as $assetSource) {
+			$a_assets = $assetSource->$s_assetFnc();
 			
 			foreach($a_assets as $a_asset) {
 				if($a_asset['type'] == 'remote') {
@@ -208,8 +209,9 @@ abstract class Assets {
 			$a_localAssets[$s_assetPath] = filemtime($s_assetPath);
 		}
 		
-		foreach($this->getComponents() as $Component) {
-			$a_assets = $Component->$s_assetFnc();
+		$a_assetSources = array_merge($this->getComponents(), $this->getReef()->getExtensionCollection()->getExtensionMapping());
+		foreach($a_assetSources as $assetSource) {
+			$a_assets = $assetSource->$s_assetFnc();
 			
 			foreach($a_assets as $a_asset) {
 				if($a_asset['type'] == 'local') {

@@ -3,6 +3,7 @@
 namespace Reef;
 
 use \Reef\Locale\Trait_ReefLocale;
+use \Reef\Extension\ExtensionCollection;
 use \Reef\Storage\DataStore;
 use \Reef\Storage\StorageFactory;
 use \Reef\Storage\Storage;
@@ -41,6 +42,12 @@ class Reef {
 	 * @type DataStore
 	 */
 	private $DataStore;
+	
+	/**
+	 * The extension collection
+	 * @type ExtensionCollection
+	 */
+	private $ExtensionCollection;
 	
 	/**
 	 * Stored forms factory
@@ -149,6 +156,7 @@ class Reef {
 		
 		$this->ReefSetup = $ReefSetup;
 		$this->DataStore = new DataStore($this);
+		$this->ExtensionCollection = new ExtensionCollection($this);
 		$this->ReefSetup->checkSetup($this);
 		
 		$SessionObject = $this->ReefSetup->getSessionObject();
@@ -230,6 +238,14 @@ class Reef {
 	 */
 	public function getDataStore() : DataStore {
 		return $this->DataStore;
+	}
+	
+	/**
+	 * Get the extension collection
+	 * @return ExtensionCollection The extension collection
+	 */
+	public function getExtensionCollection() : ExtensionCollection {
+		return $this->ExtensionCollection;
 	}
 	
 	/**

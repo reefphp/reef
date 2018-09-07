@@ -1,8 +1,13 @@
 <div class="form-group row {{CSSPRFX}}field" data-{{CSSPRFX}}type="reef:checkbox" data-{{CSSPRFX}}name="{{field.name}}">
-	<label class="{{layout.col_left}} col-form-label">
-		{{field.locale.title_left}}
-	</label>
+	<div class="{{layout.col_left}}">
+		[[submission_label_before]]
+		<label class="col-form-label">
+			{{field.locale.title_left}}
+		</label>
+		[[submission_label_after]]
+	</div>
 	<div class="{{layout.col_right}}">
+		[[submission_input_before]]
 		<div class="form-check">
 			<input
 				class="form-check-input {{^field.locale.title_right}}position-static{{/field.locale.title_right}}"
@@ -16,5 +21,6 @@
 			</label>
 			{{/field.locale.title_right}}
 		</div>
+		[[submission_input_after]]
 	</div>
 </div>

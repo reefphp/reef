@@ -690,6 +690,10 @@ var ReefBuilder = (function() {
 			field.attach();
 		}
 		
+		for(var extensionName in reef.extensionInstances) {
+			reef.extensionInstances[extensionName].attach($field);
+		}
+		
 		return field;
 	};
 	

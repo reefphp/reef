@@ -1,13 +1,19 @@
 <div class="form-group row {{CSSPRFX}}field" data-{{CSSPRFX}}type="reef:textarea" data-{{CSSPRFX}}name="{{field.name}}">
-	<label class="{{layout.col_left}} col-form-label">
-		{{field.locale.title}}
-	</label>
+	<div class="{{layout.col_left}}">
+		[[submission_label_before]]
+		<label class="col-form-label">
+			{{field.locale.title}}
+		</label>
+		[[submission_label_after]]
+	</div>
 	<div class="{{layout.col_right}}">
+		[[submission_input_before]]
 		{{#field.value}}
 			{{field.value}}
 		{{/field.value}}
 		{{^field.value}}
 			<span class="font-italic text-muted">{{field.locale.rf_submission_empty_value}}</span>
 		{{/field.value}}
+		[[submission_input_after]]
 	</div>
 </div>

@@ -7,11 +7,16 @@
 		data-choose_field="{{field.locale.choose_field}}"
 		data-condition_delete_confirm="{{field.locale.condition_delete_confirm}}"
 	></div>
-	<label class="{{layout.col_left}} col-form-label" for="{{form_idpfx}}-{{field.name}}">
-		{{field.locale.title}}
-	</label>
+	<div class="{{layout.col_left}}">
+		[[form_label_before]]
+		<label class="col-form-label" for="{{form_idpfx}}-{{field.name}}">
+			{{field.locale.title}}
+		</label>
+		[[form_label_after]]
+	</div>
 	<div class="{{layout.col_right}}">
 		
+		[[form_input_before]]
 		<select class="form-control {{CSSPRFX}}cond-type">
 			<option value="true">{{field.locale.rf_yes}}</option>
 			<option value="false">{{field.locale.rf_no}}</option>
@@ -67,6 +72,7 @@
 		<div class="{{CSSPRFX}}cond-type-section {{CSSPRFX}}cond-type-manual">
 			<textarea name="{{main_var}}[{{field.name}}]" class="form-control {{CSSPRFX}}cond-condition">{{field.value}}</textarea>
 		</div>
+		[[form_input_after]]
 		
 		{{#field.errors}}
 			<div class="invalid-feedback">{{.}}</div>

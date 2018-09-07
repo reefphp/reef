@@ -4,10 +4,15 @@
 		data-no="{{field.locale.rf_no}}"
 		data-delete_option_confirm="{{field.locale.delete_option_confirm}}"
 	></div>
-	<label class="{{layout.col_left}} col-form-label" for="{{form_idpfx}}-{{field.name}}">
-		{{field.locale.title}}
-	</label>
+	<div class="{{layout.col_left}}">
+		[[form_label_before]]
+		<label class="col-form-label" for="{{form_idpfx}}-{{field.name}}">
+			{{field.locale.title}}
+		</label>
+		[[form_label_after]]
+	</div>
 	<div class="{{layout.col_right}}">
+		[[form_input_before]]
 		<table style="width: 100%;">
 			<thead>
 				<tr>
@@ -65,6 +70,7 @@
 			</tbody>
 		</table>
 		<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-add">+ {{field.locale.add_button}}</div>
+		[[form_input_after]]
 		
 		<div class="invalid-feedback {{CSSPRFX}}error-min-options" style="display: none;">{{field.locale.error_min_options}}</div>
 		<div class="invalid-feedback {{CSSPRFX}}error-max-options" style="display: none;">{{field.locale.error_max_options}}</div>

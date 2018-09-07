@@ -1,8 +1,14 @@
 <div class="form-group row {{CSSPRFX}}field" data-{{CSSPRFX}}type="reef:select" data-{{CSSPRFX}}name="{{field.name}}">
-	<label class="{{layout.col_left}} col-form-label">
-		{{field.locale.title}}
-	</label>
+	<div class="{{layout.col_left}}">
+		[[submission_label_before]]
+		<label class="col-form-label">
+			{{field.locale.title}}
+		</label>
+		[[submission_label_after]]
+	</div>
 	<div class="{{layout.col_right}}">
+		[[submission_input_before]]
 		{{field.value}}
+		[[submission_input_after]]
 	</div>
 </div>

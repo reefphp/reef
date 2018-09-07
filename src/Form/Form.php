@@ -304,28 +304,26 @@ abstract class Form {
 		$Mustache->addHelper('main_var', $a_data['main_var']);
 		$Mustache->addHelper('layout', $a_data['layout']);
 		
+		$ExtensionCollection = $this->Reef->getExtensionCollection();
+		
 		foreach($this->a_fields as $Field) {
-			$s_templateDir = null;
-			$s_viewfile = 'view/'.$Layout->getName().'/form.mustache';
-			
-			$a_classes = $Field->getComponent()->getInheritanceList();
-			foreach($a_classes as $s_class) {
-				if(file_exists($s_class::getDir() . $s_viewfile)) {
-					$s_templateDir = $s_class::getDir();
-					break;
-				}
-			}
-			
-			if($s_templateDir === null) {
-				// @codeCoverageIgnoreStart
-				throw new ResourceNotFoundException("Could not find form template file for field '".$Field->getDeclaration()['name']."'.");
-				// @codeCoverageIgnoreEnd
-			}
-			
-			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
-			$Template = $Mustache->loadTemplate($s_viewfile);
+			$Mustache->setLoader($Field->getComponent()->getTemplateLoader($Layout->getName(), 'form'));
+			$Template = $Mustache->loadTemplate('form');
 			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? $Field->newValue($Submission) : $Submission->getFieldValue($Field->getDeclaration()['name']);
 			$a_vars = $Field->view_form($Value, \Reef\array_subset($a_options, ['locale']));
+			
+			/**
+			 * Event before a field form template is rendered
+			 * @event reef.before_field_form_render
+			 * @var array view_vars The variables passed to the view
+			 * @var Field field The field object
+			 * @var FieldValue field_value The field value object
+			 */
+			$ExtensionCollection->event('reef.before_field_form_render', [
+				'view_vars' => &$a_vars,
+				'field' => $Field,
+				'field_value' => $Value,
+			]);
 			
 			$s_html = $Template->render([
 				'field' => $a_vars,
@@ -336,7 +334,7 @@ abstract class Form {
 			];
 		}
 		
-		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__ . '/../'));
+		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, __DIR__ . '/../'));
 		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/form.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,
@@ -367,28 +365,26 @@ abstract class Form {
 		$Mustache->addHelper('form_idpfx', $this->s_idPfx);
 		$Mustache->addHelper('layout', $a_data['layout']);
 		
+		$ExtensionCollection = $this->Reef->getExtensionCollection();
+		
 		foreach($this->a_fields as $Field) {
-			$s_templateDir = null;
-			$s_viewfile = 'view/'.$Layout->getName().'/submission.mustache';
-			
-			$a_classes = $Field->getComponent()->getInheritanceList();
-			foreach($a_classes as $s_class) {
-				if(file_exists($s_class::getDir() . $s_viewfile)) {
-					$s_templateDir = $s_class::getDir();
-					break;
-				}
-			}
-			
-			if($s_templateDir === null) {
-				// @codeCoverageIgnoreStart
-				throw new ResourceNotFoundException("Could not find submission template file for field '".$Field->getDeclaration()['name']."'.");
-				// @codeCoverageIgnoreEnd
-			}
-			
-			$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader($s_templateDir));
-			$Template = $Mustache->loadTemplate($s_viewfile);
+			$Mustache->setLoader($Field->getComponent()->getTemplateLoader($Layout->getName(), 'submission'));
+			$Template = $Mustache->loadTemplate('submission');
 			$Value = ($Field->getComponent()->getConfiguration()['category'] == 'static') ? $Field->newValue($Submission) : $Submission->getFieldValue($Field->getDeclaration()['name']);
 			$a_vars = $Field->view_submission($Value, \Reef\array_subset($a_options, ['locale']));
+			
+			/**
+			 * Event before a field submission template is rendered
+			 * @event reef.before_field_submission_render
+			 * @var array view_vars The variables passed to the view
+			 * @var Field field The field object
+			 * @var FieldValue field_value The field value object
+			 */
+			$ExtensionCollection->event('reef.before_field_submission_render', [
+				'view_vars' => &$a_vars,
+				'field' => $Field,
+				'field_value' => $Value,
+			]);
 			
 			$s_html = $Template->render([
 				'field' => $a_vars,
@@ -399,7 +395,7 @@ abstract class Form {
 			];
 		}
 		
-		$Mustache->setLoader(new \Mustache_Loader_FilesystemLoader(__DIR__ . '/../'));
+		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, __DIR__ . '/../'));
 		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/submission.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,

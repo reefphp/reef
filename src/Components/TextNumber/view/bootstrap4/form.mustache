@@ -1,8 +1,13 @@
 <div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:text_number" data-{{CSSPRFX}}name="{{field.name}}" {{{field.visible}}}>
-	<label class="{{layout.col_left}} col-form-label" for="{{form_idpfx}}-{{field.name}}">
-		{{field.locale.title}}
-	</label>
+	<div class="{{layout.col_left}}">
+		[[form_label_before]]
+		<label class="col-form-label" for="{{form_idpfx}}-{{field.name}}">
+			{{field.locale.title}}
+		</label>
+		[[form_label_after]]
+	</div>
 	<div class="{{layout.col_right}}">
+		[[form_input_before]]
 		<input
 			type="number"
 			class="form-control {{#field.hasErrors}}is-invalid{{/field.hasErrors}}"
@@ -16,6 +21,7 @@
 			{{#field.step}}step="{{field.step}}"{{/field.step}}
 			{{{field.required}}}
 		>
+		[[form_input_after]]
 		<div class="invalid-feedback {{CSSPRFX}}error-not-a-number" style="display: none;">{{field.locale.error_not_a_number}}</div>
 		<div class="invalid-feedback {{CSSPRFX}}error-required-empty" style="display: none;">{{field.locale.rf_error_required_empty}}</div>
 		<div class="invalid-feedback {{CSSPRFX}}error-number-min-max" style="display: none;">{{field.locale.error_number_min_max}}</div>

@@ -47,6 +47,12 @@ abstract class Component implements HidableComponentInterface {
 	private $a_builderOperators = null;
 	
 	/**
+	 * Cached result of getTemplateLoader()
+	 * @type FilesystemLoader[]
+	 */
+	private $a_filesystemLoaders = null;
+	
+	/**
 	 * Set the Reef object
 	 * @param Reef $Reef The Reef we are currently working in
 	 */
@@ -161,17 +167,22 @@ abstract class Component implements HidableComponentInterface {
 	}
 	
 	/**
-	 * Returns the raw HTML template of this component
+	 * Returns the template filesystem loader for this component
 	 * @param ?string $s_layout The layout to use. Optional, defaults to the layout set in the Reef setup
-	 * @return string The template
+	 * @param string $s_file The template name
+	 * @return FilesystemLoader The loader
 	 */
-	public function getTemplate($s_layout = null) {
+	public function getTemplateLoader($s_layout = null, string $s_file = 'form') {
 		if(empty($s_layout)) {
 			$s_layout = $this->Reef->getSetup()->getLayout()->getName();
 		}
 		
+		if(!empty($this->a_filesystemLoaders[$s_layout][$s_file])) {
+			return $this->a_filesystemLoaders[$s_layout][$s_file];
+		}
+		
 		$s_templateDir = null;
-		$s_viewfile = 'view/'.$s_layout.'/form.mustache';
+		$s_viewfile = 'view/'.$s_layout.'/'.$s_file.'.mustache';
 		
 		$a_classes = $this->getInheritanceList();
 		foreach($a_classes as $s_class) {
@@ -183,11 +194,22 @@ abstract class Component implements HidableComponentInterface {
 		
 		if($s_templateDir === null) {
 			// @codeCoverageIgnoreStart
-			throw new ResourceNotFoundException("Could not find form template file for component '".static::COMPONENT_NAME."'.");
+			throw new \Reef\Exception\ResourceNotFoundException("Could not find ".$s_file." template file for component '".static::COMPONENT_NAME."'.");
 			// @codeCoverageIgnoreEnd
 		}
 		
-		return file_get_contents($s_templateDir.$s_viewfile);
+		$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $s_templateDir, ['default_sub_dir' => 'view/'.$s_layout]);
+		
+		return $this->a_filesystemLoaders[$s_layout][$s_file];
+	}
+	
+	/**
+	 * Returns the raw HTML template of this component
+	 * @param ?string $s_layout The layout to use. Optional, defaults to the layout set in the Reef setup
+	 * @return string The template
+	 */
+	public function getTemplate($s_layout = null) {
+		return $this->getTemplateLoader($s_layout)->load('form');
 	}
 	
 	/**
@@ -199,25 +221,59 @@ abstract class Component implements HidableComponentInterface {
 			return $this->a_configuration;
 		}
 		
-		$this->a_configuration = $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME, function() {
+		$s_extensionKey = $this->Reef->getExtensionCollection()->getCollectionHash();
+		
+		$this->a_configuration = $this->Reef->cache('configuration.component.'.static::COMPONENT_NAME.'.'.$s_extensionKey, function() {
 			$a_configuration = Yaml::parseFile(static::getDir().'config.yml');
+			
+			$a_configuration['basicDefinition']['fields'] = $a_configuration['basicDefinition']['fields']??[];
+			$a_configuration['advancedDefinition']['fields'] = $a_configuration['advancedDefinition']['fields']??[];
 			
 			// Merge generalized options
 			$a_hidableFields = $this->getDeclarationFields_hidable();
 			if(!empty($a_hidableFields)) {
-				$a_configuration['basicDefinition']['fields'] = $a_configuration['basicDefinition']['fields']??[];
 				array_push($a_configuration['basicDefinition']['fields'], ...$a_hidableFields);
 			}
 			
 			if($this instanceof \Reef\Components\Traits\Required\RequiredComponentInterface) {
 				$a_requiredFields = $this->getDeclarationFields_required();
 				if(!empty($a_requiredFields)) {
-					$a_configuration['basicDefinition']['fields'] = $a_configuration['basicDefinition']['fields']??[];
 					array_push($a_configuration['basicDefinition']['fields'], ...$a_requiredFields);
 				}
 				
 				$a_configuration['advancedLocale'] = array_merge($a_configuration['advancedLocale']??[], $this->getLocale_required());
 			}
+			
+			// Merge event options
+			$a_eventDefs = [
+				'basicDefinition' => [],
+				'advancedDefinition' => [],
+				'basicLocale' => [],
+				'advancedLocale' => [],
+			];
+			/**
+			 * Event allowing to add fields to form definitions of component configurations
+			 * @event reef.component_configuration
+			 * @var Component component The component
+			 * @var array basic_definition The basic definition
+			 * @var array advanced_definition The advanced definition
+			 * @var array basic_locale The basic locale
+			 * @var array advanced_locale The advanced locale
+			 */
+			$this->Reef->getExtensionCollection()->event('reef.component_configuration', [
+				'component' => $this,
+				'basic_definition' => &$a_eventDefs['basicDefinition'],
+				'advanced_definition' => &$a_eventDefs['advancedDefinition'],
+				'basic_locale' => &$a_eventDefs['basicLocale'],
+				'advanced_locale' => &$a_eventDefs['advancedLocale'],
+			]);
+			foreach(['basicDefinition', 'advancedDefinition'] as $s_type) {
+				if(!empty($a_eventDefs[$s_type])) {
+					array_push($a_configuration[$s_type]['fields'], ...$a_eventDefs[$s_type]);
+				}
+			}
+			$a_configuration['basicLocale'] = array_merge($a_configuration['basicLocale']??[], $a_eventDefs['basicLocale']??[]);
+			$a_configuration['advancedLocale'] = array_merge($a_configuration['advancedLocale']??[], $a_eventDefs['advancedLocale']??[]);
 			
 			// Parse locale declaration lists
 			foreach(['basicLocale', 'advancedLocale'] as $s_localeType) {
@@ -554,7 +610,20 @@ abstract class Component implements HidableComponentInterface {
 		$a_fields = [];
 		foreach($a_keys as $s_name) {
 			$s_val = $a_locale[$s_name]??'';
-			$s_title = $a_locale[$a_localeConfig[$s_name]['title_key']]??'';
+			if(isset($a_localeConfig[$s_name]['title'])) {
+				if(is_array($a_localeConfig[$s_name]['title'])) {
+					$s_title = $a_localeConfig[$s_name]['title'][$s_locale]
+					        ?? $a_localeConfig[$s_name]['title']['en_US']
+					        ?? $a_localeConfig[$s_name]['title']['_no_locale']
+					        ?? '';
+				}
+				else {
+					$s_title = $a_localeConfig[$s_name]['title'];
+				}
+			}
+			else {
+				$s_title = $a_locale[$a_localeConfig[$s_name]['title_key']]??'';
+			}
 			
 			$a_fields[] = [
 				'component' => (($a_localeConfig[$s_name]['type']??'') == 'textarea') ? 'reef:textarea' : 'reef:text_line',

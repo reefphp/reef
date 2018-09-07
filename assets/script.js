@@ -151,6 +151,12 @@ if(typeof Reef === 'undefined') {
 			var config = this.$wrapper.find('.'+CSSPRFX+'main-config').data('config');
 			this.config = (typeof config !== 'undefined') ? JSON.parse(atob(config)) : {};
 			
+			// Initialize extensions
+			this.extensionInstances = {};
+			for(var extensionName in Reef.extensions) {
+				this.extensionInstances[extensionName] = new Reef.extensions[extensionName](this);
+			}
+			
 			// Initialize all fields
 			this.$wrapper.find('.'+CSSPRFX+'field').each(function() {
 				var name = $(this).data(CSSPRFX+'name');
@@ -162,6 +168,10 @@ if(typeof Reef === 'undefined') {
 				}
 				else {
 					self.listenVisible($(this));
+				}
+				
+				for(var extensionName in self.extensionInstances) {
+					self.extensionInstances[extensionName].attach($(this));
 				}
 			});
 			
@@ -175,6 +185,7 @@ if(typeof Reef === 'undefined') {
 		};
 		
 		Reef.components = {};
+		Reef.extensions = {};
 		
 		Reef.addComponent = function(component) {
 			Reef.components[component.componentName] = component;
@@ -245,6 +256,10 @@ if(typeof Reef === 'undefined') {
 					alert(errors[name]);
 				}
 			}
+		};
+		
+		Reef.addExtension = function(extension) {
+			Reef.extensions[extension.extensionName] = extension;
 		};
 		
 		Reef.prototype.getFormUUID = function() {
