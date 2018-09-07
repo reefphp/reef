@@ -2,6 +2,7 @@
 
 namespace Reef;
 
+use \Reef\Assets\ReefAssets;
 use \Reef\Locale\Trait_ReefLocale;
 use \Reef\Extension\ExtensionCollection;
 use \Reef\Storage\DataStore;

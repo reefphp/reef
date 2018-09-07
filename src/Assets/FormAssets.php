@@ -1,7 +1,8 @@
 <?php
 
-namespace Reef;
+namespace Reef\Assets;
 
+use \Reef\Reef;
 use \Reef\Form\Form;
 
 /**

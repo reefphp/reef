@@ -102,7 +102,7 @@ final class TempFormTest extends TestCase {
 		// Test assets
 		for($i=0; $i<2; $i++) {
 			// 0: create, 1: cache
-			$this->assertInstanceOf(\Reef\FormAssets::class, static::$Form->getFormAssets());
+			$this->assertInstanceOf(\Reef\Assets\FormAssets::class, static::$Form->getFormAssets());
 		}
 	}
 	

@@ -3,7 +3,7 @@
 namespace Reef\Form;
 
 use \Reef\Reef;
-use \Reef\FormAssets;
+use \Reef\Assets\FormAssets;
 use \Reef\Submission\Submission;
 use \Reef\Locale\Trait_FormLocale;
 use \Reef\Exception\ResourceNotFoundException;

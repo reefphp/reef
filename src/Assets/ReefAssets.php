@@ -1,7 +1,8 @@
 <?php
 
-namespace Reef;
+namespace Reef\Assets;
 
+use \Reef\Reef;
 use \Reef\Exception\DomainException;
 use \Reef\Exception\InvalidArgumentException;
 
@@ -57,7 +58,7 @@ class ReefAssets extends Assets {
 		[$s_assetType, $s_subName, $s_assetName] = $this->parseAssetHash($s_assetsHash);
 		
 		if($s_assetType == 'reef') {
-			$this->writeStaticAsset($s_assetName, __DIR__.'/../', $this->Reef->getAssets());
+			$this->writeStaticAsset($s_assetName, __DIR__.'/../../', $this->Reef->getAssets());
 		}
 		
 		if($s_assetType == 'component') {
@@ -177,7 +178,7 @@ class ReefAssets extends Assets {
 		$s_newAssetHash = '';
 		
 		if($s_assetType == 'reef') {
-			$s_newAssetHash = 'reef:'.$s_assetName.':'.filemtime(__DIR__.'/../'.$this->Reef->getAssets()[$s_assetName]);
+			$s_newAssetHash = 'reef:'.$s_assetName.':'.filemtime(__DIR__.'/../../'.$this->Reef->getAssets()[$s_assetName]);
 		}
 		
 		if($s_assetType == 'component') {
