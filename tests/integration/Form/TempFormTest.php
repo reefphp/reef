@@ -110,7 +110,7 @@ final class TempFormTest extends TestCase {
 	 * @depends testCanCreateForm
 	 */
 	public function testCanCreateSubmission(): void {
-		$this->assertInstanceOf(\Reef\TempSubmission::class, static::$Form->newSubmission());
+		$this->assertInstanceOf(\Reef\Submission\TempSubmission::class, static::$Form->newSubmission());
 	}
 	
 	/**

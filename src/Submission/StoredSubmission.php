@@ -1,6 +1,6 @@
 <?php
 
-namespace Reef;
+namespace Reef\Submission;
 
 use \Reef\Exception\BadMethodCallException;
 use \Reef\Exception\StorageException;

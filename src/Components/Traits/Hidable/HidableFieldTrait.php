@@ -3,7 +3,7 @@
 namespace Reef\Components\Traits\Hidable;
 
 use \Reef\Components\FieldValue;
-use \Reef\Submission;
+use \Reef\Submission\Submission;
 use \Reef\Form\Form;
 
 trait HidableFieldTrait {

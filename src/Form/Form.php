@@ -4,7 +4,7 @@ namespace Reef\Form;
 
 use \Reef\Reef;
 use \Reef\FormAssets;
-use \Reef\Submission;
+use \Reef\Submission\Submission;
 use \Reef\Locale\Trait_FormLocale;
 use \Reef\Exception\ResourceNotFoundException;
 use Symfony\Component\Yaml\Yaml;

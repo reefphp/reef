@@ -389,11 +389,11 @@ class Filesystem {
 			$context = $context->getSubmission();
 		}
 		
-		if($context instanceof \Reef\StoredSubmission) {
+		if($context instanceof \Reef\Submission\StoredSubmission) {
 			return $this->getDir($context->getForm()->getUUID().'/'.$context->getUUID());
 		}
 		
-		if($context instanceof \Reef\TempSubmission) {
+		if($context instanceof \Reef\Submission\TempSubmission) {
 			return $this->getDir('_tmp/'.$context->getUUID());
 		}
 		
@@ -552,7 +552,7 @@ class Filesystem {
 			return;
 		}
 		
-		if(!($context instanceof \Reef\StoredSubmission) && !($context instanceof \Reef\Form\AbstractStoredForm)) {
+		if(!($context instanceof \Reef\Submission\StoredSubmission) && !($context instanceof \Reef\Form\AbstractStoredForm)) {
 			throw new FilesystemException('Invalid remove context');
 		}
 		

@@ -34,7 +34,7 @@ abstract class FieldValue implements HidableFieldValueInterface {
 	 * @param Submission $Submission The submission this value belongs to
 	 * @param Field $Field The field this value belongs to
 	 */
-	public function __construct(\Reef\Submission $Submission, Field $Field) {
+	public function __construct(\Reef\Submission\Submission $Submission, Field $Field) {
 		$this->Submission = $Submission;
 		$this->Field = $Field;
 	}

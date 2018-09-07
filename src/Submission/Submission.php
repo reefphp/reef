@@ -1,6 +1,6 @@
 <?php
 
-namespace Reef;
+namespace Reef\Submission;
 
 use \Reef\Form\Form;
 use \Reef\Exception\OutOfBoundsException;

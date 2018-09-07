@@ -3,7 +3,7 @@
 namespace Reef\Components\Traits\Required;
 
 use \Reef\Components\FieldValue;
-use \Reef\Submission;
+use \Reef\Submission\Submission;
 
 interface RequiredFieldInterface {
 	

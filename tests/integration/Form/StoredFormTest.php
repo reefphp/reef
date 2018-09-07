@@ -89,7 +89,7 @@ final class StoredFormTest extends TestCase {
 	public function testCanAddSubmission(): void {
 		$Submission = static::$Form->newSubmission();
 		
-		$this->assertInstanceOf(\Reef\Submission::class, $Submission);
+		$this->assertInstanceOf(\Reef\Submission\Submission::class, $Submission);
 		
 		$Submission->fromUserInput([
 			'input_1' => 'asdf',
@@ -109,7 +109,7 @@ final class StoredFormTest extends TestCase {
 		
 		$Submission2 = static::$Form->getSubmission(static::$i_submissionId);
 		
-		$this->assertInstanceOf(\Reef\Submission::class, $Submission2);
+		$this->assertInstanceOf(\Reef\Submission\Submission::class, $Submission2);
 	}
 	
 	/**
@@ -167,7 +167,7 @@ final class StoredFormTest extends TestCase {
 	public function testCanDeleteSubmission(): void {
 		$Submission = static::$Form->newSubmission();
 		
-		$this->assertInstanceOf(\Reef\Submission::class, $Submission);
+		$this->assertInstanceOf(\Reef\Submission\Submission::class, $Submission);
 		
 		$Submission->fromUserInput([
 			'input_2' => true,

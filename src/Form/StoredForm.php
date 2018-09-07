@@ -3,8 +3,8 @@
 namespace Reef\Form;
 
 use \Reef\Reef;
-use \Reef\Submission;
-use \Reef\StoredSubmission;
+use \Reef\Submission\Submission;
+use \Reef\Submission\StoredSubmission;
 use \Reef\SubmissionOverview;
 use \Reef\Exception\BadMethodCallException;
 

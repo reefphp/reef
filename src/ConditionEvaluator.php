@@ -2,6 +2,7 @@
 
 namespace Reef;
 
+use \Reef\Submission\Submission;
 use \Reef\Exception\ConditionException;
 
 /**
@@ -116,7 +117,7 @@ class ConditionEvaluator {
 	/**
 	 * Evaluate an entire condition
 	 * 
-	 * @param \Reef\Submission $Submission The submission to evaluate against
+	 * @param Submission $Submission The submission to evaluate against
 	 * @param string|bool $s_condition The condition
 	 * @param bool $b_validate Whether to perform operand validation, defaults to false
 	 * 
@@ -125,7 +126,7 @@ class ConditionEvaluator {
 	 * @throws BadMethodCallException If called with a submission not belonging to the form this evaluator is initialized with
 	 * @throws ConditionException If the input condition is invalid
 	 */
-	public function evaluate(\Reef\Submission $Submission, $s_condition, bool $b_validate = false) : ?bool {
+	public function evaluate(Submission $Submission, $s_condition, bool $b_validate = false) : ?bool {
 		if(is_bool($s_condition)) {
 			return (bool)$s_condition;
 		}

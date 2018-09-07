@@ -2,7 +2,7 @@
 
 namespace Reef\Form;
 
-use \Reef\TempSubmission;
+use \Reef\Submission\TempSubmission;
 
 /**
  * A TempForm is a Form that is used on-the-fly, and not persisted in the database
