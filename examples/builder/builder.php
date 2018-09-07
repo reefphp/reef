@@ -3,8 +3,8 @@
 require_once('./common.php');
 
 // Find whether we are given an existing form id
-if(isset($_POST['builder_data']['form_id']) && $_POST['builder_data']['form_id'] > 0) {
-	$Form = $Reef->getForm($_POST['builder_data']['form_id']);
+if(isset($_POST['form_id']) && $_POST['form_id'] > 0) {
+	$Form = $Reef->getForm($_POST['form_id']);
 }
 else if(isset($_GET['form_id']) && $_GET['form_id'] > 0) {
 	$Form = $Reef->getForm($_GET['form_id']);
@@ -58,7 +58,11 @@ $s_JS = $Reef->getReefAssets()->getJSHTML(['builder' => true]);
 	<script>
 	var builder;
 	$(function() {
-		builder = new ReefBuilder('.builderWrapper');
+		builder = new ReefBuilder('.builderWrapper', {
+			submit_before : function(ajaxParams) {
+				ajaxParams.data.form_id = <?php echo(($Form instanceof \Reef\Form\StoredForm) ? (int)$Form->getFormId() : -1); ?>;
+			}
+		});
 	});
 	</script>
 </head>

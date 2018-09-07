@@ -182,7 +182,6 @@ class Builder {
 			'settings' => $this->a_settings,
 			'fields' => $a_fields,
 			'definitionForm' => $DefinitionForm->generateFormHtml($DefinitionSubmission, ['main_var' => 'definition']),
-			'form_id' => ($Form instanceof StoredForm) ? $Form->getFormId() : -1,
 			'multipleLocales' => (count($a_locales) > 1),
 			'builder_lang' => $this->Reef->transMultiple([
 				'rf_yes',

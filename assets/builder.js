@@ -391,7 +391,6 @@ var ReefBuilder = (function() {
 		
 		// Gather all data
 		var builder_data = {
-			'form_id' : this.$builderWrapper.find('.'+CSSPRFX+'builder').data('form_id'),
 			'definition' : this.definitionForm.getData(),
 			'fields' : fields,
 			'allow_dataloss' : 'no'
