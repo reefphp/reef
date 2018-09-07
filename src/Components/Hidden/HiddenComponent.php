@@ -23,7 +23,7 @@ class HiddenComponent extends Component {
 		return [
 			[
 				'type' => 'local',
-				'path' => self::getDir().'script.js',
+				'path' => 'script.js',
 			]
 		];
 	}

@@ -109,7 +109,7 @@ abstract class ComponentTestCase extends TestCase {
 		$a_inexistent = [];
 		
 		foreach($a_assets as $a_asset) {
-			if($a_asset['type'] == 'local' && !file_exists($a_asset['path'])) {
+			if($a_asset['type'] == 'local' && !file_exists(static::$Component::getDir() . '/' . $a_asset['path'])) {
 				$a_inexistent[] = $a_asset['path'];
 			}
 		}

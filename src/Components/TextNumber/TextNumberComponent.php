@@ -43,7 +43,7 @@ class TextNumberComponent extends Component implements RequiredComponentInterfac
 		return [
 			[
 				'type' => 'local',
-				'path' => self::getDir().'script.js',
+				'path' => 'script.js',
 			]
 		];
 	}

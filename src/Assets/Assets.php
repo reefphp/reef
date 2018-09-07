@@ -216,7 +216,7 @@ abstract class Assets {
 			
 			foreach($a_assets as $a_asset) {
 				if($a_asset['type'] == 'local') {
-					$s_path = $a_asset['path'];
+					$s_path = $assetSource::getDir() . '/' . $a_asset['path'];
 					$a_localAssets[$s_path] = filemtime($s_path);
 				}
 			}

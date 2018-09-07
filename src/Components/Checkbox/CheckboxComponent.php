@@ -27,7 +27,7 @@ class CheckboxComponent extends Component implements RequiredComponentInterface 
 		return [
 			[
 				'type' => 'local',
-				'path' => self::getDir().'script.js',
+				'path' => 'script.js',
 			]
 		];
 	}
@@ -39,7 +39,7 @@ class CheckboxComponent extends Component implements RequiredComponentInterface 
 		return [
 			[
 				'type' => 'local',
-				'path' => self::getDir().'style.css',
+				'path' => 'style.css',
 			]
 		];
 	}
