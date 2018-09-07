@@ -166,7 +166,7 @@ class Builder {
 		
 		$Mustache = $this->Reef->newMustache();
 		
-		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, __DIR__));
+		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, Reef::getDir() . 'src/'));
 		$Template = $Mustache->loadTemplate('view/builder.mustache');
 		
 		$s_html = $Template->render([

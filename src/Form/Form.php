@@ -334,7 +334,7 @@ abstract class Form {
 			];
 		}
 		
-		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, __DIR__ . '/../'));
+		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, Reef::getDir() . 'src/'));
 		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/form.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,
@@ -395,7 +395,7 @@ abstract class Form {
 			];
 		}
 		
-		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, __DIR__ . '/../'));
+		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, Reef::getDir() . 'src/'));
 		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/submission.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,

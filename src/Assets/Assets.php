@@ -101,7 +101,7 @@ abstract class Assets {
 	 * @param string $s_path The asset path relative to the Reef root directory
 	 */
 	public function addLocalCSS($s_path) {
-		$this->customAssets['CSS'][] = __DIR__ . '/../../'.$s_path;
+		$this->customAssets['CSS'][] = Reef::getDir() . $s_path;
 	}
 	
 	/**
@@ -109,7 +109,7 @@ abstract class Assets {
 	 * @param string $s_path The asset path relative to the Reef root directory
 	 */
 	public function addLocalJS($s_path) {
-		$this->customAssets['JS'][] = __DIR__ . '/../../'.$s_path;
+		$this->customAssets['JS'][] = Reef::getDir() . $s_path;
 	}
 	
 	/**
@@ -197,12 +197,12 @@ abstract class Assets {
 		$a_localAssets = [];
 		
 		if($s_type == 'JS') {
-			$s_mainFile = __DIR__ . '/../../assets/script.js';
+			$s_mainFile = Reef::getDir() . 'assets/script.js';
 			
-			$a_localAssets[__DIR__ . '/../../assets/ConditionEvaluator.js'] = filemtime(__DIR__ . '/../../assets/ConditionEvaluator.js');
+			$a_localAssets[Reef::getDir() . 'assets/ConditionEvaluator.js'] = filemtime(Reef::getDir() . 'assets/ConditionEvaluator.js');
 		}
 		else if($s_type == 'CSS') {
-			$s_mainFile = __DIR__ . '/../../assets/style.css';
+			$s_mainFile = Reef::getDir() . 'assets/style.css';
 		}
 		$a_localAssets[$s_mainFile] = filemtime($s_mainFile);
 		

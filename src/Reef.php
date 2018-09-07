@@ -173,7 +173,7 @@ class Reef {
 	 * @return string The Reef root directory
 	 */
 	public static function getDir() : string {
-		return __DIR__.'/../';
+		return realpath(__DIR__.'/../') . '/';
 	}
 	
 	/**
