@@ -65,7 +65,7 @@ trait Trait_Locale {
 	 * @param string[] $a_locale The locale
 	 */
 	public function setLocale($s_locale, $a_locale) {
-		$this->getLocale($s_locale);
+		$this->getOwnLocaleSource($s_locale);
 		$this->a_localeSources[$s_locale] = array_merge($this->a_localeSources[$s_locale], $a_locale);
 	}
 	
