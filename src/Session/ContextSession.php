@@ -43,11 +43,11 @@ class ContextSession {
 			return 'value:'.$context->getField()->getComponent()::COMPONENT_NAME.':'.$s_submissionContext.':';
 		}
 		
-		if($context instanceof \Reef\StoredSubmission) {
+		if($context instanceof \Reef\Submission\StoredSubmission) {
 			return 'submission:'.$context->getForm()->getUUID().':'.$context->getUUID().':';
 		}
 		
-		if($context instanceof \Reef\TempSubmission) {
+		if($context instanceof \Reef\Submission\TempSubmission) {
 			return 'submission:tmp:';
 		}
 		

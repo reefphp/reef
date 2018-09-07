@@ -49,7 +49,7 @@ abstract class FieldValue implements HidableFieldValueInterface {
 	
 	/**
 	 * Get the submission this value belongs to
-	 * @return \Reef\Submission
+	 * @return \Reef\Submission\Submission
 	 */
 	public function getSubmission() {
 		return $this->Submission;

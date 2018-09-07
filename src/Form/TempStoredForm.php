@@ -2,7 +2,7 @@
 
 namespace Reef\Form;
 
-use \Reef\TempSubmission;
+use \Reef\Submission\TempSubmission;
 
 /**
  * A TempStoredForm is a Form that is intended to be persisted in the database
