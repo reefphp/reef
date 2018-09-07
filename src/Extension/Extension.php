@@ -76,6 +76,7 @@ abstract class Extension {
 	 * [
 	 *   type => local or remote
 	 *   path => path or url
+	 *   view => for which view(s) to load, one of 'form', 'submission', 'builder' or 'all'. Optional, defaults to 'all'
 	 *   name => canonical name (required for remote files)
 	 *   integrity => Optionally, an integrity value for remote files
 	 * ]
@@ -91,6 +92,7 @@ abstract class Extension {
 	 * [
 	 *   type => local or remote
 	 *   path => path or url
+	 *   view => for which view(s) to load, one of 'form', 'submission', 'builder' or 'all'. Optional, defaults to 'all'
 	 *   name => canonical name (required for remote files)
 	 *   integrity => Optionally, an integrity value for remote files
 	 * ]

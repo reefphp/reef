@@ -23,7 +23,8 @@ class OptionListComponent extends Component {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'script.js',
+				'path' => 'form.js',
+				'view' => 'form',
 			]
 		];
 	}
@@ -35,7 +36,8 @@ class OptionListComponent extends Component {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'style.css',
+				'path' => 'form.css',
+				'view' => 'form',
 			]
 		];
 	}

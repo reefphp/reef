@@ -22,6 +22,13 @@ class bootstrap4 implements \Reef\Layout\Layout {
 	/**
 	 * @inherit
 	 */
+	public static function getDir() : string {
+		return __DIR__.'/';
+	}
+	
+	/**
+	 * @inherit
+	 */
 	public function getConfig() : array {
 		return $this->a_config;
 	}

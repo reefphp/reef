@@ -23,7 +23,8 @@ class HiddenComponent extends Component {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'script.js',
+				'path' => 'form.js',
+				'view' => 'form',
 			]
 		];
 	}

@@ -86,7 +86,8 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'script.js',
+				'path' => 'form.js',
+				'view' => 'form',
 			]
 		];
 	}
@@ -98,7 +99,8 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 		return [
 			[
 				'type' => 'local',
-				'path' => 'style.css',
+				'path' => 'form.css',
+				'view' => 'form',
 			]
 		];
 	}

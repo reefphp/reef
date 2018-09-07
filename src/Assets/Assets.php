@@ -11,12 +11,6 @@ use \Reef\Exception\InvalidArgumentException;
 abstract class Assets {
 	
 	/**
-	 * Array of custom assets
-	 * @type array
-	 */
-	private $customAssets = ['CSS' => [], 'JS' => []];
-	
-	/**
 	 * Retrieve the current Reef object
 	 * @type Reef
 	 */
@@ -30,12 +24,12 @@ abstract class Assets {
 	
 	/**
 	 * Build HTML for the CSS assets
+	 * @param string $s_view Either 'form', 'submission', 'builder' or 'all'
 	 * @param array $a_options, to choose from:
-	 *  - builder   bool  True to include builder assets. Defaults to false
 	 *  - exclude   array Assets to exclude, e.g. because you include them already in your own code
 	 */
-	public function getCSSHTML($a_options = []) {
-		$a_assets = $this->getCSS($a_options);
+	public function getCSSHTML($s_view, $a_options = []) {
+		$a_assets = $this->getCSS($s_view, $a_options);
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
@@ -55,12 +49,12 @@ abstract class Assets {
 	
 	/**
 	 * Build HTML for the JS assets
+	 * @param string $s_view Either 'form', 'submission', 'builder' or 'all'
 	 * @param array $a_options, to choose from:
-	 *  - builder   bool  True to include builder assets. Defaults to false
 	 *  - exclude   array Assets to exclude, e.g. because you include them already in your own code
 	 */
-	public function getJSHTML($a_options = []) {
-		$a_assets = $this->getJS($a_options);
+	public function getJSHTML($s_view, $a_options = []) {
+		$a_assets = $this->getJS($s_view, $a_options);
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
@@ -80,53 +74,73 @@ abstract class Assets {
 	
 	/**
 	 * Get all CSS assets in an array
+	 * @param string $s_view @see getCSSHTML
 	 * @param array $a_options @see getCSSHTML
 	 * @return array
 	 */
-	public function getCSS($a_options = []) {
-		return $this->getAssets('CSS', $a_options);
+	public function getCSS($s_view, $a_options = []) {
+		return $this->getAssets('CSS', $s_view, $a_options);
 	}
 	
 	/**
 	 * Get all JS assets in an array
+	 * @param string $s_view @see getJSHTML
 	 * @param array $a_options @see getJSHTML
 	 * @return array
 	 */
-	public function getJS($a_options = []) {
-		return $this->getAssets('JS', $a_options);
-	}
-	
-	/**
-	 * Add a custom CSS asset
-	 * @param string $s_path The asset path relative to the Reef root directory
-	 */
-	public function addLocalCSS($s_path) {
-		$this->customAssets['CSS'][] = Reef::getDir() . $s_path;
-	}
-	
-	/**
-	 * Add a custom JS asset
-	 * @param string $s_path The asset path relative to the Reef root directory
-	 */
-	public function addLocalJS($s_path) {
-		$this->customAssets['JS'][] = Reef::getDir() . $s_path;
+	public function getJS($s_view, $a_options = []) {
+		return $this->getAssets('JS', $s_view, $a_options);
 	}
 	
 	/**
 	 * Get all CSS/JS assets in an array
 	 * @param string $s_type Either 'JS' or 'CSS'
+	 * @param string $s_view Either 'form', 'submission', 'builder' or 'all'
 	 * @param array $a_options
 	 * @return array
 	 */
-	private function getAssets($s_type, $a_options) {
+	private function getAssets($s_type, $s_view, $a_options) {
 		if($s_type != 'JS' && $s_type != 'CSS') {
 			throw new InvalidArgumentException("Invalid asset type '".$s_type."'.");
 		}
+		if(!in_array($s_view, ['form', 'submission', 'builder', 'all'])) {
+			throw new InvalidArgumentException("Invalid view type '".$s_view."'.");
+		}
 		$s_assetFnc = 'get'.$s_type;
 		
-		$a_remoteAssets = $this->getReef()->getSetup()->getLayout()->$s_assetFnc();
+		// Get main files
+		$a_remoteAssets = [];
+		if($s_type == 'JS') {
+			$a_remoteAssets['jquery'] = [
+				'name' => 'jquery',
+				'type' => 'remote',
+				'path' => 'https://code.jquery.com/jquery-3.2.1.min.js',
+				'integrity' => 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=',
+			];
+		}
 		
-		$a_assetSources = array_merge($this->getComponents(), $this->getReef()->getExtensionCollection()->getExtensionMapping());
+		if($s_type == 'JS' && ($s_view == 'builder' || $s_view == 'all')) {
+			$a_remoteAssets['sortable'] = [
+				'name' => 'sortable',
+				'type' => 'remote',
+				'path' => 'https://cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js',
+				'integrity' => 'sha256-+BvLlLgWJALRwV4lbCh0i4zqHhDqxR8FKUJmIl/u/vQ=',
+			];
+			
+			$a_remoteAssets['mustache'] = [
+				'name' => 'mustache',
+				'type' => 'remote',
+				'path' => 'https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js',
+				'integrity' => 'sha256-iaqfO5ue0VbSGcEiQn+OeXxnxAMK2+QgHXIDA5bWtGI=',
+			];
+		}
+		
+		// Merge layout, component and extension assets
+		$a_assetSources = array_merge(
+			[$this->getReef()->getSetup()->getLayout()],
+			$this->getComponents(),
+			$this->getReef()->getExtensionCollection()->getExtensionMapping()
+		);
 		foreach($a_assetSources as $assetSource) {
 			$a_assets = $assetSource->$s_assetFnc();
 			
@@ -137,42 +151,25 @@ abstract class Assets {
 			}
 		}
 		
-		if($s_type == 'JS' && !isset($a_remoteAssets['jquery'])) {
-			$a_remoteAssets = array_merge(['jquery' => [
-				'name' => 'jquery',
-				'type' => 'remote',
-				'path' => 'https://code.jquery.com/jquery-3.2.1.min.js',
-				'integrity' => 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=',
-			]], $a_remoteAssets);
-		}
-		
-		if($s_type == 'JS' && !empty($a_options['builder'])) {
-			$a_remoteAssets[] = [
-				'name' => 'sortable',
-				'type' => 'remote',
-				'path' => 'https://cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js',
-				'integrity' => 'sha256-+BvLlLgWJALRwV4lbCh0i4zqHhDqxR8FKUJmIl/u/vQ=',
-			];
-			
-			$a_remoteAssets[] = [
-				'name' => 'mustache',
-				'type' => 'remote',
-				'path' => 'https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js',
-				'integrity' => 'sha256-iaqfO5ue0VbSGcEiQn+OeXxnxAMK2+QgHXIDA5bWtGI=',
-			];
-		}
-		
+		// Exclude files where necessary
 		if(isset($a_options['exclude'])) {
-			foreach($a_remoteAssets as $i => $a_remoteAsset) {
-				if(in_array($a_remoteAsset['name'], $a_options['exclude'])) {
-					unset($a_remoteAssets[$i]);
-				}
+			$a_remoteAssets = array_diff_key($a_remoteAssets, $a_options['exclude']);
+		}
+		
+		foreach($a_remoteAssets as $s_name => $a_asset) {
+			if(!isset($a_asset['view'])) {
+				continue;
+			}
+			
+			$a_asset['view'] = is_array($a_asset['view']) ? $a_asset['view'] : explode(',', $a_asset['view']);
+			if($s_view != 'all' && !in_array($s_view, $a_asset['view']) && !($s_view == 'builder' && in_array('form', $a_asset['view']))) {
+				unset($a_remoteAssets[$s_name]);
 			}
 		}
 		
-		$this->checkLocalAsset($s_type, $s_assetsHash);
+		$this->checkLocalAsset($s_type, $s_view, $s_assetsHash);
 		
-		$a_assets = $a_remoteAssets;
+		$a_assets = array_values($a_remoteAssets);
 		
 		$a_assets[] = [
 			'type' => 'local',
@@ -185,49 +182,76 @@ abstract class Assets {
 	/**
 	 * Combine all local CSS/JS assets into a single file, or fetch its asset hash if it is in cache already
 	 * @param string $s_type Either 'JS' or 'CSS'
+	 * @param string $s_view @see getAssets()
 	 * @param string &$s_assetsHash (Out) The asset hash to use to refer to this asset file
 	 */
-	private function checkLocalAsset($s_type, &$s_assetsHash = null) {
+	private function checkLocalAsset($s_type, $s_view, &$s_assetsHash = null) {
 		if($s_type != 'JS' && $s_type != 'CSS') {
 			throw new InvalidArgumentException("Invalid asset type '".$s_type."'.");
 		}
 		$s_assetFnc = 'get'.$s_type;
 		
-		$Cache = $this->getReef()->getCache();
-		$a_localAssets = [];
-		
+		// Get main files
+		$a_mainFiles = [];
 		if($s_type == 'JS') {
-			$s_mainFile = Reef::getDir() . 'assets/script.js';
+			$a_mainFiles[] = Reef::getDir() . 'assets/script.js';
 			
-			$a_localAssets[Reef::getDir() . 'assets/ConditionEvaluator.js'] = filemtime(Reef::getDir() . 'assets/ConditionEvaluator.js');
+			if($s_view == 'form' || $s_view == 'builder' || $s_view == 'all') {
+				$a_mainFiles[] = Reef::getDir() . 'assets/ConditionEvaluator.js';
+			}
+			
+			if($s_view == 'builder' || $s_view == 'all') {
+				$a_mainFiles[] = Reef::getDir() . 'assets/builder.js';
+			}
 		}
 		else if($s_type == 'CSS') {
-			$s_mainFile = Reef::getDir() . 'assets/style.css';
+			$a_mainFiles[] = Reef::getDir() . 'assets/style.css';
+			
+			if($s_view == 'builder' || $s_view == 'all') {
+				$a_mainFiles[] = Reef::getDir() . 'assets/builder.css';
+			}
 		}
-		$a_localAssets[$s_mainFile] = filemtime($s_mainFile);
 		
-		foreach($this->customAssets[$s_type] as $s_assetPath) {
-			$a_localAssets[$s_assetPath] = filemtime($s_assetPath);
+		$a_localAssets = [];
+		foreach($a_mainFiles as $s_mainFile) {
+			$a_localAssets[$s_mainFile] = filemtime($s_mainFile);
 		}
 		
-		$a_assetSources = array_merge($this->getComponents(), $this->getReef()->getExtensionCollection()->getExtensionMapping());
+		// Merge layout, component and extension assets
+		$a_assetSources = array_merge(
+			[$this->getReef()->getSetup()->getLayout()],
+			$this->getComponents(),
+			$this->getReef()->getExtensionCollection()->getExtensionMapping()
+		);
 		foreach($a_assetSources as $assetSource) {
 			$a_assets = $assetSource->$s_assetFnc();
 			
 			foreach($a_assets as $a_asset) {
-				if($a_asset['type'] == 'local') {
-					$s_path = $assetSource::getDir() . '/' . $a_asset['path'];
-					$a_localAssets[$s_path] = filemtime($s_path);
+				if($a_asset['type'] != 'local') {
+					continue;
 				}
+				
+				if(isset($a_asset['view'])) {
+					$a_asset['view'] = is_array($a_asset['view']) ? $a_asset['view'] : explode(',', $a_asset['view']);
+					if($s_view != 'all' && !in_array($s_view, $a_asset['view']) && !($s_view == 'builder' && in_array('form', $a_asset['view']))) {
+						continue;
+					}
+				}
+				
+				$s_path = $assetSource::getDir() . '/' . $a_asset['path'];
+				$a_localAssets[$s_path] = filemtime($s_path);
 			}
 		}
 		
+		// Compute assets hash
 		$a_localAssetsSorted = $a_localAssets;
 		ksort($a_localAssetsSorted);
 		$s_assetsHash = sha1(implode(',', array_keys($a_localAssetsSorted)));
 		
 		$s_cacheKey = 'asset.'.$s_assetsHash.'.'.strtolower($s_type);
 		
+		// Check cache
+		$Cache = $this->getReef()->getCache();
 		$b_compile = false;
 		if(!$Cache->has($s_cacheKey)) {
 			$b_compile = true;
@@ -240,6 +264,7 @@ abstract class Assets {
 			}
 		}
 		
+		// Compile if necessary
 		if($b_compile) {
 			$s_content = '';
 			

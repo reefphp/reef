@@ -60,8 +60,8 @@ else {
 	$s_form = $DisplayForm->generateFormHtml(null, ['main_var' => 'form_data']);
 }
 
-$s_CSS = $Form->getFormAssets()->getCSSHTML();
-$s_JS = $Form->getFormAssets()->getJSHTML();
+$s_CSS = $Form->getFormAssets()->getCSSHTML($b_view ? 'submission' : 'form');
+$s_JS = $Form->getFormAssets()->getJSHTML($b_view ? 'submission' : 'form');
 
 ?>
 <!DOCTYPE html>

@@ -27,7 +27,8 @@ class RadioComponent extends AbstractSingleChoiceComponent implements RequiredCo
 		return [
 			[
 				'type' => 'local',
-				'path' => 'script.js',
+				'path' => 'form.js',
+				'view' => 'form',
 			]
 		];
 	}
@@ -39,7 +40,8 @@ class RadioComponent extends AbstractSingleChoiceComponent implements RequiredCo
 		return [
 			[
 				'type' => 'local',
-				'path' => 'style.css',
+				'path' => 'form.css',
+				'view' => 'form',
 			]
 		];
 	}

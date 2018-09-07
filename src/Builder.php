@@ -77,10 +77,6 @@ class Builder {
 	 * @return string The builder HTML
 	 */
 	public function generateBuilderHtml(Form $Form) {
-		$ReefAssets = $this->Reef->getReefAssets();
-		$ReefAssets->addLocalCSS('assets/builder.css');
-		$ReefAssets->addLocalJS('assets/builder.js');
-		
 		$Layout = $this->Reef->getSetup()->getLayout();
 		$a_componentMapping = $this->Reef->getSetup()->getComponentMapping();
 		$a_categories = [];

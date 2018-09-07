@@ -40,8 +40,8 @@ if(isset($_POST['builder_data'])) {
 
 $s_html = $Builder->generateBuilderHtml($Form);
 
-$s_CSS = $Reef->getReefAssets()->getCSSHTML(['builder' => true]);
-$s_JS = $Reef->getReefAssets()->getJSHTML(['builder' => true]);
+$s_CSS = $Reef->getReefAssets()->getCSSHTML('builder');
+$s_JS = $Reef->getReefAssets()->getJSHTML('builder');
 
 ?>
 <!DOCTYPE html>

@@ -53,8 +53,8 @@ if(isset($_GET['builder_only'])) {
 	die();
 }
 
-$s_CSS = $Reef->getReefAssets()->getCSSHTML(['builder' => true]);
-$s_JS = $Reef->getReefAssets()->getJSHTML(['builder' => true]);
+$s_CSS = $Reef->getReefAssets()->getCSSHTML('all');
+$s_JS = $Reef->getReefAssets()->getJSHTML('all');
 
 ?>
 <!DOCTYPE html>

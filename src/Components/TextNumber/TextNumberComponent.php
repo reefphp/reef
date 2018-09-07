@@ -43,7 +43,8 @@ class TextNumberComponent extends Component implements RequiredComponentInterfac
 		return [
 			[
 				'type' => 'local',
-				'path' => 'script.js',
+				'path' => 'form.js',
+				'view' => 'form',
 			]
 		];
 	}
