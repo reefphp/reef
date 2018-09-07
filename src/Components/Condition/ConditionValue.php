@@ -20,10 +20,28 @@ class ConditionValue extends FieldValue {
 	}
 	
 	/**
+	 * Get the default value
+	 * @return string
+	 */
+	public function getDefault() {
+		if(!isset($this->Field->getDeclaration()['default'])) {
+			return 'false';
+		}
+		
+		$m_default = $this->Field->getDeclaration()['default'];
+		
+		if(is_bool($m_default)) {
+			return $m_default ? 'true' : 'false';
+		}
+		
+		return $m_default;
+	}
+	
+	/**
 	 * @inherit
 	 */
 	public function fromDefault() {
-		$this->s_value = $this->Field->getDeclaration()['default']??'false';
+		$this->s_value = $this->getDefault();
 		$this->a_errors = null;
 	}
 	
@@ -31,7 +49,7 @@ class ConditionValue extends FieldValue {
 	 * @inherit
 	 */
 	public function isDefault() : bool {
-		return ($this->s_value === ($this->Field->getDeclaration()['default']??'false'));
+		return ($this->s_value === $this->getDefault());
 	}
 	
 	/**
@@ -65,7 +83,7 @@ class ConditionValue extends FieldValue {
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->s_value = ($a_flat[0]??$this->Field->getDeclaration()['default']??'false');
+		$this->s_value = ($a_flat[0]??$this->getDefault());
 		$this->a_errors = null;
 	}
 	
