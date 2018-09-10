@@ -686,6 +686,11 @@ var ReefBuilder = (function() {
 		vars.internalRequest = function() {
 			return reef.internalRequestHelper();
 		};
+		vars.nl2br = function() {
+			return function(template, render) {
+				return render(template).replace(/(\r\n|\n\r|\r|\n)/g, '<br />$1');
+			};
+		};
 		
 		if(typeof options.beforeRender !== 'undefined') {
 			options.beforeRender(vars);

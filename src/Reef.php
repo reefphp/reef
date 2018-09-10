@@ -469,6 +469,10 @@ class Reef {
 			return $this->internalRequestHelper($Mustache->render($s_requestHash));
 		};
 		
+		$a_helpers['nl2br'] = function($s_template, $Mustache) {
+			return nl2br($Mustache->render($s_template));
+		};
+		
 		$Mustache = new \Mustache_Engine([
 			'helpers' => $a_helpers,
 			'cache' => $this->getOption('cache_dir').'mustache/',

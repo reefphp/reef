@@ -9,7 +9,7 @@
 	<div class="{{layout.col_right}}">
 		[[submission_input_before]]
 		{{#field.value}}
-			{{field.value}}
+			{{#nl2br}}{{field.value}}{{/nl2br}}
 		{{/field.value}}
 		{{^field.value}}
 			<span class="font-italic text-muted">{{field.locale.rf_submission_empty_value}}</span>
