@@ -665,6 +665,19 @@ var ReefBuilder = (function() {
 			}
 		}
 		
+		delete fieldConfig.visible;
+		if(typeof fieldConfig.required !== 'undefined') {
+			try {
+				// Only try to set the 'required-if' data attribute if it is a valid condition
+				ReefConditionEvaluator.evaluate(reef, fieldConfig.required);
+				fieldConfig.required = 'data-required-if="'+(fieldConfig.required.replace(/&/g, '&amp;').replace(/"/g, '&quot;'))+'"';
+			}
+			catch(e) {
+				// Otherwise, neglect the required setting for this preview
+				delete fieldConfig.required;
+			}
+		}
+		
 		var vars = JSON.parse(atob(this.$builderWrapper.find('.'+CSSPRFX+'builder').attr('data-form_config')));
 		vars.form_idpfx = unique_id();
 		vars.CSSPRFX = CSSPRFX+'';
