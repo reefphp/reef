@@ -46,13 +46,14 @@ class ExtensionCollection {
 			$Extension->setExtensionCollection($this);
 		}
 		
-		uasort($this->a_extensionMapping, function(Extension $Extension1, Extension $Extension2) {
+		$a_extMapCopy = $this->a_extensionMapping;
+		uasort($a_extMapCopy, function(Extension $Extension1, Extension $Extension2) {
 			return $Extension1::getName() <=> $Extension2::getName();
 		});
 		
 		$this->s_collectionHash = md5(implode(';', array_map(function(Extension $Extension) {
 			return $Extension::getName();
-		}, $this->a_extensionMapping)));
+		}, $a_extMapCopy)));
 		
 		$this->processEventListeners();
 	}
