@@ -3,6 +3,7 @@
 namespace Reef\Extension;
 
 use \Reef\Reef;
+use \Reef\Assets\JSCSSAssetsTrait;
 
 /**
  * Extensions can add general functionality to Reef. Extensions can:
@@ -12,6 +13,8 @@ use \Reef\Reef;
  *  - have their own JS and CSS files
  */
 abstract class Extension {
+	
+	use JSCSSAssetsTrait;
 	
 	/**
 	 * The ExtensionCollection object
@@ -57,6 +60,14 @@ abstract class Extension {
 	abstract public static function getDir() : string;
 	
 	/**
+	 * Get the Reef object
+	 * @return Reef
+	 */
+	public function getReef() : Reef {
+		return $this->getExtensionCollection()->getReef();
+	}
+	
+	/**
 	 * Define the assets for this extension
 	 * @return array The assets, where key is the asset name and value is the path to the asset
 	 */
@@ -72,38 +83,6 @@ abstract class Extension {
 	abstract public function supportedLayouts() : ?array;
 	
 	/**
-	 * Returns an array of javascript files required by this extension.
-	 * Each file is defined by an array:
-	 * [
-	 *   type => local or remote
-	 *   path => path or url
-	 *   view => for which view(s) to load, one of 'form', 'submission', 'builder' or 'all'. Optional, defaults to 'all'
-	 *   name => canonical name (required for remote files)
-	 *   integrity => Optionally, an integrity value for remote files
-	 * ]
-	 * @return array The javascript files
-	 */
-	public function getJS() {
-		return [];
-	}
-	
-	/**
-	 * Returns an array of CSS files required by this extension.
-	 * Each file is defined by an array:
-	 * [
-	 *   type => local or remote
-	 *   path => path or url
-	 *   view => for which view(s) to load, one of 'form', 'submission', 'builder' or 'all'. Optional, defaults to 'all'
-	 *   name => canonical name (required for remote files)
-	 *   integrity => Optionally, an integrity value for remote files
-	 * ]
-	 * @return array The CSS files
-	 */
-	public function getCSS() {
-		return [];
-	}
-	
-	/**
 	 * Return an array of extension events to subscribe to
 	 * @return string[] Entries with hook name as entry and function name as value
 	 */
@@ -117,7 +96,7 @@ abstract class Extension {
 	 * @return string The template
 	 */
 	public function getHookTemplate(string $s_hookName) {
-		$Reef = $this->getExtensionCollection()->getReef();
+		$Reef = $this->getReef();
 		$s_layoutName = $Reef->getSetup()->getLayout()->getName();
 		
 		$s_templateDir = static::getDir().'/';

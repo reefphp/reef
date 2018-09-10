@@ -163,6 +163,10 @@ class ReefSetup {
 			$Component->checkSetup();
 		}
 		
+		foreach($this->a_layouts as $Layout) {
+			$Layout->setReef($this->Reef);
+		}
+		
 		$s_storage = $this->StorageFactory::getName();
 		
 		foreach($this->a_componentMapping as $Component) {

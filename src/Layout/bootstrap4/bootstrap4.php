@@ -2,7 +2,7 @@
 
 namespace Reef\Layout\bootstrap4;
 
-class bootstrap4 implements \Reef\Layout\Layout {
+class bootstrap4 extends \Reef\Layout\Layout {
 	
 	private $a_config;
 	
