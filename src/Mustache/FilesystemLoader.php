@@ -117,17 +117,82 @@ class FilesystemLoader extends \Mustache_Loader_FilesystemLoader {
 			}
 			
 			$s_hookName = substr($s_template, $i_cursor+2, $i_closeCursor - ($i_cursor+2));
-			if(!preg_match('/'.str_replace('/', '\\/', \Reef\Reef::NAME_REGEXP).'/', $s_hookName)) {
+			
+			if(empty($s_hookName)) {
 				$i_cursor = $i_closeCursor+2;
 				continue;
 			}
 			
-			$a_meta['hookNames'][] = $s_hookName;
+			// Determine modifier
+			$s_modifier = substr($s_hookName, 0, 1);
+			if(in_array($s_modifier, ['?', '+'])) {
+				$s_hookName = substr($s_hookName, 1);
+				$a_hookNames = explode($s_modifier, $s_hookName);
+			}
+			else {
+				$s_modifier = '';
+				$a_hookNames = [$s_hookName];
+			}
 			
-			$s_hookTemplate = $ExtensionCollection->getHookTemplate($s_hookName);
+			// Validate hook name(s)
+			$b_valid = true;
+			foreach($a_hookNames as $s_subHookName) {
+				if(!preg_match('/'.str_replace('/', '\\/', \Reef\Reef::NAME_REGEXP).'/', $s_subHookName)) {
+					$b_valid = false;
+					break;
+				}
+			}
+			if(!$b_valid) {
+				$i_cursor = $i_closeCursor+2;
+				continue;
+			}
 			
-			$s_template = substr($s_template, 0, $i_cursor) . $s_hookTemplate . substr($s_template, $i_closeCursor+2);
-			$i_cursor += strlen($s_hookTemplate);
+			if(in_array($s_modifier, ['?', '+'])) {
+				$s_closeTag = '[[/'.$s_hookName.']]';
+				$i_closeTagCursor = strpos($s_template, $s_closeTag, $i_cursor);
+				if($i_closeTagCursor === false) {
+					throw new \Reef\Exception\LogicException('Could not find close tag "'.$s_closeTag.'"');
+				}
+			}
+			
+			// Register hook names
+			foreach($a_hookNames as $s_subHookName) {
+				$a_meta['hookNames'][] = $s_subHookName;
+			}
+			
+			// Get template
+			$s_hookTemplate = '';
+			foreach($a_hookNames as $s_subHookName) {
+				$s_hookTemplate .= $ExtensionCollection->getHookTemplate($s_subHookName);
+				
+				if($s_modifier == '') {
+					break;
+				}
+				else if($s_modifier == '?' && !empty($s_hookTemplate)) {
+					break;
+				}
+			};
+			
+			// Insert
+			if($s_modifier == '') {
+				// Replace tag
+				$s_template = substr($s_template, 0, $i_cursor) . $s_hookTemplate . substr($s_template, $i_closeCursor+2);
+				$i_cursor += strlen($s_hookTemplate);
+			}
+			else {
+				if(!empty($s_hookTemplate)) {
+					// Replace start through end tag
+					$s_template = substr($s_template, 0, $i_cursor) . $s_hookTemplate . substr($s_template, $i_closeTagCursor+strlen($s_closeTag));
+					$i_cursor += strlen($s_hookTemplate);
+				}
+				else {
+					// Replace start and end tag only
+					$i_openTagEnd = $i_cursor + strlen($s_modifier) + strlen($s_hookName) + 4;
+					$s_hookTemplate = substr($s_template, $i_openTagEnd, $i_closeTagCursor - $i_openTagEnd);
+					$s_template = substr($s_template, 0, $i_cursor) . $s_hookTemplate . substr($s_template, $i_closeTagCursor+strlen($s_closeTag));
+					// $i_cursor remains the same
+				}
+			}
 		}
 		
 		return [$s_template, $a_meta];

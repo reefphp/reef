@@ -7,13 +7,13 @@
 	<div class="{{CSSPRFX}}builder-toolbar">
 		<div class="{{CSSPRFX}}builder-toolbar-tabs">
 			<button type="button" class="{{CSSPRFX}}builder-tab {{CSSPRFX}}builder-tab-components {{CSSPRFX}}builder-tab-active" data-tab="components">
-				+
+				[[?icon_builder_components]]+[[/icon_builder_components]]
 			</button>
 			<button type="button" class="{{CSSPRFX}}builder-tab {{CSSPRFX}}builder-tab-field" data-tab="field">
-				&#9881;
+				[[?icon_builder_field]]&#9881;[[/icon_builder_field]]
 			</button>
 			<button type="button" class="{{CSSPRFX}}builder-tab {{CSSPRFX}}builder-tab-form" data-tab="form">
-				&#128295;
+				[[?icon_builder_form]]&#128295;[[/icon_builder_form]]
 			</button>
 		</div>
 		<div class="{{CSSPRFX}}builder-sidetab {{CSSPRFX}}builder-sidetab-components">
@@ -38,9 +38,9 @@
 							<div class="{{CSSPRFX}}builder-locale-form" data-locale="{{locale}}">
 							{{#multipleLocales}}
 							<div class="{{CSSPRFX}}builder-locale-nav">
-								<div class="{{CSSPRFX}}builder-locale-prev">&#11207;</div>
+								<div class="{{CSSPRFX}}builder-locale-prev">[[?icon_locale_left]]&#11207;[[/icon_locale_left]]</div>
 								<div class="{{CSSPRFX}}builder-locale-title">{{locale}}</div>
-								<div class="{{CSSPRFX}}builder-locale-next">&#11208;</div>
+								<div class="{{CSSPRFX}}builder-locale-next">[[?icon_locale_right]]&#11208;[[/icon_locale_right]]</div>
 							</div>
 							{{/multipleLocales}}
 								{{{form}}}
@@ -79,10 +79,10 @@
 			
 			<div class="{{CSSPRFX}}builder-save-progress">
 				<div class="{{CSSPRFX}}builder-save-icons {{CSSPRFX}}builder-template">
-					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-tick" title="" alt="" src="{{#internalRequest}}asset:reef:builder-tick{{/internalRequest}}">
-					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-error" title="" alt="" src="{{#internalRequest}}asset:reef:builder-error{{/internalRequest}}">
-					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-spinner" title="" alt="" src="{{#internalRequest}}asset:reef:builder-spinner{{/internalRequest}}">
-					<img class="{{CSSPRFX}}builder-save-img {{CSSPRFX}}builder-question" title="" alt="" src="{{#internalRequest}}asset:reef:builder-question{{/internalRequest}}">
+					<div class="{{CSSPRFX}}builder-tick">[[?icon_builder_save_success]]<img class="{{CSSPRFX}}builder-save-img" title="" alt="" src="{{#internalRequest}}asset:reef:builder-tick{{/internalRequest}}">[[/icon_builder_save_success]]</div>
+					<div class="{{CSSPRFX}}builder-error">[[?icon_builder_save_error]]<img class="{{CSSPRFX}}builder-save-img" title="" alt="" src="{{#internalRequest}}asset:reef:builder-error{{/internalRequest}}">[[/icon_builder_save_error]]</div>
+					<div class="{{CSSPRFX}}builder-spinner">[[?icon_builder_save_spinner]]<img class="{{CSSPRFX}}builder-save-img" title="" alt="" src="{{#internalRequest}}asset:reef:builder-spinner{{/internalRequest}}">[[/icon_builder_save_spinner]]</div>
+					<div class="{{CSSPRFX}}builder-question">[[?icon_builder_save_question]]<img class="{{CSSPRFX}}builder-save-img" title="" alt="" src="{{#internalRequest}}asset:reef:builder-question{{/internalRequest}}">[[/icon_builder_save_question]]</div>
 				</div>
 				<div class="{{CSSPRFX}}builder-save-stage {{CSSPRFX}}builder-save-validate" style="display: none;">
 					<div class="{{CSSPRFX}}builder-save-icon"></div>
@@ -126,6 +126,16 @@
 	<div class="{{CSSPRFX}}builder-workspace my-3">
 		{{{formHtml}}}
 	</div>
+	<div class="{{CSSPRFX}}builder-template {{CSSPRFX}}builder-field">
+		<div class="{{CSSPRFX}}builder-field-preview"></div>
+		<div class="{{CSSPRFX}}builder-field-actions">
+			<div class="{{CSSPRFX}}builder-btn {{CSSPRFX}}builder-drag-handle">[[?icon_builder_move?icon_move]]&#8661;[[/icon_builder_move?icon_move]]</div>
+			<div class="{{CSSPRFX}}builder-btn {{CSSPRFX}}builder-component-delete">[[?icon_builder_remove?icon_times]]&times;[[/icon_builder_remove?icon_times]]</div>
+		</div>
+		<div class="{{CSSPRFX}}builder-field-templates">
+			<div class="{{CSSPRFX}}builder-declaration-forms" style="display: none;"></div>
+		</div>
+	</div>
 	<div class="{{CSSPRFX}}builder-existing-fields">
 		{{#fields}}
 		<div class="{{CSSPRFX}}builder-existing-field" data-component-name="{{type}}" data-declaration="{{declaration}}">
@@ -140,9 +150,9 @@
 				<div class="{{CSSPRFX}}builder-locale-form" data-locale="{{locale}}">
 				{{#multipleLocales}}
 				<div class="{{CSSPRFX}}builder-locale-nav">
-					<div class="{{CSSPRFX}}builder-locale-prev">&#11207;</div>
+					<div class="{{CSSPRFX}}builder-locale-prev">[[?icon_locale_left]]&#11207;[[/icon_locale_left]]</div>
 					<div class="{{CSSPRFX}}builder-locale-title">{{locale}}</div>
-					<div class="{{CSSPRFX}}builder-locale-next">&#11208;</div>
+					<div class="{{CSSPRFX}}builder-locale-next">[[?icon_locale_right]]&#11208;[[/icon_locale_right]]</div>
 				</div>
 				{{/multipleLocales}}
 					{{{form}}}

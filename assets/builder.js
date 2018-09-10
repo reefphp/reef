@@ -365,7 +365,7 @@ var ReefBuilder = (function() {
 		}
 		
 		// All is valid, gather fields
-		this.$builderWrapper.find('.'+CSSPRFX+'builder-field.'+CSSPRFX+'builder-field-error').removeClass(CSSPRFX+'builder-field-error');
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-workspace .'+CSSPRFX+'builder-field.'+CSSPRFX+'builder-field-error').removeClass(CSSPRFX+'builder-field-error');
 		
 		var fields = [];
 		var names = [], name;
@@ -515,7 +515,7 @@ var ReefBuilder = (function() {
 		}
 		
 		var $fn_icon = function(status) {
-			return self.$builderWrapper.find('.'+CSSPRFX+'builder-save-icons .'+CSSPRFX+'builder-'+status).clone();
+			return self.$builderWrapper.find('.'+CSSPRFX+'builder-save-icons .'+CSSPRFX+'builder-'+status).children(':first-child').clone();
 		};
 		
 		if(arguments.length < 2) {
@@ -718,7 +718,7 @@ var ReefBuilderField = (function() {
 		
 		var existingField = $item.is('.'+CSSPRFX+'builder-existing-field');
 		
-		var $fieldWrapper = $('<div class="'+CSSPRFX+'builder-field"><div class="'+CSSPRFX+'builder-field-preview"></div><div class="'+CSSPRFX+'builder-field-actions"><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-drag-handle">&#8661;</div><div class="'+CSSPRFX+'builder-btn '+CSSPRFX+'builder-component-delete">&times;</div></div><div class="'+CSSPRFX+'builder-field-templates"><div class="'+CSSPRFX+'builder-declaration-forms" style="display: none;"></div></div></div>');
+		var $fieldWrapper = this.reefBuilder.$builderWrapper.find('.'+CSSPRFX+'builder-template.'+CSSPRFX+'builder-field').clone().removeClass(CSSPRFX+'builder-template');
 		
 		var templates = [
 			CSSPRFX+'builder-basic-locale-forms',

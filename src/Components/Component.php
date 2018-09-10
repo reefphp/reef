@@ -143,10 +143,11 @@ abstract class Component implements HidableComponentInterface {
 	}
 	
 	/**
-	 * Returns an array of supported layouts
-	 * @return array
+	 * Returns an array of supported layouts. May return null to indicate that
+	 * this component is layout-agnostic
+	 * @return ?array
 	 */
-	abstract public function supportedLayouts() : array;
+	abstract public function supportedLayouts() : ?array;
 	
 	/**
 	 * Returns an array of supported storages. May return null to indicate that
@@ -193,12 +194,18 @@ abstract class Component implements HidableComponentInterface {
 		}
 		
 		if($s_templateDir === null) {
-			// @codeCoverageIgnoreStart
-			throw new \Reef\Exception\ResourceNotFoundException("Could not find ".$s_file." template file for component '".static::COMPONENT_NAME."'.");
-			// @codeCoverageIgnoreEnd
+			if($s_layout == 'default') {
+				// @codeCoverageIgnoreStart
+				throw new \Reef\Exception\ResourceNotFoundException("Could not find ".$s_file." template file for component '".static::COMPONENT_NAME."'.");
+				// @codeCoverageIgnoreEnd
+			}
+			else {
+				$this->a_filesystemLoaders[$s_layout][$s_file] = $this->getTemplateLoader('default', $s_file);
+			}
 		}
-		
-		$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $s_templateDir, ['default_sub_dir' => 'view/'.$s_layout]);
+		else {
+			$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $s_templateDir, ['default_sub_dir' => 'view/'.$s_layout]);
+		}
 		
 		return $this->a_filesystemLoaders[$s_layout][$s_file];
 	}

@@ -65,10 +65,11 @@ abstract class Extension {
 	}
 	
 	/**
-	 * Returns an array of supported layouts
-	 * @return array
+	 * Returns an array of supported layouts. May return null to indicate that
+	 * this extension is layout-agnostic
+	 * @return ?array
 	 */
-	abstract public function supportedLayouts() : array;
+	abstract public function supportedLayouts() : ?array;
 	
 	/**
 	 * Returns an array of javascript files required by this extension.
@@ -123,7 +124,11 @@ abstract class Extension {
 		$s_viewfile = 'view/'.$s_layoutName.'/'.$s_hookName.'.mustache';
 		
 		if(!file_exists($s_templateDir . $s_viewfile)) {
-			return '';
+			$s_viewfile = 'view/default/'.$s_hookName.'.mustache';
+			
+			if(!file_exists($s_templateDir . $s_viewfile)) {
+				return '';
+			}
 		}
 		
 		$Loader = new \Reef\Mustache\FilesystemLoader($Reef, $s_templateDir);

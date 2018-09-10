@@ -164,8 +164,9 @@ class ReefSetup {
 				}
 			}
 			
+			$a_supportedLayouts = $Component->supportedLayouts();
 			foreach($this->a_layouts as $s_layout => $Layout) {
-				if(!in_array($s_layout, $Component->supportedLayouts())) {
+				if($a_supportedLayouts !== null && !in_array($s_layout, $a_supportedLayouts)) {
 					throw new LogicException("Component ".$Component::COMPONENT_NAME." does not support layout ".$s_layout.".");
 				}
 			}
@@ -181,8 +182,9 @@ class ReefSetup {
 		}
 		
 		foreach($this->a_extensions as $Extension) {
+			$a_supportedLayouts = $Extension->supportedLayouts();
 			foreach($this->a_layouts as $s_layout => $Layout) {
-				if(!in_array($s_layout, $Extension->supportedLayouts())) {
+				if($a_supportedLayouts !== null && !in_array($s_layout, $a_supportedLayouts)) {
 					throw new LogicException("Extension ".$Extension::getName()." does not support layout ".$s_layout.".");
 				}
 			}

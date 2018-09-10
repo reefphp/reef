@@ -26,9 +26,9 @@
 					{{#field.multipleLocales}}
 					{{#field.locales}}
 						<div class="{{CSSPRFX}}ol-locale" data-locale="{{.}}" style="display: none;">
-							<div class="{{CSSPRFX}}ol-locale-prev">&#11207;</div>
+							<div class="{{CSSPRFX}}ol-locale-prev">[[?icon_locale_left]]&#11207;[[/icon_locale_left]]</div>
 							<div class="{{CSSPRFX}}ol-locale-title">{{.}}</div>
-							<div class="{{CSSPRFX}}ol-locale-next">&#11208;</div>
+							<div class="{{CSSPRFX}}ol-locale-next">[[?icon_locale_right]]&#11208;[[/icon_locale_right]]</div>
 						</div>
 					{{/field.locales}}
 					{{/field.multipleLocales}}
@@ -59,8 +59,8 @@
 					<td>
 						<input type="hidden" name="{{main_var}}[{{field.name}}][old_name][]" class="{{CSSPRFX}}ol-old-name" value="" />
 						<div class="{{CSSPRFX}}ol-btns">
-							<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-btn-icon {{CSSPRFX}}ol-drag-handle">&#8661;</div>
-							<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-btn-icon {{CSSPRFX}}ol-remove-option">&times;</div>
+							<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-btn-icon {{CSSPRFX}}ol-drag-handle">[[?icon_optionlist_move?icon_move]]&#8661;[[/icon_optionlist_move?icon_move]]</div>
+							<div class="{{CSSPRFX}}ol-btn {{CSSPRFX}}ol-btn-icon {{CSSPRFX}}ol-remove-option">[[?icon_optionlist_remove?icon_times]]&times;[[/icon_optionlist_remove?icon_times]]</div>
 						</div>
 					</td>
 				</tr>
