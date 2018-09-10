@@ -2,9 +2,11 @@
 
 namespace Reef\Components\Traits\Required;
 
+use \Reef\Reef;
+
 trait RequiredComponentTrait {
 	
-	abstract public function getReef();
+	abstract public function getReef() : Reef;
 	
 	/**
 	 * @inherit

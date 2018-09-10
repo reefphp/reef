@@ -2,12 +2,13 @@
 
 namespace Reef\Components\Traits\Required;
 
+use \Reef\Form\Form;
 use \Reef\Components\FieldValue;
 use \Reef\Submission\Submission;
 
 trait RequiredFieldTrait {
 	
-	abstract public function getForm();
+	abstract public function getForm() : Form;
 	
 	/**
 	 * @inherit

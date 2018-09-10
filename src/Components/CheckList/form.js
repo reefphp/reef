@@ -5,9 +5,18 @@ Reef.addComponent((function() {
 	var Field = function(Reef, $field) {
 		this.$field = $field;
 		this.Reef = Reef;
+		this.layouts = {};
+		for(var layoutName in Field.layoutPrototypes) {
+			this.layouts[layoutName] = new Field.layoutPrototypes[layoutName](this);
+		}
 	};
 	
 	Field.componentName = 'reef:checklist';
+	
+	Field.layoutPrototypes = {};
+	Field.addLayout = function(layout) {
+		Field.layoutPrototypes[layout.layoutName] = layout;
+	};
 	
 	Field.viewVars = function(declaration) {
 		var i, l;
@@ -61,27 +70,24 @@ Reef.addComponent((function() {
 	Field.prototype.setError = function(message_key) {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('.invalid-feedback').hide().filter('.'+CSSPRFX+message_key).show();
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].setError(message_key);
 		}
 	};
 	
 	Field.prototype.removeErrors = function() {
 		this.$field.removeClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').removeClass('is-invalid');
-			this.$field.find('.invalid-feedback').hide();
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].removeErrors();
 		}
 	};
 	
 	Field.prototype.addError = function(message) {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('input').last().parent().append($('<div class="invalid-feedback"></div>').text(message));
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].addError(message);
 		}
 	};
 	
@@ -99,26 +105,29 @@ Reef.addComponent((function() {
 	Field.prototype.getConditionOperandInput = function(operator, layout) {
 		var self = this;
 		
-		var classes = '';
-		if(layout == 'bootstrap4') {
-			classes += ' form-control';
-		}
+		var $input = null;
 		
 		if(['has checked', 'has not checked'].indexOf(operator) > -1) {
-			var $select = $('<select class="'+classes+'">');
+			$input = $('<select>');
 			
 			this.$field.find('input').each(function() {
-				$select.append($('<option>').val($(this).attr('data-name')).text(self.$field.find('[for="'+$(this).attr('id')+'"]').text()));
+				$input.append($('<option>').val($(this).attr('data-name')).text(self.$field.find('[for="'+$(this).attr('id')+'"]').text()));
 			});
-			
-			return $select;
 		}
 		
 		if(['at least checked', 'at most checked', 'at least unchecked', 'at most unchecked'].indexOf(operator) > -1) {
-			return $('<input type="number" class="'+classes+'" min="0" step="1" />');
+			$input = $('<input type="number" min="0" step="1" />');
 		}
 		
-		return null;
+		if($input == null) {
+			return null;
+		}
+		
+		if(this.layouts[layout]) {
+			this.layouts[layout].styleConditionOperandInput($input);
+		}
+		
+		return $input;
 	};
 	
 	Field.prototype.validateConditionOperation = function(operator, operand) {

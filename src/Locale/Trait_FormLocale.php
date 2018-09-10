@@ -2,6 +2,8 @@
 
 namespace Reef\Locale;
 
+use \Reef\Reef;
+
 /**
  * Trait providing locale functionality for forms
  * 
@@ -20,7 +22,7 @@ trait Trait_FormLocale {
 	use Trait_Locale;
 	
 	abstract public function getPartialDefinition();
-	abstract public function getReef();
+	abstract public function getReef() : Reef;
 	
 	/**
 	 * @inherit

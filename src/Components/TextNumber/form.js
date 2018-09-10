@@ -5,9 +5,18 @@ Reef.addComponent((function() {
 	var Field = function(Reef, $field) {
 		this.$field = $field;
 		this.Reef = Reef;
+		this.layouts = {};
+		for(var layoutName in Field.layoutPrototypes) {
+			this.layouts[layoutName] = new Field.layoutPrototypes[layoutName](this);
+		}
 	};
 	
 	Field.componentName = 'reef:text_number';
+	
+	Field.layoutPrototypes = {};
+	Field.addLayout = function(layout) {
+		Field.layoutPrototypes[layout.layoutName] = layout;
+	};
 	
 	Field.getLanguageReplacements = function(declaration) {
 		var replacements = {};
@@ -96,27 +105,24 @@ Reef.addComponent((function() {
 	Field.prototype.setError = function(message_key) {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('.invalid-feedback').hide().filter('.'+CSSPRFX+message_key).show();
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].setError(message_key);
 		}
 	};
 	
 	Field.prototype.removeErrors = function() {
 		this.$field.removeClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').removeClass('is-invalid');
-			this.$field.find('.invalid-feedback').hide();
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].removeErrors();
 		}
 	};
 	
 	Field.prototype.addError = function(message) {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('input').parent().append($('<div class="invalid-feedback"></div>').text(message));
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].addError(message);
 		}
 	};
 	
@@ -130,12 +136,13 @@ Reef.addComponent((function() {
 	};
 	
 	Field.prototype.getConditionOperandInput = function(operator, layout) {
-		var classes = '';
-		if(layout == 'bootstrap4') {
-			classes += ' form-control';
+		var $input = $('<input type="number" step="0.001" />');
+		
+		if(this.layouts[layout]) {
+			this.layouts[layout].styleConditionOperandInput($input);
 		}
 		
-		return $('<input type="number" class="'+classes+'" step="0.001" />');
+		return $input;
 	};
 	
 	Field.prototype.validateConditionOperation = function(operator, operand) {

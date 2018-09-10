@@ -5,9 +5,18 @@ Reef.addComponent((function() {
 	var Field = function(Reef, $field) {
 		this.$field = $field;
 		this.Reef = Reef;
+		this.layouts = {};
+		for(var layoutName in Field.layoutPrototypes) {
+			this.layouts[layoutName] = new Field.layoutPrototypes[layoutName](this);
+		}
 	};
 	
 	Field.componentName = 'reef:checkbox';
+	
+	Field.layoutPrototypes = {};
+	Field.addLayout = function(layout) {
+		Field.layoutPrototypes[layout.layoutName] = layout;
+	};
 	
 	Field.prototype.attach = function() {
 		var self = this;
@@ -51,18 +60,16 @@ Reef.addComponent((function() {
 	Field.prototype.setError = function(message_key) {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').addClass('is-invalid');
-			this.$field.find('.invalid-feedback').hide().filter('.'+CSSPRFX+message_key).show();
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].setError(message_key);
 		}
 	};
 	
 	Field.prototype.removeErrors = function() {
 		this.$field.removeClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('input').removeClass('is-invalid');
-			this.$field.find('.invalid-feedback').hide();
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].removeErrors();
 		}
 	};
 	

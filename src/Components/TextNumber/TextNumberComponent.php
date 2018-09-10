@@ -39,19 +39,6 @@ class TextNumberComponent extends Component implements RequiredComponentInterfac
 	/**
 	 * @inherit
 	 */
-	public function getJS() : array {
-		return [
-			[
-				'type' => 'local',
-				'path' => 'form.js',
-				'view' => 'form',
-			]
-		];
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function supportedLayouts() : array {
 		return [
 			'bootstrap4',

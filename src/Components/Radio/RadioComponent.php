@@ -23,32 +23,6 @@ class RadioComponent extends AbstractSingleChoiceComponent implements RequiredCo
 	/**
 	 * @inherit
 	 */
-	public function getJS() : array {
-		return [
-			[
-				'type' => 'local',
-				'path' => 'form.js',
-				'view' => 'form',
-			]
-		];
-	}
-	
-	/**
-	 * @inherit
-	 */
-	public function getCSS() : array {
-		return [
-			[
-				'type' => 'local',
-				'path' => 'form.css',
-				'view' => 'form',
-			]
-		];
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function supportedLayouts() : array {
 		return [
 			'bootstrap4',

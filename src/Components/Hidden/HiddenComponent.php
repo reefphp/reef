@@ -19,19 +19,6 @@ class HiddenComponent extends Component {
 	/**
 	 * @inherit
 	 */
-	public function getJS() : array {
-		return [
-			[
-				'type' => 'local',
-				'path' => 'form.js',
-				'view' => 'form',
-			]
-		];
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function supportedLayouts() : array {
 		return [
 			'bootstrap4',

@@ -5,6 +5,7 @@ namespace Reef\Components;
 use Reef\Form\Form;
 use Reef\Reef;
 use Reef\Locale\Trait_ComponentLocale;
+use \Reef\Assets\JSCSSAssetsTrait;
 use Symfony\Component\Yaml\Yaml;
 use \Reef\Components\Traits\Hidable\HidableComponentInterface;
 use \Reef\Components\Traits\Hidable\HidableComponentTrait;
@@ -21,6 +22,7 @@ abstract class Component implements HidableComponentInterface {
 	
 	use Trait_ComponentLocale;
 	use HidableComponentTrait;
+	use JSCSSAssetsTrait;
 	
 	/**
 	 * The Reef object this component instance if member of
@@ -64,7 +66,7 @@ abstract class Component implements HidableComponentInterface {
 	 * Get the Reef object
 	 * @return Reef The Reef we are currently working in
 	 */
-	public function getReef() {
+	public function getReef() : Reef {
 		return $this->Reef;
 	}
 	
@@ -485,38 +487,6 @@ abstract class Component implements HidableComponentInterface {
 		$a_props = $this->getConfiguration()['props']??[];
 		
 		return array_column($a_props, 'name');
-	}
-	
-	/**
-	 * Returns an array of javascript files required by this component.
-	 * Each file is defined by an array:
-	 * [
-	 *   type => local or remote
-	 *   path => path or url
-	 *   view => for which view(s) to load, one of 'form', 'submission', 'builder' or 'all'. Optional, defaults to 'all'
-	 *   name => canonical name (required for remote files)
-	 *   integrity => Optionally, an integrity value for remote files
-	 * ]
-	 * @return array The javascript files
-	 */
-	public function getJS() {
-		return [];
-	}
-	
-	/**
-	 * Returns an array of CSS files required by this component.
-	 * Each file is defined by an array:
-	 * [
-	 *   type => local or remote
-	 *   path => path or url
-	 *   view => for which view(s) to load, one of 'form', 'submission', 'builder' or 'all'. Optional, defaults to 'all'
-	 *   name => canonical name (required for remote files)
-	 *   integrity => Optionally, an integrity value for remote files
-	 * ]
-	 * @return array The CSS files
-	 */
-	public function getCSS() {
-		return [];
 	}
 	
 	/**

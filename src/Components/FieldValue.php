@@ -1,6 +1,7 @@
 <?php
 
 namespace Reef\Components;
+use \Reef\Submission\Submission;
 use \Reef\Components\Traits\Hidable\HidableFieldValueInterface;
 use \Reef\Components\Traits\Hidable\HidableFieldValueTrait;
 
@@ -43,7 +44,7 @@ abstract class FieldValue implements HidableFieldValueInterface {
 	 * Get the field this value belongs to
 	 * @return Field
 	 */
-	public function getField() {
+	public function getField() : Field {
 		return $this->Field;
 	}
 	
@@ -51,7 +52,7 @@ abstract class FieldValue implements HidableFieldValueInterface {
 	 * Get the submission this value belongs to
 	 * @return \Reef\Submission\Submission
 	 */
-	public function getSubmission() {
+	public function getSubmission() : Submission {
 		return $this->Submission;
 	}
 	

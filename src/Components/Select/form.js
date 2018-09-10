@@ -5,9 +5,18 @@ Reef.addComponent((function() {
 	var Field = function(Reef, $field) {
 		this.$field = $field;
 		this.Reef = Reef;
+		this.layouts = {};
+		for(var layoutName in Field.layoutPrototypes) {
+			this.layouts[layoutName] = new Field.layoutPrototypes[layoutName](this);
+		}
 	};
 	
 	Field.componentName = 'reef:select';
+	
+	Field.layoutPrototypes = {};
+	Field.addLayout = function(layout) {
+		Field.layoutPrototypes[layout.layoutName] = layout;
+	};
 	
 	Field.viewVars = function(declaration) {
 		var i, l;
@@ -45,9 +54,8 @@ Reef.addComponent((function() {
 	Field.prototype.addError = function(message) {
 		this.$field.addClass(CSSPRFX+'invalid');
 		
-		if(this.Reef.config.layout_name == 'bootstrap4') {
-			this.$field.find('select').addClass('is-invalid');
-			this.$field.find('select').parent().append($('<div class="invalid-feedback"></div>').text(message));
+		if(this.layouts[this.Reef.config.layout_name]) {
+			this.layouts[this.Reef.config.layout_name].addError(message);
 		}
 	};
 	
@@ -63,22 +71,22 @@ Reef.addComponent((function() {
 	Field.prototype.getConditionOperandInput = function(operator, layout) {
 		var self = this;
 		
-		var classes = '';
-		if(layout == 'bootstrap4') {
-			classes += ' form-control';
-		}
-		
 		if(operator.indexOf('equal') > -1) {
-			var $select = $('<select class="'+classes+'">');
+			var $select = $('<select>');
 			
 			this.$field.find('select option').each(function() {
 				$select.append($('<option>').val($(this).attr('value')).text($(this).text()));
 			});
 			
+			if(this.layouts[layout]) {
+				this.layouts[layout].styleConditionOperandInput($select);
+			}
+			
 			return $select;
 		}
-		
-		return null;
+		else {
+			return null;
+		}
 	};
 	
 	Field.prototype.validateConditionOperation = function(operator, operand) {

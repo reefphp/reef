@@ -2,6 +2,7 @@
 
 namespace Reef\Locale;
 
+use \Reef\Reef;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -24,7 +25,7 @@ trait Trait_ComponentLocale {
 	
 	use Trait_Locale;
 	
-	abstract public function getReef();
+	abstract public function getReef() : Reef;
 	abstract public function getParent();
 	abstract public function getConfiguration() : array;
 	

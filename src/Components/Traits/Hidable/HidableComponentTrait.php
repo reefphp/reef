@@ -2,9 +2,11 @@
 
 namespace Reef\Components\Traits\Hidable;
 
+use \Reef\Reef;
+
 trait HidableComponentTrait {
 	
-	abstract public function getReef();
+	abstract public function getReef() : Reef;
 	
 	/**
 	 * @inherit

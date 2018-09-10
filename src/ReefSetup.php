@@ -110,6 +110,14 @@ class ReefSetup {
 	}
 	
 	/**
+	 * Get the array of layouts
+	 * @return Layout[] Layouts indexed by layout name
+	 */
+	public function getLayouts() : array {
+		return $this->a_layouts;
+	}
+	
+	/**
 	 * Get the current layout
 	 * @return Layout
 	 */
