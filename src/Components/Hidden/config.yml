@@ -1,8 +1,6 @@
 vendor: reef
 name: hidden
-category: text
-assets:
-    component_image: ../../../assets/img/text-freeform.svg
+category: internal
 basicDefinition:
     fields:
       - component: reef:text_line

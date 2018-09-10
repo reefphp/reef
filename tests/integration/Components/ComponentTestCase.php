@@ -66,7 +66,7 @@ abstract class ComponentTestCase extends TestCase {
 			$this->assertTrue(!empty($a_configuration[$s_confKey]) && is_string($a_configuration[$s_confKey]));
 		}
 		
-		$this->assertTrue(!empty($a_configuration['assets']['component_image']) && is_string($a_configuration['assets']['component_image']));
+		$this->assertTrue($a_configuration['category'] == 'internal' || (!empty($a_configuration['assets']['component_image']) && is_string($a_configuration['assets']['component_image'])));
 		
 		// Test other configuration types
 		foreach(['assets', 'basicLocale', 'advancedLocale', 'internalLocale', 'basicDefinition', 'advancedDefinition', 'props'] as $s_confKey) {

@@ -29,6 +29,7 @@ $Builder = $Reef->getBuilder();
 $Builder->setSettings([
 	'submit_action' => 'builder.php',
 ]);
+$Builder->addComponents(['reef:upload']);
 
 if(isset($_POST['builder_data'])) {
 	$Builder->processBuilderData_write($Form, $_POST['builder_data'], function(&$a_return) {

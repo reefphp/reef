@@ -1,8 +1,6 @@
 vendor: reef
 name: condition
-category: other
-assets:
-    component_image: ../../../assets/img/choice-check.svg
+category: internal
 basicLocale:
     title: rf_field_title
 internalLocale:

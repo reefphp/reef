@@ -1,8 +1,6 @@
 vendor: reef
 name: option_list
-category: text
-assets:
-    component_image: ../../../assets/img/text-freeform.svg
+category: internal
 basicLocale:
     title: rf_field_title
 internalLocale:

@@ -48,6 +48,7 @@ class Builder {
 	 */
 	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
+		$this->a_settings['components'] = $Reef->getSetup()->getDefaultBuilderComponents();
 	}
 	
 	/**
@@ -69,6 +70,30 @@ class Builder {
 		foreach($a_settings as $s_key => $s_val) {
 			$this->setSetting($s_key, $s_val);
 		}
+	}
+	
+	/**
+	 * Remove components from builder
+	 * @param string|string[] $a_componentNames The component names
+	 */
+	public function removeComponents($a_componentNames) {
+		if(!is_array($a_componentNames)) {
+			$a_componentNames = [$a_componentNames];
+		}
+		
+		$this->a_settings['components'] = array_diff($this->a_settings['components'], $a_componentNames);
+	}
+	
+	/**
+	 * Add components to builder
+	 * @param string|string[] $a_componentNames The component names
+	 */
+	public function addComponents($a_componentNames) {
+		if(!is_array($a_componentNames)) {
+			$a_componentNames = [$a_componentNames];
+		}
+		
+		$this->a_settings['components'] = array_unique(array_merge($this->a_settings['components'], $a_componentNames));
 	}
 	
 	/**
@@ -175,7 +200,7 @@ class Builder {
 				]
 			))),
 			'formHtml' => $s_formHtml,
-			'settings' => $this->a_settings,
+			'settings' => \Reef\array_subset($this->a_settings, ['submit_action']),
 			'fields' => $a_fields,
 			'definitionForm' => $DefinitionForm->generateFormHtml($DefinitionSubmission, ['main_var' => 'definition']),
 			'multipleLocales' => (count($a_locales) > 1),

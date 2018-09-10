@@ -226,7 +226,6 @@ class ReefSetup {
 			'reef:checklist',
 			'reef:radio',
 			'reef:select',
-			'reef:upload',
 		];
 		
 		return array_intersect($a_components, array_keys($this->a_componentMapping));
