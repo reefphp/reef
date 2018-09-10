@@ -163,6 +163,11 @@ if(typeof Reef === 'undefined') {
 				var type = $(this).data(CSSPRFX+'type');
 				if(Reef.components[type]) {
 					self.fields[name] = self.newField(type, $(this));
+				}
+			}).each(function() {
+				// And after initialization, attach & listen
+				var name = $(this).data(CSSPRFX+'name');
+				if(self.fields[name]) {
 					self.fields[name].attach();
 					self.listenVisible($(this), self.fields[name]);
 				}
