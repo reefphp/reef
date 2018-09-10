@@ -156,14 +156,16 @@ abstract class Assets {
 			$a_remoteAssets = array_diff_key($a_remoteAssets, $a_options['exclude']);
 		}
 		
-		foreach($a_remoteAssets as $s_name => $a_asset) {
-			if(!isset($a_asset['view'])) {
-				continue;
-			}
-			
-			$a_asset['view'] = is_array($a_asset['view']) ? $a_asset['view'] : explode(',', $a_asset['view']);
-			if($s_view != 'all' && !in_array($s_view, $a_asset['view']) && !($s_view == 'builder' && in_array('form', $a_asset['view']))) {
-				unset($a_remoteAssets[$s_name]);
+		if($s_view != 'all') {
+			foreach($a_remoteAssets as $s_name => $a_asset) {
+				if(!isset($a_asset['view']) || $a_asset['view'] == 'all') {
+					continue;
+				}
+				
+				$a_asset['view'] = is_array($a_asset['view']) ? $a_asset['view'] : explode(',', $a_asset['view']);
+				if(!in_array($s_view, $a_asset['view']) && !($s_view == 'builder' && in_array('form', $a_asset['view']))) {
+					unset($a_remoteAssets[$s_name]);
+				}
 			}
 		}
 		
@@ -231,9 +233,9 @@ abstract class Assets {
 					continue;
 				}
 				
-				if(isset($a_asset['view'])) {
+				if($s_view != 'all' && isset($a_asset['view']) && $a_asset['view'] != 'all') {
 					$a_asset['view'] = is_array($a_asset['view']) ? $a_asset['view'] : explode(',', $a_asset['view']);
-					if($s_view != 'all' && !in_array($s_view, $a_asset['view']) && !($s_view == 'builder' && in_array('form', $a_asset['view']))) {
+					if(!in_array($s_view, $a_asset['view']) && !($s_view == 'builder' && in_array('form', $a_asset['view']))) {
 						continue;
 					}
 				}
