@@ -383,6 +383,7 @@ if(typeof Reef === 'undefined') {
 				if(should_be_required != $input.prop('required')) {
 					$input.prop('required', should_be_required);
 					field.validate();
+					field.$field.toggleClass(CSSPRFX+'is-required', should_be_required);
 				}
 			}, options);
 		}

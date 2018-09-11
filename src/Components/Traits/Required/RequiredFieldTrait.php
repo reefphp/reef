@@ -32,13 +32,16 @@ trait RequiredFieldTrait {
 		}
 		
 		$s_required = 'data-required-if="'.htmlspecialchars($this->a_declaration['required']).'"';
+		$s_requiredFieldClass = '';
 		
 		if($this->is_required($Value->getSubmission())) {
 			$s_required .= ' required';
+			$s_requiredFieldClass = ' ' . $this->getForm()->getReef()->getOption('css_prefix') . 'is-required ';
 		}
 		
 		return [
 			'required' => $s_required,
+			'field_classes' => $s_requiredFieldClass,
 		];
 	}
 	

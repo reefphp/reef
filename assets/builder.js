@@ -668,9 +668,13 @@ var ReefBuilder = (function() {
 		delete fieldConfig.visible;
 		if(typeof fieldConfig.required !== 'undefined') {
 			try {
-				// Only try to set the 'required-if' data attribute if it is a valid condition
-				ReefConditionEvaluator.evaluate(reef, fieldConfig.required);
+				// Only try to set the 'required-if' data attribute if it is a valid condition. If it is an invalid
+				// condition, this will throw an exception
+				var is_required = ReefConditionEvaluator.evaluate(reef, fieldConfig.required);
 				fieldConfig.required = 'data-required-if="'+(fieldConfig.required.replace(/&/g, '&amp;').replace(/"/g, '&quot;'))+'"';
+				if(is_required) {
+					fieldConfig.field_classes = (fieldConfig.field_classes||'') + ' '+CSSPRFX+'is-required ';
+				}
 			}
 			catch(e) {
 				// Otherwise, neglect the required setting for this preview

@@ -1,8 +1,9 @@
-<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}}" data-{{CSSPRFX}}type="reef:radio" data-{{CSSPRFX}}name="{{field.name}}" {{{field.visible}}} data-default="{{field.default}}">
+<div class="form-group row {{CSSPRFX}}field {{#field.hasErrors}}{{CSSPRFX}}invalid{{/field.hasErrors}} {{field.field_classes}}" data-{{CSSPRFX}}type="reef:radio" data-{{CSSPRFX}}name="{{field.name}}" {{{field.visible}}} data-default="{{field.default}}">
 	<div class="{{layout.col_left}}">
 		[[form_label_before]]
 		<label class="col-form-label" for="{{form_idpfx}}-{{field.name}}">
 			{{field.locale.title}}
+			[[form_label_append]]
 		</label>
 		[[form_label_after]]
 	</div>

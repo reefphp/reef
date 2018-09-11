@@ -250,10 +250,10 @@ abstract class Field implements HidableFieldInterface {
 		$a_vars = $this->a_declaration;
 		
 		// Merge generalized options
-		$a_vars = array_merge($a_vars, $this->view_form_hidable($Value));
+		$a_vars = $this->mergeViewVars($a_vars, $this->view_form_hidable($Value));
 		
 		if($this instanceof \Reef\Components\Traits\Required\RequiredFieldInterface) {
-			$a_vars = array_merge($a_vars, $this->view_form_required($Value));
+			$a_vars = $this->mergeViewVars($a_vars, $this->view_form_required($Value));
 		}
 		
 		$a_vars['errors'] = $Value->getErrors();
@@ -278,6 +278,23 @@ abstract class Field implements HidableFieldInterface {
 		unset($a_vars['locales']);
 		
 		return $a_vars;
+	}
+	
+	/**
+	 * Merge new view vars into an existing view vars array
+	 * @param array $a_base The old view vars array
+	 * @param array $a_add The view vars to add
+	 * @return array Combined view vars
+	 */
+	private function mergeViewVars(array $a_base, array $a_add) {
+		if(array_key_exists('field_classes', $a_add)) {
+			$a_base['field_classes'] = ($a_base['field_classes']??'') . ' ' . $a_add['field_classes'];
+			unset($a_add['field_classes']);
+		}
+		
+		$a_base = array_merge($a_base, $a_add);
+		
+		return $a_base;
 	}
 	
 	/**
