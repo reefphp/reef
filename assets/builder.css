@@ -1,6 +1,7 @@
 .CSSPRFXbuilder {
 	display: flex;
 	position: relative;
+	height: 100%;
 }
 
 .CSSPRFXbuilder-toolbar {
@@ -8,6 +9,8 @@
 	width: 300px;
 	background-color: #f7f7fe;
 	font-size: 9pt;
+	height: 100%;
+	overflow: auto;
 }
 
 .CSSPRFXbuilder-toolbar input, .CSSPRFXbuilder-toolbar textarea, .CSSPRFXbuilder-toolbar select {
@@ -81,6 +84,8 @@
 .CSSPRFXbuilder-workspace {
 	background-color: #fff;
 	flex: 1;
+	height: 100%;
+	overflow: auto;
 }
 
 .CSSPRFXbuilder-workspace .CSSPRFXfields {
