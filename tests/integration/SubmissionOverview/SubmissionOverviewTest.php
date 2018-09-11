@@ -133,7 +133,6 @@ final class SubmissionOverviewTest extends TestCase {
 	
 	/**
 	 * @depends testCanCreateForm
-	 * @doesNotPerformAssertions
 	 */
 	public function testCSV_set(): void {
 		$this->expectException(InvalidArgumentException::class);
