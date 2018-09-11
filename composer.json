@@ -1,7 +1,17 @@
 {
-    "require-dev": {
-        "phpunit/phpunit": "^7"
-    },
+    "name": "reef/reef",
+    "type": "library",
+    "description": "Responsive Embeddable Extensible Form generator",
+    "keywords": ["form","forms"],
+    "homepage": "https://gitlab.com/reefphp/reef",
+    "license": "LGPL-3.0",
+    "authors": [
+        {
+            "name": "Marco van Oort",
+            "email": "marcovoort@gmail.com",
+            "role": "Developer"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Reef\\": "src/",
@@ -9,8 +19,12 @@
         }
     },
     "require": {
+        "php": ">=7.2.0",
         "symfony/yaml": "^4.0",
         "mustache/mustache": "^2.12",
         "symfony/cache": "^4.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7"
     }
 }

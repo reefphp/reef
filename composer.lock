@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "996db540e7df2dde66d633d960e291de",
+    "content-hash": "43383359dd91cd47d46f80cadcf653e6",
     "packages": [
         {
             "name": "mustache/mustache",
@@ -1782,6 +1782,8 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=7.2.0"
+    },
     "platform-dev": []
 }
