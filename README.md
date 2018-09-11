@@ -12,5 +12,6 @@ Reef can be embedded seamlessly into your own website. Reef only provides the fo
 
 ## Notable dependencies
 
-* Mustache.php and Mustache.js for templates shared between PHP and JS
-* RubaXa/Sortable JS library
+* jQuery
+* Mustache.php and Mustache.js for templates shared between PHP and JS (Mustache.js only in builder)
+* RubaXa/Sortable JS library (only in builder)
