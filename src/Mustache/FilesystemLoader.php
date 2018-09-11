@@ -163,7 +163,8 @@ class FilesystemLoader extends \Mustache_Loader_FilesystemLoader {
 			// Get template
 			$s_hookTemplate = '';
 			foreach($a_hookNames as $s_subHookName) {
-				$s_hookTemplate .= $ExtensionCollection->getHookTemplate($s_subHookName);
+				$b_returnFirst = ($s_modifier == '?');
+				$s_hookTemplate .= $ExtensionCollection->getHookTemplate($s_subHookName, $b_returnFirst);
 				
 				if($s_modifier == '') {
 					break;

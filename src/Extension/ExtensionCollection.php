@@ -97,12 +97,17 @@ class ExtensionCollection {
 	/**
 	 * Get combined extension template of a template hook
 	 * @param string $s_hookName The hook name
+	 * @param bool $b_returnFirst Whether to return on the first nonempty result. Defaults to false
 	 * @return string The template
 	 */
-	public function getHookTemplate(string $s_hookName) {
+	public function getHookTemplate(string $s_hookName, bool $b_returnFirst = false) {
 		$s_template = '';
 		foreach($this->a_extensionMapping as $Extension) {
 			$s_template .= $Extension->getHookTemplate($s_hookName);
+			
+			if($b_returnFirst && !empty(trim($s_template))) {
+				break;
+			}
 		}
 		return $s_template;
 	}
