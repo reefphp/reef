@@ -42,8 +42,8 @@ class Filesystem {
 		
 		'pdf'   => 'application/pdf',
 		
-		'jpeg'  => ['image/jpg', 'image/jpeg'],
-		'jpg'   => ['image/jpg', 'image/jpeg'],
+		'jpeg'  => ['image/jpg', 'image/jpeg', 'image/pjpeg'],
+		'jpg'   => ['image/jpg', 'image/jpeg', 'image/pjpeg'],
 		'png'   => 'image/png',
 		'gif'   => 'image/gif',
 		'txt'   => 'text/plain',
