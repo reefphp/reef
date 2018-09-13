@@ -21,15 +21,15 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 		$this->a_errors = [];
 		$a_declaration = $this->Field->getDeclaration();
 		
-		if(!$this->validate_required(trim($this->m_rawValue) == '', $this->a_errors)) {
+		if(!$this->validate_required(trim($this->m_rawValue) === '', $this->a_errors)) {
 			$b_valid = false;
 		}
 		
-		if($this->m_rawValue != '' && !is_numeric($this->m_rawValue)) {
+		if($this->m_rawValue !== '' && !is_numeric($this->m_rawValue)) {
 			$this->a_errors[] = $this->Field->trans('error_not_a_number');
 			$b_valid = false;
 		}
-		else if($this->m_rawValue != '') {
+		else if($this->m_rawValue !== '') {
 			$f_value = (float)$this->f_value;
 			
 			// Check min/max
@@ -89,7 +89,7 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 	 * @inherit
 	 */
 	public function fromStructured($s_input) {
-		$this->f_value = $this->m_rawValue = $s_input;
+		$this->f_value = $this->m_rawValue = $s_input??$this->Field->getDeclaration()['default']??'';
 		$this->a_errors = null;
 		if($this->f_value !== '') {
 			$this->f_value = $this->Field->is_integer() ? (int)$this->f_value : (float)$this->f_value;
@@ -101,7 +101,7 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 	 */
 	public function toFlat() : array {
 		return [
-			$this->f_value,
+			($this->f_value === '') ? null : $this->f_value,
 		];
 	}
 	
@@ -109,7 +109,7 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 	 * @inherit
 	 */
 	public function fromFlat(?array $a_flat) {
-		$this->f_value = $this->m_rawValue = $a_flat[0]??$this->Field->getDeclaration()['default']??'';
+		$this->f_value = $this->m_rawValue = $a_flat[0]??'';
 		$this->a_errors = null;
 		if($this->f_value !== '') {
 			$this->f_value = $this->Field->is_integer() ? (int)$this->f_value : (float)$this->f_value;
