@@ -99,9 +99,11 @@ class Builder {
 	/**
 	 * Create HTML for the builder
 	 * @param Form $Form The form to generate the builder for
+	 * @param array $a_options Array of options, to choose from:
+	 *  - definition_submission: array of definition submission values
 	 * @return string The builder HTML
 	 */
-	public function generateBuilderHtml(Form $Form) {
+	public function generateBuilderHtml(Form $Form, $a_options = []) {
 		$Layout = $this->Reef->getSetup()->getLayout();
 		$a_componentMapping = $this->Reef->getSetup()->getComponentMapping();
 		$a_categories = [];
@@ -177,9 +179,9 @@ class Builder {
 		// Form definition
 		$DefinitionForm = $this->generateDefinitionForm($Form);
 		$DefinitionSubmission = $DefinitionForm->newSubmission();
-		$DefinitionSubmission->fromStructured([
-			'storage_name' => ($Form instanceof AbstractStoredForm) ? $Form->getStorageName() : 'temporary_form',
-		]);
+		$a_definitionSubmission = $a_options['definition_submission'] ?? [];
+		$a_definitionSubmission['storage_name'] = ($Form instanceof AbstractStoredForm) ? $Form->getStorageName() : 'temporary_form';
+		$DefinitionSubmission->fromStructured($a_definitionSubmission);
 		
 		$EmptyForm = clone $Form;
 		$EmptyForm->setFields([]);
@@ -227,7 +229,7 @@ class Builder {
 	 * Parse builder data into a new form definition and a list of field renames
 	 * @param Form $Form The form
 	 * @param array $a_data The submitted builder data
-	 * @return array [(array) new form definition, (string[]) field renames]
+	 * @return array [(array) new form definition, (string[]) field renames, (Submission) The definition submission]
 	 */
 	private function parseBuilderData(Form $Form, array $a_data) {
 		$Setup = $this->Reef->getSetup();
@@ -347,7 +349,7 @@ class Builder {
 		$a_newDefinition = array_merge($Form->getPartialDefinition(), array_subset($DefinitionSubmission->toStructured(['skip_default' => true]), ['storage_name']));
 		$a_newDefinition['fields'] = $a_fields;
 		
-		return [$a_newDefinition, $a_fieldRenames];
+		return [$a_newDefinition, $a_fieldRenames, $DefinitionSubmission];
 	}
 	
 	/**
@@ -355,11 +357,13 @@ class Builder {
 	 * @param Form &$Form The form to modify. In case a TempStoredForm is passed, upon applying the changes this variable
 	 *                    will be replaced with a corresponding StoredForm object
 	 * @param array $a_data The builder data from the builder
+	 * @param ?callable $fn_callback Callback to apply just before exiting. The return array
+	 *                  (@see processBuilderData_return()) is passed as first argument, the definition submission as second
 	 * @return array The return data to be returned (in JSON format) to the builder
 	 */
-	public function processBuilderData_return(Form &$Form, array $a_data) : array {
+	public function processBuilderData_return(Form &$Form, array $a_data, ?callable $fn_callback = null) : array {
 		try {
-			[$a_newDefinition, $a_fieldRenames] = $this->parseBuilderData($Form, $a_data);
+			[$a_newDefinition, $a_fieldRenames, $DefinitionSubmission] = $this->parseBuilderData($Form, $a_data);
 			
 			$a_return = null;
 			
@@ -395,6 +399,10 @@ class Builder {
 		
 		$a_return['result'] = !empty($a_return['result']);
 		
+		if($fn_callback !== null) {
+			$fn_callback($a_return, $DefinitionSubmission);
+		}
+		
 		return $a_return;
 	}
 	
@@ -405,14 +413,10 @@ class Builder {
 	 *                    will be replaced with a corresponding StoredForm object
 	 * @param array $a_data The builder data from the builder
 	 * @param ?callable $fn_callback Callback to apply just before exiting. The return array
-	 *                  (@see processBuilderData_return()) is passed as first argument
+	 *                  (@see processBuilderData_return()) is passed as first argument, the definition submission as second
 	 */
 	public function processBuilderData_write(Form &$Form, array $a_data, ?callable $fn_callback = null) {
-		$a_return = $this->processBuilderData_return($Form, $a_data);
-		
-		if($fn_callback !== null) {
-			$fn_callback($a_return);
-		}
+		$a_return = $this->processBuilderData_return($Form, $a_data, $fn_callback);
 		
 		echo json_encode($a_return);
 		die();
