@@ -334,8 +334,8 @@ abstract class Form {
 			];
 		}
 		
-		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, Reef::getDir() . 'src/'));
-		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/form.mustache');
+		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, $Layout::getDir()));
+		$Template = $Mustache->loadTemplate('view/form.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,
 			'config_base64' => base64_encode(json_encode($a_data)),
@@ -395,8 +395,8 @@ abstract class Form {
 			];
 		}
 		
-		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, Reef::getDir() . 'src/'));
-		$Template = $Mustache->loadTemplate('view/'.$Layout->getName().'/submission.mustache');
+		$Mustache->setLoader(new \Reef\Mustache\FilesystemLoader($this->Reef, $Layout::getDir()));
+		$Template = $Mustache->loadTemplate('view/submission.mustache');
 		$s_html = $Template->render([
 			'fields' => $a_fields,
 			'config_base64' => base64_encode(json_encode($a_data)),
