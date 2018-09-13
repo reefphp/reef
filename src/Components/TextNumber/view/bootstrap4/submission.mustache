@@ -8,12 +8,12 @@
 	</div>
 	<div class="{{layout.col_right}}">
 		[[submission_input_before]]
-		{{#field.value}}
+		{{#field.hasValue}}
 			{{field.value}}
-		{{/field.value}}
-		{{^field.value}}
+		{{/field.hasValue}}
+		{{^field.hasValue}}
 			<span class="font-italic text-muted">{{field.locale.rf_submission_empty_value}}</span>
-		{{/field.value}}
+		{{/field.hasValue}}
 		[[submission_input_after]]
 	</div>
 </div>

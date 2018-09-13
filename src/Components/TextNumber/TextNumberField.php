@@ -92,6 +92,7 @@ class TextNumberField extends Field implements RequiredFieldInterface {
 	public function view_submission($Value, $a_options = []) : array {
 		$a_vars = parent::view_submission($Value, $a_options);
 		$a_vars['value'] = $Value->toTemplateVar();
+		$a_vars['hasValue'] = $a_vars['value'] !== '' && $a_vars['value'] !== null;
 		return $a_vars;
 	}
 	
