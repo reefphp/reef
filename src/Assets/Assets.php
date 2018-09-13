@@ -153,7 +153,7 @@ abstract class Assets {
 		
 		// Exclude files where necessary
 		if(isset($a_options['exclude'])) {
-			$a_remoteAssets = array_diff_key($a_remoteAssets, $a_options['exclude']);
+			$a_remoteAssets = array_diff_key($a_remoteAssets, array_flip($a_options['exclude']));
 		}
 		
 		if($s_view != 'all') {
