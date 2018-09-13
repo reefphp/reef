@@ -274,6 +274,9 @@ abstract class Field implements HidableFieldInterface {
 	public function view_submission(FieldValue $Value, $a_options = []) : array {
 		$a_vars = $this->a_declaration;
 		
+		// Merge generalized options
+		$a_vars = $this->mergeViewVars($a_vars, $this->view_form_hidable($Value));
+		
 		$a_vars['locale'] = $this->getLocale($a_options['locale']??null);
 		unset($a_vars['locales']);
 		
