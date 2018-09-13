@@ -156,6 +156,10 @@ class ReefSetup {
 	 * @throws LogicException If the configuration is not valid
 	 */
 	public function checkSetup(\Reef\Reef $Reef) {
+		foreach($this->a_layouts as $Layout) {
+			$Layout->init($this);
+		}
+		
 		$this->Reef = $Reef;
 		
 		foreach($this->a_componentMapping as $Component) {
@@ -241,6 +245,7 @@ class ReefSetup {
 			throw new BadMethodCallException("Can only add components during Reef setup.");
 		}
 		$this->a_componentMapping[$Component::COMPONENT_NAME] = $Component;
+		$Component->init($this);
 	}
 	
 	/**
@@ -291,6 +296,7 @@ class ReefSetup {
 			throw new BadMethodCallException("Can only add extensions during Reef setup.");
 		}
 		$this->a_extensions[$Extension::getName()] = $Extension;
+		$Extension->init($this);
 	}
 	
 	/**

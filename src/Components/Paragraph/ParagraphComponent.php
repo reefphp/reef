@@ -19,15 +19,6 @@ class ParagraphComponent extends Component {
 	/**
 	 * @inherit
 	 */
-	public function supportedLayouts() : array {
-		return [
-			'bootstrap4',
-		];
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function supportedStorages() : ?array {
 		return null;
 	}

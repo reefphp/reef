@@ -20,13 +20,4 @@ class RadioComponent extends AbstractSingleChoiceComponent implements RequiredCo
 		return __DIR__.'/';
 	}
 	
-	/**
-	 * @inherit
-	 */
-	public function supportedLayouts() : array {
-		return [
-			'bootstrap4',
-		];
-	}
-	
 }

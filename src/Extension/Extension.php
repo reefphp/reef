@@ -42,6 +42,13 @@ abstract class Extension {
 	}
 	
 	/**
+	 * Initialize the extension
+	 * @param \Reef\ReefSetup $ReefSetup The setup
+	 */
+	public function init($ReefSetup) {
+	}
+	
+	/**
 	 * Check the setup, may throw an exception if something is not valid
 	 */
 	public function checkSetup() {

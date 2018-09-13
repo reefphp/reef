@@ -82,15 +82,6 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 	/**
 	 * @inherit
 	 */
-	public function supportedLayouts() : array {
-		return [
-			'bootstrap4',
-		];
-	}
-	
-	/**
-	 * @inherit
-	 */
 	public function supportedStorages() : ?array {
 		return [
 			'pdo_mysql',

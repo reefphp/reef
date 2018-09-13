@@ -32,6 +32,13 @@ abstract class Layout {
 	}
 	
 	/**
+	 * Initialize the layout
+	 * @param \Reef\ReefSetup $ReefSetup The setup
+	 */
+	public function init($ReefSetup) {
+	}
+	
+	/**
 	 * Returns the layout name
 	 * @return string The layout name
 	 */

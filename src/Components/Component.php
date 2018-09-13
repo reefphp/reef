@@ -52,7 +52,19 @@ abstract class Component implements HidableComponentInterface {
 	 * Cached result of getTemplateLoader()
 	 * @type FilesystemLoader[]
 	 */
-	private $a_filesystemLoaders = null;
+	private $a_filesystemLoaders = [];
+	
+	/**
+	 * Custom layout directories
+	 * @type string[]
+	 */
+	private $a_customLayoutDirs = [];
+	
+	/**
+	 * Cached result of supportedLayouts() (defaults to -1 for 'not initialized')
+	 * @type string[]
+	 */
+	private $a_supportedLayouts = -1;
 	
 	/**
 	 * Set the Reef object
@@ -68,6 +80,13 @@ abstract class Component implements HidableComponentInterface {
 	 */
 	public function getReef() : Reef {
 		return $this->Reef;
+	}
+	
+	/**
+	 * Initialize the component
+	 * @param \Reef\ReefSetup $ReefSetup The setup
+	 */
+	public function init($ReefSetup) {
 	}
 	
 	/**
@@ -149,7 +168,72 @@ abstract class Component implements HidableComponentInterface {
 	 * this component is layout-agnostic
 	 * @return ?array
 	 */
-	abstract public function supportedLayouts() : ?array;
+	public function supportedLayouts() : ?array {
+		if($this->a_supportedLayouts !== -1) {
+			return $this->a_supportedLayouts;
+		}
+		
+		// Get own supported layouts
+		$a_supportedLayouts = $this->Reef->cache('supportedLayouts.component.'.static::COMPONENT_NAME, function() {
+			$s_viewDir = static::getDir().'/view/';
+			$i_viewDirLen = strlen($s_viewDir);
+			$a_layouts = glob($s_viewDir . '*', GLOB_ONLYDIR);
+			
+			$a_layouts = array_map(function($s_layout) use($i_viewDirLen) {
+				return substr($s_layout, $i_viewDirLen);
+			}, $a_layouts);
+			
+			if(in_array('default', $a_layouts)) {
+				return null;
+			}
+			return $a_layouts;
+		});
+		
+		if($a_supportedLayouts === null) {
+			$this->a_supportedLayouts = null;
+			return null;
+		}
+		
+		// Merge custom supported layouts
+		$a_supportedLayouts = array_merge($a_supportedLayouts, array_keys($this->a_customLayoutDirs));
+		
+		// Merge parent supported layouts
+		if(static::PARENT_NAME !== null) {
+			$a_parentSupportedLayouts = $this->getParent()->supportedLayouts();
+			if($a_parentSupportedLayouts === null) {
+				$this->a_supportedLayouts = null;
+				return null;
+			}
+			
+			$a_supportedLayouts = array_merge($a_supportedLayouts, $a_parentSupportedLayouts);
+		}
+		
+		$a_supportedLayouts = array_unique($a_supportedLayouts);
+		
+		// Cache the result if not still initializing
+		if($this->Reef !== null) {
+			$this->a_supportedLayouts = $a_supportedLayouts;
+		}
+		
+		return $a_supportedLayouts;
+	}
+	
+	/**
+	 * Add a layout for this component
+	 * @param string $s_layout The layout
+	 * @param string $s_templateDir The template dir
+	 * @param string $s_subDir Optionally, the subdirectory within the template dir to use
+	 */
+	public function addLayout($s_layout, $s_templateDir, $s_subDir = null) {
+		if($this->Reef !== null) {
+			throw new \Reef\Exception\LogicException("Can only add layouts during initialization");
+		}
+		
+		$this->a_customLayoutDirs[$s_layout] = [
+			'template_dir' => $s_templateDir,
+			'default_sub_dir' => $s_subDir,
+		];
+	}
 	
 	/**
 	 * Returns an array of supported storages. May return null to indicate that
@@ -160,7 +244,7 @@ abstract class Component implements HidableComponentInterface {
 	
 	/**
 	 * Return a list of class names, of this class and all its parents, except this abstract Component class
-	 * @return string The directory
+	 * @return string[] The class names
 	 */
 	public function getInheritanceList() {
 		$s_currentClass = get_called_class();
@@ -184,6 +268,19 @@ abstract class Component implements HidableComponentInterface {
 			return $this->a_filesystemLoaders[$s_layout][$s_file];
 		}
 		
+		// Resolve custom layouts
+		$Component = $this;
+		do {
+			if(isset($Component->a_customLayoutDirs[$s_layout])) {
+				$a_customLayout = $Component->a_customLayoutDirs[$s_layout];
+				if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_file.'.mustache')) {
+					$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $a_customLayout['template_dir'], ['default_sub_dir' => $a_customLayout['default_sub_dir']]);
+					return $this->a_filesystemLoaders[$s_layout][$s_file];
+				}
+			}
+		} while(null !== ($Component = $Component->getParent()));
+		
+		// Resolve own layouts
 		$s_templateDir = null;
 		$s_viewfile = 'view/'.$s_layout.'/'.$s_file.'.mustache';
 		

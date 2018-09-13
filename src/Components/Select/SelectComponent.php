@@ -16,13 +16,4 @@ class SelectComponent extends AbstractSingleChoiceComponent {
 		return __DIR__.'/';
 	}
 	
-	/**
-	 * @inherit
-	 */
-	public function supportedLayouts() : array {
-		return [
-			'bootstrap4',
-		];
-	}
-	
 }
