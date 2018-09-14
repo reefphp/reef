@@ -164,6 +164,26 @@ abstract class Component implements HidableComponentInterface {
 	}
 	
 	/**
+	 * Returns an array of natively supported layouts. May return null to indicate that
+	 * this component is layout-agnostic
+	 * @return ?array
+	 */
+	public function nativelySupportedLayouts() : ?array {
+		$s_viewDir = static::getDir().'/view/';
+		$i_viewDirLen = strlen($s_viewDir);
+		$a_layouts = glob($s_viewDir . '*', GLOB_ONLYDIR);
+		
+		$a_layouts = array_map(function($s_layout) use($i_viewDirLen) {
+			return substr($s_layout, $i_viewDirLen);
+		}, $a_layouts);
+		
+		if(in_array('default', $a_layouts)) {
+			return null;
+		}
+		return $a_layouts;
+	}
+	
+	/**
 	 * Returns an array of supported layouts. May return null to indicate that
 	 * this component is layout-agnostic
 	 * @return ?array
@@ -174,20 +194,14 @@ abstract class Component implements HidableComponentInterface {
 		}
 		
 		// Get own supported layouts
-		$a_supportedLayouts = $this->Reef->cache('supportedLayouts.component.'.static::COMPONENT_NAME, function() {
-			$s_viewDir = static::getDir().'/view/';
-			$i_viewDirLen = strlen($s_viewDir);
-			$a_layouts = glob($s_viewDir . '*', GLOB_ONLYDIR);
-			
-			$a_layouts = array_map(function($s_layout) use($i_viewDirLen) {
-				return substr($s_layout, $i_viewDirLen);
-			}, $a_layouts);
-			
-			if(in_array('default', $a_layouts)) {
-				return null;
-			}
-			return $a_layouts;
-		});
+		if($this->Reef !== null) {
+			$a_supportedLayouts = $this->Reef->cache('supportedLayouts.component.'.static::COMPONENT_NAME, function() {
+				return $this->nativelySupportedLayouts();
+			});
+		}
+		else {
+			$a_supportedLayouts = $this->nativelySupportedLayouts();
+		}
 		
 		if($a_supportedLayouts === null) {
 			$this->a_supportedLayouts = null;
@@ -274,7 +288,7 @@ abstract class Component implements HidableComponentInterface {
 			if(isset($Component->a_customLayoutDirs[$s_layout])) {
 				$a_customLayout = $Component->a_customLayoutDirs[$s_layout];
 				if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_file.'.mustache')) {
-					$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $a_customLayout['template_dir'], ['default_sub_dir' => $a_customLayout['default_sub_dir']]);
+					$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $a_customLayout['template_dir'], ['default_sub_dir' => $a_customLayout['default_sub_dir']??'']);
 					return $this->a_filesystemLoaders[$s_layout][$s_file];
 				}
 			}

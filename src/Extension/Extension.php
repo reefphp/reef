@@ -23,6 +23,18 @@ abstract class Extension {
 	protected $ExtensionCollection;
 	
 	/**
+	 * Custom layout directories
+	 * @type string[]
+	 */
+	private $a_customLayoutDirs = [];
+	
+	/**
+	 * Cached result of supportedLayouts() (defaults to -1 for 'not initialized')
+	 * @type string[]
+	 */
+	private $a_supportedLayouts = -1;
+	
+	/**
 	 * Set the ExtensionCollection object
 	 * @param ExtensionCollection $ExtensionCollection The ExtensionCollection object
 	 */
@@ -83,11 +95,79 @@ abstract class Extension {
 	}
 	
 	/**
+	 * Returns an array of natively supported layouts. May return null to indicate that
+	 * this extension is layout-agnostic
+	 * @return ?array
+	 */
+	public function nativelySupportedLayouts() : ?array {
+		$s_viewDir = static::getDir().'/view/';
+		$i_viewDirLen = strlen($s_viewDir);
+		$a_layouts = glob($s_viewDir . '*', GLOB_ONLYDIR);
+		
+		$a_layouts = array_map(function($s_layout) use($i_viewDirLen) {
+			return substr($s_layout, $i_viewDirLen);
+		}, $a_layouts);
+		
+		if(in_array('default', $a_layouts)) {
+			return null;
+		}
+		return $a_layouts;
+	}
+	
+	/**
 	 * Returns an array of supported layouts. May return null to indicate that
 	 * this extension is layout-agnostic
 	 * @return ?array
 	 */
-	abstract public function supportedLayouts() : ?array;
+	public function supportedLayouts() : ?array {
+		if($this->a_supportedLayouts !== -1) {
+			return $this->a_supportedLayouts;
+		}
+		
+		// Get own supported layouts
+		if($this->ExtensionCollection !== null) {
+			$a_supportedLayouts = $this->getReef()->cache('supportedLayouts.extension.'.static::getName(), function() {
+				return $this->nativelySupportedLayouts();
+			});
+		}
+		else {
+			$a_supportedLayouts = $this->nativelySupportedLayouts();
+		}
+		
+		if($a_supportedLayouts === null) {
+			$this->a_supportedLayouts = null;
+			return null;
+		}
+		
+		// Merge custom supported layouts
+		$a_supportedLayouts = array_merge($a_supportedLayouts, array_keys($this->a_customLayoutDirs));
+		
+		$a_supportedLayouts = array_unique($a_supportedLayouts);
+		
+		// Cache the result if not still initializing
+		if($this->ExtensionCollection !== null && $this->getReef()->getSetup()->isInitialized()) {
+			$this->a_supportedLayouts = $a_supportedLayouts;
+		}
+		
+		return $a_supportedLayouts;
+	}
+	
+	/**
+	 * Add a layout for this extension
+	 * @param string $s_layout The layout
+	 * @param string $s_templateDir The template dir
+	 * @param string $s_subDir Optionally, the subdirectory within the template dir to use
+	 */
+	public function addLayout($s_layout, $s_templateDir, $s_subDir = null) {
+		if($this->ExtensionCollection !== null && $this->getReef()->getSetup()->isInitialized()) {
+			throw new \Reef\Exception\LogicException("Can only add layouts during initialization");
+		}
+		
+		$this->a_customLayoutDirs[$s_layout] = [
+			'template_dir' => $s_templateDir,
+			'default_sub_dir' => $s_subDir,
+		];
+	}
 	
 	/**
 	 * Return an array of extension events to subscribe to
@@ -106,6 +186,16 @@ abstract class Extension {
 		$Reef = $this->getReef();
 		$s_layoutName = $Reef->getSetup()->getLayout()->getName();
 		
+		// Resolve custom layouts
+		if(isset($this->a_customLayoutDirs[$s_layoutName])) {
+			$a_customLayout = $this->a_customLayoutDirs[$s_layoutName];
+			if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache')) {
+				$Loader = new \Reef\Mustache\FilesystemLoader($Reef, $a_customLayout['template_dir']);
+				return $Loader->load(($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache');
+			}
+		}
+		
+		// Resolve own layouts
 		$s_templateDir = static::getDir().'/';
 		$s_viewfile = 'view/'.$s_layoutName.'/'.$s_hookName.'.mustache';
 		

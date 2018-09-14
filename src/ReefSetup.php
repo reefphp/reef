@@ -59,6 +59,12 @@ class ReefSetup {
 	private $s_currentLayout;
 	
 	/**
+	 * Whether initialization has completed
+	 * @type bool
+	 */
+	private $b_isInitialized = false;
+	
+	/**
 	 * The Reef of this setup (only available after checkSetup() has been called)
 	 * @type \Reef\Reef
 	 */
@@ -123,6 +129,14 @@ class ReefSetup {
 	 */
 	public function getLayout() : Layout {
 		return $this->a_layouts[$this->s_currentLayout];
+	}
+	
+	/**
+	 * Determine whether initialization has completed
+	 * @return bool
+	 */
+	public function isInitialized() : bool {
+		return $this->b_isInitialized;
 	}
 	
 	/**
@@ -205,6 +219,8 @@ class ReefSetup {
 				}
 			}
 		}
+		
+		$this->b_isInitialized = true;
 	}
 	
 	/**
@@ -297,6 +313,29 @@ class ReefSetup {
 		}
 		$this->a_extensions[$Extension::getName()] = $Extension;
 		$Extension->init($this);
+	}
+	
+	/**
+	 * Determine whether this setup contains the specified extension name
+	 * @param string $s_extensionName The extension to check
+	 * @return bool
+	 */
+	public function hasExtension($s_extensionName) {
+		return isset($this->a_extensions[$s_extensionName]);
+	}
+	
+	/**
+	 * Retrieve the extension with the specified extension name
+	 * @param string $s_extensionName The extension to check
+	 * @return Extension
+	 * @throws DomainException If the extension does not exist
+	 */
+	public function getExtension($s_extensionName) {
+		if(!isset($this->a_extensions[$s_extensionName])) {
+			throw new DomainException("Extension not loaded: ".$s_extensionName);
+		}
+		
+		return $this->a_extensions[$s_extensionName];
 	}
 	
 	/**
