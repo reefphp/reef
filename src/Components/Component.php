@@ -56,7 +56,7 @@ abstract class Component implements HidableComponentInterface {
 	
 	/**
 	 * Custom layout directories
-	 * @type string[]
+	 * @type array[]
 	 */
 	private $a_customLayoutDirs = [];
 	
@@ -243,7 +243,7 @@ abstract class Component implements HidableComponentInterface {
 			throw new \Reef\Exception\LogicException("Can only add layouts during initialization");
 		}
 		
-		$this->a_customLayoutDirs[$s_layout] = [
+		$this->a_customLayoutDirs[$s_layout][] = [
 			'template_dir' => $s_templateDir,
 			'default_sub_dir' => $s_subDir,
 		];
@@ -286,10 +286,11 @@ abstract class Component implements HidableComponentInterface {
 		$Component = $this;
 		do {
 			if(isset($Component->a_customLayoutDirs[$s_layout])) {
-				$a_customLayout = $Component->a_customLayoutDirs[$s_layout];
-				if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_file.'.mustache')) {
-					$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $a_customLayout['template_dir'], ['default_sub_dir' => $a_customLayout['default_sub_dir']??'']);
-					return $this->a_filesystemLoaders[$s_layout][$s_file];
+				foreach($Component->a_customLayoutDirs[$s_layout] as $a_customLayout) {
+					if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_file.'.mustache')) {
+						$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $a_customLayout['template_dir'], ['default_sub_dir' => $a_customLayout['default_sub_dir']??'']);
+						return $this->a_filesystemLoaders[$s_layout][$s_file];
+					}
 				}
 			}
 		} while(null !== ($Component = $Component->getParent()));

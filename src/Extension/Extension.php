@@ -24,7 +24,7 @@ abstract class Extension {
 	
 	/**
 	 * Custom layout directories
-	 * @type string[]
+	 * @type array[]
 	 */
 	private $a_customLayoutDirs = [];
 	
@@ -163,7 +163,7 @@ abstract class Extension {
 			throw new \Reef\Exception\LogicException("Can only add layouts during initialization");
 		}
 		
-		$this->a_customLayoutDirs[$s_layout] = [
+		$this->a_customLayoutDirs[$s_layout][] = [
 			'template_dir' => $s_templateDir,
 			'default_sub_dir' => $s_subDir,
 		];
@@ -188,10 +188,11 @@ abstract class Extension {
 		
 		// Resolve custom layouts
 		if(isset($this->a_customLayoutDirs[$s_layoutName])) {
-			$a_customLayout = $this->a_customLayoutDirs[$s_layoutName];
-			if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache')) {
-				$Loader = new \Reef\Mustache\FilesystemLoader($Reef, $a_customLayout['template_dir']);
-				return $Loader->load(($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache');
+			foreach($this->a_customLayoutDirs[$s_layoutName] as $a_customLayout) {
+				if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache')) {
+					$Loader = new \Reef\Mustache\FilesystemLoader($Reef, $a_customLayout['template_dir']);
+					return $Loader->load(($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache');
+				}
 			}
 		}
 		
