@@ -2,6 +2,8 @@
 
 ### Reef is a form generator written in PHP. It provides functionality to let your users build forms that can in turn be filled in by other users.
 
+[Home page](https://reefphp.gitlab.io/home/) - [User's guide](https://reef-docs.readthedocs.io/en/latest/users_guide/) - [Integration guide](https://reef-docs.readthedocs.io/en/latest/integration_guide/) - [Contribution guide](https://reef-docs.readthedocs.io/en/latest/contribution_guide/) - [Packagist](https://packagist.org/packages/reef/reef)
+
 ## Features
 
 * Creating, modifying and deleting forms. Forms can also be modified after submissions have been received
