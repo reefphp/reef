@@ -8,15 +8,15 @@ use Reef\Storage\PDO_MySQL_Storage;
 final class PDOMySQLStorageTest extends PDOStorageTestCase {
 	
 	const DB_NAME = 'reef_test';
-	const DB_HOST = '127.0.0.1';
 	const DB_USER = 'reef_test';
 	const DB_PASS = 'reef_test';
 	
 	private static $PDOException = null;
 	
 	public static function setUpBeforeClass() {
+		$DB_HOST = getenv('IN_GITLAB_CI') ? 'mysql' : '127.0.0.1';
 		try {
-			static::$PDO = new \PDO("mysql:dbname=".static::DB_NAME.";host=".static::DB_HOST, static::DB_USER, static::DB_PASS);
+			static::$PDO = new \PDO("mysql:dbname=".static::DB_NAME.";host=".$DB_HOST, static::DB_USER, static::DB_PASS);
 		} catch (PDOException $e) {
 			static::$PDO = null;
 			static::$PDOException = $e;

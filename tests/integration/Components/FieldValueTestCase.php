@@ -12,13 +12,13 @@ abstract class FieldValueTestCase extends TestCase {
 	protected static $Component;
 	protected static $s_componentName;
 	
-	const CACHE_DIR = 'var/tmp/test/component_test_cache';
+	const CACHE_DIR = __DIR__ . '/../../../var/tmp/test/component_test_cache';
 	
 	public static function setUpBeforeClass() {
 		global $_reef_PDO;
 		
 		if(!is_dir(static::CACHE_DIR)) {
-			mkdir(static::CACHE_DIR, 0777);
+			mkdir(static::CACHE_DIR, 0777, true);
 		}
 		
 		// Specify which components we want to use
