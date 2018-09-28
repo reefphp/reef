@@ -9,7 +9,7 @@ use \Reef\Exception\FilesystemException;
 
 final class FilesystemTest extends TestCase {
 	
-	const FILES_DIR = 'var/tmp/test/filesystemtest';
+	const FILES_DIR = __DIR__ . '/../../../var/tmp/test/filesystemtest';
 	
 	private static $Reef;
 	private static $Form;
@@ -19,7 +19,7 @@ final class FilesystemTest extends TestCase {
 	public static function setUpBeforeClass() {
 		
 		if(!is_dir(static::FILES_DIR)) {
-			mkdir(static::FILES_DIR, 0777);
+			mkdir(static::FILES_DIR, 0777, true);
 		}
 		
 		$PDO = new \PDO("sqlite:".static::FILES_DIR."/test.db");

@@ -11,13 +11,13 @@ abstract class UpdateTestCase extends TestCase {
 	protected static $Reef;
 	protected static $Component;
 	
-	const CACHE_DIR = 'var/tmp/test/update_test_cache';
+	const CACHE_DIR = __DIR__ . '/../../../var/tmp/test/update_test_cache';
 	
 	public static function setUpBeforeClass() {
 		global $_reef_PDO;
 		
 		if(!is_dir(static::CACHE_DIR)) {
-			mkdir(static::CACHE_DIR, 0777);
+			mkdir(static::CACHE_DIR, 0777, true);
 		}
 		
 		// Specify which components we want to use

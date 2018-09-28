@@ -8,11 +8,11 @@ class_exists('\\Reef\\Reef'); // Make sure functions are loaded
 
 final class functionsTest extends TestCase {
 	
-	const STORAGE_DIR = 'var/tmp/test/functions';
+	const STORAGE_DIR = __DIR__ . '/../../../var/tmp/test/functions';
 	
 	public static function setUpBeforeClass() {
 		if(!is_dir(static::STORAGE_DIR)) {
-			mkdir(static::STORAGE_DIR, 0777);
+			mkdir(static::STORAGE_DIR, 0777, true);
 		}
 	}
 	
