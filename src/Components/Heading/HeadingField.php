@@ -25,7 +25,7 @@ class HeadingField extends Field {
 	 */
 	public function view_form($Value, $a_options = []) : array {
 		$a_vars = parent::view_form($Value, $a_options);
-		$a_vars['level'] = $a_vars['level'] ?? 4;
+		$a_vars['level'] = $a_vars['level'] ?? 1;
 		return $a_vars;
 	}
 	
@@ -34,7 +34,7 @@ class HeadingField extends Field {
 	 */
 	public function view_submission($Value, $a_options = []) : array {
 		$a_vars = parent::view_submission($Value, $a_options);
-		$a_vars['level'] = $a_vars['level'] ?? 4;
+		$a_vars['level'] = $a_vars['level'] ?? 1;
 		return $a_vars;
 	}
 	
