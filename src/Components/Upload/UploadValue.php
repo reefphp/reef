@@ -57,6 +57,19 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	}
 	
 	/**
+	 * Set value by copying files from disk
+	 * @param string[] $a_filePaths The file paths to copy
+	 */
+	public function setFilesCopy(array $a_filePaths) {
+		$a_uuids = [];
+		foreach($a_filePaths as $s_filePath) {
+			$a_uuids[] = $this->getField()->getComponent()->copyFile($s_filePath);
+		}
+		
+		$this->fromUserInput($a_uuids);
+	}
+	
+	/**
 	 * @inherit
 	 */
 	public function validate() : bool {

@@ -507,6 +507,61 @@ class Filesystem {
 	}
 	
 	/**
+	 * Add a file by copying it from disk
+	 * @param string $s_sourceFile The source file path
+	 * @return File The file object
+	 * @throws FilesystemException If the file is not valid
+	 */
+	public function addFileByCopy(string $s_sourceFile) {
+		$s_dir = $this->getDir('_upload');
+		
+		if($s_sourceFile === '') {
+			throw new FilesystemException('Error: received invalid empty filename');
+		}
+		
+		$s_mimetype = $this->getMimeType($s_sourceFile);
+		$s_extension = $this->getExtension($s_sourceFile);
+		
+		if(is_array($this->a_allowedFileTypes[$s_extension])) {
+			if(!in_array($s_mimetype, $this->a_allowedFileTypes[$s_extension])) {
+				throw new FilesystemException($this->Reef->trans('upload_error_type'));
+			}
+		}
+		else {
+			if($s_mimetype != $this->a_allowedFileTypes[$s_extension]) {
+				throw new FilesystemException($this->Reef->trans('upload_error_type'));
+			}
+		}
+		
+		$i_filesize = filesize($s_sourceFile);
+		if($i_filesize == 0 || $i_filesize > $this->getMaxUploadSize()) {
+			throw new FilesystemException($this->Reef->trans('upload_error_size'));
+		}
+		
+		$s_sourceFileName = $s_sourceFile;
+		if(false !== ($i_pos = strrpos($s_sourceFileName, '/'))) {
+			$s_sourceFileName = substr($s_sourceFileName, $i_pos+1);
+		}
+		
+		$s_cleanName = substr(preg_replace('[^a-zA-Z0-9-_\.]', '', $s_sourceFileName), -255);
+		
+		do {
+			$s_destPath = $s_dir.\Reef\unique_id().'_'.$s_cleanName;
+		} while(file_exists($s_destPath));
+		
+		if(!copy($s_sourceFile, $s_destPath)) {
+			throw new FilesystemException('An error occurred while processing the file');
+		}
+		
+		$File = new File($this, $s_destPath);
+		
+		$this->logMutation('add', $File);
+		$this->a_files[$File->getUUID()] = $File;
+		
+		return $File;
+	}
+	
+	/**
 	 * Move the file between contexts
 	 * Should be used to e.g. move a file from the temporary upload directory to its final destination
 	 * @param File $File The file to move

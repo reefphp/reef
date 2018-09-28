@@ -101,6 +101,52 @@ final class UploadValueTest extends FieldValueTestCase {
 	/**
 	 * @depends testCanBeCreated
 	 */
+	public function testCopy() {
+		$a_declaration = [
+			'component' => 'reef:upload',
+			'name' => 'upload_field',
+			'multiple' => true,
+			'max_files' => 3,
+			'types' => [
+				'txt' => true,
+			],
+			'locale' => [
+				'title' => 'The title'
+			],
+		];
+		
+		$this->copyFile('file1.txt', 'somecontent', $s_uuid1);
+		$this->copyFile('file2.txt', 'somecontent', $s_uuid2);
+		
+		$Form = static::$Reef->newTempForm();
+		$Submission = $Form->newSubmission();
+		$Field = static::$Component->newField($a_declaration, $Form);
+		$Filesystem = static::$Reef->getDataStore()->getFilesystem();
+		
+		$Value = $Field->newValue($Submission);
+		$this->assertSame(0, count($Value->getFiles()));
+		$this->assertSame(2, $Filesystem->numFilesInContext('upload'));
+		
+		$Value->fromUserInput([$s_uuid1]);
+		$this->assertTrue($Value->validate());
+		$this->assertSame(1, count($Value->getFiles()));
+		$this->assertSame(1, $Filesystem->numFilesInContext('upload'));
+		
+		$Value->fromUserInput([$s_uuid1, 'x'.$s_uuid2]);
+		$this->assertTrue($Value->validate());
+		$this->assertSame(1, count($Value->getFiles()));
+		$this->assertSame(0, $Filesystem->numFilesInContext('upload'));
+		
+		$s_filePath3 = $this->newTmpFile('file3.txt', 'somecontent');
+		$s_filePath4 = $this->newTmpFile('file4.txt', 'somecontent');
+		$Value->setFilesCopy([$s_filePath3, $s_filePath4]);
+		$this->assertSame(2, count($Value->getFiles()));
+		$this->assertSame(0, $Filesystem->numFilesInContext('upload'));
+	}
+	
+	/**
+	 * @depends testCanBeCreated
+	 */
 	public function testReSubmit() {
 		$a_declaration = [
 			'component' => 'reef:upload',

@@ -64,4 +64,22 @@ trait CommonUploadTrait {
 		
 		return $a_output;
 	}
+	
+	protected function copyFile(string $s_filename, string $s_content, ?string &$s_uuid = null) {
+		
+		$s_filepath = $this->newTmpFile($s_filename, $s_content);
+		
+		$s_uuid = static::$Reef->getSetup()->getComponent('reef:upload')->copyFile($s_filepath);
+		
+		return $s_uuid;
+	}
+	
+	protected function newTmpFile(string $s_filename, string $s_content) {
+		
+		$s_filepath = static::FILES_DIR . '/' . \Reef\unique_id().'_'.$s_filename;
+		
+		file_put_contents($s_filepath, $s_content);
+		
+		return $s_filepath;
+	}
 }

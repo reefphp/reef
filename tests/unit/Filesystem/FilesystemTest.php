@@ -100,6 +100,24 @@ final class FilesystemTest extends TestCase {
 		static::$Filesystem->uploadFiles('identifier');
 	}
 	
+	public function testCopyValidFile() {
+		$s_filepath = static::FILES_DIR . '/file.txt';
+		$s_content = 'content';
+		file_put_contents($s_filepath, $s_content);
+		
+		$File = static::$Filesystem->addFileByCopy($s_filepath);
+		
+		$this->assertSame('txt', $File->getExtension());
+		
+		$this->assertSame($File, static::$Filesystem->getFile($File->getUUID(), 'upload'));
+		
+		$this->assertSame(1, static::$Filesystem->numFilesInContext('upload'));
+		
+		static::$Filesystem->deleteFile($File);
+		
+		$this->assertSame(0, static::$Filesystem->numFilesInContext('upload'));
+	}
+	
 	public function testUploadValidFile() : string {
 		$s_filepath = static::FILES_DIR . '/file.txt';
 		$s_content = 'content';

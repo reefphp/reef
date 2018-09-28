@@ -126,4 +126,22 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 		\Reef\stop();
 	}
 	
+	/**
+	 * 'Upload' a file by copying it from disk
+	 * @param string $s_fileName The file path + name
+	 * @return string The file UUID
+	 */
+	public function copyFile(string $s_fileName) {
+		$Filesystem = $this->getReef()->getDataStore()->getFilesystem();
+		$File = $Filesystem->addFileByCopy($s_fileName);
+		
+		$Session = $this->getReef()->getSession();
+		$Session->set($this, 'uploaded_files', array_merge(
+			$Session->get($this, 'uploaded_files', []),
+			[$File->getUUID()]
+		));
+		
+		return $File->getUUID();
+	}
+	
 }
