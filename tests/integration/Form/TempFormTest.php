@@ -17,7 +17,7 @@ final class TempFormTest extends TestCase {
 		'fields' => [
 			[
 				'component' => 'reef:heading',
-				'size' => 4,
+				'level' => 4,
 				'locale' => [
 					'title' => 'Test form',
 				],

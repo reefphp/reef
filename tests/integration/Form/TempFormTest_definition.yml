@@ -1,7 +1,7 @@
 locale: {}
 fields:
   - component: reef:heading
-    size: 2
+    level: 2
     locale:
         title: 'Test form'
   - component: reef:text_line

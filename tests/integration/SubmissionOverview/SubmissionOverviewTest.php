@@ -34,7 +34,7 @@ final class SubmissionOverviewTest extends TestCase {
 			->getForm()
 				->setStorageName('submission_overview_test')
 			->addField('reef:heading')
-				->set('size', 4)
+				->set('level', 4)
 				->setLocale(['title' => 'Test form'])
 			->addField('reef:text_line')
 				->setName('input_1')
