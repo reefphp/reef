@@ -167,7 +167,7 @@ button.CSSPRFXbuilder-btn {
 	height: 2em;
 }
 
-.CSSPRFXbuilder-spinner {
+.CSSPRFXbuilder-spin-icon {
 	animation: builderspinner 2s linear infinite;
 }
 @keyframes builderspinner {
