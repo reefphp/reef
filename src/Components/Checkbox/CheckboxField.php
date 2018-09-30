@@ -30,8 +30,8 @@ class CheckboxField extends Field implements RequiredFieldInterface {
 	 * @inherit
 	 */
 	public function getOverviewColumns() : array {
-		$s_title = $this->trans('title_left');
-		$s_title = empty($s_title) ? $this->trans('title_right') : $s_title;
+		$s_title = $this->trans('title');
+		$s_title = empty($s_title) ? $this->trans('box_label') : $s_title;
 		return [
 			$s_title,
 		];

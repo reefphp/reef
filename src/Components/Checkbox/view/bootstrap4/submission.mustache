@@ -2,7 +2,7 @@
 	<div class="{{layout.col_left}}">
 		[[submission_label_before]]
 		<label class="col-form-label">
-			{{field.locale.title_left}}
+			{{field.locale.title}}
 		</label>
 		[[submission_label_after]]
 	</div>
@@ -10,16 +10,16 @@
 		[[submission_input_before]]
 		<div class="form-check">
 			<input
-				class="form-check-input {{^field.locale.title_right}}position-static{{/field.locale.title_right}}"
+				class="form-check-input {{^field.locale.box_label}}position-static{{/field.locale.box_label}}"
 				type="checkbox"
 				{{#field.value}}checked{{/field.value}}
 				readonly
 			>
-			{{#field.locale.title_right}}
+			{{#field.locale.box_label}}
 			<label class="form-check-label">
-				{{field.locale.title_right}}
+				{{field.locale.box_label}}
 			</label>
-			{{/field.locale.title_right}}
+			{{/field.locale.box_label}}
 		</div>
 		[[submission_input_after]]
 	</div>

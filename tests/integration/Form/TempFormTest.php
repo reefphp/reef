@@ -34,7 +34,7 @@ final class TempFormTest extends TestCase {
 				'component' => 'reef:checkbox',
 				'name' => 'input_2',
 				'locale' => [
-					'title_left' => 'Input 2',
+					'title' => 'Input 2',
 				],
 			],
 		],

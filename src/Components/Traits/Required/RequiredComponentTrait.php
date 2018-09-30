@@ -24,7 +24,7 @@ trait RequiredComponentTrait {
 			$a_fields[] = [
 				'component' => 'reef:checkbox',
 				'name' => 'required',
-				'locales' => $this->getReef()->transMultipleLocales(['title_right' => 'builder_required'], $this->getReef()->getOption('locales')),
+				'locales' => $this->getReef()->transMultipleLocales(['box_label' => 'builder_required'], $this->getReef()->getOption('locales')),
 			];
 		}
 		return $a_fields;

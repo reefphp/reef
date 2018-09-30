@@ -41,7 +41,7 @@ final class SubmissionOverviewTest extends TestCase {
 				->setLocale(['title' => 'Input 1'])
 			->addField('reef:checkbox')
 				->setName('input_2')
-				->setLocale(['title_left' => 'Input 2'])
+				->setLocale(['title' => 'Input 2'])
 			->apply();
 		
 		$a_fields = static::$Form->getFields();

@@ -17,9 +17,9 @@ basicDefinition:
         name: 'multiple'
         locales:
             en_US:
-                title_right: 'Multiple files'
+                box_label: 'Multiple files'
             nl_NL:
-                title_right: 'Meerdere bestanden'
+                box_label: 'Meerdere bestanden'
       - component: reef:text_number
         name: 'max_files'
         min: 1
