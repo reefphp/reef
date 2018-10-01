@@ -198,11 +198,7 @@ class DataStore {
 	 * @return Filesystem
 	 */
 	public function getFilesystem() {
-		if(empty($this->Filesystem)) {
-			$this->Filesystem = new \Reef\Filesystem\Filesystem($this->Reef);
-		}
-		
-		return $this->Filesystem;
+		return $this->Reef->getSetup()->getFilesystem();
 	}
 	
 }

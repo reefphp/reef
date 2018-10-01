@@ -69,9 +69,49 @@ class Filesystem {
 	
 	/**
 	 * Constructor
+	 */
+	public function __construct() {
+		
+	}
+	
+	/**
+	 * Set the list of allowed file types
+	 * @param array $a_types Array of mime types indexed by their extensions. Mime types value may be either a string or an array of strings
+	 */
+	public function setAllowedTypes(array $a_types) {
+		if($this->Reef !== null) {
+			throw new \Reef\Exception\BadMethodCallException("Can only set allowed types during initialization");
+		}
+		$this->a_allowedFileTypes = $a_types;
+	}
+	
+	/**
+	 * Add allowed file types
+	 * @param array $a_types Array of mime types indexed by their extensions. Mime types value may be either a string or an array of strings
+	 */
+	public function addAllowedTypes(array $a_types) {
+		if($this->Reef !== null) {
+			throw new \Reef\Exception\BadMethodCallException("Can only add allowed types during initialization");
+		}
+		$this->a_allowedFileTypes = array_merge($this->a_allowedFileTypes, $a_types);
+	}
+	
+	/**
+	 * Remove allowed file types
+	 * @param string[] $a_extensions The extensions to remove
+	 */
+	public function removeAllowedTypes(array $a_extensions) {
+		if($this->Reef !== null) {
+			throw new \Reef\Exception\BadMethodCallException("Can only remove allowed types during initialization");
+		}
+		$this->a_allowedFileTypes = array_diff_key($this->a_allowedFileTypes, array_flip($a_extensions));
+	}
+	
+	/**
+	 * Set the Reef object
 	 * @param Reef $Reef The reef object this filesystem belongs to
 	 */
-	public function __construct(Reef $Reef) {
+	public function setReef(Reef $Reef) {
 		$this->Reef = $Reef;
 		$this->s_dir = $this->Reef->getOption('files_dir');
 		if($this->s_dir !== null) {

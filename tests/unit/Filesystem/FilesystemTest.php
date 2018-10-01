@@ -6,6 +6,7 @@ require_once(__DIR__ . '/../../filesystem_move_uploaded_file.php');
 
 use PHPUnit\Framework\TestCase;
 use \Reef\Exception\FilesystemException;
+use \Reef\Exception\BadMethodCallException;
 
 final class FilesystemTest extends TestCase {
 	
@@ -43,6 +44,53 @@ final class FilesystemTest extends TestCase {
 	
 	public function testAllowedExtensionsIsArray() {
 		$this->assertInternalType('array', static::$Filesystem->getAllowedExtensions());
+	}
+	
+	public function testAllowedExtensionSetters() {
+		$Setup = new \Reef\ReefSetup(
+			new \Reef\Storage\NoStorageFactory(),
+			new \Reef\Layout\bootstrap4\bootstrap4(),
+			new \Reef\Session\TmpSession()
+		);
+		
+		// Before init
+		$Filesystem = $Setup->getFilesystem();
+		
+		$Filesystem->setAllowedTypes(['txt' => 'text/plain']);
+		$this->assertSame(['txt'], $Filesystem->getAllowedExtensions());
+		
+		$Filesystem->addAllowedTypes(['png' => 'image/png']);
+		$this->assertSame(['txt', 'png'], $Filesystem->getAllowedExtensions());
+		
+		$Filesystem->removeAllowedTypes(['txt']);
+		$this->assertSame(['png'], $Filesystem->getAllowedExtensions());
+		
+		// Init
+		$Reef = new \Reef\Reef(
+			$Setup,
+			[
+				'files_dir' => static::FILES_DIR,
+			]
+		);
+		
+		// After init
+		$i_nonerrors = 0;
+		try {
+			$Filesystem->setAllowedTypes(['txt' => 'text/plain']);
+			$i_nonerrors++;
+		} catch(BadMethodCallException $e) {}
+		
+		try {
+			$Filesystem->addAllowedTypes(['txt' => 'text/plain']);
+			$i_nonerrors++;
+		} catch(BadMethodCallException $e) {}
+		
+		try {
+			$Filesystem->removeAllowedTypes(['txt']);
+			$i_nonerrors++;
+		} catch(BadMethodCallException $e) {}
+		
+		$this->assertSame(0, $i_nonerrors, "Some allowed type setters (".$i_nonerrors.") did not throw an error when run after initialization");
 	}
 	
 	public function testTransactionState() {

@@ -15,8 +15,45 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 	
 	private $a_defaultTypes = ['doc', 'docx', 'odt', 'pdf', 'jpg', 'jpeg', 'png'];
 	
+	/**
+	 * Get the default list of accepted upload file extensions
+	 * @return string[] The extensions
+	 */
 	public function getDefaultTypes() {
 		return $this->a_defaultTypes;
+	}
+	
+	/**
+	 * Set the default list of accepted upload file extensions
+	 * @param string[] $a_extensions The extensions
+	 */
+	public function setDefaultTypes(array $a_extensions) {
+		if($this->Reef !== null) {
+			throw new \Reef\Exception\BadMethodCallException("Can only set default types during initialization");
+		}
+		$this->a_defaultTypes = array_map('strtolower', $a_extensions);
+	}
+	
+	/**
+	 * Add accepted upload file extensions
+	 * @param string[] $a_extensions The extensions to add
+	 */
+	public function addDefaultTypes(array $a_extensions) {
+		if($this->Reef !== null) {
+			throw new \Reef\Exception\BadMethodCallException("Can only add default types during initialization");
+		}
+		$this->a_defaultTypes = array_unique(array_merge($this->a_defaultTypes, array_map('strtolower', $a_extensions)));
+	}
+	
+	/**
+	 * Remove accepted upload file extensions
+	 * @param string[] $a_extensions The extensions to remove
+	 */
+	public function removeDefaultTypes(array $a_extensions) {
+		if($this->Reef !== null) {
+			throw new \Reef\Exception\BadMethodCallException("Can only remove default types during initialization");
+		}
+		$this->a_defaultTypes = array_diff($this->a_defaultTypes, array_map('strtolower', $a_extensions));
 	}
 	
 	/**
@@ -29,6 +66,11 @@ class UploadComponent extends Component implements RequiredComponentInterface {
 		
 		if($this->Reef->getSetup()->getSessionObject() instanceof \Reef\Session\NoSession) {
 			throw new \Reef\Exception\InvalidArgumentException("Upload component requires session");
+		}
+		
+		$a_invalidExtensions = array_diff($this->a_defaultTypes, $this->getReef()->getDataStore()->getFilesystem()->getAllowedExtensions());
+		if(!empty($a_invalidExtensions)) {
+			throw new \Reef\Exception\InvalidArgumentException("Invalid upload default types ".implode(',', $a_invalidExtensions)." ");
 		}
 	}
 	

@@ -9,6 +9,7 @@ use \Reef\Storage\StorageFactory;
 use \Reef\Storage\NoStorageFactory;
 use \Reef\Layout\Layout;
 use \Reef\Session\SessionInterface;
+use \Reef\Filesystem\Filesystem;
 use \Reef\Exception\LogicException;
 use \Reef\Exception\DomainException;
 use \Reef\Exception\BadMethodCallException;
@@ -63,6 +64,12 @@ class ReefSetup {
 	 * @type bool
 	 */
 	private $b_isInitialized = false;
+	
+	/**
+	 * The Filesystem object of this setup
+	 * @type \Filesystem\Filesystem
+	 */
+	private $Filesystem;
 	
 	/**
 	 * The Reef of this setup (only available after checkSetup() has been called)
@@ -175,6 +182,7 @@ class ReefSetup {
 		}
 		
 		$this->Reef = $Reef;
+		$this->getFilesystem()->setReef($this->Reef);
 		
 		foreach($this->a_componentMapping as $Component) {
 			$Component->setReef($this->Reef);
@@ -344,6 +352,18 @@ class ReefSetup {
 	 */
 	public function getExtensionMapping() {
 		return $this->a_extensions;
+	}
+	
+	/**
+	 * Get the Filesystem object
+	 * @return Filesystem
+	 */
+	public function getFilesystem() {
+		if(empty($this->Filesystem)) {
+			$this->Filesystem = new \Reef\Filesystem\Filesystem();
+		}
+		
+		return $this->Filesystem;
 	}
 	
 	
