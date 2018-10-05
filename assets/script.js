@@ -146,6 +146,7 @@ if(typeof Reef === 'undefined') {
 			this.options.submit_success = this.options.submit_success || $.noop;
 			this.options.submit_error = this.options.submit_error || $.noop;
 			this.options.submit_after = this.options.submit_after || $.noop;
+			this.options.submit_wrapper = this.options.submit_wrapper || null;
 			
 			// Set config
 			var config = this.$wrapper.find('.'+CSSPRFX+'main-config').data('config');
@@ -254,7 +255,7 @@ if(typeof Reef === 'undefined') {
 			var name;
 			
 			for(name in errors) {
-				if(typeof(this.fields[name].addError) !== 'undefined') {
+				if(typeof(this.fields[name]) !== 'undefined' && typeof(this.fields[name].addError) !== 'undefined') {
 					this.fields[name].addError(errors[name]);
 				}
 				else {
@@ -284,6 +285,39 @@ if(typeof Reef === 'undefined') {
 		};
 		
 		Reef.prototype.submit = function(options) {
+			var self = this;
+			options = options || {};
+			
+			if(typeof(this.options.submit_wrapper) === 'function') {
+				// We have a wrapper function around submit that we should perform
+				this.options.submit_wrapper(function(moreOptions) {
+					// The wrapper may pass options, merge these
+					moreOptions = moreOptions || {};
+					$.each(moreOptions, function(opt) {
+						if(typeof(options[opt]) !== 'undefined' && opt.substr(0, 7) == 'submit_') {
+							var fn1 = options[opt];
+							var fn2 = moreOptions[opt];
+							options[opt] = function() {
+								fn1();
+								fn2();
+							};
+						}
+						else {
+							options[opt] = moreOptions[opt];
+						}
+					});
+					
+					// Perform the real submit
+					self.doSubmit(options);
+				});
+			}
+			else {
+				// No wrapper, immediately perform the real submit
+				this.doSubmit(options);
+			}
+		};
+		
+		Reef.prototype.doSubmit = function(options) {
 			var self = this;
 			
 			options = options || {};
