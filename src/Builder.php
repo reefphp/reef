@@ -4,9 +4,9 @@ namespace Reef;
 
 use Symfony\Component\Yaml\Yaml;
 use \Reef\Form\Form;
-use \Reef\Form\AbstractStoredForm;
+use \Reef\Form\AbstractStorableForm;
 use \Reef\Form\StoredForm;
-use \Reef\Form\TempStoredForm;
+use \Reef\Form\TempStorableForm;
 use \Reef\Components\Component;
 use \Reef\Components\Field;
 use \Reef\Exception\LogicException;
@@ -180,7 +180,7 @@ class Builder {
 		$DefinitionForm = $this->generateDefinitionForm($Form);
 		$DefinitionSubmission = $DefinitionForm->newSubmission();
 		$a_definitionSubmission = $a_options['definition_submission'] ?? [];
-		$a_definitionSubmission['storage_name'] = ($Form instanceof AbstractStoredForm) ? $Form->getStorageName() : 'temporary_form';
+		$a_definitionSubmission['storage_name'] = ($Form instanceof AbstractStorableForm) ? $Form->getStorageName() : 'temporary_form';
 		$DefinitionSubmission->fromStructured($a_definitionSubmission);
 		
 		$EmptyForm = clone $Form;
@@ -354,7 +354,7 @@ class Builder {
 	
 	/**
 	 * Process builder data and return the result
-	 * @param Form &$Form The form to modify. In case a TempStoredForm is passed, upon applying the changes this variable
+	 * @param Form &$Form The form to modify. In case a TempStorableForm is passed, upon applying the changes this variable
 	 *                    will be replaced with a corresponding StoredForm object
 	 * @param array $a_data The builder data from the builder
 	 * @param ?callable $fn_callback Callback to apply just before exiting. The return array
@@ -382,7 +382,7 @@ class Builder {
 				// Apply
 				$Form->updateDefinition($a_newDefinition, $a_fieldRenames);
 				
-				if($Form instanceof TempStoredForm) {
+				if($Form instanceof TempStorableForm) {
 					$Form = $Form->toStoredForm();
 				}
 				
@@ -409,7 +409,7 @@ class Builder {
 	/**
 	 * Process builder data and write the result to output, exiting afterwards.
 	 * This function does NOT return!
-	 * @param Form &$Form The form to modify. In case a TempStoredForm is passed, upon applying the changes this variable
+	 * @param Form &$Form The form to modify. In case a TempStorableForm is passed, upon applying the changes this variable
 	 *                    will be replaced with a corresponding StoredForm object
 	 * @param array $a_data The builder data from the builder
 	 * @param ?callable $fn_callback Callback to apply just before exiting. The return array

@@ -18,7 +18,7 @@ class StoredFormFactory extends FormFactory {
 			$a_definition['storage_name'] = 'form_'.\Reef\unique_id();
 		}
 		
-		return $this->Reef->getTempStoredFormFactory()->newForm($a_definition)->toStoredForm();
+		return $this->Reef->getTempStorableFormFactory()->newForm($a_definition)->toStoredForm();
 	}
 	
 	/**
@@ -44,6 +44,26 @@ class StoredFormFactory extends FormFactory {
 	/**
 	 * Load an existing stored form
 	 * 
+	 * @param int $i_formId The form id to load
+	 * 
+	 * @return InpersistableStoredForm The stored form
+	 * 
+	 * @throws ResourceNotFoundException If form does not exist
+	 */
+	public function loadInpersistable(int $i_formId) {
+		try {
+			$a_result = $this->Reef->getFormStorage()->get($i_formId);
+		}
+		catch(StorageException $e) {
+			throw new ResourceNotFoundException('Could not find form with id "'.$i_formId.'"', null, $e);
+		}
+		
+		return new InpersistableStoredForm($this->getReef(), json_decode($a_result['definition'], true), $i_formId, $a_result['_uuid']);
+	}
+	
+	/**
+	 * Load an existing stored form
+	 * 
 	 * @param string $s_uuid The form uuid to load
 	 * 
 	 * @return StoredForm The stored form
@@ -62,13 +82,44 @@ class StoredFormFactory extends FormFactory {
 	}
 	
 	/**
-	 * Create a StoredForm form a TempStoredForm
+	 * Load an existing stored form
 	 * 
-	 * @param TempStoredForm $TempForm The source form
+	 * @param string $s_uuid The form uuid to load
+	 * 
+	 * @return InpersistableStoredForm The stored form
+	 * 
+	 * @throws ResourceNotFoundException If form does not exist
+	 */
+	public function loadInpersistableByUUID(string $s_uuid) {
+		try {
+			$a_result = $this->Reef->getFormStorage()->getByUUID($s_uuid);
+		}
+		catch(StorageException $e) {
+			throw new ResourceNotFoundException('Could not find form with uuid "'.$s_uuid.'"', null, $e);
+		}
+		
+		return new InpersistableStoredForm($this->getReef(), json_decode($a_result['definition'], true), $a_result['_entry_id'], $a_result['_uuid']);
+	}
+	
+	/**
+	 * Turn an inpersistable stored form to a persistable stored form
+	 * 
+	 * @param StoredForm $SourceForm The source form
+	 * 
+	 * @return InpersistableStoredForm The stored form
+	 */
+	public function persistableToInpersistable(StoredForm $SourceForm) {
+		return new InpersistableStoredForm($this->getReef(), $SourceForm->getDefinition(), $SourceForm->getFormId(), $SourceForm->getUUID());
+	}
+	
+	/**
+	 * Create a StoredForm form a TempStorableForm
+	 * 
+	 * @param TempStorableForm $TempForm The source form
 	 * 
 	 * @return StoredForm The stored form
 	 */
-	public function createFromTempStoredForm(TempStoredForm $TempForm) {
+	public function createFromTempStorableForm(TempStorableForm $TempForm) {
 		$a_declaration = $TempForm->getDefinition();
 		unset($a_declaration['fields']);
 		

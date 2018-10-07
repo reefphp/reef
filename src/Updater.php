@@ -4,7 +4,7 @@ namespace Reef;
 
 use \Symfony\Component\Yaml\Yaml;
 use \Reef\Form\StoredForm;
-use \Reef\Form\TempStoredForm;
+use \Reef\Form\TempStorableForm;
 use \Reef\Components\Component;
 use \Reef\Storage\PDOStorage;
 use \Reef\Exception\RuntimeException;
@@ -32,14 +32,14 @@ class Updater {
 	 * what needs to happen to migrate $Form1 to the definition of $Form2? This is computed into a series of `created`, `updated` and
 	 * `deleted` fields.
 	 * @param StoredForm $Form1 The form that is being migrated
-	 * @param TempStoredForm $Form2 The new form definition
+	 * @param TempStorableForm $Form2 The new form definition
 	 * @param string[] $a_fieldRenames Mapping from old field names to new field names, where applicable
 	 * @return array Field update plan, consisting of:
 	 *  - string[] $a_create: list of created field names (name as in $Form2)
 	 *  - string[] $a_update: list of fields present in both $Form1 and $Form2, its name in $Form1 as key and its name in $Form2 as value
 	 *  - string[] $a_delete: list of deleted field names (name as in $Form1)
 	 */
-	private function computeFieldUpdatePlan(StoredForm $Form1, TempStoredForm $Form2, array $a_fieldRenames) {
+	private function computeFieldUpdatePlan(StoredForm $Form1, TempStorableForm $Form2, array $a_fieldRenames) {
 		$a_create = $a_update = $a_delete = [];
 		
 		$a_fields1 = $Form1->getValueFieldsByName();
@@ -98,7 +98,7 @@ class Updater {
 	 * but updated fields may lead to created, updated as well as deleted columns. This is determined here.
 	 * Note: a column name is defined to be (more or less) the field name + the datafield name. See getColumns() below
 	 * @param StoredForm $Form1 The form that is being migrated
-	 * @param TempStoredForm $Form2 The new form definition
+	 * @param TempStorableForm $Form2 The new form definition
 	 * @param string[] $a_fieldRenames Mapping from old field names to new field names, where applicable
 	 * @return array Schema update plan, consisting of the return values of computeFieldUpdatePlan() and:
 	 *  - array $a_createColumns: list of created columns, the column name in $Form2 as key and structure array as value
@@ -110,7 +110,7 @@ class Updater {
 	 *     - structureTo      array    The new structure array
 	 *  - array $a_deleteColumns: list of deleted columns, the column name in $Form1 as key and structure array as value
 	 */
-	private function computeSchemaUpdatePlan(StoredForm $Form1, TempStoredForm $Form2, array $a_fieldRenames) {
+	private function computeSchemaUpdatePlan(StoredForm $Form1, TempStorableForm $Form2, array $a_fieldRenames) {
 		// Fetch field update plan
 		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form1, $Form2, $a_fieldRenames);
 		
@@ -229,10 +229,10 @@ class Updater {
 	/**
 	 * Migrate a form, updating it from one definition to another
 	 * @param StoredForm $Form The form to migrate
-	 * @param TempStoredForm $newForm The new form definition to use
+	 * @param TempStorableForm $newForm The new form definition to use
 	 * @param string[] $a_fieldRenames Mapping from old field names to new field names, where applicable
 	 */
-	public function update(StoredForm $Form, TempStoredForm $newForm, $a_fieldRenames) {
+	public function update(StoredForm $Form, TempStorableForm $newForm, $a_fieldRenames) {
 		
 		[$a_createFields, $a_updateFields, $a_deleteFields, $a_createColumns, $a_updateColumns, $a_deleteColumns] = $this->computeSchemaUpdatePlan($Form, $newForm, $a_fieldRenames);
 		
@@ -341,11 +341,11 @@ class Updater {
 	/**
 	 * Determine the dataloss that a migration will induce
 	 * @param StoredForm $Form The form to migrate
-	 * @param TempStoredForm $newForm The new form definition to use
+	 * @param TempStorableForm $newForm The new form definition to use
 	 * @param string[] $a_fieldRenames Mapping from old field names to new field names, where applicable
 	 * @return string[] The data loss, with field names as key and one of self::DATALOSS_* as value
 	 */
-	public function determineUpdateDataLoss(StoredForm $Form, TempStoredForm $newForm, $a_fieldRenames) {
+	public function determineUpdateDataLoss(StoredForm $Form, TempStorableForm $newForm, $a_fieldRenames) {
 		
 		[$a_createFields, $a_updateFields, $a_deleteFields] = $this->computeFieldUpdatePlan($Form, $newForm, $a_fieldRenames);
 		

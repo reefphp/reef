@@ -34,7 +34,7 @@ class ContextSession {
 		}
 		
 		if($context instanceof \Reef\Components\Field) {
-			$s_formContext = ($context->getForm() instanceof \Reef\Form\AbstractStoredForm) ? $context->getForm()->getUUID() : 'tmp';
+			$s_formContext = ($context->getForm() instanceof \Reef\Form\AbstractStorableForm) ? $context->getForm()->getUUID() : 'tmp';
 			return 'field:'.$context->getComponent()::COMPONENT_NAME.':'.$s_formContext.':';
 		}
 		
@@ -51,7 +51,7 @@ class ContextSession {
 			return 'submission:tmp:';
 		}
 		
-		if($context instanceof \Reef\Form\AbstractStoredForm) {
+		if($context instanceof \Reef\Form\AbstractStorableForm) {
 			return 'form:'.$context->getUUID().':';
 		}
 		

@@ -437,7 +437,7 @@ class Filesystem {
 			return $this->getDir('_tmp/'.$context->getUUID());
 		}
 		
-		if($context instanceof \Reef\Form\AbstractStoredForm) {
+		if($context instanceof \Reef\Form\AbstractStorableForm) {
 			return $this->getDir($context->getUUID());
 		}
 		
@@ -647,7 +647,7 @@ class Filesystem {
 			return;
 		}
 		
-		if(!($context instanceof \Reef\Submission\StoredSubmission) && !($context instanceof \Reef\Form\AbstractStoredForm)) {
+		if(!($context instanceof \Reef\Submission\StoredSubmission) && !($context instanceof \Reef\Form\AbstractStorableForm)) {
 			throw new FilesystemException('Invalid remove context');
 		}
 		

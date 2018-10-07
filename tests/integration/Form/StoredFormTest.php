@@ -20,6 +20,8 @@ final class StoredFormTest extends TestCase {
 	/**
 	 */
 	public function testCanCreateForm(): void {
+		$i_formIdsBefore = count(static::$Reef->getFormIds());
+		
 		static::$Form = static::$Reef->newStoredForm();
 		static::$Form->updateDefinition([
 			'storage_name' => 'stored_form_test',
@@ -56,9 +58,9 @@ final class StoredFormTest extends TestCase {
 		
 		static::$Form->save();
 		$a_formIds = static::$Reef->getFormIds();
-		$this->assertSame(1, count($a_formIds));
+		$this->assertSame($i_formIdsBefore+1, count($a_formIds));
 		
-		$this->assertSame(static::$Form->getDefinition(), static::$Reef->getForm(reset($a_formIds))->getDefinition());
+		$this->assertSame(static::$Form->getDefinition(), static::$Reef->getForm(static::$Form->getFormId())->getDefinition());
 	}
 	
 	/**
@@ -197,8 +199,10 @@ final class StoredFormTest extends TestCase {
 	 * @depends testCanDeleteSubmission
 	 */
 	public function testCanDeleteForm(): void {
+		$i_formIdsBefore = count(static::$Reef->getFormIds());
+		
 		static::$Form->delete();
 		
-		$this->assertSame(0, count(static::$Reef->getFormIds()));
+		$this->assertSame($i_formIdsBefore-1, count(static::$Reef->getFormIds()));
 	}
 }

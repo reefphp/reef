@@ -5,7 +5,7 @@ namespace Reef\Form;
 /**
  * Temporary stored form factory
  */
-class TempStoredFormFactory extends FormFactory {
+class TempStorableFormFactory extends FormFactory {
 	
 	/**
 	 * @inherit
@@ -15,7 +15,7 @@ class TempStoredFormFactory extends FormFactory {
 			$a_definition['storage_name'] = 'form_'.\Reef\unique_id();
 		}
 		
-		return new TempStoredForm($this->getReef(), $a_definition);
+		return new TempStorableForm($this->getReef(), $a_definition);
 	}
 	
 }

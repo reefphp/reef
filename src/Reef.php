@@ -10,8 +10,9 @@ use \Reef\Storage\StorageFactory;
 use \Reef\Storage\Storage;
 use \Reef\Form\StoredFormFactory;
 use \Reef\Form\StoredForm;
-use \Reef\Form\TempStoredFormFactory;
-use \Reef\Form\TempStoredForm;
+use \Reef\Form\InpersistableStoredForm;
+use \Reef\Form\TempStorableFormFactory;
+use \Reef\Form\TempStorableForm;
 use \Reef\Form\TempFormFactory;
 use \Reef\Form\TempForm;
 use \Reef\Session\ContextSession;
@@ -58,9 +59,9 @@ class Reef {
 	
 	/**
 	 * Temporarily stored forms factory
-	 * @type TempStoredFormFactory
+	 * @type TempStorableFormFactory
 	 */
-	private $TempStoredFormFactory;
+	private $TempStorableFormFactory;
 	
 	/**
 	 * Temporary form factory
@@ -300,19 +301,19 @@ class Reef {
 	}
 	
 	/**
-	 * Retrieve the TempStoredForm factory
-	 * @return TempStoredFormFactory
+	 * Retrieve the TempStorableForm factory
+	 * @return TempStorableFormFactory
 	 * @throws BadMethodCallException When there is no storage attached
 	 */
-	public function getTempStoredFormFactory() : TempStoredFormFactory {
+	public function getTempStorableFormFactory() : TempStorableFormFactory {
 		if($this->ReefSetup->getStorageFactory() instanceof \Reef\Storage\NoStorageFactory) {
-			throw new BadMethodCallException("Cannot get TempStoredFormFactory using NoStorage");
+			throw new BadMethodCallException("Cannot get TempStorableFormFactory using NoStorage");
 		}
 		
-		if($this->TempStoredFormFactory == null) {
-			$this->TempStoredFormFactory = new \Reef\Form\TempStoredFormFactory($this);
+		if($this->TempStorableFormFactory == null) {
+			$this->TempStorableFormFactory = new \Reef\Form\TempStorableFormFactory($this);
 		}
-		return $this->TempStoredFormFactory;
+		return $this->TempStorableFormFactory;
 	}
 	
 	/**
@@ -336,6 +337,15 @@ class Reef {
 	}
 	
 	/**
+	 * Get a form by its id
+	 * @param int $i_formId The form id
+	 * @return InpersistableStoredForm
+	 */
+	public function getInpersistableForm(int $i_formId) : InpersistableStoredForm {
+		return $this->getStoredFormFactory()->loadInpersistable($i_formId);
+	}
+	
+	/**
 	 * Get a form by its uuid
 	 * @param string $s_formUUID The form uuid
 	 * @return StoredForm
@@ -345,16 +355,25 @@ class Reef {
 	}
 	
 	/**
-	 * Create a new TempStoredForm
-	 * @param array $a_definition The form definition (optional)
-	 * @return TempStoredForm
+	 * Get a form by its uuid
+	 * @param string $s_formUUID The form uuid
+	 * @return InpersistableStoredForm
 	 */
-	public function newTempStoredForm(array $a_definition = []) : TempStoredForm {
-		return $this->getTempStoredFormFactory()->createFromArray($a_definition);
+	public function getInpersistableFormByUUID(string $s_formUUID) : InpersistableStoredForm {
+		return $this->getStoredFormFactory()->loadInpersistableByUUID($s_formUUID);
 	}
 	
 	/**
-	 * Create a new StoredForm. In most cases, you'll likely want to use newTempStoredForm() instead
+	 * Create a new TempStorableForm
+	 * @param array $a_definition The form definition (optional)
+	 * @return TempStorableForm
+	 */
+	public function newTempStorableForm(array $a_definition = []) : TempStorableForm {
+		return $this->getTempStorableFormFactory()->createFromArray($a_definition);
+	}
+	
+	/**
+	 * Create a new StoredForm. In most cases, you'll likely want to use newTempStorableForm() instead
 	 * @param array $a_definition The form definition (optional)
 	 * @return StoredForm
 	 */

@@ -299,7 +299,7 @@ final class FilesystemTest extends TestCase {
 		[$File1, $File2] = $a_files;
 		
 		$Form1 = static::$Reef->newTempForm();
-		$Form2 = static::$Reef->newTempStoredForm();
+		$Form2 = static::$Reef->newTempStorableForm();
 		
 		$this->assertSame(2, static::$Filesystem->numFilesInContext('upload'));
 		
@@ -335,7 +335,7 @@ final class FilesystemTest extends TestCase {
 	public function testMoveTransaction(array $a_objects) : array {
 		[$File1, $File2, $Form1, $Form2] = $a_objects;
 		
-		$Form2B = static::$Reef->newTempStoredForm();
+		$Form2B = static::$Reef->newTempStorableForm();
 		
 		$this->assertSame(1, static::$Filesystem->numFilesInContext($Form2));
 		$this->assertSame(0, static::$Filesystem->numFilesInContext($Form2B));

@@ -5,10 +5,10 @@ namespace Reef\Form;
 use \Reef\Submission\TempSubmission;
 
 /**
- * A TempStoredForm is a Form that is intended to be persisted in the database
+ * A TempStorableForm is a Form that is intended to be persisted in the database
  * by the currently running request
  */
-class TempStoredForm extends AbstractStoredForm {
+class TempStorableForm extends AbstractStorableForm {
 	
 	/**
 	 * @inherit
@@ -41,7 +41,7 @@ class TempStoredForm extends AbstractStoredForm {
 	 * @return StoredForm
 	 */
 	public function toStoredForm() : StoredForm {
-		return $this->Reef->getStoredFormFactory()->createFromTempStoredForm($this);
+		return $this->Reef->getStoredFormFactory()->createFromTempStorableForm($this);
 	}
 	
 }
