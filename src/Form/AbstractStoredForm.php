@@ -9,7 +9,7 @@ use \Reef\SubmissionOverview;
 use \Reef\Exception\BadMethodCallException;
 
 /**
- * An AbstractStoredForm is a Form that is persisted in the database, it can be either persistable (StoredForm) or inpersistable (InpersistableStoredForm)
+ * An AbstractStoredForm is a Form that is persisted in the database, it can be either persistable (StoredForm) or nonpersistable (NonpersistableStoredForm)
  */
 abstract class AbstractStoredForm extends AbstractStorableForm {
 	

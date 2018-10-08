@@ -46,11 +46,11 @@ class StoredFormFactory extends FormFactory {
 	 * 
 	 * @param int $i_formId The form id to load
 	 * 
-	 * @return InpersistableStoredForm The stored form
+	 * @return NonpersistableStoredForm The stored form
 	 * 
 	 * @throws ResourceNotFoundException If form does not exist
 	 */
-	public function loadInpersistable(int $i_formId) {
+	public function loadNonpersistable(int $i_formId) {
 		try {
 			$a_result = $this->Reef->getFormStorage()->get($i_formId);
 		}
@@ -58,7 +58,7 @@ class StoredFormFactory extends FormFactory {
 			throw new ResourceNotFoundException('Could not find form with id "'.$i_formId.'"', null, $e);
 		}
 		
-		return new InpersistableStoredForm($this->getReef(), json_decode($a_result['definition'], true), $i_formId, $a_result['_uuid']);
+		return new NonpersistableStoredForm($this->getReef(), json_decode($a_result['definition'], true), $i_formId, $a_result['_uuid']);
 	}
 	
 	/**
@@ -86,11 +86,11 @@ class StoredFormFactory extends FormFactory {
 	 * 
 	 * @param string $s_uuid The form uuid to load
 	 * 
-	 * @return InpersistableStoredForm The stored form
+	 * @return NonpersistableStoredForm The stored form
 	 * 
 	 * @throws ResourceNotFoundException If form does not exist
 	 */
-	public function loadInpersistableByUUID(string $s_uuid) {
+	public function loadNonpersistableByUUID(string $s_uuid) {
 		try {
 			$a_result = $this->Reef->getFormStorage()->getByUUID($s_uuid);
 		}
@@ -98,18 +98,18 @@ class StoredFormFactory extends FormFactory {
 			throw new ResourceNotFoundException('Could not find form with uuid "'.$s_uuid.'"', null, $e);
 		}
 		
-		return new InpersistableStoredForm($this->getReef(), json_decode($a_result['definition'], true), $a_result['_entry_id'], $a_result['_uuid']);
+		return new NonpersistableStoredForm($this->getReef(), json_decode($a_result['definition'], true), $a_result['_entry_id'], $a_result['_uuid']);
 	}
 	
 	/**
-	 * Turn an inpersistable stored form to a persistable stored form
+	 * Turn an nonpersistable stored form to a persistable stored form
 	 * 
 	 * @param StoredForm $SourceForm The source form
 	 * 
-	 * @return InpersistableStoredForm The stored form
+	 * @return NonpersistableStoredForm The stored form
 	 */
-	public function persistableToInpersistable(StoredForm $SourceForm) {
-		return new InpersistableStoredForm($this->getReef(), $SourceForm->getDefinition(), $SourceForm->getFormId(), $SourceForm->getUUID());
+	public function persistableToNonpersistable(StoredForm $SourceForm) {
+		return new NonpersistableStoredForm($this->getReef(), $SourceForm->getDefinition(), $SourceForm->getFormId(), $SourceForm->getUUID());
 	}
 	
 	/**

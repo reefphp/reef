@@ -10,7 +10,7 @@ use \Reef\Storage\StorageFactory;
 use \Reef\Storage\Storage;
 use \Reef\Form\StoredFormFactory;
 use \Reef\Form\StoredForm;
-use \Reef\Form\InpersistableStoredForm;
+use \Reef\Form\NonpersistableStoredForm;
 use \Reef\Form\TempStorableFormFactory;
 use \Reef\Form\TempStorableForm;
 use \Reef\Form\TempFormFactory;
@@ -339,10 +339,10 @@ class Reef {
 	/**
 	 * Get a form by its id
 	 * @param int $i_formId The form id
-	 * @return InpersistableStoredForm
+	 * @return NonpersistableStoredForm
 	 */
-	public function getInpersistableForm(int $i_formId) : InpersistableStoredForm {
-		return $this->getStoredFormFactory()->loadInpersistable($i_formId);
+	public function getNonpersistableForm(int $i_formId) : NonpersistableStoredForm {
+		return $this->getStoredFormFactory()->loadNonpersistable($i_formId);
 	}
 	
 	/**
@@ -357,10 +357,10 @@ class Reef {
 	/**
 	 * Get a form by its uuid
 	 * @param string $s_formUUID The form uuid
-	 * @return InpersistableStoredForm
+	 * @return NonpersistableStoredForm
 	 */
-	public function getInpersistableFormByUUID(string $s_formUUID) : InpersistableStoredForm {
-		return $this->getStoredFormFactory()->loadInpersistableByUUID($s_formUUID);
+	public function getNonpersistableFormByUUID(string $s_formUUID) : NonpersistableStoredForm {
+		return $this->getStoredFormFactory()->loadNonpersistableByUUID($s_formUUID);
 	}
 	
 	/**

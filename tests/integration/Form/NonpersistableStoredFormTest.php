@@ -6,11 +6,11 @@ use PHPUnit\Framework\TestCase;
 use \Reef\Exception\OutOfBoundsException;
 use \Reef\Exception\ResourceNotFoundException;
 
-final class InpersistableStoredFormTest extends TestCase {
+final class NonpersistableStoredFormTest extends TestCase {
 	
 	private static $Reef;
 	private static $Form;
-	private static $InpersistableForm;
+	private static $NonpersistableForm;
 	private static $i_submissionId;
 	
 	public static function setUpBeforeClass() {
@@ -25,7 +25,7 @@ final class InpersistableStoredFormTest extends TestCase {
 		
 		static::$Form = static::$Reef->newStoredForm();
 		static::$Form->updateDefinition([
-			'storage_name' => 'inpersistable_form_test',
+			'storage_name' => 'nonpersistable_form_test',
 			'fields' => [
 				[
 					'component' => 'reef:heading',
@@ -80,28 +80,28 @@ final class InpersistableStoredFormTest extends TestCase {
 	/**
 	 * @depends testCanAddSubmission
 	 */
-	public function testCanGetInpersistable(): void {
-		static::$InpersistableForm = static::$Form->toInpersistable();
+	public function testCanGetNonpersistable(): void {
+		static::$NonpersistableForm = static::$Form->toNonpersistable();
 		
-		$this->assertInstanceOf(\Reef\Form\InpersistableStoredForm::class, static::$InpersistableForm);
+		$this->assertInstanceOf(\Reef\Form\NonpersistableStoredForm::class, static::$NonpersistableForm);
 		
-		$this->assertSame(static::$Form->getDefinition()['fields'], static::$InpersistableForm->getDefinition()['fields']);
-		$this->assertSame(static::$Form->getFormId(), static::$InpersistableForm->getFormId());
-		$this->assertSame(static::$Form->getUUID(), static::$InpersistableForm->getUUID());
+		$this->assertSame(static::$Form->getDefinition()['fields'], static::$NonpersistableForm->getDefinition()['fields']);
+		$this->assertSame(static::$Form->getFormId(), static::$NonpersistableForm->getFormId());
+		$this->assertSame(static::$Form->getUUID(), static::$NonpersistableForm->getUUID());
 		
 		
-		$InpersistableForm = static::$Reef->getInpersistableForm(static::$Form->getFormId());
+		$NonpersistableForm = static::$Reef->getNonpersistableForm(static::$Form->getFormId());
 		
-		$this->assertSame(static::$Form->getDefinition()['fields'], $InpersistableForm->getDefinition()['fields']);
-		$this->assertSame(static::$Form->getFormId(), $InpersistableForm->getFormId());
-		$this->assertSame(static::$Form->getUUID(), $InpersistableForm->getUUID());
+		$this->assertSame(static::$Form->getDefinition()['fields'], $NonpersistableForm->getDefinition()['fields']);
+		$this->assertSame(static::$Form->getFormId(), $NonpersistableForm->getFormId());
+		$this->assertSame(static::$Form->getUUID(), $NonpersistableForm->getUUID());
 	}
 	
 	/**
-	 * @depends testCanGetInpersistable
+	 * @depends testCanGetNonpersistable
 	 */
-	public function testCanEditInpersistable(): void {
-		$Creator = static::$InpersistableForm->newCreator();
+	public function testCanEditNonpersistable(): void {
+		$Creator = static::$NonpersistableForm->newCreator();
 		
 		$Creator->addField('reef:text_line')
 			->setName('input_3')
@@ -113,16 +113,16 @@ final class InpersistableStoredFormTest extends TestCase {
 			'name' => 'input_3',
 		];
 		
-		$this->assertSame($a_refDefinition['fields'], static::$InpersistableForm->getDefinition()['fields']);
+		$this->assertSame($a_refDefinition['fields'], static::$NonpersistableForm->getDefinition()['fields']);
 	}
 	
 	/**
-	 * @depends testCanEditInpersistable
+	 * @depends testCanEditNonpersistable
 	 */
-	public function testCannotSetInpersistableStorageName(): void {
+	public function testCannotSetNonpersistableStorageName(): void {
 		$this->expectException(\Reef\Exception\BadMethodCallException::class);
 		
-		static::$InpersistableForm->setStorageName('we_should_not_be_able_to_do_this');
+		static::$NonpersistableForm->setStorageName('we_should_not_be_able_to_do_this');
 	}
 	
 	public static function tearDownAfterClass() {

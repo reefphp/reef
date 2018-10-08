@@ -56,12 +56,12 @@ class StoredForm extends AbstractStoredForm {
 	}
 	
 	/**
-	 * Duplicate this form into an inpersistable stored form
+	 * Duplicate this form into an nonpersistable stored form
 	 * 
-	 * @return InpersistableStoredForm
+	 * @return NonpersistableStoredForm
 	 */
-	public function toInpersistable() {
-		return $this->Reef->getStoredFormFactory()->persistableToInpersistable($this);
+	public function toNonpersistable() {
+		return $this->Reef->getStoredFormFactory()->persistableToNonpersistable($this);
 	}
 	
 }

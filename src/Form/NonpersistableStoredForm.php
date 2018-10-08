@@ -5,15 +5,15 @@ namespace Reef\Form;
 use \Reef\Exception\BadMethodCallException;
 
 /**
- * A InpersistableStoredForm is a Form that is persisted in the database, that does not allow saving to the database
+ * A NonpersistableStoredForm is a Form that is persisted in the database, that does not allow saving to the database
  */
-class InpersistableStoredForm extends AbstractStoredForm {
+class NonpersistableStoredForm extends AbstractStoredForm {
 	
 	/**
 	 * @inherit
 	 */
 	public function setStorageName($s_newStorageName) {
-		throw new BadMethodCallException("Cannot set storage name on inpersistable object");
+		throw new BadMethodCallException("Cannot set storage name on nonpersistable object");
 	}
 	
 	/**
