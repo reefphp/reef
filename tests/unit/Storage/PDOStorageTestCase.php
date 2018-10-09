@@ -272,6 +272,27 @@ abstract class PDOStorageTestCase extends TestCase {
 	/**
 	 * @depends testCanDeleteData
 	 */
+	public function testCanUseReservedNames(): void {
+		static::$Storage->addColumns([
+			'table' => [
+				'type' => Storage::TYPE_TEXT,
+				'limit' => 2000,
+			],
+			'condition' => [
+				'type' => Storage::TYPE_INTEGER,
+			],
+		]);
+		
+		$this->assertSame(static::$Storage->getColumns(), ['_entry_id', '_uuid', 'value2', 'table', 'condition']);
+		
+		static::$Storage->removeColumns(['table', 'condition']);
+		
+		$this->assertSame(static::$Storage->getColumns(), ['_entry_id', '_uuid', 'value2']);
+	}
+	
+	/**
+	 * @depends testCanUseReservedNames
+	 */
 	public function testCanDeleteStorage(): void {
 		static::$Storage->deleteStorage();
 		

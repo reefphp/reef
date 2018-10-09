@@ -31,7 +31,7 @@ abstract class PDOStorage implements Storage {
 	 * The escaped table name
 	 * @type string
 	 */
-	protected $es_table;
+	protected $qs_table;
 	
 	/**
 	 * Constructor
@@ -44,7 +44,7 @@ abstract class PDOStorage implements Storage {
 		$this->StorageFactory = $StorageFactory;
 		$this->PDO = $PDO;
 		$this->s_table = $s_table;
-		$this->es_table = static::sanitizeName($this->s_table);
+		$this->qs_table = static::quoteIdentifier($this->s_table);
 		
 		if(!static::table_exists($this->StorageFactory, $this->PDO, $this->s_table)) {
 			throw new StorageException("Table ".$this->s_table." does not exist.");
@@ -113,7 +113,7 @@ abstract class PDOStorage implements Storage {
 	 * @param string $s_newTableName The new table name
 	 */
 	public function renameStorage(string $s_newTableName) {
-		$sth = $this->PDO->prepare("ALTER TABLE ".$this->es_table." RENAME TO ".static::sanitizeName($s_newTableName)." ");
+		$sth = $this->PDO->prepare("ALTER TABLE ".$this->qs_table." RENAME TO ".static::quoteIdentifier($s_newTableName)." ");
 		$sth->execute();
 		
 		if($sth->errorCode() !== '00000') {
@@ -123,7 +123,7 @@ abstract class PDOStorage implements Storage {
 		}
 		
 		$this->s_table = $s_newTableName;
-		$this->es_table = static::sanitizeName($s_newTableName);
+		$this->qs_table = static::quoteIdentifier($s_newTableName);
 	}
 	
 	/**
@@ -152,7 +152,7 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function deleteStorage() : bool {
 		$sth = $this->PDO->prepare("
-			DROP TABLE ".static::sanitizeName($this->es_table).";
+			DROP TABLE ".static::quoteIdentifier($this->qs_table).";
 		");
 		$sth->execute();
 		return $sth->errorCode() === '00000';
@@ -164,7 +164,7 @@ abstract class PDOStorage implements Storage {
 	public function count() : int {
 		$sth = $this->PDO->prepare("
 			SELECT COUNT(_entry_id) AS num
-			FROM ".$this->es_table."
+			FROM ".$this->qs_table."
 		");
 		$sth->execute();
 		$a_rows = $sth->fetchAll(PDO::FETCH_NUM);
@@ -177,7 +177,7 @@ abstract class PDOStorage implements Storage {
 	public function list() : array {
 		$sth = $this->PDO->prepare("
 			SELECT _entry_id
-			FROM ".$this->es_table."
+			FROM ".$this->qs_table."
 			ORDER BY _entry_id ASC
 		");
 		$sth->execute();
@@ -234,7 +234,7 @@ abstract class PDOStorage implements Storage {
 		$a_values[] = $i_entryId; // May be null to get auto increment
 		
 		foreach($a_data as $s_key => $s_value) {
-			$a_keys[] = static::sanitizeName($s_key);
+			$a_keys[] = static::quoteIdentifier($s_key);
 			$a_values[] = $s_value;
 		}
 		
@@ -242,7 +242,7 @@ abstract class PDOStorage implements Storage {
 		$s_valueQs = str_repeat('?,', count($a_values)-1).'?';
 		
 		$sth = $this->PDO->prepare("
-			INSERT INTO ".$this->es_table."
+			INSERT INTO ".$this->qs_table."
 			(".$s_keys.")
 			VALUES (".$s_valueQs.")
 		");
@@ -262,7 +262,7 @@ abstract class PDOStorage implements Storage {
 		$a_sets = $a_values = [];
 		
 		foreach($a_data as $s_key => $s_value) {
-			$a_sets[] = static::sanitizeName($s_key) . " = ? ";
+			$a_sets[] = static::quoteIdentifier($s_key) . " = ? ";
 			$a_values[] = $s_value;
 		}
 		
@@ -275,7 +275,7 @@ abstract class PDOStorage implements Storage {
 		$s_sets = implode(', ', $a_sets);
 		
 		$sth = $this->PDO->prepare("
-			UPDATE ".$this->es_table."
+			UPDATE ".$this->qs_table."
 			SET ".$s_sets."
 			WHERE _entry_id = ?
 		");
@@ -288,7 +288,7 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function delete(int $i_entryId) {
 		$sth = $this->PDO->prepare("
-			DELETE FROM ".$this->es_table."
+			DELETE FROM ".$this->qs_table."
 			WHERE _entry_id = ?
 		");
 		$sth->execute([$i_entryId]);
@@ -300,7 +300,7 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function get(int $i_entryId) : array {
 		$sth = $this->PDO->prepare("
-			SELECT * FROM ".$this->es_table."
+			SELECT * FROM ".$this->qs_table."
 			WHERE _entry_id = ?
 		");
 		$sth->execute([$i_entryId]);
@@ -332,7 +332,7 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function getByUUID(string $s_uuid) : array {
 		$sth = $this->PDO->prepare("
-			SELECT * FROM ".$this->es_table."
+			SELECT * FROM ".$this->qs_table."
 			WHERE _uuid = ?
 		");
 		$sth->execute([$s_uuid]);
@@ -364,7 +364,7 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function exists(int $i_entryId) : bool {
 		$sth = $this->PDO->prepare("
-			SELECT _entry_id FROM ".$this->es_table."
+			SELECT _entry_id FROM ".$this->qs_table."
 			WHERE _entry_id = ?
 		");
 		$sth->execute([$i_entryId]);
@@ -410,14 +410,19 @@ abstract class PDOStorage implements Storage {
 	abstract public static function table_exists(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_tableName) : bool;
 	
 	/**
-	 * Sanitize a name for use in a query. Unfortunately we cannot use quote() as table and column names
-	 * should not be quoted. Hence we resort to removing everything but althanumeric characters and
-	 * underscores.
+	 * Sanitize a name for use in a query, removing everything but alphanumeric characters and underscores.
 	 * @param string $s_name The name to sanitize
 	 * @return string
 	 */
 	public static function sanitizeName($s_name) {
 		return preg_replace('/[^a-zA-Z0-9_]/', '', $s_name);
 	}
+	
+	/**
+	 * Quote and sanitize an identifier, such as a table name or column name
+	 * @param string $s_name The name to quote
+	 * @return string
+	 */
+	abstract public static function quoteIdentifier($s_name);
 	
 }

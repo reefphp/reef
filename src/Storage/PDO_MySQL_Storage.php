@@ -27,14 +27,14 @@ class PDO_MySQL_Storage extends PDOStorage {
 	 * @inherit
 	 */
 	public static function newSavepoint(\PDO $PDO, string $s_savepoint) {
-		$PDO->exec("SAVEPOINT ".static::sanitizeName($s_savepoint)." ;");
+		$PDO->exec("SAVEPOINT ".static::quoteIdentifier($s_savepoint)." ;");
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public static function rollbackToSavepoint(\PDO $PDO, string $s_savepoint) {
-		$PDO->exec("ROLLBACK TO SAVEPOINT ".static::sanitizeName($s_savepoint).";");
+		$PDO->exec("ROLLBACK TO SAVEPOINT ".static::quoteIdentifier($s_savepoint).";");
 	}
 	
 	/**
@@ -56,7 +56,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 	 */
 	public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage {
 		$sth = $PDO->prepare("
-			CREATE TABLE ".static::sanitizeName($s_table)." (
+			CREATE TABLE ".static::quoteIdentifier($s_table)." (
 				_entry_id INT NOT NULL AUTO_INCREMENT,
 				_uuid BINARY(32),
 				PRIMARY KEY (_entry_id),
@@ -83,7 +83,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 		}
 		$sth = $this->PDO->prepare("
 			SELECT *
-			FROM ".$this->es_table."
+			FROM ".$this->qs_table."
 			ORDER BY _entry_id ASC
 			LIMIT ".$i_num."
 			OFFSET ".$i_offset."
@@ -202,7 +202,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 	public function addColumns($a_subfields) {
 		$this->a_columns = null;
 		foreach($a_subfields as $s_column => $a_subfield) {
-			$sth = $this->PDO->prepare("ALTER TABLE ".$this->es_table." ADD ".static::sanitizeName($s_column)." ".$this->subfield2type($a_subfield)." ");
+			$sth = $this->PDO->prepare("ALTER TABLE ".$this->qs_table." ADD ".static::quoteIdentifier($s_column)." ".$this->subfield2type($a_subfield)." ");
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
@@ -218,7 +218,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 	 */
 	public function updateColumns($a_subfields) {
 		
-		$s_query = "ALTER TABLE ".$this->es_table." ";
+		$s_query = "ALTER TABLE ".$this->qs_table." ";
 		
 		$b_first = true;
 		foreach($a_subfields as $s_columnOld => $a_fieldUpdate) {
@@ -228,7 +228,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 				$s_query .= " , ";
 			}
 			
-			$s_query .= " CHANGE ".static::sanitizeName($s_columnOld)." ".static::sanitizeName($s_columnNew)." ".$this->subfield2type($a_fieldUpdate['structureTo'])." ";
+			$s_query .= " CHANGE ".static::quoteIdentifier($s_columnOld)." ".static::quoteIdentifier($s_columnNew)." ".$this->subfield2type($a_fieldUpdate['structureTo'])." ";
 			
 			$b_first = false;
 		}
@@ -250,14 +250,14 @@ class PDO_MySQL_Storage extends PDOStorage {
 	 */
 	public function removeColumns($a_columns) {
 		
-		$s_query = "ALTER TABLE ".$this->es_table." ";
+		$s_query = "ALTER TABLE ".$this->qs_table." ";
 		
 		$b_first = true;
 		foreach($a_columns as $s_column) {
 			if(!$b_first) {
 				$s_query .= " , ";
 			}
-			$s_query .= " DROP ".static::sanitizeName($s_column);
+			$s_query .= " DROP ".static::quoteIdentifier($s_column);
 			
 			$b_first = false;
 		}
@@ -292,7 +292,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 		
 		$this->a_columns = [];
 		
-		$sth = $this->PDO->prepare("SELECT * FROM ".$this->es_table." WHERE 0 LIMIT 0");
+		$sth = $this->PDO->prepare("SELECT * FROM ".$this->qs_table." WHERE 0 LIMIT 0");
 		$sth->execute();
 		
 		$i_columns = $sth->columnCount();
@@ -316,5 +316,11 @@ class PDO_MySQL_Storage extends PDOStorage {
 		return !empty($a_rows);
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public static function quoteIdentifier($s_name) {
+		return '`'.static::sanitizeName($s_name).'`';
+	}
 	
 }

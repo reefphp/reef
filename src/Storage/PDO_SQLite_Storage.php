@@ -27,14 +27,14 @@ class PDO_SQLite_Storage extends PDOStorage {
 	 * @inherit
 	 */
 	public static function newSavepoint(\PDO $PDO, string $s_savepoint) {
-		$PDO->exec("SAVEPOINT ".static::sanitizeName($s_savepoint)." ;");
+		$PDO->exec("SAVEPOINT ".static::quoteIdentifier($s_savepoint)." ;");
 	}
 	
 	/**
 	 * @inherit
 	 */
 	public static function rollbackToSavepoint(\PDO $PDO, string $s_savepoint) {
-		$PDO->exec("ROLLBACK TRANSACTION TO SAVEPOINT ".static::sanitizeName($s_savepoint).";");
+		$PDO->exec("ROLLBACK TRANSACTION TO SAVEPOINT ".static::quoteIdentifier($s_savepoint).";");
 	}
 	
 	/**
@@ -56,7 +56,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 	 */
 	public static function createStorage(PDOStorageFactory $StorageFactory, \PDO $PDO, string $s_table) : PDOStorage {
 		$sth = $PDO->prepare("
-			CREATE TABLE ".static::sanitizeName($s_table)." (
+			CREATE TABLE ".static::quoteIdentifier($s_table)." (
 				_entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
 				_uuid BLOB UNIQUE
 			);
@@ -78,7 +78,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 	protected function queryAll(int $i_offset, int $i_num) : \PDOStatement {
 		$sth = $this->PDO->prepare("
 			SELECT *
-			FROM ".$this->es_table."
+			FROM ".$this->qs_table."
 			ORDER BY _entry_id ASC
 			LIMIT ".$i_num."
 			OFFSET ".$i_offset."
@@ -132,7 +132,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 		$this->StorageFactory->ensureTransaction(function() use($a_subfields) {
 			
 			foreach($a_subfields as $s_column => $a_subfield) {
-				$sth = $this->PDO->prepare("ALTER TABLE ".$this->es_table." ADD ".static::sanitizeName($s_column)." ".$this->subfield2type($a_subfield)." ");
+				$sth = $this->PDO->prepare("ALTER TABLE ".$this->qs_table." ADD ".static::quoteIdentifier($s_column)." ".$this->subfield2type($a_subfield)." ");
 				$sth->execute();
 				
 				if($sth->errorCode() !== '00000') {
@@ -253,7 +253,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 				// @codeCoverageIgnoreEnd
 			}
 			
-			$sth = $this->PDO->prepare("INSERT INTO __tmp__migration (".implode(', ', $a_columnsNew).") SELECT ".implode(', ', $a_columnsOld)." FROM ".$this->es_table." ");
+			$sth = $this->PDO->prepare("INSERT INTO __tmp__migration (".implode(', ', $a_columnsNew).") SELECT ".implode(', ', $a_columnsOld)." FROM ".$this->qs_table." ");
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
@@ -262,7 +262,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 				// @codeCoverageIgnoreEnd
 			}
 			
-			$sth = $this->PDO->prepare("DROP TABLE ".$this->es_table." ");
+			$sth = $this->PDO->prepare("DROP TABLE ".$this->qs_table." ");
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
@@ -271,7 +271,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 				// @codeCoverageIgnoreEnd
 			}
 			
-			$sth = $this->PDO->prepare("ALTER TABLE __tmp__migration RENAME TO ".$this->es_table." ");
+			$sth = $this->PDO->prepare("ALTER TABLE __tmp__migration RENAME TO ".$this->qs_table." ");
 			$sth->execute();
 			
 			if($sth->errorCode() !== '00000') {
@@ -305,7 +305,7 @@ class PDO_SQLite_Storage extends PDOStorage {
 		
 		$this->a_columnData = [];
 		
-		$sth = $this->PDO->prepare("PRAGMA table_info(".$this->es_table.")");
+		$sth = $this->PDO->prepare("PRAGMA table_info(".$this->qs_table.")");
 		$sth->execute();
 		
 		$this->a_columnData = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -337,5 +337,11 @@ class PDO_SQLite_Storage extends PDOStorage {
 		return !empty($a_rows);
 	}
 	
+	/**
+	 * @inherit
+	 */
+	public static function quoteIdentifier($s_name) {
+		return '"'.static::sanitizeName($s_name).'"';
+	}
 	
 }
