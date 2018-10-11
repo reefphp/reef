@@ -127,6 +127,8 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 		
 		$this->a_uuidsDel = $this->a_uuids = $this->a_uuidsMissing = [];
 		
+		$b_dryrun = ($this->getSubmission() instanceof \Reef\Submission\NonpersistableStoredSubmission);
+		
 		foreach($a_uuids??[] as $s_uuid) {
 			if(empty($s_uuid)) {
 				continue;
@@ -149,7 +151,7 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 					continue;
 				}
 				
-				if($b_delete) {
+				if($b_delete && !$b_dryrun) {
 					$Filesystem->deleteFile($File);
 				}
 			}
@@ -168,11 +170,13 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 					continue;
 				}
 				
-				if($b_delete) {
-					$Filesystem->deleteFile($File);
-				}
-				else {
-					$Filesystem->changeFileContext($File, $this);
+				if(!$b_dryrun) {
+					if($b_delete) {
+						$Filesystem->deleteFile($File);
+					}
+					else {
+						$Filesystem->changeFileContext($File, $this);
+					}
 				}
 			}
 			
@@ -184,10 +188,12 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 			}
 		}
 		
-		foreach($a_oldUUIDS as $s_uuid => $tmp) {
-			$File = $Filesystem->getFile($s_uuid, $this);
-			$Filesystem->deleteFile($File);
-			$this->a_uuidsDel[] = $File->getUUID();
+		if(!$b_dryrun) {
+			foreach($a_oldUUIDS as $s_uuid => $tmp) {
+				$File = $Filesystem->getFile($s_uuid, $this);
+				$Filesystem->deleteFile($File);
+				$this->a_uuidsDel[] = $File->getUUID();
+			}
 		}
 		
 		$this->a_errors = null;
