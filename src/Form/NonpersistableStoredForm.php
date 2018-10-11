@@ -2,6 +2,8 @@
 
 namespace Reef\Form;
 
+use \Reef\Submission\AbstractStoredSubmission;
+use \Reef\Submission\NonpersistableStoredSubmission;
 use \Reef\Exception\BadMethodCallException;
 
 /**
@@ -22,6 +24,16 @@ class NonpersistableStoredForm extends AbstractStoredForm {
 	 */
 	public function updateDefinition(array $a_definition, array $a_fieldRenames = []) {
 		$this->setDefinition($a_definition);
+	}
+	
+	/**
+	 * Create a new nonpersistable submission object from an existing stored submission
+	 * @param AbstractStoredSubmission $SourceSubmission The submission to copy from
+	 */
+	public function newNonpersistableSubmission(AbstractStoredSubmission $SourceSubmission) {
+		$NewSubmission = new NonpersistableStoredSubmission($this);
+		$NewSubmission->copyFrom($SourceSubmission);
+		return $NewSubmission;
 	}
 	
 }

@@ -39,11 +39,11 @@ class ContextSession {
 		}
 		
 		if($context instanceof \Reef\Components\FieldValue) {
-			$s_submissionContext = ($context->getSubmission() instanceof \Reef\Form\StoredSubmission) ? $context->getSubmission()->getUUID() : 'tmp';
+			$s_submissionContext = ($context->getSubmission() instanceof \Reef\Form\AbstractStoredSubmission) ? $context->getSubmission()->getUUID() : 'tmp';
 			return 'value:'.$context->getField()->getComponent()::COMPONENT_NAME.':'.$s_submissionContext.':';
 		}
 		
-		if($context instanceof \Reef\Submission\StoredSubmission) {
+		if($context instanceof \Reef\Submission\AbstractStoredSubmission) {
 			return 'submission:'.$context->getForm()->getUUID().':'.$context->getUUID().':';
 		}
 		

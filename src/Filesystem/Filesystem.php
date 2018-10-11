@@ -429,7 +429,7 @@ class Filesystem {
 			$context = $context->getSubmission();
 		}
 		
-		if($context instanceof \Reef\Submission\StoredSubmission) {
+		if($context instanceof \Reef\Submission\AbstractStoredSubmission) {
 			return $this->getDir($context->getForm()->getUUID().'/'.$context->getUUID());
 		}
 		

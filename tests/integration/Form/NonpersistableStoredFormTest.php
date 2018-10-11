@@ -125,6 +125,24 @@ final class NonpersistableStoredFormTest extends TestCase {
 		static::$NonpersistableForm->setStorageName('we_should_not_be_able_to_do_this');
 	}
 	
+	/**
+	 * @depends testCanEditNonpersistable
+	 */
+	public function testCanGetNonpersistableSubmission(): void {
+		
+		$Submission = static::$Form->getSubmission(static::$i_submissionId);
+		
+		$NPSubmission = static::$NonpersistableForm->newNonpersistableSubmission($Submission);
+		
+		$a_submission = $Submission->toStructured();
+		$a_npSubmission = $NPSubmission->toStructured();
+		
+		$this->assertSame(['input_1', 'input_2'], array_keys($a_submission));
+		$this->assertSame(['input_1', 'input_2', 'input_3'], array_keys($a_npSubmission));
+		
+		$this->assertSame($a_submission, \Reef\array_subset($a_npSubmission, ['input_1', 'input_2']));
+	}
+	
 	public static function tearDownAfterClass() {
 		static::$Form->delete();
 	}
