@@ -1,8 +1,8 @@
 {
     "name": "reef/reef",
     "type": "library",
-    "description": "Responsive Embeddable Extensible Form generator",
-    "keywords": ["form","forms"],
+    "description": "Reef: the Responsive Embeddable Extensible Form generator for PHP",
+    "keywords": ["reef","form","forms","form generator","form builder","drag and drop"],
     "homepage": "https://gitlab.com/reefphp/reef",
     "license": "LGPL-3.0",
     "authors": [
