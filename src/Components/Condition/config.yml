@@ -1,6 +1,7 @@
 vendor: reef
 name: condition
 category: internal
+documentation: https://reef-docs.readthedocs.io/en/latest/components/reef/condition.html
 basicLocale:
     title: rf_field_title
 internalLocale:

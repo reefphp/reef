@@ -1,6 +1,7 @@
 vendor: reef
 name: textarea
 category: text
+documentation: https://reef-docs.readthedocs.io/en/latest/components/reef/textarea.html
 assets:
     component_image: ../../../assets/img/text-textarea.svg
 basicLocale:

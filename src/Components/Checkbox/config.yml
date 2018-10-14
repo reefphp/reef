@@ -1,6 +1,7 @@
 vendor: reef
 name: checkbox
 category: choice
+documentation: https://reef-docs.readthedocs.io/en/latest/components/reef/checkbox.html
 assets:
     component_image: ../../../assets/img/choice-check.svg
 basicLocale:

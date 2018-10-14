@@ -249,7 +249,12 @@ var ReefBuilder = (function() {
 		// Display component name
 		var componentName = field.$fieldWrapper.attr('data-component-name');
 		var componentTitle = this.$builderWrapper.find('.'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"] span.'+CSSPRFX+'builder-component-title').text();
-		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name').text(componentTitle);
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name-name').text(componentTitle);
+		
+		var componentConfig = JSON.parse(atob(this.$builderWrapper.find('.'+CSSPRFX+'builder-component[data-component-name="'+componentName+'"]').attr('data-configuration')));
+		if(typeof componentConfig.documentation !== 'undefined') {
+			this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name-docs').show().attr('href', componentConfig.documentation);
+		}
 		
 		// Register selected field
 		this.selectedField = field;
@@ -287,7 +292,8 @@ var ReefBuilder = (function() {
 		this.selectedField.checkValid();
 		
 		// Remove component name
-		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name').text('');
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name-name').text('');
+		this.$builderWrapper.find('.'+CSSPRFX+'builder-sidetab-field-component-name-docs').hide();
 		
 		// Register (no) selected field
 		this.selectedField = null;

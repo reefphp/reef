@@ -1,6 +1,7 @@
 vendor: reef
 name: option_list
 category: internal
+documentation: https://reef-docs.readthedocs.io/en/latest/components/reef/option_list.html
 basicLocale:
     title: rf_field_title
 internalLocale:

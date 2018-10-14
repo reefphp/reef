@@ -1,6 +1,7 @@
 vendor: reef
 name: paragraph
 category: static
+documentation: https://reef-docs.readthedocs.io/en/latest/components/reef/paragraph.html
 assets:
     component_image: ../../../assets/img/static-paragraph.svg
 basicLocale:
