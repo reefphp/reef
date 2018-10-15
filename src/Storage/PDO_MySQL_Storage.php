@@ -106,9 +106,6 @@ class PDO_MySQL_Storage extends PDOStorage {
 				if($i_limit <= 100) {
 					$s_columnType = 'VARCHAR('.$i_limit.')';
 				}
-				else if($i_limit <= 255) {
-					$s_columnType = 'TINYTEXT';
-				}
 				else if($i_limit <= 16383) {
 					$s_columnType = 'TEXT';
 				}
