@@ -14,9 +14,14 @@ final class PDOMySQLStorageTest extends PDOStorageTestCase {
 	private static $PDOException = null;
 	
 	public static function setUpBeforeClass() {
-		$DB_HOST = getenv('IN_GITLAB_CI') ? 'mysql' : '127.0.0.1';
 		try {
-			static::$PDO = new \PDO("mysql:dbname=".static::DB_NAME.";host=".$DB_HOST, static::DB_USER, static::DB_PASS);
+			if(getenv('IN_SCRUTINIZER_CI')) {
+				static::$PDO = new \PDO("mysql:dbname=".static::DB_NAME.";host=127.0.0.1", "root", "");
+			}
+			else {
+				$DB_HOST = getenv('IN_GITLAB_CI') ? 'mysql' : '127.0.0.1';
+				static::$PDO = new \PDO("mysql:dbname=".static::DB_NAME.";host=".$DB_HOST, static::DB_USER, static::DB_PASS);
+			}
 		} catch (PDOException $e) {
 			static::$PDO = null;
 			static::$PDOException = $e;
