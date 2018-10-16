@@ -16,13 +16,18 @@ if(!is_dir($s_baseDir.$s_coverageDir)) {
 }
 
 $a_configFiles = [];
-$b_coverageHtml = false;
+$b_coverageHtml = $b_coverageClover = false;
 
 for($i=1; $i<$argc; $i++) {
 	$s_arg = $argv[$i];
 	
 	if($s_arg == '--coverage-html') {
 		$b_coverageHtml = true;
+		continue;
+	}
+	
+	if($s_arg == '--coverage-clover') {
+		$b_coverageClover = true;
 		continue;
 	}
 	
@@ -55,7 +60,7 @@ foreach ($a_configFiles as $s_configFile) {
 	
 	$s_command = 'vendor/bin/phpunit --configuration tests/'.$s_configFile;
 	
-	if($b_coverageHtml) {
+	if($b_coverageHtml || $b_coverageClover) {
 		$s_command .= ' --coverage-php '.$s_baseDir.$s_coverageDir.$s_configFile.'.cov';
 	}
 	
@@ -67,7 +72,7 @@ foreach ($a_configFiles as $s_configFile) {
 	}
 }
 
-if($b_coverageHtml) {
+if($b_coverageHtml || $b_coverageClover) {
 	// https://stackoverflow.com/questions/10167775/aggregating-code-coverage-from-several-executions-of-phpunit/14874892#14874892
 	
 	foreach ($a_configFiles as $s_configFile) {
@@ -83,12 +88,22 @@ if($b_coverageHtml) {
 		}
 	}
 
-	print "\nGenerating code coverage report in HTML format ...";
+	if($b_coverageHtml) {
+		print "\nGenerating code coverage report in HTML format ...";
 
-	// Based on PHPUnit_TextUI_TestRunner::doRun
-	$writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade();
+		// Based on PHPUnit_TextUI_TestRunner::doRun
+		$writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade();
 
-	$writer->process($codeCoverage, $s_baseDir.$s_coverageDir);
+		$writer->process($codeCoverage, $s_baseDir.$s_coverageDir);
+	}
+	
+	if($b_coverageClover) {
+		print "\nGenerating code coverage report in clover format ...";
 
+		$writer = new \SebastianBergmann\CodeCoverage\Report\Clover();
+
+		$writer->process($codeCoverage, $s_baseDir.$s_coverageDir.'clover.xml');
+	}
+	
 	print " done\n";
 }
