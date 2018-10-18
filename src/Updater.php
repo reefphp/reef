@@ -251,27 +251,14 @@ class Updater {
 		
 		$SubmissionStorage = $Form->getSubmissionStorage();
 		
-		$fn_getContentUpdater = function($Field) use($SubmissionStorage) {
-			return function(string $s_query, array $a_vars = []) use($Field, $SubmissionStorage) {
-				$PDO = $SubmissionStorage->getPDO();
-				
-				$a_names = [];
-				
-				// Table name
-				$a_names[] = $SubmissionStorage::quoteIdentifier($SubmissionStorage->getTableName());
-				
-				// Column names
-				$a_names = array_merge($a_names, array_values($this->getColumns($Field, $SubmissionStorage)));
-				
-				// Compute query
-				$s_query = vsprintf($s_query, $a_names);
-				
-				// Execute query
-				$sth = $PDO->prepare($s_query);
-				$sth->execute($a_vars);
-				
-				return $sth;
-			};
+		$fn_contentUpdater = function(string $s_query, array $a_vars = []) use($SubmissionStorage) {
+			$PDO = $SubmissionStorage->getPDO();
+			
+			// Execute query
+			$sth = $PDO->prepare($s_query);
+			$sth->execute($a_vars);
+			
+			return $sth;
 		};
 		
 		$a_info = [
@@ -288,7 +275,7 @@ class Updater {
 			$a_deleteColumns,
 			$a_updateFields,
 			$a_deleteFields,
-			$fn_getContentUpdater
+			$fn_contentUpdater
 			) {
 			
 			$SubmissionStorage->addColumns($a_createColumns);
@@ -298,7 +285,7 @@ class Updater {
 			
 			foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
 				$a_fields1[$s_fieldName1]->beforeSchemaUpdate(array_merge($a_info, [
-					'content_updater' => $fn_getContentUpdater($a_fields1[$s_fieldName1]),
+					'content_updater' => $fn_contentUpdater,
 					'new_field' => $a_fields2[$s_fieldName2],
 					'table' => $SubmissionStorage::quoteIdentifier($SubmissionStorage->getTableName()),
 					'old_columns' => $this->getColumns($a_fields1[$s_fieldName1], $SubmissionStorage),
@@ -308,7 +295,7 @@ class Updater {
 			
 			foreach($a_deleteFields as $s_fieldName1) {
 				$a_fields1[$s_fieldName1]->beforeDelete(array_merge($a_info, [
-					'content_updater' => $fn_getContentUpdater($a_fields1[$s_fieldName1]),
+					'content_updater' => $fn_contentUpdater,
 					'table' => $SubmissionStorage::quoteIdentifier($SubmissionStorage->getTableName()),
 					'columns' => $this->getColumns($a_fields1[$s_fieldName1], $SubmissionStorage),
 				]));
@@ -324,7 +311,7 @@ class Updater {
 			
 			foreach($a_updateFields as $s_fieldName1 => $s_fieldName2) {
 				$a_fields[$s_fieldName2]->afterSchemaUpdate(array_merge($a_info, [
-					'content_updater' => $fn_getContentUpdater($a_fields[$s_fieldName2]),
+					'content_updater' => $fn_contentUpdater,
 					'table' => $SubmissionStorage::quoteIdentifier($SubmissionStorage->getTableName()),
 					'old_columns' => $this->getColumns($a_fields1[$s_fieldName1], $SubmissionStorage),
 					'new_columns' => $this->getColumns($a_fields[$s_fieldName2], $SubmissionStorage),

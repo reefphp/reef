@@ -116,17 +116,18 @@ class TextNumberField extends Field implements RequiredFieldInterface {
 	 */
 	public function beforeSchemaUpdate($a_data) {
 		$NewField = $a_data['new_field'];
+		$s_column = $a_data['old_columns'][0];
 		$a_newDecl = $NewField->getDeclaration();
 		
 		switch($a_data['storageFactoryName']) {
 			case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
 			case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
 				if(isset($a_newDecl['max']) && (!isset($this->a_declaration['max']) || $this->a_declaration['max'] > $a_newDecl['max'])) {
-					$a_data['content_updater']('UPDATE %1$s SET %2$s = ? WHERE %2$s > ?', [$a_newDecl['max'], $a_newDecl['max']]);
+					$a_data['content_updater']('UPDATE '.$a_data['table'].' SET '.$s_column.' = ? WHERE '.$s_column.' > ?', [$a_newDecl['max'], $a_newDecl['max']]);
 				}
 				
 				if(isset($a_newDecl['min']) && (!isset($this->a_declaration['min']) || $this->a_declaration['min'] < $a_newDecl['min'])) {
-					$a_data['content_updater']('UPDATE %1$s SET %2$s = ? WHERE %2$s < ?', [$a_newDecl['min'], $a_newDecl['min']]);
+					$a_data['content_updater']('UPDATE '.$a_data['table'].' SET '.$s_column.' = ? WHERE '.$s_column.' < ?', [$a_newDecl['min'], $a_newDecl['min']]);
 				}
 			break;
 		}

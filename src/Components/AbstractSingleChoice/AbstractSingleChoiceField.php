@@ -127,13 +127,14 @@ abstract class AbstractSingleChoiceField extends Field {
 	 * @inherit
 	 */
 	public function beforeSchemaUpdate($a_data) {
+		$s_column = $a_data['old_columns'][0];
 		[$a_create, $a_update, $a_delete] = $this->getOptionUpdatePlan($this, $a_data['new_field']);
 		
 		foreach($a_update as $s_oldName => $s_newName) {
 			switch($a_data['storageFactoryName']) {
 				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
 				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
-					$a_data['content_updater']('UPDATE %1$s SET %2$s = ? WHERE %2$s = ?', [$s_newName, $s_oldName]);
+					$a_data['content_updater']('UPDATE '.$a_data['table'].' SET '.$s_column.' = ? WHERE '.$s_column.' = ?', [$s_newName, $s_oldName]);
 				break;
 			}
 		}
@@ -146,7 +147,7 @@ abstract class AbstractSingleChoiceField extends Field {
 			switch($a_data['storageFactoryName']) {
 				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
 				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
-					$a_data['content_updater']('UPDATE %1$s SET %2$s = NULL WHERE %2$s NOT IN ('.$s_qs.') ', array_values($a_names));
+					$a_data['content_updater']('UPDATE '.$a_data['table'].' SET '.$s_column.' = NULL WHERE '.$s_column.' NOT IN ('.$s_qs.') ', array_values($a_names));
 				break;
 			}
 		}
@@ -154,7 +155,7 @@ abstract class AbstractSingleChoiceField extends Field {
 			switch($a_data['storageFactoryName']) {
 				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
 				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
-					$a_data['content_updater']('UPDATE %1$s SET %2$s = NULL');
+					$a_data['content_updater']('UPDATE '.$a_data['table'].' SET '.$s_column.' = NULL');
 				break;
 			}
 		}

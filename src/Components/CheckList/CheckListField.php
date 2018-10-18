@@ -147,7 +147,7 @@ class CheckListField extends Field {
 			switch($a_data['storageFactoryName']) {
 				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
 				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
-					$a_data['content_updater']('UPDATE %1$s SET '.$a_data['new_columns'][$s_newName].' = '.$a_data['old_columns'][$s_oldName].' ');
+					$a_data['content_updater']('UPDATE '.$a_data['table'].' SET '.$a_data['new_columns'][$s_newName].' = '.$a_data['old_columns'][$s_oldName].' ');
 				break;
 			}
 		}
