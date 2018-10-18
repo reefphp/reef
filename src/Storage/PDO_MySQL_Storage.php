@@ -181,7 +181,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 			break;
 			
 			case Storage::TYPE_FLOAT:
-				'FLOAT NULL';
+				$s_columnType = 'FLOAT NULL';
 				
 				if(isset($a_subfield['default'])) {
 					$s_columnType .= ' DEFAULT '.((float)$a_subfield['default']).'';
