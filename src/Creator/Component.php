@@ -259,7 +259,7 @@ class Component extends Context {
 	/**
 	 * Return the value of a field property in the currently selected field
 	 * @param string $s_key The field property key
-	 * @return The property value, or null if it is not set
+	 * @return mixed The property value, or null if it is not set
 	 */
 	public function return(string $s_key) {
 		$this->requireIndex();

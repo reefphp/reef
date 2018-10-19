@@ -54,7 +54,7 @@ class ConditionEvaluator {
 	
 	/**
 	 * Cached empty submission for $Form
-	 * @type string[]
+	 * @type Submission
 	 */
 	private $EmptySubmission;
 	
@@ -81,6 +81,12 @@ class ConditionEvaluator {
 	 * @type int
 	 */
 	private $i_length;
+	
+	/**
+	 * During evaluation, whether to perform operand validation
+	 * @type bool
+	 */
+	private $b_validate;
 	
 	/**
 	 * Constructor

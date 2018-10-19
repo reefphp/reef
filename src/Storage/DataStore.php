@@ -4,6 +4,7 @@ namespace Reef\Storage;
 
 use \Reef\Reef;
 use \Reef\Form\StoredForm;
+use \Reef\Filesystem\Filesystem;
 use \Reef\Exception\StorageException;
 
 /**
