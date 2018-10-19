@@ -60,6 +60,6 @@ abstract class Layout {
 	 * Prepare layout configuration for usage in template
 	 * @return array The template vars
 	 */
-	abstract public function view(array $a_config) : array;
+	abstract public function view(array $a_config = []) : array;
 	
 }

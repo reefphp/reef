@@ -47,6 +47,11 @@ class SelectValue extends AbstractSingleChoiceValue {
 				
 			case 'is not empty':
 				return $this->s_value != '';
+			
+			// @codeCoverageIgnoreStart
+			default:
+				throw new \Reef\Exception\ConditionException("Invalid operator");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 }

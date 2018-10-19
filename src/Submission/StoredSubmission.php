@@ -57,7 +57,7 @@ class StoredSubmission extends AbstractStoredSubmission {
 		$Exception = new class extends \Exception {};
 		
 		try {
-			$this->getForm()->getReef()->getDataStore()->ensureTransaction(function() use ($a_userInput, $Exception) {
+			$this->getForm()->getReef()->getDataStore()->ensureTransaction(function() use ($a_userInput, $a_options, $Exception) {
 				
 				$this->fromUserInput($a_userInput);
 				

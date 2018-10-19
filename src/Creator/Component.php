@@ -217,7 +217,7 @@ class Component extends Context {
 	
 	/**
 	 * Return the index of the currently selected field
-	 * @return The index
+	 * @return ?int The index
 	 */
 	public function returnIndex() {
 		$this->requireIndex();
@@ -237,7 +237,7 @@ class Component extends Context {
 	
 	/**
 	 * Return the position of the currently selected field
-	 * @return The position
+	 * @return ?int The position
 	 */
 	public function returnPosition() {
 		$this->requireIndex();
@@ -353,8 +353,6 @@ class Component extends Context {
 		if(!(0 <= $i_index && $i_index < count($this->a_fields))) {
 			throw new CreatorException('Invalid field index "'.$i_index.'"');
 		}
-		
-		$a_field = &$this->a_fields[$this->i_index];
 		
 		array_splice($this->a_fields, $i_index, 0, array_splice($this->a_fields, $this->i_index, 1));
 		

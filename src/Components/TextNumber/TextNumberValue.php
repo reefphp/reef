@@ -108,7 +108,7 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$this->f_value = $this->m_rawValue = $a_flat[0]??'';
 		$this->a_errors = null;
 		if($this->f_value !== '') {
@@ -176,6 +176,11 @@ class TextNumberValue extends FieldValue implements RequiredFieldValueInterface 
 				
 			case 'is at most':
 				return $this->f_value <= $m_operand;
+			
+			// @codeCoverageIgnoreStart
+			default:
+				throw new \Reef\Exception\ConditionException("Invalid operator");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 }

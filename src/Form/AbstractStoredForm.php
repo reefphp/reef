@@ -3,6 +3,7 @@
 namespace Reef\Form;
 
 use \Reef\Reef;
+use \Reef\Storage\Storage;
 use \Reef\Submission\Submission;
 use \Reef\Submission\StoredSubmission;
 use \Reef\SubmissionOverview;

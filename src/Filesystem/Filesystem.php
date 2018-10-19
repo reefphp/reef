@@ -128,8 +128,8 @@ class Filesystem {
 	}
 	
 	/**
-	 * Get a list of allowed extensions
-	 * @return string[] The extensions
+	 * Get the path of the specified directory
+	 * @return string The directory path
 	 */
 	protected function getDir(string $s_dir) : string {
 		if($this->s_dir === null) {

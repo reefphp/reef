@@ -82,7 +82,7 @@ class TextLineValue extends FieldValue implements RequiredFieldValueInterface {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$this->s_value = $a_flat[0]??$this->Field->getDeclaration()['default']??'';
 		$this->a_errors = null;
 	}
@@ -155,6 +155,11 @@ class TextLineValue extends FieldValue implements RequiredFieldValueInterface {
 				
 			case 'is shorter than':
 				return strlen($this->s_value) < $m_operand;
+			
+			// @codeCoverageIgnoreStart
+			default:
+				throw new \Reef\Exception\ConditionException("Invalid operator");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 }

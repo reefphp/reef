@@ -3,6 +3,7 @@
 namespace Reef\Form;
 
 use \Reef\Reef;
+use \Reef\ConditionEvaluator;
 use \Reef\Assets\FormAssets;
 use \Reef\Submission\Submission;
 use \Reef\Locale\Trait_FormLocale;
@@ -239,7 +240,7 @@ abstract class Form {
 	/**
 	 * Set the fields from a list of field declarations
 	 * 
-	 * @param Field[] $a_fields The list of field declarations (arrays)
+	 * @param array[] $a_fields The list of field declarations (arrays)
 	 */
 	public function setFields(array $a_fields) {
 		$Setup = $this->Reef->getSetup();

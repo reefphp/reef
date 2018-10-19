@@ -146,6 +146,7 @@ class ReefAssets extends Assets {
 		}
 		
 		$s_assetType = $a_assetHash[0];
+		$s_subName = $s_assetName = null;
 		
 		if(!in_array($s_assetType, ['reef', 'component', 'extension'])) {
 			throw new InvalidArgumentException("Illegal asset type");

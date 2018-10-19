@@ -81,7 +81,7 @@ class CheckListValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$this->a_list = array_map('boolval', $a_flat);
 		$this->a_errors = null;
 	}
@@ -154,6 +154,11 @@ class CheckListValue extends FieldValue {
 				
 			case 'at most unchecked':
 				return count(array_filter($this->a_list, function($b) { return !$b; })) <= $m_operand;
+			
+			// @codeCoverageIgnoreStart
+			default:
+				throw new \Reef\Exception\ConditionException("Invalid operator");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 }

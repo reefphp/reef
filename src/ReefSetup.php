@@ -67,7 +67,7 @@ class ReefSetup {
 	
 	/**
 	 * The Filesystem object of this setup
-	 * @type \Filesystem\Filesystem
+	 * @type Filesystem
 	 */
 	private $Filesystem;
 	
@@ -151,7 +151,7 @@ class ReefSetup {
 	 * @param ?string $s_layoutName The layout name, or null for the default layout
 	 */
 	public function setLayout(?string $s_layoutName) {
-		if($s_layoutName == null) {
+		if($s_layoutName === null) {
 			$this->s_currentLayout = \Reef\array_first_key($this->a_layouts);
 			return;
 		}
@@ -299,7 +299,7 @@ class ReefSetup {
 	 * Create a new field from the given declaration
 	 * @param array $a_declaration The field declaration
 	 * @param Form $Form The form the field belongs to
-	 * @return Field
+	 * @return \Reef\Components\Field
 	 * @throws DomainException If the component does not exist
 	 */
 	public function getField(array $a_declaration, Form $Form) {
@@ -360,7 +360,7 @@ class ReefSetup {
 	 */
 	public function getFilesystem() {
 		if(empty($this->Filesystem)) {
-			$this->Filesystem = new \Reef\Filesystem\Filesystem();
+			$this->Filesystem = new Filesystem();
 		}
 		
 		return $this->Filesystem;

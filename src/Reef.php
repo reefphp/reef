@@ -192,7 +192,7 @@ class Reef {
 	 * Get a cache value defined by the callback. Returns the cached value if present, or executes
 	 * the callback and stores & returns that value instead otherwise
 	 * @param string $s_cacheKey The key identifying the desired value
-	 * @param function $fn_val Callback to a function yielding the value that should be cached
+	 * @param callable $fn_val Callback to a function yielding the value that should be cached
 	 * @return mixed The (cached) value
 	 */
 	public function cache($s_cacheKey, $fn_val) {
@@ -219,8 +219,8 @@ class Reef {
 	
 	/**
 	 * Get the value of the given option
-	 * @param string The option name
-	 * @return string The value
+	 * @param string $s_name The option name
+	 * @return mixed The value
 	 */
 	public function getOption($s_name) {
 		return $this->a_options[$s_name];
@@ -477,7 +477,7 @@ class Reef {
 	
 	/**
 	 * Obtain a new Mustache_Engine instance, with some general helpers already added
-	 * @return Mustache_Engine
+	 * @return \Mustache_Engine
 	 */
 	public function newMustache() : \Mustache_Engine {
 		$a_helpers = [];

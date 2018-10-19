@@ -66,6 +66,11 @@ class RadioValue extends AbstractSingleChoiceValue implements RequiredFieldValue
 				
 			case 'is not empty':
 				return $this->s_value != '';
+			
+			// @codeCoverageIgnoreStart
+			default:
+				throw new \Reef\Exception\ConditionException("Invalid operator");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 	

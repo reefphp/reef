@@ -208,7 +208,7 @@ abstract class PDOStorage implements Storage {
 	 * Return PDOStatement fetching the requested rows from the table
 	 * @param int $i_offset The offset to use
 	 * @param int $i_num The number of rows to return
-	 * @return PDOStatement
+	 * @return \PDOStatement
 	 */
 	abstract protected function queryAll(int $i_offset, int $i_num) : \PDOStatement;
 	
@@ -247,7 +247,7 @@ abstract class PDOStorage implements Storage {
 			VALUES (".$s_valueQs.")
 		");
 		$sth->execute($a_values);
-		return $this->PDO->lastInsertId();
+		return (int)$this->PDO->lastInsertId();
 	}
 	
 	/**
@@ -352,7 +352,7 @@ abstract class PDOStorage implements Storage {
 	 */
 	public function getByUUIDOrNull(string $s_uuid) : ?array {
 		try {
-			return $this->get($s_uuid);
+			return $this->getByUUID($s_uuid);
 		}
 		catch(StorageException $e) {
 			return null;

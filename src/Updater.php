@@ -6,6 +6,7 @@ use \Symfony\Component\Yaml\Yaml;
 use \Reef\Form\StoredForm;
 use \Reef\Form\TempStorableForm;
 use \Reef\Components\Component;
+use \Reef\Components\Field;
 use \Reef\Storage\PDOStorage;
 use \Reef\Exception\RuntimeException;
 use \Reef\Exception\ValidationException;
@@ -209,7 +210,7 @@ class Updater {
 	 * @param PDOStorage $SubmissionStorage The submission storage used
 	 * @return string[] $a_names The column names
 	 */
-	private function getColumns(\Reef\Components\Field $Field, PDOStorage $SubmissionStorage) {
+	private function getColumns(Field $Field, PDOStorage $SubmissionStorage) {
 		// Column names
 		$s_name = $Field->getDeclaration()['name'];
 		$a_flatStructure = $Field->getFlatStructure();

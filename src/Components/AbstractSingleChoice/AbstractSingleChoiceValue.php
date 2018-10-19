@@ -67,7 +67,7 @@ abstract class AbstractSingleChoiceValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$this->s_value = $a_flat[0]??$this->Field->getDeclaration()['default']??'';
 		$this->a_errors = null;
 	}

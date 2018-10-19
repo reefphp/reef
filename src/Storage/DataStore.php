@@ -2,6 +2,7 @@
 
 namespace Reef\Storage;
 
+use \Reef\Reef;
 use \Reef\Form\StoredForm;
 use \Reef\Exception\StorageException;
 
@@ -25,12 +26,6 @@ class DataStore {
 	private $StorageFactory;
 	
 	/**
-	 * The Filesystem in use by this DataStore
-	 * @type Filesystem
-	 */
-	private $Filesystem;
-	
-	/**
 	 * The form storage instance
 	 * @type Storage
 	 */
@@ -52,7 +47,7 @@ class DataStore {
 	 * Constructor
 	 * @param Reef $Reef The Reef object
 	 */
-	public function __construct(\Reef\Reef $Reef) {
+	public function __construct(Reef $Reef) {
 		$this->Reef = $Reef;
 		$this->StorageFactory = $this->Reef->getSetup()->getStorageFactory();
 		$this->s_prefix = $this->Reef->getOption('db_prefix');

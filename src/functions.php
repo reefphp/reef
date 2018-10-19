@@ -23,7 +23,7 @@ function unique_id() {
 
 /**
  * Return the first key of an array without resetting its pointer
- * @param array The array
+ * @param array $a_array The array
  * @return mixed The first key
  */
 function array_first_key(array $a_array) {
@@ -105,7 +105,7 @@ function matcherToRegExp(string $s_matcher) : string {
 	
 	$s_regexp = preg_replace_callback('/((?:\\\\)*)_/', function($a_matches) {
 		$i_slashes = strlen($a_matches[1]);
-		return substr($a_matches[1], 0, floor($i_slashes/4)*2) . (($i_slashes % 4 == 0) ? '.' : '_');
+		return substr($a_matches[1], 0, (int)floor($i_slashes/4)*2) . (($i_slashes % 4 == 0) ? '.' : '_');
 	}, $s_regexp);
 	
 	return '/^'.$s_regexp.'$/';
@@ -147,7 +147,7 @@ function parseBytes(string $s_size, ?int $i_base) : int {
 	}
 	$f_size = max((float)$s_size, 0);
 	
-	return round($f_size * pow($i_base??1000, strpos('bkmgtpezy', $s_unit)));
+	return (int)round($f_size * pow($i_base??1000, strpos('bkmgtpezy', $s_unit)));
 }
 
 /**

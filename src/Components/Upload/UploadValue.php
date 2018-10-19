@@ -13,6 +13,7 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	
 	protected $a_uuids;
 	protected $a_uuidsDel;
+	protected $a_uuidsMissing;
 	
 	/**
 	 * Get all files of this field
@@ -219,7 +220,7 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$s_uuids = $a_flat[0]??'';
 		$this->a_uuids = empty($s_uuids) ? [] : explode(',', $s_uuids);
 		$this->a_errors = null;
@@ -278,6 +279,11 @@ class UploadValue extends FieldValue implements RequiredFieldValueInterface {
 				
 			case 'is not empty':
 				return !empty($this->a_uuids);
+			
+			// @codeCoverageIgnoreStart
+			default:
+				throw new \Reef\Exception\ConditionException("Invalid operator");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 	

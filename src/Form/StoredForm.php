@@ -35,7 +35,7 @@ class StoredForm extends AbstractStoredForm {
 	public function save() {
 		$a_definition = $this->getDefinition();
 		
-		if($this->i_formId == null) {
+		if($this->i_formId === null) {
 			$this->i_formId = $this->Reef->getFormStorage()->insert(['definition' => json_encode($a_definition), '_uuid' => $this->getUUID()]);
 		}
 		else {

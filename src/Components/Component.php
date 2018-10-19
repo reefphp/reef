@@ -3,12 +3,14 @@
 namespace Reef\Components;
 
 use Reef\Form\Form;
+use Reef\Form\TempForm;
 use Reef\Reef;
 use Reef\Locale\Trait_ComponentLocale;
 use \Reef\Assets\JSCSSAssetsTrait;
 use Symfony\Component\Yaml\Yaml;
 use \Reef\Components\Traits\Hidable\HidableComponentInterface;
 use \Reef\Components\Traits\Hidable\HidableComponentTrait;
+use \Reef\Mustache\FilesystemLoader;
 
 /**
  * A component describes the appearance and behaviour of a specific element that can be used
@@ -62,7 +64,7 @@ abstract class Component implements HidableComponentInterface {
 	
 	/**
 	 * Cached result of supportedLayouts() (defaults to -1 for 'not initialized')
-	 * @type string[]
+	 * @type string[]|int
 	 */
 	private $a_supportedLayouts = -1;
 	
@@ -288,7 +290,7 @@ abstract class Component implements HidableComponentInterface {
 			if(isset($Component->a_customLayoutDirs[$s_layout])) {
 				foreach($Component->a_customLayoutDirs[$s_layout] as $a_customLayout) {
 					if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_file.'.mustache')) {
-						$this->a_filesystemLoaders[$s_layout][$s_file] = new \Reef\Mustache\FilesystemLoader($this->Reef, $a_customLayout['template_dir'], ['default_sub_dir' => $a_customLayout['default_sub_dir']??'']);
+						$this->a_filesystemLoaders[$s_layout][$s_file] = new FilesystemLoader($this->Reef, $a_customLayout['template_dir'], ['default_sub_dir' => $a_customLayout['default_sub_dir']??'']);
 						return $this->a_filesystemLoaders[$s_layout][$s_file];
 					}
 				}
@@ -493,7 +495,7 @@ abstract class Component implements HidableComponentInterface {
 	 * @param array $a_parentBasicFields
 	 * @param array $a_parentAdvancedFields
 	 * @param array $a_parentProps
-	 * @return [array, array, array] merged fields & props
+	 * @return array[] [array, array, array] merged fields & props
 	 */
 	private function mergeConfigurationFieldsProps($a_basicFields, $a_advancedFields, $a_props, $a_parentBasicFields, $a_parentAdvancedFields, $a_parentProps) {
 		
@@ -576,8 +578,8 @@ abstract class Component implements HidableComponentInterface {
 		// Merge new props
 		foreach($a_props as $a_prop) {
 			
-			$fn_rmBasic($a_field['name']);
-			$fn_rmAdv($a_field['name']);
+			$fn_rmBasic($a_prop['name']);
+			$fn_rmAdv($a_prop['name']);
 			
 			if(isset($a_parentPropsKeys[$a_prop['name']])) {
 				$a_returnProps[$a_parentPropsKeys[$a_prop['name']]] = $a_prop;

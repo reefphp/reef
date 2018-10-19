@@ -29,7 +29,7 @@ class PhpSession implements SessionInterface {
 	
 	/**
 	 * (Internal) Set the reef object
-	 * @param Reef $Reef
+	 * @param \Reef\Reef $Reef
 	 */
 	public function setReef($Reef) {
 		if(empty($this->s_rootKey)) {

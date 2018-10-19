@@ -89,7 +89,7 @@ abstract class FieldValue implements HidableFieldValueInterface {
 	 * Parse the value from a flat array created with toFlat()
 	 * @param scalar[] $a_flat The flat value array
 	 */
-	abstract public function fromFlat(?array $a_flat);
+	abstract public function fromFlat(array $a_flat);
 	
 	/**
 	 * Serialize the current value into a structured value

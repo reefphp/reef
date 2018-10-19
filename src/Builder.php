@@ -4,6 +4,7 @@ namespace Reef;
 
 use Symfony\Component\Yaml\Yaml;
 use \Reef\Form\Form;
+use \Reef\Form\TempForm;
 use \Reef\Form\AbstractStorableForm;
 use \Reef\Form\StoredForm;
 use \Reef\Form\TempStorableForm;
@@ -496,7 +497,7 @@ class Builder {
 	 * @param Component $Component The component to generate the form for
 	 * @param ?Field $Field The field to generate the form for, or null for a 'new' field
 	 * @param string $s_type Either 'basic' or 'advanced'
-	 * @return string The locale form html
+	 * @return array The locale form html for each locale
 	 */
 	private function generateLocaleForms(Component $Component, ?Field $Field, string $s_type) {
 		$a_locales = $this->Reef->getOption('locales');

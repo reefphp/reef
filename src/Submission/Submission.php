@@ -3,6 +3,7 @@
 namespace Reef\Submission;
 
 use \Reef\Form\Form;
+use \Reef\Components\FieldValue;
 use \Reef\Exception\OutOfBoundsException;
 
 /**

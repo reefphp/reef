@@ -82,7 +82,7 @@ class ConditionValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$this->s_value = ($a_flat[0]??$this->getDefault());
 		$this->a_errors = null;
 	}

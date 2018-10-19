@@ -113,7 +113,7 @@ class SubmissionOverview {
 	 * Get submission values in a 2D generator
 	 * @param int $i_offset Offset row. Defaults to 0 for first row
 	 * @param int $i_num Rows to retrieve. Defaults to -1 for 'all rows'
-	 * @return Generator
+	 * @return \Generator
 	 */
 	public function getGenerator(int $i_offset = 0, int $i_num = -1) : iterable {
 		$b_callback = is_callable($this->a_config['callback_row']);

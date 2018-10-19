@@ -2,6 +2,7 @@
 
 namespace Reef;
 
+use \Reef\Form\Form;
 use \Reef\Submission\Submission;
 use \Reef\Exception\ConditionException;
 

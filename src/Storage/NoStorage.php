@@ -40,6 +40,7 @@ class NoStorage implements Storage {
 	 * @inherit
 	 */
 	public function generator(int $i_offset = 0, int $i_num = -1) : iterable {
+		return new \EmptyIterator();
 	}
 	
 	/**

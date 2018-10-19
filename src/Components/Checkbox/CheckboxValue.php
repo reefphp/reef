@@ -67,7 +67,7 @@ class CheckboxValue extends FieldValue implements RequiredFieldValueInterface {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$this->b_value = (bool)($a_flat[0]??$this->Field->getDeclaration()['default']??false);
 		$this->a_errors = null;
 	}
@@ -114,6 +114,11 @@ class CheckboxValue extends FieldValue implements RequiredFieldValueInterface {
 				
 			case 'is not checked':
 				return !$this->b_value;
+			
+			// @codeCoverageIgnoreStart
+			default:
+				throw new \Reef\Exception\ConditionException("Invalid operator");
+			// @codeCoverageIgnoreEnd
 		}
 	}
 }

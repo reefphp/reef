@@ -30,7 +30,7 @@ abstract class Extension {
 	
 	/**
 	 * Cached result of supportedLayouts() (defaults to -1 for 'not initialized')
-	 * @type string[]
+	 * @type string[]|int
 	 */
 	private $a_supportedLayouts = -1;
 	

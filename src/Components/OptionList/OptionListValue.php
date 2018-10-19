@@ -132,7 +132,7 @@ class OptionListValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$this->a_value = json_decode($a_flat[0]??'[]', true);
 		$this->a_errors = null;
 	}

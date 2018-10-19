@@ -257,6 +257,7 @@ abstract class Assets {
 		$b_compile = false;
 		if(!$Cache->has($s_cacheKey)) {
 			$b_compile = true;
+			$a_cache = null;
 		}
 		else {
 			$a_cache = $Cache->get($s_cacheKey);

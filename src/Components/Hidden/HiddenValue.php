@@ -57,7 +57,7 @@ class HiddenValue extends FieldValue {
 	/**
 	 * @inherit
 	 */
-	public function fromFlat(?array $a_flat) {
+	public function fromFlat(array $a_flat) {
 		$this->a_errors = null;
 	}
 	
