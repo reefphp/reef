@@ -33,15 +33,17 @@ abstract class Assets {
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
+				$s_path = htmlspecialchars($a_asset['path'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 				if(isset($a_asset['integrity'])) {
-					$s_html .= '<link href="'.$a_asset['path'].'" rel="stylesheet" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous">'.PHP_EOL;
+					$s_html .= '<link href="'.$s_path.'" rel="stylesheet" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous">'.PHP_EOL;
 				}
 				else {
-					$s_html .= '<link href="'.$a_asset['path'].'" rel="stylesheet">'.PHP_EOL;
+					$s_html .= '<link href="'.$s_path.'" rel="stylesheet">'.PHP_EOL;
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_html .= '<link href="'.str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')).'" rel="stylesheet">'.PHP_EOL;
+				$s_path = htmlspecialchars(str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+				$s_html .= '<link href="'.$s_path.'" rel="stylesheet">'.PHP_EOL;
 			}
 		}
 		return $s_html;
@@ -58,15 +60,17 @@ abstract class Assets {
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
+				$s_path = htmlspecialchars($a_asset['path'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 				if(isset($a_asset['integrity'])) {
-					$s_html .= '<script src="'.$a_asset['path'].'" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous"></script>'.PHP_EOL;
+					$s_html .= '<script src="'.$s_path.'" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous"></script>'.PHP_EOL;
 				}
 				else {
-					$s_html .= '<script src="'.$a_asset['path'].'"></script>'.PHP_EOL;
+					$s_html .= '<script src="'.$s_path.'"></script>'.PHP_EOL;
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_html .= '<script src="'.str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')).'"></script>'.PHP_EOL;
+				$s_path = htmlspecialchars(str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+				$s_html .= '<script src="'.$s_path.'"></script>'.PHP_EOL;
 			}
 		}
 		return $s_html;
