@@ -17,7 +17,8 @@ else {
 	$DB_PASS = 'reef_test';
 }
 
-$_reef_PDO = new \PDO("mysql:dbname=".$DB_NAME.";host=".$DB_HOST, $DB_USER, $DB_PASS);
+$_reef_PDO = new \PDO("mysql:dbname=".$DB_NAME.";host=".$DB_HOST.";charset=utf8mb4", $DB_USER, $DB_PASS);
+$_reef_PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 $_reef_setup = new \Reef\ReefSetup(
 	\Reef\Storage\PDOStorageFactory::createFactory($_reef_PDO),

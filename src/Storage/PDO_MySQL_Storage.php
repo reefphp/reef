@@ -116,7 +116,7 @@ class PDO_MySQL_Storage extends PDOStorage {
 					$s_columnType = 'LONGTEXT';
 				}
 				
-				$s_columnType .= ' CHARACTER SET utf8mb4';
+				$s_columnType .= ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
 				
 				$s_columnType .= ' NULL';
 				

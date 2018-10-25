@@ -24,6 +24,7 @@ final class FilesystemTest extends TestCase {
 		}
 		
 		$PDO = new \PDO("sqlite:".static::FILES_DIR."/test.db");
+		$PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		
 		// Specify which components we want to use
 		$Setup = new \Reef\ReefSetup(

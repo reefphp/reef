@@ -54,7 +54,12 @@ abstract class PDOStorageFactory implements StorageFactory {
 	 */
 	public function __construct(PDO $PDO) {
 		$this->PDO = $PDO;
-		$this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		
+		if($this->PDO->getAttribute(PDO::ATTR_ERRMODE) != PDO::ERRMODE_EXCEPTION) {
+			// @codeCoverageIgnoreStart
+			throw new InvalidArgumentException("PDO attribute PDO::ATTR_ERRMODE should be set to PDO::ERRMODE_EXCEPTION");
+			// @codeCoverageIgnoreEnd
+		}
 		
 		if($this->PDO->getAttribute(PDO::ATTR_DRIVER_NAME) != $this->getPDODriverName()) {
 			// @codeCoverageIgnoreStart

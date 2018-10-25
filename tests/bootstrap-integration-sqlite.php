@@ -5,6 +5,7 @@ session_start();
 require_once(__DIR__ . '/../vendor/autoload.php');
 
 $_reef_PDO = new \PDO("sqlite::memory:");
+$_reef_PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 $_reef_setup = new \Reef\ReefSetup(
 	\Reef\Storage\PDOStorageFactory::createFactory($_reef_PDO),
