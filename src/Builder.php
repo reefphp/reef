@@ -20,6 +20,10 @@ use \Reef\Exception\ValidationException;
  */
 class Builder {
 	
+	/**
+	 * All categories to display in the builder. Note that in particular, 'internal' is NOT one of these.
+	 * @type string[]
+	 */
 	const CATEGORIES = [
 		'static',
 		'text',
@@ -130,7 +134,7 @@ class Builder {
 			$a_configuration = $Component->getConfiguration();
 			
 			if(!isset($a_categories[$a_configuration['category']])) {
-				throw new LogicException('Category "'.$a_configuration['category'].'" does not exist.');
+				throw new LogicException('Components in the category "'.$a_configuration['category'].'" cannot be used in the builder');
 			}
 			
 			$a_categories[$a_configuration['category']]['components'][] = [
