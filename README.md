@@ -6,9 +6,9 @@
 
 [User's guide](https://reef-docs.readthedocs.io/en/latest/users_guide/) - [Components reference](https://reef-docs.readthedocs.io/en/latest/components/) - [Integration guide](https://reef-docs.readthedocs.io/en/latest/integration_guide/) - [Contribution guide](https://reef-docs.readthedocs.io/en/latest/contribution_guide/)
 
-[![Build Status](https://scrutinizer-ci.com/gl/reef/reefphp/reef/badges/build.png?b=master&s=1ed9895e06ecd232d9b6767b1b9c1a15e95f8009)](https://scrutinizer-ci.com/gl/reef/reefphp/reef/build-status/master)
-[![Code Coverage](https://scrutinizer-ci.com/gl/reef/reefphp/reef/badges/coverage.png?b=master&s=4d447e9d0bded47f8277ca641282d779ffd8f608)](https://scrutinizer-ci.com/gl/reef/reefphp/reef/?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/gl/reef/reefphp/reef/badges/quality-score.png?b=master&s=37266bc9703413079368bf90001fb36bc6d18b22)](https://scrutinizer-ci.com/gl/reef/reefphp/reef/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/reefphp/reef/badges/build.png?b=master)](https://scrutinizer-ci.com/g/reefphp/reef/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/reefphp/reef/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/reefphp/reef/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/reefphp/reef/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/reefphp/reef/?branch=master)
 
 ## Features
 
