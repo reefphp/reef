@@ -120,7 +120,7 @@ class ReefAssets extends Assets {
 		
 		$s_filename = $s_dir . $a_assets[$s_assetName];
 		
-		if(!file_exists($s_filename)) {
+		if(!is_file($s_filename)) {
 			throw new DomainException("Unknown asset");
 		}
 		

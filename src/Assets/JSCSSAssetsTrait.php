@@ -69,7 +69,7 @@ trait JSCSSAssetsTrait {
 			foreach(['form', 'submission', 'builder', 'all'] as $s_view) {
 				// Main file in src/ directory
 				$s_path = $s_view . '.' . $s_type;
-				if(file_exists($s_dir . $s_path)) {
+				if(is_file($s_dir . $s_path)) {
 					$a_files[] = [
 						'type' => 'local',
 						'path' => $s_path,
@@ -79,7 +79,7 @@ trait JSCSSAssetsTrait {
 				
 				// Main file in type directory
 				$s_path = $s_type . '/' . $s_view . '.' . $s_type;
-				if(file_exists($s_dir . $s_path)) {
+				if(is_file($s_dir . $s_path)) {
 					$a_files[] = [
 						'type' => 'local',
 						'path' => $s_path,
@@ -93,7 +93,7 @@ trait JSCSSAssetsTrait {
 			foreach(['form', 'submission', 'builder', 'all'] as $s_view) {
 				foreach($a_layouts as $s_layoutName => $Layout) {
 					$s_path = $s_type . '/' . $s_layoutName . '-' . $s_view . '.' . $s_type;
-					if(file_exists($s_dir . $s_path)) {
+					if(is_file($s_dir . $s_path)) {
 						$a_files[] = [
 							'type' => 'local',
 							'path' => $s_path,

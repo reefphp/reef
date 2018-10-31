@@ -189,7 +189,7 @@ abstract class Extension {
 		// Resolve custom layouts
 		if(isset($this->a_customLayoutDirs[$s_layoutName])) {
 			foreach($this->a_customLayoutDirs[$s_layoutName] as $a_customLayout) {
-				if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache')) {
+				if(is_file($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache')) {
 					$Loader = new \Reef\Mustache\FilesystemLoader($Reef, $a_customLayout['template_dir']);
 					return $Loader->load(($a_customLayout['default_sub_dir']??'') . '/' . $s_hookName.'.mustache');
 				}
@@ -200,10 +200,10 @@ abstract class Extension {
 		$s_templateDir = static::getDir().'/';
 		$s_viewfile = 'view/'.$s_layoutName.'/'.$s_hookName.'.mustache';
 		
-		if(!file_exists($s_templateDir . $s_viewfile)) {
+		if(!is_file($s_templateDir . $s_viewfile)) {
 			$s_viewfile = 'view/default/'.$s_hookName.'.mustache';
 			
-			if(!file_exists($s_templateDir . $s_viewfile)) {
+			if(!is_file($s_templateDir . $s_viewfile)) {
 				return '';
 			}
 		}

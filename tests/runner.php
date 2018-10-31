@@ -31,7 +31,7 @@ for($i=1; $i<$argc; $i++) {
 		continue;
 	}
 	
-	if(file_exists($s_baseDir.'tests/phpunit-'.$s_arg.'.xml')) {
+	if(is_file($s_baseDir.'tests/phpunit-'.$s_arg.'.xml')) {
 		$a_configFiles[] = 'phpunit-'.$s_arg.'.xml';
 	}
 }

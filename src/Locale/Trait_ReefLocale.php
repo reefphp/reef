@@ -24,7 +24,7 @@ trait Trait_ReefLocale {
 	protected function fetchBaseLocale($s_locale) {
 		return $this->cache('locale.reef.base.'.$s_locale, function() use($s_locale) {
 			
-			if(file_exists(static::getDir().'locale/'.$s_locale.'.yml')) {
+			if(is_file(static::getDir().'locale/'.$s_locale.'.yml')) {
 				return Yaml::parseFile(static::getDir().'locale/'.$s_locale.'.yml')??[];
 			}
 			

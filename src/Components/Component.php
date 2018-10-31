@@ -289,7 +289,7 @@ abstract class Component implements HidableComponentInterface {
 		do {
 			if(isset($Component->a_customLayoutDirs[$s_layout])) {
 				foreach($Component->a_customLayoutDirs[$s_layout] as $a_customLayout) {
-					if(file_exists($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_file.'.mustache')) {
+					if(is_file($a_customLayout['template_dir'] . '/' . ($a_customLayout['default_sub_dir']??'') . '/' . $s_file.'.mustache')) {
 						$this->a_filesystemLoaders[$s_layout][$s_file] = new FilesystemLoader($this->Reef, $a_customLayout['template_dir'], ['default_sub_dir' => $a_customLayout['default_sub_dir']??'']);
 						return $this->a_filesystemLoaders[$s_layout][$s_file];
 					}
@@ -303,7 +303,7 @@ abstract class Component implements HidableComponentInterface {
 		
 		$a_classes = $this->getInheritanceList();
 		foreach($a_classes as $s_class) {
-			if(file_exists($s_class::getDir() . $s_viewfile)) {
+			if(is_file($s_class::getDir() . $s_viewfile)) {
 				$s_templateDir = $s_class::getDir();
 				break;
 			}

@@ -32,7 +32,7 @@ trait Trait_ComponentLocale {
 	protected function fetchBaseLocale($s_locale) {
 		return $this->getReef()->cache('locale.component.base.'.static::COMPONENT_NAME.'.'.$s_locale, function() use($s_locale) {
 			
-			if(file_exists(static::getDir().'locale/'.$s_locale.'.yml')) {
+			if(is_file(static::getDir().'locale/'.$s_locale.'.yml')) {
 				return Yaml::parseFile(static::getDir().'locale/'.$s_locale.'.yml')??[];
 			}
 			

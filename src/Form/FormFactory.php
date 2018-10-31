@@ -53,7 +53,7 @@ abstract class FormFactory {
 	 * @return Form
 	 */
 	public function createFromFile(string $s_filename) {
-		if(!file_exists($s_filename) || !is_readable($s_filename)) {
+		if(!is_file($s_filename) || !is_readable($s_filename)) {
 			throw new ResourceNotFoundException('Could not find file "'.$s_filename.'".');
 		}
 		
