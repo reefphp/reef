@@ -338,37 +338,49 @@ class ConditionEvaluator {
 			return array_pop($this->a_tokenStack);
 		}
 		
+		// Skip whitespace
 		$s_token = '';
 		for(; $this->i_cursor < $this->i_length && strpos(self::WHITESPACE, $this->s_condition[$this->i_cursor]) !== false; $this->i_cursor++);
 		
+		// Return empty string if we reached the end (the end consisted of whitespace)
 		if($this->i_cursor >= $this->i_length) {
 			return $s_token;
 		}
 		
-		if($this->s_condition[$this->i_cursor] == '(' || $this->s_condition[$this->i_cursor] == ')') {
-			return $this->s_condition[$this->i_cursor++];
+		// Parentheses are tokens, return them irrespective of possible whitespace after them
+		$s_char = $this->s_condition[$this->i_cursor];
+		if($s_char == '(' || $s_char == ')') {
+			$this->i_cursor++;
+			return $s_char;
 		}
 		
+		// Detect whether the current token is delimited by quotes
 		$s_find = null;
-		if($this->s_condition[$this->i_cursor] == '"' || $this->s_condition[$this->i_cursor] == "'") {
-			$s_find = $this->s_condition[$this->i_cursor];
-			$s_token .= $s_find;
+		if($s_char == '"' || $s_char == "'") {
+			$s_find = $s_char;
+			$s_token .= $s_char;
 			$this->i_cursor++;
 		}
 		
-		for(; $this->i_cursor < $this->i_length && ($s_find !== null || strpos(self::WHITESPACE.')', $this->s_condition[$this->i_cursor]) === false); $this->i_cursor++) {
-			$s_token .= $this->s_condition[$this->i_cursor];
+		// Collect the token, consisting of all characters until we arrive at whitespace or the closing parentheses, or the $s_find character if applicable
+		while($this->i_cursor < $this->i_length && ($s_find !== null || strpos(self::WHITESPACE.')', $this->s_condition[$this->i_cursor]) === false)) {
 			
-			if($s_find !== null && $this->s_condition[$this->i_cursor] == $s_find) {
-				for($i=strlen($s_token)-2; $i>=0; $i--) {
-					if(substr($s_token, $i, 1) != '\\') {
+			// Obtain the next character. Note we use mb_substr() to find the next UTF-8 character instead of the next byte
+			$s_char = mb_substr(substr($this->s_condition, $this->i_cursor, 6), 0, 1);
+			$s_token .= $s_char;
+			$this->i_cursor += strlen($s_char);
+			
+			// If we found the $s_find character, determine whether it is escaped. Stop if not escaped
+			if($s_find !== null && $s_char == $s_find) {
+				$i_numBackslashes = 0;
+				for($i=mb_strlen($s_token)-2; $i>=0; $i--) {
+					if(mb_substr($s_token, $i, 1) != '\\') {
 						break;
 					}
+					$i_numBackslashes++;
 				}
 				
-				$i_numBackslashes = strlen($s_token)-2 - $i;
 				if($i_numBackslashes % 2 == 0) {
-					$this->i_cursor++;
 					break;
 				}
 			}

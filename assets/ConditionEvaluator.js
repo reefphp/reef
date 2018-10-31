@@ -243,39 +243,51 @@ var ReefConditionEvaluator = (function() {
 			return this.a_tokenStack.pop();
 		}
 		
-		var s_token, s_find, i, i_numBackslashes;
+		var s_token, s_char, s_find, i, i_numBackslashes;
 		
+		// Skip whitespace
 		s_token = '';
 		for(; this.i_cursor < this.i_length && this.WHITESPACE.indexOf(this.s_condition[this.i_cursor]) > -1; this.i_cursor++);
 		
+		// Return empty string if we reached the end (the end consisted of whitespace)
 		if(this.i_cursor >= this.i_length) {
 			return s_token;
 		}
 		
-		if(this.s_condition[this.i_cursor] == '(' || this.s_condition[this.i_cursor] == ')') {
-			return this.s_condition[this.i_cursor++];
+		// Parentheses are tokens, return them irrespective of possible whitespace after them
+		s_char = this.s_condition[this.i_cursor];
+		if(s_char == '(' || s_char == ')') {
+			this.i_cursor++;
+			return s_char;
 		}
 		
+		// Detect whether the current token is delimited by quotes
 		s_find = null;
-		if(this.s_condition[this.i_cursor] == '"' || this.s_condition[this.i_cursor] == "'") {
-			s_find = this.s_condition[this.i_cursor];
-			s_token += s_find;
+		if(s_char == '"' || s_char == "'") {
+			s_find = s_char;
+			s_token += s_char;
 			this.i_cursor++;
 		}
 		
-		for(; this.i_cursor < this.i_length && (s_find !== null || (this.WHITESPACE+')').indexOf(this.s_condition[this.i_cursor]) == -1); this.i_cursor++) {
-			s_token += this.s_condition[this.i_cursor];
+		// Collect the token, consisting of all characters until we arrive at whitespace or the closing parentheses, or the s_find character if applicable
+		while(this.i_cursor < this.i_length && (s_find !== null || (this.WHITESPACE+')').indexOf(this.s_condition[this.i_cursor]) == -1)) {
 			
-			if(s_find !== null && this.s_condition[this.i_cursor] == s_find) {
+			// Obtain the next character
+			s_char = this.s_condition[this.i_cursor];
+			s_token += s_char;
+			this.i_cursor++
+			
+			// If we found the s_find character, determine whether it is escaped. Stop if not escaped
+			if(s_find !== null && s_char == s_find) {
+				i_numBackslashes = 0;
 				for(i=s_token.length-2; i>=0; i--) {
 					if(s_token.substr(i, 1) != '\\') {
 						break;
 					}
+					i_numBackslashes++;
 				}
 				
-				i_numBackslashes = s_token.length-2 - i;
 				if(i_numBackslashes % 2 == 0) {
-					this.i_cursor++;
 					break;
 				}
 			}
