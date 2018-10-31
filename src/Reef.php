@@ -156,6 +156,17 @@ class Reef {
 			}
 		}
 		
+		// Validate locales
+		foreach(array_merge($this->a_options['locales'], [$this->a_options['default_locale']]) as $s_locale) {
+			if($s_locale == '_no_locale') {
+				continue;
+			}
+			
+			if(!preg_match('/'.str_replace('/', '\\/', \Reef\Reef::NAME_REGEXP).'/i', $s_locale)) {
+				throw new \Reef\Exception\InvalidArgumentException("Invalid locale '".$s_locale."'");
+			}
+		}
+		
 		$this->ReefSetup = $ReefSetup;
 		$this->DataStore = new DataStore($this);
 		$this->ExtensionCollection = new ExtensionCollection($this);

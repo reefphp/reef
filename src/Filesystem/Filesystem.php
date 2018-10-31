@@ -528,7 +528,7 @@ class Filesystem {
 			throw new FilesystemException($this->Reef->trans('upload_error_size'));
 		}
 		
-		$s_cleanName = substr(preg_replace('[^a-zA-Z0-9-_\.]', '', $a_upload['name']), -255);
+		$s_cleanName = substr(preg_replace('/[^a-zA-Z0-9\-_\.]/', '', $a_upload['name']), -255);
 		
 		do {
 			$s_destPath = $s_dir.\Reef\unique_id().'_'.$s_cleanName;
@@ -559,6 +559,10 @@ class Filesystem {
 			throw new FilesystemException('Error: received invalid empty filename');
 		}
 		
+		if(!is_file($s_sourceFile)) {
+			throw new FilesystemException('Error: could not find file "'.$s_sourceFile.'"');
+		}
+		
 		$s_mimetype = $this->getMimeType($s_sourceFile);
 		$s_extension = $this->getExtension($s_sourceFile);
 		
@@ -583,7 +587,7 @@ class Filesystem {
 			$s_sourceFileName = substr($s_sourceFileName, $i_pos+1);
 		}
 		
-		$s_cleanName = substr(preg_replace('[^a-zA-Z0-9-_\.]', '', $s_sourceFileName), -255);
+		$s_cleanName = substr(preg_replace('/[^a-zA-Z0-9\-_\.]/', '', $s_sourceFileName), -255);
 		
 		do {
 			$s_destPath = $s_dir.\Reef\unique_id().'_'.$s_cleanName;
