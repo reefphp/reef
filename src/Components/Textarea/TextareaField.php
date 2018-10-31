@@ -83,13 +83,15 @@ class TextareaField extends Field implements RequiredFieldInterface {
 		$NewField = $a_data['new_field'];
 		$s_column = $a_data['old_columns'][0];
 		
-		switch($a_data['storageFactoryName']) {
-			case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
-			case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
-				if($this->getMaxLength() > $NewField->getMaxLength()) {
+		if($this->getMaxLength() > $NewField->getMaxLength()) {
+			switch($a_data['storageFactoryName']) {
+				case \Reef\Storage\PDO_SQLite_StorageFactory::getName():
 					$a_data['content_updater']('UPDATE '.$a_data['table'].' SET '.$s_column.' = SUBSTR('.$s_column.', 1, '.$NewField->getMaxLength().') WHERE LENGTH('.$s_column.') > '.$NewField->getMaxLength().' ');
-				}
-			break;
+				break;
+				case \Reef\Storage\PDO_MySQL_StorageFactory::getName():
+					$a_data['content_updater']('UPDATE '.$a_data['table'].' SET '.$s_column.' = SUBSTR('.$s_column.', 1, '.$NewField->getMaxLength().') WHERE CHAR_LENGTH('.$s_column.') > '.$NewField->getMaxLength().' ');
+				break;
+			}
 		}
 	}
 }

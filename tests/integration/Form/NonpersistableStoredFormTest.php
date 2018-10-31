@@ -144,6 +144,8 @@ final class NonpersistableStoredFormTest extends TestCase {
 	}
 	
 	public static function tearDownAfterClass() {
-		static::$Form->delete();
+		if(!is_null(static::$Form)) {
+			static::$Form->delete();
+		}
 	}
 }

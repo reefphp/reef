@@ -25,7 +25,7 @@ class TextLineValue extends FieldValue implements RequiredFieldValueInterface {
 			return false;
 		}
 		
-		if(strlen($s_value) > $this->Field->getMaxLength()) {
+		if(mb_strlen($s_value) > $this->Field->getMaxLength()) {
 			$this->a_errors[] = $this->Field->trans('error_value_too_long');
 			return false;
 		}
@@ -151,10 +151,10 @@ class TextLineValue extends FieldValue implements RequiredFieldValueInterface {
 				return trim($this->s_value) !== '';
 				
 			case 'is longer than':
-				return strlen($this->s_value) > $m_operand;
+				return mb_strlen($this->s_value) > $m_operand;
 				
 			case 'is shorter than':
-				return strlen($this->s_value) < $m_operand;
+				return mb_strlen($this->s_value) < $m_operand;
 			
 			// @codeCoverageIgnoreStart
 			default:

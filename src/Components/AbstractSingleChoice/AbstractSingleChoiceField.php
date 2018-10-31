@@ -13,7 +13,7 @@ abstract class AbstractSingleChoiceField extends Field {
 	public function getFlatStructure() : array {
 		$i_length = 1;
 		if(count($this->a_declaration['options']) > 0) {
-			$i_length = max(array_map('strlen', array_column($this->a_declaration['options'], 'name')));
+			$i_length = max(array_map('mb_strlen', array_column($this->a_declaration['options'], 'name')));
 		}
 		
 		return [[
