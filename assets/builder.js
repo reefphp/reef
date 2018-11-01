@@ -398,7 +398,7 @@ var ReefBuilder = (function() {
 		// Gather all data
 		var builder_data = {
 			'definition' : this.definitionForm.getData(),
-			'fields' : fields,
+			'fields' : JSON.stringify(fields),
 			'allow_dataloss' : 'no'
 		};
 		

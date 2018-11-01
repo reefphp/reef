@@ -255,7 +255,14 @@ class Builder {
 		// Validate all fields
 		$a_submissions = [];
 		
-		foreach($a_data['fields']??[] as $i_index => $a_field) {
+		$a_fields = json_decode($a_data['fields']??'[]', true);
+		if(!is_array($a_fields)) {
+			throw new ValidationException([
+				-1 => ['Corrupt input data!'],
+			]);
+		}
+		
+		foreach($a_fields as $i_index => $a_field) {
 			$Component = $Setup->getComponent($a_field['component']);
 			
 			// Validate declaration
@@ -400,6 +407,7 @@ class Builder {
 			$a_return = [
 				'errors' => $e->getErrors(),
 			];
+			$DefinitionSubmission = null;
 		}
 		
 		$a_return['result'] = !empty($a_return['result']);
