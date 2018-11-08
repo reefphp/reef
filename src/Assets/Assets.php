@@ -33,7 +33,7 @@ abstract class Assets {
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
-				$s_path = htmlspecialchars($a_asset['path'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+				$s_path = \Reef\escapeHTML($a_asset['path']);
 				if(isset($a_asset['integrity'])) {
 					$s_html .= '<link href="'.$s_path.'" rel="stylesheet" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous">'.PHP_EOL;
 				}
@@ -42,7 +42,7 @@ abstract class Assets {
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_path = htmlspecialchars(str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+				$s_path = \Reef\escapeHTML(str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')));
 				$s_html .= '<link href="'.$s_path.'" rel="stylesheet">'.PHP_EOL;
 			}
 		}
@@ -60,7 +60,7 @@ abstract class Assets {
 		$s_html = '';
 		foreach($a_assets as $a_asset) {
 			if($a_asset['type'] == 'remote') {
-				$s_path = htmlspecialchars($a_asset['path'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+				$s_path = \Reef\escapeHTML($a_asset['path']);
 				if(isset($a_asset['integrity'])) {
 					$s_html .= '<script src="'.$s_path.'" integrity="'.$a_asset['integrity'].'" crossorigin="anonymous"></script>'.PHP_EOL;
 				}
@@ -69,7 +69,7 @@ abstract class Assets {
 				}
 			}
 			else if($a_asset['type'] == 'local') {
-				$s_path = htmlspecialchars(str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+				$s_path = \Reef\escapeHTML(str_replace('[[request_hash]]', $a_asset['hash'], $this->getReef()->getOption('internal_request_url')));
 				$s_html .= '<script src="'.$s_path.'"></script>'.PHP_EOL;
 			}
 		}

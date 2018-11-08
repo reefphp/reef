@@ -22,6 +22,15 @@ function unique_id() {
 }
 
 /**
+ * Escape a variable to use in HTML context
+ * @param string $s_string The string to escape
+ * @return string The escaped string
+ */
+function escapeHTML(string $s_string) {
+	return htmlspecialchars($s_string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/**
  * Return the first key of an array without resetting its pointer
  * @param array $a_array The array
  * @return mixed The first key

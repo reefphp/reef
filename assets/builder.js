@@ -648,14 +648,18 @@ var ReefBuilder = (function() {
 			component = function(){};
 		}
 		
+		var fieldVars;
 		if(component.viewVars) {
-			fieldConfig = component.viewVars(fieldConfig);
+			fieldVars = component.viewVars(fieldConfig);
+		}
+		else {
+			fieldVars = fieldConfig;
 		}
 		
 		if(component.getLanguageReplacements) {
-			var replacements = component.getLanguageReplacements(fieldConfig);
-			for(var i in fieldConfig.locale) {
-				fieldConfig.locale[i] = fieldConfig.locale[i].replace(/\[\[([^\[\]]+)\]\]/g, function(match, key) {
+			var replacements = component.getLanguageReplacements(fieldVars);
+			for(var i in fieldVars.locale) {
+				fieldVars.locale[i] = fieldVars.locale[i].replace(/\[\[([^\[\]]+)\]\]/g, function(match, key) {
 					var parts = key.split('.');
 					var repl = replacements;
 					for(var j in parts) {
@@ -671,20 +675,28 @@ var ReefBuilder = (function() {
 			}
 		}
 		
-		delete fieldConfig.visible;
-		if(typeof fieldConfig.required !== 'undefined') {
+		// Standard classes/attributes
+		fieldVars.field_classes = CSSPRFX+'field';
+		
+		fieldVars.field_attributes = 'data-'+CSSPRFX+'type="'+ReefUtil.escapeHTML(componentName)+'"';
+		if(typeof fieldConfig.name !== 'undefined') {
+			fieldVars.field_attributes += ' data-'+CSSPRFX+'name="'+ReefUtil.escapeHTML(fieldConfig.name)+'"';
+		}
+		
+		delete fieldVars.visible;
+		if(typeof fieldVars.required !== 'undefined') {
 			try {
 				// Only try to set the 'required-if' data attribute if it is a valid condition. If it is an invalid
 				// condition, this will throw an exception
-				var is_required = ReefConditionEvaluator.evaluate(reef, fieldConfig.required);
-				fieldConfig.required = 'data-required-if="'+(fieldConfig.required.replace(/&/g, '&amp;').replace(/"/g, '&quot;'))+'"';
+				var is_required = ReefConditionEvaluator.evaluate(reef, fieldVars.required);
+				fieldVars.required = 'data-required-if="'+ReefUtil.escapeHTML(fieldVars.required)+'"';
 				if(is_required) {
-					fieldConfig.field_classes = (fieldConfig.field_classes||'') + ' '+CSSPRFX+'is-required ';
+					fieldVars.field_classes += ' '+CSSPRFX+'is-required ';
 				}
 			}
 			catch(e) {
 				// Otherwise, neglect the required setting for this preview
-				delete fieldConfig.required;
+				delete fieldVars.required;
 			}
 		}
 		
@@ -692,7 +704,7 @@ var ReefBuilder = (function() {
 		vars.form_idpfx = unique_id();
 		vars.CSSPRFX = CSSPRFX+'';
 		vars.main_var = 'preview';
-		vars.field = fieldConfig;
+		vars.field = fieldVars;
 		vars.internalRequest = function() {
 			return reef.internalRequestHelper();
 		};

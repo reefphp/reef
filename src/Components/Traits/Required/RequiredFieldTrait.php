@@ -31,17 +31,17 @@ trait RequiredFieldTrait {
 			return [];
 		}
 		
-		$s_required = 'data-required-if="'.htmlspecialchars($this->a_declaration['required']).'"';
-		$s_requiredFieldClass = '';
+		$s_required = 'data-required-if="'.\Reef\escapeHTML($this->a_declaration['required']).'"';
+		$s_classes = '';
 		
 		if($this->is_required($Value->getSubmission())) {
 			$s_required .= ' required';
-			$s_requiredFieldClass = ' ' . $this->getForm()->getReef()->getOption('css_prefix') . 'is-required ';
+			$s_classes = ' ' . $this->getForm()->getReef()->getOption('css_prefix') . 'is-required ';
 		}
 		
 		return [
 			'required' => $s_required,
-			'field_classes' => $s_requiredFieldClass,
+			'field_classes' => $s_classes,
 		];
 	}
 	

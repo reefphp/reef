@@ -31,14 +31,14 @@ trait HidableFieldTrait {
 			return [];
 		}
 		
-		$s_visible = 'data-visible-if="'.htmlspecialchars($this->a_declaration['visible']).'"';
+		$s_attributes = 'data-visible-if="'.\Reef\escapeHTML($this->a_declaration['visible']).'"';
 		
 		if(!$this->is_visible($Value->getSubmission())) {
-			$s_visible .= ' data-'.$this->getForm()->getReef()->getOption('css_prefix').'hidable-hidden="1"';
+			$s_attributes .= ' data-'.$this->getForm()->getReef()->getOption('css_prefix').'hidable-hidden="1"';
 		}
 		
 		return [
-			'visible' => $s_visible,
+			'field_attributes' => $s_attributes,
 		];
 	}
 	

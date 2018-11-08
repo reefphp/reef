@@ -9,6 +9,28 @@ if(typeof Reef === 'undefined') {
 		},
 		
 		/**
+		 * Escape a variable to use in HTML context
+		 * @param string string The string to escape
+		 * @return string The escaped string
+		 */
+		escapeHTML : function(string) {
+			var entityMap = {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#39;',
+				'/': '&#x2F;',
+				'`': '&#x60;',
+				'=': '&#x3D;'
+			};
+			
+			return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+				return entityMap[s];
+			});
+		},
+		
+		/**
 		 * Convert a matcher to a regular expression.
 		 * `*`, `?` and `_` are mapped to `.*`, `.?` and `.`, respectively
 		 * This function has an equivalent in php

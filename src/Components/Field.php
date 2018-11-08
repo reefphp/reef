@@ -247,7 +247,18 @@ abstract class Field implements HidableFieldInterface {
 	 * @return array The template variables
 	 */
 	public function view_form(FieldValue $Value, $a_options = []) : array {
+		$a_config = $this->getComponent()->getConfiguration();
 		$a_vars = $this->a_declaration;
+		
+		// Standard classes/attributes
+		$s_CSSPRFX = $this->getForm()->getReef()->getOption('css_prefix');
+		
+		$a_vars['field_classes'] = $s_CSSPRFX.'field';
+		
+		$a_vars['field_attributes'] = 'data-'.$s_CSSPRFX.'type="'.\Reef\escapeHTML($this->getComponent()::COMPONENT_NAME).'"';
+		if($a_config['category'] !== 'static') {
+			$a_vars['field_attributes'] .= ' data-'.$s_CSSPRFX.'name="'.\Reef\escapeHTML($this->a_declaration['name']).'"';
+		}
 		
 		// Merge generalized options
 		$a_vars = $this->mergeViewVars($a_vars, $this->view_form_hidable($Value));
@@ -258,6 +269,9 @@ abstract class Field implements HidableFieldInterface {
 		
 		$a_vars['errors'] = $Value->getErrors();
 		$a_vars['hasErrors'] = !empty($a_vars['errors']);
+		if($a_vars['hasErrors']) {
+			$a_vars['field_classes'] .= ' '.$s_CSSPRFX.'invalid';
+		}
 		
 		$a_vars['locale'] = $this->getLocale($a_options['locale']??null);
 		unset($a_vars['locales']);
@@ -272,7 +286,18 @@ abstract class Field implements HidableFieldInterface {
 	 * @return array The template variables
 	 */
 	public function view_submission(FieldValue $Value, $a_options = []) : array {
+		$a_config = $this->getComponent()->getConfiguration();
 		$a_vars = $this->a_declaration;
+		
+		// Standard classes/attributes
+		$s_CSSPRFX = $this->getForm()->getReef()->getOption('css_prefix');
+		
+		$a_vars['field_classes'] = $s_CSSPRFX.'field';
+		
+		$a_vars['field_attributes'] = 'data-'.$s_CSSPRFX.'type="'.\Reef\escapeHTML($this->getComponent()::COMPONENT_NAME).'"';
+		if($a_config['category'] !== 'static') {
+			$a_vars['field_attributes'] .= ' data-'.$s_CSSPRFX.'name="'.\Reef\escapeHTML($this->a_declaration['name']).'"';
+		}
 		
 		// Merge generalized options
 		$a_vars = $this->mergeViewVars($a_vars, $this->view_form_hidable($Value));
@@ -293,6 +318,10 @@ abstract class Field implements HidableFieldInterface {
 		if(array_key_exists('field_classes', $a_add)) {
 			$a_base['field_classes'] = ($a_base['field_classes']??'') . ' ' . $a_add['field_classes'];
 			unset($a_add['field_classes']);
+		}
+		if(array_key_exists('field_attributes', $a_add)) {
+			$a_base['field_attributes'] = ($a_base['field_attributes']??'') . ' ' . $a_add['field_attributes'];
+			unset($a_add['field_attributes']);
 		}
 		
 		$a_base = array_merge($a_base, $a_add);
