@@ -100,6 +100,7 @@ var ReefBuilder = (function() {
 		this.options = options || {};
 		this.options.submit_before = this.options.submit_before || $.noop;
 		this.options.submit_success = this.options.submit_success || $.noop;
+		this.options.submit_wrapper = this.options.submit_wrapper || null;
 		
 		this.selectedField = null;
 		this.submitting = false;
@@ -336,6 +337,39 @@ var ReefBuilder = (function() {
 	};
 	
 	ReefBuilder.prototype.submit = function(options) {
+		var self = this;
+		options = options || {};
+		
+		if(typeof(this.options.submit_wrapper) === 'function') {
+			// We have a wrapper function around submit that we should perform
+			this.options.submit_wrapper(function(moreOptions) {
+				// The wrapper may pass options, merge these
+				moreOptions = moreOptions || {};
+				$.each(moreOptions, function(opt) {
+					if(typeof(options[opt]) !== 'undefined' && opt.substr(0, 7) == 'submit_') {
+						var fn1 = options[opt];
+						var fn2 = moreOptions[opt];
+						options[opt] = function() {
+							fn1();
+							fn2();
+						};
+					}
+					else {
+						options[opt] = moreOptions[opt];
+					}
+				});
+				
+				// Perform the real submit
+				self.doSubmit(options);
+			});
+		}
+		else {
+			// No wrapper, immediately perform the real submit
+			this.doSubmit(options);
+		}
+	};
+	
+	ReefBuilder.prototype.doSubmit = function(options) {
 		var self = this;
 		
 		if(this.submitting) {

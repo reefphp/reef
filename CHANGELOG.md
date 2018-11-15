@@ -1,3 +1,7 @@
+## 0.3.0 (2018-11-15)
+
+- Add submit_wrapper option to JS builder
+
 ## 0.2.0 (2018-11-08)
 
 ### Second minor release
