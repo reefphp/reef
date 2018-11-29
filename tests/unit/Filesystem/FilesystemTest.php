@@ -47,6 +47,14 @@ final class FilesystemTest extends TestCase {
 		$this->assertInternalType('array', static::$Filesystem->getAllowedExtensions());
 	}
 	
+	public function testIsPermittedPathOnValidPath() {
+		$this->assertTrue(\Reef\Filesystem\Filesystem::isPermittedPath(__FILE__));
+	}
+	
+	public function testIsPermittedPathOnInvalidPath() {
+		$this->assertFalse(\Reef\Filesystem\Filesystem::isPermittedPath('phar://'.__FILE__));
+	}
+	
 	public function testAllowedExtensionSetters() {
 		$Setup = new \Reef\ReefSetup(
 			new \Reef\Storage\NoStorageFactory(),

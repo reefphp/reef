@@ -75,6 +75,16 @@ class Filesystem {
 	}
 	
 	/**
+	 * Check whether the given file path is allowed to be used: rejects any fopen wrapper.
+	 * In particular, this function rejects phar:// paths to block phar exploitation
+	 * @param string $s_path The file path to check
+	 * @return bool
+	 */
+	public static function isPermittedPath(string $s_path) {
+		return !preg_match('%^[a-z]+://%i', $s_path);
+	}
+	
+	/**
 	 * Set the list of allowed file types
 	 * @param array $a_types Array of mime types indexed by their extensions. Mime types value may be either a string or an array of strings
 	 */
@@ -557,6 +567,10 @@ class Filesystem {
 		
 		if($s_sourceFile === '') {
 			throw new FilesystemException('Error: received invalid empty filename');
+		}
+		
+		if(!self::isPermittedPath($s_sourceFile)) {
+			throw new FilesystemException('Error: filename "'.$s_sourceFile.'" is not permitted');
 		}
 		
 		if(!is_file($s_sourceFile)) {
