@@ -152,7 +152,7 @@ class Reef {
 		
 		if($this->a_options['files_dir'] !== null) {
 			if(!\Reef\Filesystem\Filesystem::isPermittedPath($this->a_options['files_dir'])) {
-				throw new FilesystemException('Error: files dir path "'.$this->a_options['files_dir'].'" is not permitted');
+				throw new \Reef\Exception\InvalidArgumentException('Error: files dir path "'.$this->a_options['files_dir'].'" is not permitted');
 			}
 			
 			if(!is_dir($this->a_options['files_dir']) || !is_writable($this->a_options['files_dir'])) {
