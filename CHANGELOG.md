@@ -1,3 +1,7 @@
+## 0.3.1 (2018-12-24)
+
+- Solve bug where the javascript implementation of number comparison in conditions was performed incorrectly (lexically instead of numerically) (#17)
+
 ## 0.3.0 (2018-11-15)
 
 - Add submit_wrapper option to JS builder
