@@ -137,9 +137,9 @@ Reef.addComponent((function() {
 			case 'is not empty':
 				return $.trim(value) !== '';
 			case 'is longer than':
-				return value.length > operand;
+				return value.length > +operand;
 			case 'is shorter than':
-				return value.length < operand;
+				return value.length < +operand;
 		};
 	};
 	

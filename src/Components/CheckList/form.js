@@ -170,16 +170,16 @@ Reef.addComponent((function() {
 				return !values[operand];
 				
 			case 'at least checked':
-				return valueArray.filter(function(b) { return b; }).length >= operand;
+				return valueArray.filter(function(b) { return b; }).length >= +operand;
 				
 			case 'at most checked':
-				return valueArray.filter(function(b) { return b; }).length <= operand;
+				return valueArray.filter(function(b) { return b; }).length <= +operand;
 				
 			case 'at least unchecked':
-				return valueArray.filter(function(b) { return !b; }).length >= operand;
+				return valueArray.filter(function(b) { return !b; }).length >= +operand;
 				
 			case 'at most unchecked':
-				return valueArray.filter(function(b) { return !b; }).length <= operand;
+				return valueArray.filter(function(b) { return !b; }).length <= +operand;
 		};
 	};
 	

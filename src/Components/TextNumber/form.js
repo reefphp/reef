@@ -172,9 +172,9 @@ Reef.addComponent((function() {
 				}
 				return value !== operand;
 			case 'is at least':
-				return value >= operand;
+				return +value >= +operand;
 			case 'is at most':
-				return value <= operand;
+				return +value <= +operand;
 		};
 	};
 	
