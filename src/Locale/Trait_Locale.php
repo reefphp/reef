@@ -20,6 +20,12 @@ trait Trait_Locale {
 	private $a_localeSources = [];
 	
 	/**
+	 * Get the Reef object
+	 * @return Reef The Reef we are currently working in
+	 */
+	abstract public function getReef() : Reef;
+	
+	/**
 	 * Retrieve base locale array from file system
 	 * @param string $s_locale The locale to fetch
 	 * @return string[] The locale data
@@ -126,6 +132,7 @@ trait Trait_Locale {
 		// Build priority list of locales
 		$a_locales[] = $this->getDefaultLocale();
 		$a_locales[] = 'en_US';
+		$a_locales = array_merge($a_locales, $this->getReef()->getOption('locales'));
 		$a_locales = array_unique(array_filter($a_locales));
 		
 		$s_localesKey = implode('/', $a_locales);
@@ -139,7 +146,7 @@ trait Trait_Locale {
 		$a_allKeys = ($s_firstLocale == 'en_US') ? array_keys($a_locale) : array_keys($this->getCombinedLocaleSources('en_US'));
 		$a_missing = [];
 		foreach($a_allKeys as $s_key) {
-			if(!isset($a_locale[$s_key])) {
+			if(!isset($a_locale[$s_key]) || $a_locale[$s_key] == '') {
 				$a_missing[$s_key] = 1;
 			}
 		}
@@ -147,11 +154,16 @@ trait Trait_Locale {
 		// Fill in gaps with other languages, if provided
 		if(!empty($a_missing)) {
 			foreach($a_locales as $s_locale) {
-				$a_secLocale = array_intersect_key($this->getCombinedLocaleSources($s_locale), $a_missing);
+				$a_secLocale = $this->getCombinedLocaleSources($s_locale);
 				
-				$a_locale = array_merge($a_locale, $a_secLocale);
-				
-				$a_missing = array_diff_key($a_missing, $a_secLocale);
+				foreach($a_missing as $s_key => $i) {
+					if(!isset($a_secLocale[$s_key]) || $a_secLocale[$s_key] == '') {
+						continue;
+					}
+					
+					$a_locale[$s_key] = $a_secLocale[$s_key];
+					unset($a_missing[$s_key]);
+				}
 				
 				if(empty($a_missing)) {
 					break;

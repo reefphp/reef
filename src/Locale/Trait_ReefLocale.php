@@ -21,6 +21,10 @@ trait Trait_ReefLocale {
 	abstract public function cache($s_cacheKey, $fn_val);
 	abstract public function getOption($s_name);
 	
+	public function getReef() {
+		return $this;
+	}
+	
 	protected function fetchBaseLocale($s_locale) {
 		return $this->cache('locale.reef.base.'.$s_locale, function() use($s_locale) {
 			

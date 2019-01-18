@@ -35,6 +35,10 @@ trait Trait_FieldLocale {
 	abstract public function getComponent() : Component;
 	abstract public function getForm() : Form;
 	
+	public function getReef() {
+		return $this->getForm()->getReef();
+	}
+	
 	protected function fetchBaseLocale($s_locale) {
 		if(!empty($s_locale) && isset($this->getDeclaration()['locales'][$s_locale])) {
 			return $this->getDeclaration()['locales'][$s_locale];
