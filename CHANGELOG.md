@@ -1,3 +1,8 @@
+## 0.3.3 (2020-02-16)
+
+- Update Symfony dependencies
+- Add support for running and testing Reef in Docker
+
 ## 0.3.2 (2019-01-18)
 
 - Improve locale coalescence
