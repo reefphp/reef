@@ -10,7 +10,7 @@ use \Reef\Exception\BadMethodCallException;
 
 final class FilesystemTest extends TestCase {
 	
-	const FILES_DIR = __DIR__ . '/../../../var/tmp/test/filesystemtest';
+	const FILES_DIR = TEST_TMP_DIR . '/filesystemtest';
 	
 	private static $Reef;
 	private static $Form;

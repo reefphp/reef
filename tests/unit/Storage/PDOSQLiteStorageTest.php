@@ -7,7 +7,7 @@ use Reef\Storage\PDO_SQLite_Storage;
 
 final class PDOSQLiteStorageTest extends PDOStorageTestCase {
 	
-	const STORAGE_DIR = __DIR__ . '/../../../var/tmp/test/sqlite_storage';
+	const STORAGE_DIR = TEST_TMP_DIR . '/sqlite_storage';
 	
 	public static function setUpBeforeClass() {
 		if(!is_dir(static::STORAGE_DIR)) {

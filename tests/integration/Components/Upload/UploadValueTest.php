@@ -8,7 +8,7 @@ final class UploadValueTest extends FieldValueTestCase {
 	
 	use CommonUploadTrait;
 
-	const FILES_DIR = 'var/tmp/test/reef_upload_value';
+	const FILES_DIR = TEST_TMP_DIR . '/reef_upload_value';
 	
 	public function declarationProvider() {
 		

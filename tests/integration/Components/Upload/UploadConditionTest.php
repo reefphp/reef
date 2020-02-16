@@ -8,7 +8,7 @@ final class UploadConditionTest extends ConditionTestCase {
 	
 	use CommonUploadTrait;
 	
-	const FILES_DIR = 'var/tmp/test/reef_upload_condition';
+	const FILES_DIR = TEST_TMP_DIR . '/reef_upload_condition';
 	
 	public function declarationProvider() {
 		

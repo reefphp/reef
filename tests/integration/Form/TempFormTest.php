@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 final class TempFormTest extends TestCase {
 	
-	const CACHE_DIR = __DIR__ . '/../../../var/tmp/test/temp_form_test';
+	const CACHE_DIR = TEST_TMP_DIR . '/temp_form_test';
 	
 	private static $Reef;
 	private static $Form;

@@ -10,7 +10,7 @@ final class UploadComponentTest extends ComponentTestCase {
 	
 	use CommonUploadTrait;
 	
-	const FILES_DIR = 'var/tmp/test/reef_upload_component';
+	const FILES_DIR = TEST_TMP_DIR . '/reef_upload_component';
 	
 	public function testCanBeCreated() {
 		parent::testCanBeCreated();

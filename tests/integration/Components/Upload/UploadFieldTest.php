@@ -8,6 +8,6 @@ final class UploadFieldTest extends FieldTestCase {
 	
 	use CommonUploadTrait;
 	
-	const FILES_DIR = 'var/tmp/test/reef_upload_field';
+	const FILES_DIR = TEST_TMP_DIR . '/reef_upload_field';
 	
 }

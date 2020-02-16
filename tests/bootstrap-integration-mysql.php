@@ -4,6 +4,8 @@ session_start();
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
+define('TEST_TMP_DIR', getenv('IN_DOCKER') ? '/var/tmp/test' :  __DIR__ . '/../var/tmp/test');
+
 if(getenv('IN_SCRUTINIZER_CI')) {
 	$DB_NAME = 'reef_test';
 	$DB_HOST = '127.0.0.1';
@@ -12,7 +14,7 @@ if(getenv('IN_SCRUTINIZER_CI')) {
 }
 else {
 	$DB_NAME = 'reef_test';
-	$DB_HOST = getenv('IN_GITLAB_CI') ? 'mysql' : '127.0.0.1';
+	$DB_HOST = getenv('IN_GITLAB_CI') ? 'mysql' : (getenv('IN_DOCKER') ? 'mysql' : '127.0.0.1');
 	$DB_USER = 'reef_test';
 	$DB_PASS = 'reef_test';
 }

@@ -12,7 +12,7 @@ abstract class ConditionTestCase extends TestCase {
 	protected static $Component;
 	protected static $s_componentName;
 	
-	const CACHE_DIR = __DIR__ . '/../../../var/tmp/test/component_test_cache';
+	const CACHE_DIR = TEST_TMP_DIR . '/component_test_cache';
 	
 	public static function setUpBeforeClass() {
 		global $_reef_PDO;
