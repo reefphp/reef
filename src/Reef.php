@@ -18,7 +18,8 @@ use \Reef\Form\TempForm;
 use \Reef\Session\ContextSession;
 use \Reef\Exception\BadMethodCallException;
 use \Reef\Exception\ValidationException;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Psr16Cache;
 use Symfony\Component\Yaml\Yaml;
 
 require_once(__DIR__ . '/functions.php');
@@ -77,7 +78,7 @@ class Reef {
 	
 	/**
 	 * Cache object
-	 * @type FilesystemCache
+	 * @type Psr16Cache
 	 */
 	private $Cache;
 	
@@ -194,11 +195,12 @@ class Reef {
 	
 	/**
 	 * Get the cache object for this Reef instance
-	 * @return FilesystemCache The cache object
+	 * @return Psr16Cache The cache object
 	 */
-	public function getCache() : FilesystemCache {
+	public function getCache() : Psr16Cache {
 		if($this->Cache == null) {
-			$this->Cache = new FilesystemCache('reef', 0, $this->a_options['cache_dir']);
+		    $adapter = new FilesystemAdapter('reef', 0, $this->a_options['cache_dir']);
+			$this->Cache = new Psr16Cache($adapter);
 		}
 		return $this->Cache;
 	}
