@@ -1,3 +1,7 @@
+## 0.3.4 (2020-04-12)
+
+- Fix psr/simple-cache dependency
+
 ## 0.3.3 (2020-02-16)
 
 - Update Symfony dependencies
